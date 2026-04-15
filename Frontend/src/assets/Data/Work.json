@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "number": "01.",
+        "title": "Private residences",
+        "image": "/images/Work/work-image-01.jpg",
+        "mainimage": "/images/Work/work-image-02.jpg",
+        "description": "We design luxurious private residences with modern architecture and elegant interiors."
+    },
+    {
+        "id": 2,
+        "number": "02.",
+        "title": "Business projects",
+        "image": "/images/Work/work-image-03.jpg",
+        "mainimage": "/images/Work/work-image-04.jpg",
+        "description": "Professional workspace design for offices, corporate buildings, and commercial spaces."
+    },
+    {
+        "id": 3,
+        "number": "03.",
+        "title": "Cottages",
+        "image": "/images/Work/work-image-05.jpg",
+        "mainimage": "/images/Work/work-image-06.jpg",
+        "description": "Beautiful cottage designs with natural materials and cozy living spaces."
+    }
+]

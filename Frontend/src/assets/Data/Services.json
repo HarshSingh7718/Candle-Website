@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "Kitchens",
+        "image": "/images/Services/service-image-01.jpg",
+        "category": "Interiors"
+    },
+    {
+        "id": 1,
+        "title": "Living rooms",
+        "image": "/images/Services/service-image-02.jpg",
+        "category": "Interiors"
+    },
+    {
+        "id": 3,
+        "title": "Bathrooms",
+        "image": "/images/Services/service-image-03.jpg",
+        "category": "Interiors"
+    }
+]

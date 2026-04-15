@@ -1,0 +1,68 @@
+[
+    {
+        "id": 1,
+        "title": "House in Monaco",
+        "Client": "Isabella Hart",
+        "Date": "March, 2026",
+        "Author": "John Miles",
+        "image1": "/images/Gallery/gallery-image-01.jpg",
+        "image2": "/images/Gallery/gallery-image-02.jpg",
+        "image3": "/images/Gallery/gallery-image-03.jpg",
+        "image4": "/images/Gallery/gallery-image.jpg"
+    },
+    {
+        "id": 2,
+        "title": "Glazed terrace",
+        "Client": "Isabella Hart",
+        "Date": "October, 2026",
+        "Author": "Amy Walker",
+        "image1": "/images/Gallery/gallery-image-04.jpg",
+        "image2": "/images/Gallery/gallery-image-05.jpg",
+        "image3": "/images/Gallery/gallery-image-06.jpg",
+        "image4": "/images/Gallery/gallery-image.jpg"
+    },
+    {
+        "id": 3,
+        "title": "Residence in Dubai",
+        "Client": "Isabella Hart",
+        "Date": "July, 2026",
+        "Author": "Jim Carter",
+        "image1": "/images/Gallery/gallery-image-07.jpg",
+        "image2": "/images/Gallery/gallery-image-05.jpg",
+        "image3": "/images/Gallery/gallery-image-06.jpg",
+        "image4": "/images/Gallery/gallery-image.jpg"
+    },
+    {
+        "id": 4,
+        "title": "Hi-Tech project",
+        "image1": "/images/Gallery/gallery-image-08.jpg",
+        "image2": "/images/Gallery/gallery-image-02.jpg",
+        "image3": "/images/Gallery/gallery-image-03.jpg",
+        "image4": "/images/Gallery/gallery-image.jpg",
+        "swiperimage1": "/images/Gallery/gallery-image-09.jpg",
+        "swiperimage2": "/images/Gallery/gallery-image-10.jpg",
+        "swiperimage3": "/images/Gallery/gallery-image-11.jpg"
+    },
+    {
+        "id": 5,
+        "title": "Modern house",
+        "Client": "Isabella Hart",
+        "Date": "September, 2019",
+        "Author": "Tabitha Adams",
+        "image1": "/images/Gallery/gallery-image-15.jpg",
+        "image2": "/images/Gallery/gallery-image-05.jpg",
+        "image3": "/images/Gallery/gallery-image-13.jpg",
+        "image4": "/images/Gallery/gallery-image-14.jpg"
+    },
+    {
+        "id": 6,
+        "title": "Contemporary kitchen",
+        "Client": "Isabella Hart",
+        "Year": "2026",
+        "Author": "Tabitha Adams",
+        "image1": "/images/Gallery/gallery-image-16.jpg",
+        "image2": "/images/Gallery/gallery-image-05.jpg",
+        "image3": "/images/Gallery/gallery-image-06.jpg",
+        "image4": "/images/Gallery/gallery-image.jpg"
+    }
+]

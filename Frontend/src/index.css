@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nata+Sans:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prata&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import "tailwindcss";
+
+@font-face {
+  font-family: "impact01";
+  src: url(/fonts/IMPACT.TTF);
+   font-display: swap;
+}
+
+.impact,
+.impact span {
+  font-family: "impact01", sans-serif !important;
+}
+
+
+@theme {
+  --color-primary: #051728;
+  --color-light-yellow: #f4f3e6;
+  --color-heading: #1e2831;
+  --color-paragraph: #656565;
+  --color-muted: #858D97;
+  --color-footer: #9aa0a8;
+  --color-coffee: #ae9775;
+  --color-coffee-light: #B19777;
+}
+
+body {
+  font-family: "Sora", "Montserrat", sans-serif;
+}
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+::-webkit-scrollbar {
+  display: none;
+  -webkit-scrollbar: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-transform: capitalize !important;
+}
+
+@utility centered-row {
+  @apply flex items-center;
+}
+
+@utility centered-start {
+  @apply flex items-center;
+}
+
+@layer components {
+  .section-container {
+    @apply flex justify-between items-start w-full lg:flex-row flex-col;
+  }
+
+  .heading-1 {
+    @apply text-3xl text-heading sm:text-4xl lg:text-5xl font-semibold leading-tight mb-12;
+  }
+}
+
+.pera-text {
+  @apply text-paragraph mb-10;
+}
+
+.section-image {
+  @apply w-full h-full object-cover
+}
+
+.title-span {
+  @apply text-[14px] leading-4.5 text-heading font-semibold uppercase tracking-[2px] opacity-90 mb-[1.4em] inline-block;
+}
+
+/* Nav Link Underline Animation Fix */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after,
+.group:hover .nav-link::after {
+  width: 100% !important;
+}
+
+
+
+
+.card-count{
+  font-size: 10px;
+  font-weight: 500;
+  min-width: 15px;
+  min-height: 15px;
+  text-align: center;
+  letter-spacing: .3px;
+  padding:0 2px;
+  top:auto;
+  bottom:-3px;
+  right:-6px;
+  --webkit-transform: none;
+  --ms-transform:none;
+  transform: none;
+
+  border-radius: 8px;
+  position:absolute;
+  z-index: 1;
+  color:#fff;
+  background-color: #00a4b2;
+
+}
+
+/* Hero Section */
+
+.swiper-pagination-bullet {
+    background: white !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--color-light-yellow) !important;
+}
+/* About Section */
+
+.about-image img {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.about-bg-video {
+    height: 500px;
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/Index/About/main-about-dots.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: -1;
+}
+
+
+/* Product Section */
+
+.product-icons li {
+    display: block;
+    overflow: hidden;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    letter-spacing: 0 !important;
+    cursor: pointer;
+    text-align:center;
+    border: none !important;
+margin: 4px !important;
+width: 47px;
+height: 47px;
+padding: 13px;
+line-height: 48px !important;
+border-radius: 50% !important;
+transition: all 0.4s ease;
+box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.06);
+position: relative;
+visibility: visible !important;
+pointer-events: auto !important;
+top: 0;
+opacity: 0;
+transform: translateX(12px);
+}
+
+.product-icons li svg {
+    display: block !important;
+    margin: 0 !important;
+    font-size: 14px !important;
+    line-height: inherit !important;
+    vertical-align: middle !important;
+    padding: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.product-image:hover .product-icons li {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.product-image:hover .product-icons li:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.product-image:hover .product-icons li:nth-child(2) {
+    transition-delay: 0.25s;
+}
+
+.product-image:hover .product-icons li:nth-child(3) {
+    transition-delay: 0.4s;
+}

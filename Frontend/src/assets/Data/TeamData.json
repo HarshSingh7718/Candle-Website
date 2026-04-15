@@ -1,0 +1,162 @@
+[
+    {
+        "id": 1,
+        "image": "/images/Teams/team-01.jpg",
+        "name": "Daniel Carter",
+        "category": "Architect",
+        "age": "32",
+        "Experience": "7 Years",
+        "Specialization": "Urban Design",
+        "mobnumber": "+91 98765 12340",
+        "email": "danielcarter@gmail.com",
+        "Skills": [
+            {
+                "Management": "85%",
+                "Analytics": "72%",
+                "Consultation": "68%",
+                "Engineering": "74%",
+                "Communicatoin": "91%"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "image": "/images/Teams/team-02.jpg",
+        "name": "Sophia Bennett",
+        "category": "Interior Designer",
+        "age": "27",
+        "Experience": "5 Years",
+        "Specialization": "Modern Interiors",
+        "mobnumber": "+91 98765 12341",
+        "email": "sophiabennett@gmail.com",
+        "Skills": [
+            {
+                "Management": "78%",
+                "Analytics": "66%",
+                "Consultation": "81%",
+                "Engineering": "60%",
+                "Communicatoin": "95%"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "image": "/images/Teams/team-03.jpg",
+        "name": "Michael Foster",
+        "category": "Project Manager",
+        "age": "36",
+        "Experience": "10 Years",
+        "Specialization": "Construction Planning",
+        "mobnumber": "+91 98765 12342",
+        "email": "michaelfoster@gmail.com",
+        "Skills": [
+            {
+                "Management": "93%",
+                "Analytics": "75%",
+                "Consultation": "80%",
+                "Engineering": "69%",
+                "Communicatoin": "88%"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "image": "/images/Teams/team-04.jpg",
+        "name": "Olivia Grant",
+        "category": "Landscape Designer",
+        "age": "30",
+        "Experience": "6 Years",
+        "Specialization": "Garden Architecture",
+        "mobnumber": "+91 98765 12343",
+        "email": "oliviagrant@gmail.com",
+        "Skills": [
+            {
+                "Management": "82%",
+                "Analytics": "64%",
+                "Consultation": "79%",
+                "Engineering": "70%",
+                "Communicatoin": "90%"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "image": "/images/Teams/team-05.jpg",
+        "name": "James Walker",
+        "category": "Structural Engineer",
+        "age": "34",
+        "Experience": "9 Years",
+        "Specialization": "Steel Structures",
+        "mobnumber": "+91 98765 12344",
+        "email": "jameswalker@gmail.com",
+        "Skills": [
+            {
+                "Management": "88%",
+                "Analytics": "73%",
+                "Consultation": "67%",
+                "Engineering": "92%",
+                "Communicatoin": "85%"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "image": "/images/Teams/team-06.jpg",
+        "name": "Emily Rogers",
+        "category": "Architect",
+        "age": "29",
+        "Experience": "5 Years",
+        "Specialization": "Residential Design",
+        "mobnumber": "+91 98765 12345",
+        "email": "emilyrogers@gmail.com",
+        "Skills": [
+            {
+                "Management": "80%",
+                "Analytics": "68%",
+                "Consultation": "74%",
+                "Engineering": "71%",
+                "Communicatoin": "92%"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "image": "/images/Teams/team-07.jpg",
+        "name": "Ryan Mitchell",
+        "category": "3D Visualizer",
+        "age": "26",
+        "Experience": "4 Years",
+        "Specialization": "Architectural Rendering",
+        "mobnumber": "+91 98765 12346",
+        "email": "ryanmitchell@gmail.com",
+        "Skills": [
+            {
+                "Management": "70%",
+                "Analytics": "77%",
+                "Consultation": "60%",
+                "Engineering": "68%",
+                "Communicatoin": "87%"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "image": "/images/Teams/team-08.jpg",
+        "name": "Lucas Hayes",
+        "category": "Designer",
+        "age": "31",
+        "Experience": "7 Years",
+        "Specialization": "Commercial Spaces",
+        "mobnumber": "+91 98765 12347",
+        "email": "lucashayes@gmail.com",
+        "Skills": [
+            {
+                "Management": "86%",
+                "Analytics": "71%",
+                "Consultation": "73%",
+                "Engineering": "69%",
+                "Communicatoin": "89%"
+            }
+        ]
+    }
+]

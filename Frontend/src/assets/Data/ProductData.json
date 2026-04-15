@@ -1,0 +1,279 @@
+[
+    {
+        "id": 1,
+        "title": "Candel Vanila",
+        "image1": "/images/Products/product-image-01.jpg",
+        "hoverImage": "/images/Products/product-image-02.jpg",
+        "image3": "/images/Products/product-image-03.jpg",
+        "image4": "/images/Products/product-image-04.jpg",
+        "image5": "/images/Products/product-image-05.jpg",
+        "price": 180,
+        "oldprice": "$210",
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 2,
+        "title": "Candel Vanila",
+        "image1": "/images/Products/product-image-06.jpg",
+        "hoverImage": "/images/Products/product-image-07.jpg",
+        "image3": "/images/Products/product-image-08.jpg",
+        "image4": "/images/Products/product-image-09.jpg",
+        "image5": "/images/Products/product-image-10.jpg",
+        "price": 30,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 3,
+        "title": "Candel Vanila",
+        "image1": "/images/Products/product-image-11.jpg",
+        "hoverImage": "/images/Products/product-image-12.jpg",
+        "image3": "/images/Products/product-image-13.jpg",
+        "image4": "/images/Products/product-image-14.jpg",
+        "image5": "/images/Products/product-image-15.jpg",
+        "price": 30,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+        
+    },
+    {
+  
+        "id": 4,
+        "title": "Candel New",
+        "image1": "/images/Products/product-image-16.jpg",
+        "hoverImage": "/images/Products/product-image-17.jpg",
+        "image3": "/images/Products/product-image-18.jpg",
+        "image4": "/images/Products/product-image-19.jpg",
+        "image5": "/images/Products/product-image-20.jpg",
+        "price": 30,
+        "oldprice": "$60",
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 6,
+        "title": "Vase Candle my best candle is Vanila",
+        "image1": "/images/Products/product-image-21.jpg",
+        "hoverImage": "/images/Products/product-image-22.jpg",
+        "image3": "/images/Products/product-image-23.jpg",
+        "image4": "/images/Products/product-image-24.jpg",
+        "image5": "/images/Products/product-image-25.jpg",
+        "oldprice":18,
+        "price": 15,
+        "categories": "Furniture,Decor",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+        
+        
+    },
+    {
+        "id": 7,
+        "title": "Candel White",
+        "image1": "/images/Products/product-image-26.jpg",
+        "hoverImage": "/images/Products/product-image-27.jpg",
+        "image3": "/images/Products/product-image-28.jpg",
+        "image4": "/images/Products/product-image-29.jpg",
+        "image5": "/images/Products/product-image-30.jpg",
+        "price": 132,
+        "categories": "Furniture,Decor",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":5
+       
+        
+    },
+    {
+        "id": 9,
+        "title": "New Candle",
+        "image1": "/images/Products/product-image-31.jpg",
+        "hoverImage": "/images/Products/product-image-32.jpg",
+        "image3": "/images/Products/product-image-33.jpg",
+        "image4": "/images/Products/product-image-34.jpg",
+        "image5": "/images/Products/product-image-35.jpg",
+        "price": 200,
+        "categories": "Furniture,Decor",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 10,
+        "title": "Candle Rose",
+        "image1": "/images/Products/product-image-36.jpg",
+        "hoverImage": "/images/Products/product-image-37.jpg",
+        "image3": "/images/Products/product-image-38.jpg",
+        "image4": "/images/Products/product-image-39.jpg",
+        "image5": "/images/Products/product-image-40.jpg",
+        "price": 9,
+        "categories": "Decor",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 11,
+        "title": "Vriant Candel",
+        "image1": "/images/Products/product-image-41.jpg",
+        "hoverImage": "/images/Products/product-image-42.jpg",
+        "image3": "/images/Products/product-image-43.jpg",
+        "image4": "/images/Products/product-image-44.jpg",
+        "image5": "/images/Products/product-image-45.jpg",
+        "price": 130,
+        "oldprice": "$150",
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 12,
+        "title": "Small Candle",
+        "image1": "/images/Products/product-image-46.jpg",
+        "hoverImage": "/images/Products/product-image-47.jpg",
+        "image3": "/images/Products/product-image-48.jpg",
+        "image4": "/images/Products/product-image-49.jpg",
+        "image5": "/images/Products/product-image-50.jpg",
+        "price": 14,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 13,
+        "title": "Candle",
+        "image1": "/images/Products/product-image-51.jpg",
+        "hoverImage": "/images/Products/product-image-52.jpg",
+        "image3": "/images/Products/product-image-53.jpg",
+        "image4": "/images/Products/product-image-54.jpg",
+        "image5": "/images/Products/product-image-55.jpg",
+        "price": 300,
+        "categories": "Furniture,Decor",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 14,
+        "title": "New Price",
+        "image1": "/images/Products/product-image-56.jpg",
+        "hoverImage": "/images/Products/product-image-57.jpg",
+        "image3": "/images/Products/product-image-58.jpg",
+        "image4": "/images/Products/product-image-59.jpg",
+        "image5": "/images/Products/product-image-60.jpg",
+        "price": 30,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 15,
+        "title": "Latest Cancle",
+        "image1": "/images/Products/product-image-61.jpg",
+        "hoverImage": "/images/Products/product-image-62.jpg",
+        "image3": "/images/Products/product-image-63.jpg",
+        "image4": "/images/Products/product-image-64.jpg",
+        "image5": "/images/Products/product-image-65.jpg",
+        "price": 120,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 16,
+        "title": "Candle for ",
+        "image1": "/images/Products/product-image-66.jpg",
+        "hoverImage": "/images/Products/product-image-67.jpg",
+        "image3": "/images/Products/product-image-68.jpg",
+        "image4": "/images/Products/product-image-69.jpg",
+        "image5": "/images/Products/product-image-70.jpg",
+        "price": 80,
+        "categories": "Furniture,Decor",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 17,
+        "title": "White Candle",
+        "image1": "/images/Products/product-image-71.jpg",
+        "hoverImage": "/images/Products/product-image-72.jpg",
+        "image3": "/images/Products/product-image-73.jpg",
+        "image4": "/images/Products/product-image-74.jpg",
+        "image5": "/images/Products/product-image-75.jpg",
+        "price": 100,
+        "oldprice": "$115",
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 18,
+        "title": "Beanbag",
+        "image1": "/images/Products/product-image-76.jpg",
+        "hoverImage": "/images/Products/product-image-77.jpg",
+        "image3": "/images/Products/product-image-78.jpg",
+        "image4": "/images/Products/product-image-79.jpg",
+        "image5": "/images/Products/product-image-80.jpg",
+        "price": 60,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 19,
+        "title": "Floor Lamp",
+        "image1": "/images/Products/product-image-81.jpg",
+        "hoverImage": "/images/Products/product-image-82.jpg",
+        "image3": "/images/Products/product-image-83.jpg",
+        "image4": "/images/Products/product-image-84.jpg",
+        "image5": "/images/Products/product-image-85.jpg",
+        "price": 32,
+        "categories": "Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    },
+    {
+  
+        "id": 20,
+        "title": "Coffee Candle",
+        "image1": "/images/Products/product-image-86.jpg",
+        "hoverImage": "/images/Products/product-image-87.jpg",
+        "image3": "/images/Products/product-image-88.jpg",
+        "image4": "/images/Products/product-image-89.jpg",
+        "image5": "/images/Products/product-image-90.jpg",
+        "price": 100,
+        "categories": "Decor,Furniture",
+        "discount": "10% OFF",
+        "brand": "Naisha Creation",
+        "rating":4
+    }
+]

@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "image": "/images/Index/Blogs/blog-post-01.jpg",
+        "date": "Apr 21, 2026",
+        "category": "Furniture",
+        "title": "What color is trending in modern interiors?",
+        "comments": "2 Comments",
+        "description": "Modern interiors are shifting towards warm neutrals and earthy tones. These colors bring calmness and elegance to the space."
+    },
+    {
+        "id": 2,
+        "image": "/images/Index/Blogs/blog-post-02.jpg",
+        "date": "Apr 22, 2026",
+        "category": "Furniture",
+        "title": "Furniture for cozy and inviting atmosphere",
+        "comments": "3 Comments",
+        "description": "Soft textures, natural wood, and warm lighting can make any room feel more comfortable and welcoming."
+    },
+    {
+        "id": 3,
+        "image": "/images/Index/Blogs/blog-post-03.jpg",
+        "date": "Apr 23, 2026",
+        "category": "Furniture",
+        "title": "Decorating with neutrals: 5 brilliant tricks",
+        "comments": "5 Comments",
+        "description": "Neutral palettes never go out of style. Layering textures and subtle patterns can create depth."
+    },
+    {
+        "id": 4,
+        "image": "/images/Index/Blogs/blog-post-04.jpg",
+        "date": "Apr 24, 2026",
+        "category": "Furniture",
+        "comments": "1 Comments",
+        "title": "Amazing renovation projects to inspire",
+        "description": "From small upgrades to full renovations, these inspiring projects show the power of good design."
+    }
+]

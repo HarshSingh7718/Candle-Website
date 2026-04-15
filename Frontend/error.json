@@ -1,0 +1,17 @@
+{
+  "errors": [
+    {
+      "code": "MISSING_EXPORT",
+      "kind": "MISSING_EXPORT",
+      "message": "\u001b[31m[MISSING_EXPORT] Error:\u001b[0m \"Instagram\" is not exported by \"node_modules/lucide-react/dist/esm/lucide-react.js\".\n   \u001b[38;5;246m╭\u001b[0m\u001b[38;5;246m─\u001b[0m\u001b[38;5;246m[\u001b[0m src/components/sections/Instagram.jsx:2:10 \u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m│\u001b[0m\n \u001b[38;5;246m2 │\u001b[0m \u001b[38;5;249mi\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249m \u001b[0mInstagram\u001b[38;5;249m \u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mI\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mg\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249mI\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249m}\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249m\"\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m\"\u001b[0m\u001b[38;5;249m;\u001b[0m\n \u001b[38;5;240m  │\u001b[0m          ────┬────  \n \u001b[38;5;240m  │\u001b[0m              ╰────── Missing export\n\u001b[38;5;246m───╯\u001b[0m\n",
+      "id": "C:/Users/lenovo/Desktop/CandleWebsite -Code/Frontend/src/components/sections/Instagram.jsx",
+      "exporter": "C:/Users/lenovo/Desktop/CandleWebsite -Code/Frontend/node_modules/lucide-react/dist/esm/lucide-react.js",
+      "loc": {
+        "line": 2,
+        "column": 9,
+        "file": "C:/Users/lenovo/Desktop/CandleWebsite -Code/Frontend/src/components/sections/Instagram.jsx"
+      },
+      "pos": 36
+    }
+  ]
+}
