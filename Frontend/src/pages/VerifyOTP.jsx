@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import API from '../../api';
-import { useStore } from "../../context/StoreContext";
+import API from '../api';
+import { useStore } from "../context/StoreContext";
 
 const VerifyOTP = () => {
     const [otp, setOtp] = useState(new Array(4).fill(""));
