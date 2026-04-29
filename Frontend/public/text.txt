@@ -1,0 +1,30 @@
+<section className="pb-24 max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="mb-12 flex items-end justify-between">
+            <h3 className="text-3xl font-serif">Behind the <span className="italic font-light">Craft</span></h3>
+            <span className="text-sm uppercase tracking-widest text-stone-400 mb-2">Visual Diary</span>
+        </div>
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+          {[
+            { src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBrnOVPTAQTDu8a4WhT_cFZcJIECcC9W0OlfSOvDG-hWme0iiAxeAKUl5zPmhA29xuc35Egv1lv0bEgZDWFrHvHLWec3Xd8SUu8LOA4oGcxjcuDMZZWdyRgnn9IzPARiGSPRAsf_TrVa2MUm2BbWlT0N5t2hxOllalkaLHlGknAR-SwqjqS_YbhewYg4M_018Sdcv95QKzMjdWg3axq2lYMcaJ5_h6c_3JNkfdKa7Od10T4g48YuGi6MxH48zGg0EnJeSVXAlr57cxF", alt: "Wax Poured" },
+            { src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBqRTd--_RZ4z8exzM4aOUSostFXW2AEmQruQRWamGzAIA9tf5x3zEFYlJw4GfALe_0LArIR6rMRH2cwKK4jDpNoqEJxDW1cpBerB9FHb1gP_id9YfGUH_SG3mfX4UinSbXuCFNaoQHvsWCQejvytF9a65xgAVmK9DR3c6Al1F7zaVZVYMmmh5e3FsPrBfMvkBcAHv1wBMio1AImVpyqm5zooTJGAKAPwdEQ_ZzStbuIZ88-MKu262PcClW8XiPDM6QDWlRPhuKy_cN", alt: "Oils" },
+            { src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDqEx6Aln3qEUIeVDjtP1wP-kV-3ttqNdCpArx6MmMTZReWdKXvrQsmaOQM2bIci7j4Jzca7t93Gp267-myB5JpxgmMbGz0x1UgRjlB8JicNFXtTHg3wn-cCeev5b9840HGnFLYekaXo6szUakZA549hIzb0roNc6x0jrw5he3SWduRwvWR8eGQvMiwdjDfYZsXqGMMWR1kIhZBjCQx8rOL99pALbC7bthO5TzOcCLmTq8KjlaE9dg1E_FCDs4_bVehkfneabMmVeZT", alt: "Wick Detail" },
+            { src: "https://lh3.googleusercontent.com/aida-public/AB6AXuB-pS-WSpRaWfxzPUsMbllz2mvipuL5taoXUs8NSTnt4N8yc0oS-QpfsgRYyxsyw3n__lqKP-k28YXiLvbwqL79ODnVIfzCcTw0EyYfhscBrVAlqPyGMI0Jn6rJa3WlHWuL76WE5eOc1NTa5-wvnet6FTjSN17ROnRiijhc4mUEfq7FQlGC2VOFT4x4eXMO94TWD10-RSTwPt5hlmf2oL_pJVrSApZy3yUvp8v-kUk7dHI-iMrI7R8ecryWd7cRXxj2XAzuZbdNgiO", alt: "Botanicals" },
+            { src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAlV27YyezoXFBWvXsIgLt56wYw8AB-IznlJDHWOeH1VSyFXXxRi_SGjHbm_AE3eRQPO6dLcYj0jGfEkJ42_oraT8Hc356_CGwSqfGFxbIkXv6zpgRAcEQpNBIf9mfKP26RkQC2AgnU73gw5liUPkpez5qt71WVhyfdShxErItXYVpvV8yd2M_QpY_sHAf6_ZH5Qw3x-yzOeRwlSEw9aqpGlNkMEPOGQWE3ixD-hHica2tJxh5YUVplliwMBRCidIy39RDvKcR-XjCy", alt: "Lifestyle" },
+            { src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDuHMsFuS4ISH-11iii-y_HxqQuqI5ZONCq4a-nwopxlZguZWph4sZVT83RswvgTIOv3OtM6Qk3_eqt9CcWm-GvA9VxRx1JWnrUiB8wEIaNzU9ubVRtNjrT_wFc992x6YI26EjZYroaD8qFAvSujvgakxQ5gygXnQjDMfIn0_0Os1Wl1ajyoIzPqBPkiYLwVoseBfQ2OEpnXodzouSnc_jbHrNSSozZN_lVrrbD_ulFb0osl8v1OoiVxulwo9xKa2QCESi7Z1Kh_iRS", alt: "Recycled Packaging" },
+          ].map((img, idx) => (
+            <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500">
+              <img 
+                src={img.src} 
+                alt={img.alt} 
+                className="w-full grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" 
+                onError={(e) => { e.target.src = `https://images.unsplash.com/photo-1596435707700-6264292b861d?auto=format&fit=crop&q=80&w=600` }}
+              />
+              <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <p className="text-white font-serif tracking-widest uppercase text-sm">{img.alt}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      

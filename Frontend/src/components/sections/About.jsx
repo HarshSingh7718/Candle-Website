@@ -63,11 +63,11 @@ return ()=>ctx.revert();
 
     return (
         <>
-            <section ref={aboutRef} id="about" className="about container py-[8%] mx-auto section-container gap-14">
-                <div className="about-image rounded-sm w-full lg:w-1/2 max-w-full
+            <section ref={aboutRef} id="about" className="about container py-[8%] mx-auto section-container gap-14 px-4">
+                <div className="about-image  rounded-sm w-full lg:w-1/2 max-w-full
                 lg:max-w-125 mx-auto relative overflow-hidden">
                     <div className="about-bg-video absolute inset-0 -z-10"></div>
-                    <img src={aboutMainImg} alt="Our Story" className="about" loading="lazy" />
+                    <img src={aboutMainImg} alt="Our Story" className="about w-full h-auto object-cover rounded-sm" loading="lazy" />
                 </div>
 
                 <div className="about-content w-full lg:w-1/2">
@@ -81,21 +81,21 @@ return ()=>ctx.revert();
     Founded on the belief that scent is a bridge to memory and tranquility, Naisha Creations brings you candles that are more than just wax and wick. Every piece is a story of craft, poured by hand with organic ingredients to elevate your everyday rituals.
 </p>
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 xl:gap-8
-lg:grid-cols-3 mx-auto mb-14 md:mb-18">
+lg:grid-cols-3 mx-auto mb-1 md:mb-18">
     <div className="image ">
 
         <img src={aboutImg1} alt="Artisanal process"
-className="section-image" loading="lazy" />
+className="section-image w-full md:h-auto object-cover rounded-sm " loading="lazy" />
     </div>
        <div className="image ">
 
         <img src={aboutImg2} alt="Premium ingredients"
-className="section-image" loading="lazy" />
+className="section-image w-full aspect-[3/4] md:h-auto object-cover rounded-sm" loading="lazy" />
     </div>
        <div className="image ">
 
         <img src={aboutImg3} alt="Final product"
-className="section-image" loading="lazy" />
+className="section-image w-full h-auto object-cover rounded-sm hidden md:block" loading="lazy" />
     </div>
 </div>
 

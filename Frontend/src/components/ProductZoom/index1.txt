@@ -1,0 +1,269 @@
+import React, { useState, useRef } from 'react';
+import { Heart, Star, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const App = () => {
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [openAccordion, setOpenAccordion] = useState(null);
+  const scrollRef = useRef(null);
+
+  // Mock product images - limited to exactly four as requested
+  const images = [
+    "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=800", // Main Amber Jar
+    "https://images.unsplash.com/photo-1572502181244-5e403cc4458b?auto=format&fit=crop&q=80&w=400", // Detail
+    "https://images.unsplash.com/photo-1594913366159-1832ffdf8e46?auto=format&fit=crop&q=80&w=400", // Lifestyle
+    "https://images.unsplash.com/photo-1602872030219-c09e844d8340?auto=format&fit=crop&q=80&w=400"  // Unlit
+  ];
+
+  const faqItems = [
+    { title: 'ABOUT EKAM', content: 'Ekam represents the spirit of togetherness and natural harmony. Our products are crafted using premium ingredients to transform your living space into a sanctuary.' },
+    { title: 'ABOUT COLLECTION', content: 'The Artisan Series focuses on minimalist design and maximum olfactory impact, featuring hand-poured soy wax and natural essences.' },
+    { title: 'ABOUT FRAGRANCE', content: 'A rich, creamy vanilla bean base with subtle notes of toasted sugar and warm milk. Perfect for creating a cozy, welcoming atmosphere.' },
+    { title: 'SPECIFICATIONS', content: 'Weight: 250g | Burn Time: ~60 Hours | Wax: 100% Soy Wax | Wick: Lead-free Cotton.' },
+    { title: 'INSTRUCTIONS TO USE', content: 'Trim wick to 1/4 inch before each lighting. Burn for at least 2 hours on first use to ensure an even melt pool. Never leave a burning candle unattended.' },
+    { title: 'CUSTOMER CARE', content: 'Have questions? Our support team is available Mon-Fri, 9am-6pm. Contact us via email or our live chat for immediate assistance.' },
+  ];
+
+  const handlePrev = () => {
+    setSelectedImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setSelectedImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const scrollThumbnails = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === 'left' ? -100 : 100;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const toggleAccordion = (index) => {
+    setOpenAccordion(openAccordion === index ? null : index);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FDFBF7] font-sans text-slate-900 selection:bg-amber-100">
+      <div className="max-w-7xl mx-auto px-4 py-6 md:py-12 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-20 items-start">
+          
+          {/* Left Section: Gallery - Centered Vertically on Desktop */}
+          <div className="lg:col-span-7 flex flex-col-reverse md:flex-row md:items-center gap-4">
+            
+            {/* Thumbnails Container */}
+            <div className="relative flex items-center md:block">
+              {/* Mobile Thumbnail Nav - Left */}
+              <button 
+                onClick={() => scrollThumbnails('left')}
+                className="md:hidden p-1 text-slate-400 hover:text-slate-900 transition-colors shrink-0"
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              {/* Thumbnails - Centered Column */}
+              <div 
+                ref={scrollRef}
+                className="flex md:flex-col gap-3 shrink-0 items-center justify-start md:justify-center overflow-x-auto md:overflow-y-visible no-scrollbar pb-2 md:pb-0 px-1"
+              >
+                {/* Desktop Scroll Arrows - Centered */}
+                <button className="hidden md:flex items-center justify-center text-slate-300 hover:text-slate-600 p-1 transition-colors mx-auto">
+                  <ChevronUp size={20} />
+                </button>
+                
+                <div className="flex md:flex-col gap-3 items-center">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(idx)}
+                      className={`relative w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-28 flex-shrink-0 overflow-hidden border-2 transition-all duration-300 group ${
+                        selectedImage === idx ? 'border-amber-600 shadow-md' : 'border-transparent'
+                      }`}
+                    >
+                      <img 
+                        src={img} 
+                        alt={`Thumbnail ${idx}`} 
+                        className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${
+                          selectedImage !== idx ? 'opacity-70 grayscale-[0.3]' : 'opacity-100'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                <button className="hidden md:flex items-center justify-center text-slate-300 hover:text-slate-600 p-1 transition-colors mx-auto">
+                  <ChevronDown size={20} />
+                </button>
+              </div>
+
+              {/* Mobile Thumbnail Nav - Right */}
+              <button 
+                onClick={() => scrollThumbnails('right')}
+                className="md:hidden p-1 text-slate-400 hover:text-slate-900 transition-colors shrink-0"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+
+            {/* Main Image Container */}
+            <div className="relative flex-1 bg-white overflow-hidden aspect-[4/5] sm:aspect-square md:aspect-[4/5] shadow-sm rounded-sm">
+              <img
+                src={images[selectedImage]}
+                alt="Candel Vanila Product"
+                className="w-full h-full object-cover transition-opacity duration-300"
+              />
+              
+              {/* Mobile Navigation Arrows */}
+              <div className="absolute inset-y-0 left-2 flex items-center md:hidden pointer-events-none">
+                <button 
+                  onClick={handlePrev}
+                  className="w-10 h-10 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-full shadow-sm text-slate-700 pointer-events-auto active:bg-white/90 active:scale-95 transition-all"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              </div>
+              <div className="absolute inset-y-0 right-2 flex items-center md:hidden pointer-events-none">
+                <button 
+                  onClick={handleNext}
+                  className="w-10 h-10 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-full shadow-sm text-slate-700 pointer-events-auto active:bg-white/90 active:scale-95 transition-all"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+
+              {/* Interaction Overlay (Wishlist only) */}
+              <div className="absolute top-4 right-4 flex flex-col gap-2">
+                <button className="bg-white/95 p-2.5 rounded-full shadow-lg hover:bg-white transition-all group active:scale-95">
+                  <Heart size={18} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+                </button>
+              </div>
+
+              {/* Mobile Slide Indicator */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 md:hidden">
+                {images.map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`h-1 rounded-full transition-all duration-300 ${selectedImage === i ? 'w-6 bg-amber-600' : 'w-2 bg-white/50'}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Section: Product Info */}
+          <div className="lg:col-span-5 flex flex-col pt-2 lg:pt-0 lg:sticky lg:top-10">
+            
+            <div className="mb-6">
+              <h1 className="text-3xl sm:text-4xl xl:text-5xl font-semibold text-[#1a2b40] tracking-tight mb-3">
+                Candel Vanila
+              </h1>
+              
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-500">Collection:</span>
+                  <span className="font-semibold text-slate-800 border-b border-amber-200">Naisha Creation</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <div className="flex text-amber-400">
+                    {[...Array(4)].map((_, i) => (
+                      <Star key={i} size={14} fill="currentColor" />
+                    ))}
+                    <Star size={14} className="text-slate-300" />
+                  </div>
+                  <span className="text-slate-400 text-xs">(124 Reviews)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Pricing & Stock */}
+            <div className="flex flex-wrap items-baseline gap-4 mb-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl text-slate-400 line-through font-light">$210.00</span>
+                <span className="text-3xl sm:text-4xl font-bold text-[#1a1a1a]">$180.00</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm">
+                <span className="text-slate-500">Availability:</span>
+                <span className="font-semibold text-emerald-700">84 Units In Stock</span>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="mb-8 text-center sm:text-left">
+              <p className="text-slate-600 leading-relaxed text-base sm:text-lg">
+                Indulge in the calming essence of our signature candles.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <div className="w-full h-px bg-slate-200 mb-8"></div>
+              
+              <p className="text-xs font-bold text-[#4a5568] tracking-[0.15em] uppercase mb-8">
+                FREE ECO-FRIENDLY SHIPPING ON ORDERS OVER $50
+              </p>
+
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <button className="w-full py-4 sm:py-5 border-[1.5px] border-black text-black font-bold text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-300 active:scale-[0.98] shadow-sm hover:shadow-lg">
+                  ADD TO CART
+                </button>
+                <button className="w-full py-4 sm:py-5 bg-black text-white font-bold text-xs uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all duration-300 active:scale-[0.98] shadow-md hover:shadow-xl">
+                  BUY IT NOW
+                </button>
+              </div>
+            </div>
+
+            {/* Accordion Section - MATCHING IMAGE 131d0e */}
+            <div className="mt-8 space-y-0 border-t border-slate-200">
+              <div className="py-5 text-[11px] sm:text-xs text-slate-500 uppercase tracking-[0.15em] font-medium border-b border-slate-200">
+                - DELIVERY BETWEEN 5-7 BUSINESS DAYS
+              </div>
+              
+              {faqItems.map((item, index) => (
+                <div key={index} className="border-b border-slate-200">
+                  <button
+                    onClick={() => toggleAccordion(index)}
+                    className="w-full py-5 flex items-center justify-between text-left group transition-all"
+                  >
+                    <span className="text-[11px] sm:text-xs font-medium uppercase tracking-[0.2em] text-slate-600 group-hover:text-black transition-colors">
+                      {item.title}
+                    </span>
+                    <ChevronDown 
+                      size={18} 
+                      className={`text-slate-400 transition-transform duration-500 ${openAccordion === index ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+                  <div 
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openAccordion === index ? 'max-h-96 opacity-100 mb-6' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <p className="text-sm text-slate-500 leading-relaxed font-light">
+                      {item.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+I am building a website using react js (vite with tailwind css). I want this website production ready , fast,optemized . suppose you are a senior website devloper and build it with me production ready . 
+
+I want the color , theme ,fonts same as i am using . theme should be classy modern.
+
+Now just add faqs  as i give you in 
+export default App;

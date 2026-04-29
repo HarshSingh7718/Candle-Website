@@ -1,57 +1,75 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import API from '../api';
+import toast from 'react-hot-toast';
 
 export const useCart = () => {
+  const queryClient = useQueryClient();
 
-    const [cart, setCart] = useState([]);
-    
+  // 1. Get Full Cart -> GET /api/cart/getcart
+  const { data: cart = [], isLoading } = useQuery({
+    queryKey: ['cart'],
+    queryFn: async () => {
+      const { data } = await API.get('/cart/getcart');
+      return data.cart; // Assumes backend returns { cart: [...] }
+    },
+  });
 
-    const loadCart = () => {
-    const data = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(data);
+  // 2. Add Item -> POST /api/cart/addtocart
+  const addToCartMutation = useMutation({
+    mutationFn: async ({ productId, quantity = 1 }) => {
+      const { data } = await API.post('/cart/addtocart', { productId, quantity });
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Added to cart");
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to add to cart")
+  });
+
+  // 3. Update Quantity -> PATCH /api/cart/:itemId
+  const updateQuantityMutation = useMutation({
+    mutationFn: async ({ itemId, quantity }) => {
+      const { data } = await API.patch(`/cart/${itemId}`, { quantity });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (err) => toast.error("Could not update quantity")
+  });
+
+  // 4. Remove Item -> DELETE /api/cart/:itemId
+  const removeFromCartMutation = useMutation({
+    mutationFn: async (itemId) => {
+      const { data } = await API.delete(`/cart/${itemId}`);
+      return data;
+    },
+    onSuccess: () => {
+      toast.error("Item removed");
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    }
+  });
+
+  // 5. Clear Cart -> DELETE /api/cart/clear
+  const clearCartMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await API.delete('/cart/clear');
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    }
+  });
+
+  return { 
+    cart, 
+    isLoading, 
+    addToCart: (product, quantity) => addToCartMutation.mutate({ productId: product._id, quantity }),
+    // Use item._id from the cart array for these:
+    removeFromCart: (itemId) => removeFromCartMutation.mutate(itemId),
+    updateQuantity: (itemId, quantity) => updateQuantityMutation.mutate({ itemId, quantity }),
+    clearCart: () => clearCartMutation.mutate(),
+    isAdding: addToCartMutation.isPending
+  };
 };
-
-
-useEffect(() => {
-    loadCart();
-
-    window.addEventListener("cartUpdated", loadCart);
-
-return () => {
-        window.removeEventListener("cartUpdated", loadCart);
-    };
-}, []);
-
-const addToCart = (product) => {
-    
-
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    const exist = cart.find((item) => item.id === product.id);
-
-if (exist) {
-    toast("Product already in cart");
-    return;
-}
-cart.push(product);
-
-localStorage.setItem("cart", JSON.stringify(cart));
-
-toast.success("Added to cart");
-
-window.dispatchEvent(new Event("cartUpdated"));
-};
-const removeFromCart = (id)=>{
-let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-
-cartItems = cartItems.filter((item) => item.id !== id);
-
-localStorage.setItem("cart", JSON.stringify(cartItems));
-
-toast.error("Removed from cart");
-
-window.dispatchEvent(new Event("cartUpdated"));
-};
-return {cart,addToCart,removeFromCart};
-    
-}

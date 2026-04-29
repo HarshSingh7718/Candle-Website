@@ -7,6 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import Footer from './components/layout/Footer/Footer';
 import Wishlist from './pages/Wishlist'
+import MyAccount from './pages/MyAccount'
+import Orders from './pages/Orders'
 import { Toaster } from 'react-hot-toast'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
@@ -15,10 +17,20 @@ import MainAbout from './components/sections/OurStory'
 import OurStory from './components/sections/OurStory'
 import Shop from './components/sections/Shop'
 import Candles from './pages/Candles'
+import Contact from './components/sections/Contact'
+import Customized from './pages/Customized'
+import Collections from './components/sections/Collections'
+import CollectionProducts from './pages/CollectionProducts'
+import AdminAddProduct from './pages/AdminAddProducts'
+
+
 
 // Lazy loading pages for performance optimization
 const Home = lazy(() => import('./pages/Home'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const SignIn = lazy(() => import('./pages/SignIn'));
+const Register = lazy(() => import('./pages/Register'));
+const VerifyOTP = lazy(() => import('./pages/VerifyOTP'));
 
 // Simple loading indicator for Suspense fallback
 const PageLoader = () => (
@@ -51,21 +63,37 @@ function App() {
         <div id="smooth-content">
           <div className="min-h-screen flex flex-col overflow-clip">
             <main className="flex-grow">
+              
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/wishlist" element={<Wishlist />} />
+                  <Route path="/account" element={<MyAccount />} />
+                  <Route path="/orders" element={<Orders />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout/>} />
-                  <Route path="/product/:id" element={<ShopDetails/>} />
+                  <Route path="/collections/candles/product/:id" element={<ShopDetails/>} />
                   <Route path="/about" element={<OurStory/>} />
-                  <Route path="/candles" element={<Candles/>} />
+                  <Route path="/contact" element={<Contact/>} />
+                  <Route path="/collections/candles" element={<Candles/>} />
+                  <Route path="/customized" element={<Customized/>} />
+                  <Route path="/collections" element={<Collections/>} />
+                  <Route path="/collections/:categoryName" element={<CollectionProducts />} />
+                  
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/signin" element={<SignIn />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/verify-otp" element={<VerifyOTP />} />
+                  <Route path="/admin/add-product" element={<AdminAddProduct />} />
+                 
 
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  
                 </Routes>
+                
               </Suspense>
             </main>
             <Footer />
+            
           </div>
         </div>
       </div>

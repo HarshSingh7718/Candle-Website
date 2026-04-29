@@ -53,7 +53,7 @@ const InstagramItem = ({ imageUrl }) => {
 
 const Instagram = () => {
   return (
-    <section className="px-[11px] pt-16 pb-[15px] bg-gray-50 relative z-10 w-full">
+    <section className="px-[11px] pt-13 md:pt-16 pb-[15px] bg-gray-50 relative z-10 w-full">
       <div className="w-full">
         {/* Header */}
         <div className="flex items-center justify-center gap-3 mb-5">

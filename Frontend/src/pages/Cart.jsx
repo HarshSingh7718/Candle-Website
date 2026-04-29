@@ -1,6 +1,6 @@
 import React from "react";
 import PageBanner from "../components/ui/PageBanner";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Icon } from "@iconify/react";
@@ -11,31 +11,31 @@ import MainBtn from "../components/ui/Buttons/MainBtn";
 gsap.registerPlugin(ScrollTrigger);
 
 function Cart() {
-  const { cart, removeFromCart } = useCart();
-  const [qty, setQty] = useState({});
+  // 1. Hook provides data and handlers
+  const { cart, removeFromCart, updateQuantity, isLoading } = useCart();
 
-  const increase = (id) => {
-    setQty((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 1) < 5 ? (prev[id] || 1) + 1 : 5,
-    }));
+  // 2. Logic updated to use itemId (item._id) as per your backend routes
+  const increase = (itemId, currentQty) => {
+    if (currentQty < 5) {
+      updateQuantity(itemId, currentQty + 1);
+    }
   };
 
-  const decrease = (id) => {
-    setQty((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 1) > 1 ? prev[id] - 1 : 1,
-    }));
+  const decrease = (itemId, currentQty) => {
+    if (currentQty > 1) {
+      updateQuantity(itemId, currentQty - 1);
+    }
   };
 
+  // 3. Subtotal calculation
   const subtotal = cart.reduce((acc, item) => {
-    const quantity = qty[item.id] || 1;
-    return acc + item.price * quantity;
+    const price = item.product?.discountPrice || item.product?.price || 0;
+    return acc + price * item.quantity;
   }, 0);
 
   const cartRef = useRef();
   useEffect(() => {
-    if (!cartRef.current) return;
+    if (!cartRef.current || isLoading) return;
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(cartRef);
       gsap.from(q(".cart-item"), {
@@ -55,7 +55,6 @@ function Cart() {
         scale: 0.9,
         opacity: 0,
         duration: 0.6,
-
         ease: "back.out(1.7)",
         scrollTrigger: {
           trigger: q(".cart-empty"),
@@ -66,10 +65,8 @@ function Cart() {
 
       gsap.from(q(".cart-actions"), {
         y: 50,
-
         opacity: 0,
         duration: 0.6,
-
         ease: "power3.out",
         scrollTrigger: {
           trigger: q(".cart-actions"),
@@ -80,12 +77,10 @@ function Cart() {
 
       gsap.from(q(".cart-btn"), {
         y: 30,
-
         opacity: 0,
         duration: 0.5,
         stagger: 0.2,
         delay: 0.2,
-
         ease: "power3.out",
         scrollTrigger: {
           trigger: q(".cart-actions"),
@@ -96,10 +91,8 @@ function Cart() {
 
       gsap.from(q(".cart-head"), {
         y: -40,
-
         opacity: 0,
         duration: 0.5,
-
         ease: "power3.out",
         scrollTrigger: {
           trigger: q(".cart-head"),
@@ -110,11 +103,9 @@ function Cart() {
 
       gsap.from(q(".cart-th"), {
         x: -30,
-
         opacity: 0,
         duration: 0.4,
         stagger: 0.15,
-
         ease: "power3.out",
         scrollTrigger: {
           trigger: q(".cart-head"),
@@ -124,7 +115,9 @@ function Cart() {
       });
     }, cartRef);
     return () => ctx.revert();
-  }, [cart]);
+  }, [cart, isLoading]);
+
+  if (isLoading) return <div className="py-20 text-center font-serif italic">Loading your cart...</div>;
 
   return (
     <>
@@ -132,125 +125,80 @@ function Cart() {
 
       <div
         ref={cartRef}
-        className="container mx-auto  py-[8%] px-4 
-        wishlist-section"
+        className="container mx-auto py-[4%] px-4 flex wishlist-section"
       >
         {cart.length === 0 ? (
-          <p
-            className="text-center text-lg bg-gray-50 shadow-md py-5
-    wishlist-empty"
-          >
+          <p className="text-center w-full text-lg bg-gray-50 shadow-md py-5 wishlist-empty">
             Cart is empty
           </p>
         ) : (
           <>
-            <div className="hidden lg:block  overscroll-x-auto">
+            <div className="hidden lg:block overscroll-x-auto w-[180%]">
               <table className="w-full border-collapse">
                 <thead className="bg-black">
                   <tr className="text-center text-white">
                     <th className="p-4 cart-th"></th>
-                    <th
-                      className="p-4 text-left font-medium
-                cart-th"
-                    >
-                      Product
-                    </th>
-                    <th
-                      className="p-4   font-medium
-                cart-th"
-                    >
-                      Price
-                    </th>
-                    <th
-                      className="p-4   font-medium
-                cart-th"
-                    >
-                      Quantity
-                    </th>
-                    <th
-                      className="p-4   font-medium
-                cart-th"
-                    >
-                      Status
-                    </th>
-                    <th
-                      className="p-4   font-medium
-                cart-th"
-                    >
-                      Total
-                    </th>
+                    <th className="p-4 text-left font-medium cart-th">Product</th>
+                    <th className="p-4 font-medium cart-th">Price</th>
+                    <th className="p-4 font-medium cart-th">Quantity</th>
+                    <th className="p-4 font-medium cart-th">Status</th>
+                    <th className="p-4 font-medium cart-th">Total</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {cart.map((item) => {
-                    const quantity = qty[item.id] || 1;
+                    const product = item.product;
+                    const displayPrice = product?.discountPrice || product?.price || 0;
 
                     return (
-                      <tr key={item.id} className="border-b cart-item">
+                      <tr key={item._id} className="border-b cart-item">
                         <td className="text-center">
                           <button
                             className="cursor-pointer"
-                            onClick={() => removeFromCart(item.id)}
+                            onClick={() => removeFromCart(item._id)}
                           >
                             <Icon icon="mdi:close" width="18" />
                           </button>
                         </td>
 
-                        <td
-                          className="flex items-center gap-4
-py-6"
-                        >
+                        <td className="flex items-center gap-4 py-6">
                           <img
-                            src={item.image1}
-                            className="w-20 h-20
-        object-cover"
+                            src={product?.images?.[0]?.url || "/placeholder.jpg"}
+                            className="w-20 h-20 object-cover"
+                            alt={product?.name}
                           />
-                          <p className="font-semibold">{item.title}</p>
+                          <p className="font-semibold">{product?.name}</p>
                         </td>
 
-                        <td className="text-center">${item.price}</td>
+                        <td className="text-center">₹{displayPrice}</td>
 
                         <td className="text-center">
-                          <div
-                            className="flex
-    justify-center items-center
-    gap-3"
-                          >
+                          <div className="flex justify-center items-center gap-3">
                             <button
-                              onClick={() => decrease(item.id)}
-                              className="border
-    border-gray-200 p-2
-    cursor-pointer"
+                              onClick={() => decrease(item._id, item.quantity)}
+                              className="border border-gray-200 p-2 cursor-pointer"
                             >
                               <Minus size={14} />
                             </button>
 
-                            <span>{quantity}</span>
+                            <span>{item.quantity}</span>
 
                             <button
-                              onClick={() => increase(item.id)}
-                              className="border
-    border-gray-200 p-2
-    cursor-pointer"
+                              onClick={() => increase(item._id, item.quantity)}
+                              className="border border-gray-200 p-2 cursor-pointer"
                             >
                               <Plus size={14} />
                             </button>
                           </div>
                         </td>
 
-                        <td
-                          className="text-green-600
-text-center"
-                        >
-                          In stock
+                        <td className="text-green-600 text-center">
+                          {product?.stock > 0 ? "In stock" : "Out of stock"}
                         </td>
 
-                        <td
-                          className="text-center
-font-semibold"
-                        >
-                          ${item.price * quantity}
+                        <td className="text-center font-semibold">
+                          ₹{displayPrice * item.quantity}
                         </td>
                       </tr>
                     );
@@ -259,149 +207,111 @@ font-semibold"
               </table>
             </div>
 
+            {/* Mobile View */}
             <div className="lg:hidden space-y-6">
               {cart.map((item) => {
-                const quantity = qty[item.id] || 1;
+                const product = item.product;
+                const displayPrice = product?.discountPrice || product?.price || 0;
 
                 return (
-                  <div
-                    key={item.id}
-                    className="border border-gray-200 bg-white
-        shadow-lg p-4 rounded-lg cart-item"
-                  >
-                    <div className="flex justify-between">
+                  <div key={item._id} className="border border-gray-200 bg-white shadow-lg p-4 rounded-lg cart-item">
+                    <div className="flex  justify-between">
                       <button
                         className="cursor-pointer"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item._id)}
                       >
                         <Icon icon="mdi:close" width="18" />
                       </button>
-                      <span className="text-green-600">In stock</span>
+                      <span className="text-green-600">
+                        {product?.stock > 0 ? "In stock" : "Out of stock"}
+                      </span>
                     </div>
                     <div className="flex items-center gap-4 mt-4">
                       <img
-                        src={item.image1}
-                        className="w-20 h-20 object-cover
-        rounded-sm"
+                        src={product?.images?.[0]?.url || "/placeholder.jpg"}
+                        className="w-20 h-20 object-cover rounded-sm"
+                        alt={product?.name}
                       />
-                      <p className="font-semibold">{item.title}</p>
+                      <p className="font-semibold">{product?.name}</p>
                     </div>
                     <div className="flex justify-between mt-4">
                       <span>Price:</span>
-                      <span>${item.price}</span>
+                      <span>₹{displayPrice}</span>
                     </div>
 
                     <div className="flex justify-between mt-4">
                       <span>Quantity:</span>
-
                       <div className="flex items-center gap-3">
                         <button
-                          onClick={() => decrease(item.id)}
-                          className="border border-gray-200
-p-2 cursor-pointer"
+                          onClick={() => decrease(item._id, item.quantity)}
+                          className="border border-gray-200 p-2 cursor-pointer"
                         >
                           <Minus size={14} />
                         </button>
-                        <span>{quantity}</span>
-
+                        <span>{item.quantity}</span>
                         <button
-                          onClick={() => increase(item.id)}
-                          className="border border-gray-200
-p-2 cursor-pointer"
+                          onClick={() => increase(item._id, item.quantity)}
+                          className="border border-gray-200 p-2 cursor-pointer"
                         >
                           <Plus size={14} />
                         </button>
                       </div>
                     </div>
 
-                    <div
-                      className="flex justify-between mt-4
-font-semibold"
-                    >
+                    <div className="flex justify-between mt-4 font-semibold">
                       <span>Total:</span>
-                      <span>${item.price * quantity}</span>
+                      <span>₹{displayPrice * item.quantity}</span>
                     </div>
                   </div>
                 );
               })}
-
-              
             </div>
-            <div className="w-full flex justify-end items-center mt-10">
-              <div
-                className="w-full lg:w-120 border border-gray-200
-    rounded-sm"
-              >
-                <div
-                  className="grid grid-cols-2 border-b
-        border-gray-200 cart-item"
-                >
-                  <div
-                    className="p-6 font-semibold bg-gray-50
-            border-r border-gray-200"
-                  >
+
+            {/* Subtotal Section */}
+            <div className="w-full flex justify-end mb-10">
+              <div className="w-full h-[35%] lg:w-120 border border-gray-200 sticky top-24 rounded-sm">
+                <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
+                  <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
                     Subtotal
                   </div>
-
-                  <div className="p-6 text-right font-semibold b">
-                    ${subtotal}.00
+                  <div className="p-6 text-right font-semibold">
+                    ₹{subtotal}.00
                   </div>
                 </div>
-                <div
-                  className="grid grid-cols-2 border-b
-border-gray-200 cart-item"
-                >
-                  <div
-                    className="p-6 font-semibold bg-gray-50
-    border-r border-gray-200"
-                  >
+                <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
+                  <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
                     Shipping
                   </div>
-
                   <div className="p-6 text-sm text-gray-600">
                     <p className="mb-3">
                       Enter your address to view shipping options.
                     </p>
-
-                    <button
-                      className="flex items-center gap-2
-font-semibold text-black border-b
-border-dashed border-black"
-                    >
+                    <button className="flex items-center gap-2 font-semibold text-black border-b border-dashed border-black">
                       CALCULATE SHIPPING
                       <Icon icon="mdi:truck-delivery-outline" width="18" />
                     </button>
                   </div>
                 </div>
 
-                <div
-                  className="grid grid-cols-2 border-b
-border-gray-200 cart-item"
-                >
-                  <div
-                    className="p-6 font-semibold bg-gray-50
-    border-r border-gray-200"
-                  >
+                <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
+                  <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
                     Total
                   </div>
                   <div className="p-6 text-right font-bold text-lg">
-                    ${subtotal}.00
+                    ₹{subtotal}.00
                   </div>
                 </div>
                 <div className="p-6 cart-actions">
                   <MainBtn
                     path="/checkout"
-                    text={"PROCEED TO  CHECKOUT"}
-                    className="wishlist-btn shadow-none! bg-black!
-    text-white! w-full! rounded-sm!"
+                    text={"PROCEED TO CHECKOUT"}
+                    className="wishlist-btn shadow-none! bg-black! text-white! w-full! rounded-sm!"
                   />
                 </div>
               </div>
             </div>
           </>
-          
         )}
-        
       </div>
     </>
   );

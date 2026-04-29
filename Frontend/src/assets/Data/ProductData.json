@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "title": "Candel Vanila",
+        "title": "Candle Vanila",
         "image1": "/images/Products/product-image-01.jpg",
         "hoverImage": "/images/Products/product-image-02.jpg",
         "image3": "/images/Products/product-image-03.jpg",
@@ -12,12 +12,12 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Golden Glow Collection"
     },
     {
-  
         "id": 2,
-        "title": "Candel Vanila",
+        "title": "Candle Vanila",
         "image1": "/images/Products/product-image-06.jpg",
         "hoverImage": "/images/Products/product-image-07.jpg",
         "image3": "/images/Products/product-image-08.jpg",
@@ -27,12 +27,12 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Midnight Bliss Collection"
     },
     {
-  
         "id": 3,
-        "title": "Candel Vanila",
+        "title": "Candle Vanila",
         "image1": "/images/Products/product-image-11.jpg",
         "hoverImage": "/images/Products/product-image-12.jpg",
         "image3": "/images/Products/product-image-13.jpg",
@@ -42,13 +42,12 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
-        
+        "rating": 4,
+        "collection": "Serene Scents Collection"
     },
     {
-  
         "id": 4,
-        "title": "Candel New",
+        "title": "Candle New",
         "image1": "/images/Products/product-image-16.jpg",
         "hoverImage": "/images/Products/product-image-17.jpg",
         "image3": "/images/Products/product-image-18.jpg",
@@ -59,10 +58,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Velvet Flame Collection"
     },
     {
-  
         "id": 6,
         "title": "Vase Candle my best candle is Vanila",
         "image1": "/images/Products/product-image-21.jpg",
@@ -70,18 +69,17 @@
         "image3": "/images/Products/product-image-23.jpg",
         "image4": "/images/Products/product-image-24.jpg",
         "image5": "/images/Products/product-image-25.jpg",
-        "oldprice":18,
+        "oldprice": 18,
         "price": 15,
         "categories": "Furniture,Decor",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
-        
-        
+        "rating": 4,
+        "collection": "Pure Harmony Collection"
     },
     {
         "id": 7,
-        "title": "Candel White",
+        "title": "Candle White",
         "image1": "/images/Products/product-image-26.jpg",
         "hoverImage": "/images/Products/product-image-27.jpg",
         "image3": "/images/Products/product-image-28.jpg",
@@ -91,9 +89,8 @@
         "categories": "Furniture,Decor",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":5
-       
-        
+        "rating": 5,
+        "collection": "Twilight Aura Collection"
     },
     {
         "id": 9,
@@ -107,10 +104,10 @@
         "categories": "Furniture,Decor",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Cozy Comfort Collection"
     },
     {
-  
         "id": 10,
         "title": "Candle Rose",
         "image1": "/images/Products/product-image-36.jpg",
@@ -122,12 +119,12 @@
         "categories": "Decor",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Radiant Light Collection"
     },
     {
-  
         "id": 11,
-        "title": "Vriant Candel",
+        "title": "Vriant Candle",
         "image1": "/images/Products/product-image-41.jpg",
         "hoverImage": "/images/Products/product-image-42.jpg",
         "image3": "/images/Products/product-image-43.jpg",
@@ -138,10 +135,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Golden Glow Collection"
     },
     {
-  
         "id": 12,
         "title": "Small Candle",
         "image1": "/images/Products/product-image-46.jpg",
@@ -153,10 +150,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Midnight Bliss Collection"
     },
     {
-  
         "id": 13,
         "title": "Candle",
         "image1": "/images/Products/product-image-51.jpg",
@@ -168,10 +165,10 @@
         "categories": "Furniture,Decor",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Serene Scents Collection"
     },
     {
-  
         "id": 14,
         "title": "New Price",
         "image1": "/images/Products/product-image-56.jpg",
@@ -183,10 +180,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Velvet Flame Collection"
     },
     {
-  
         "id": 15,
         "title": "Latest Cancle",
         "image1": "/images/Products/product-image-61.jpg",
@@ -198,10 +195,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Pure Harmony Collection"
     },
     {
-  
         "id": 16,
         "title": "Candle for ",
         "image1": "/images/Products/product-image-66.jpg",
@@ -213,10 +210,10 @@
         "categories": "Furniture,Decor",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Twilight Aura Collection"
     },
     {
-  
         "id": 17,
         "title": "White Candle",
         "image1": "/images/Products/product-image-71.jpg",
@@ -229,10 +226,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Cozy Comfort Collection"
     },
     {
-  
         "id": 18,
         "title": "Beanbag",
         "image1": "/images/Products/product-image-76.jpg",
@@ -244,10 +241,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Radiant Light Collection"
     },
     {
-  
         "id": 19,
         "title": "Floor Lamp",
         "image1": "/images/Products/product-image-81.jpg",
@@ -259,10 +256,10 @@
         "categories": "Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Golden Glow Collection"
     },
     {
-  
         "id": 20,
         "title": "Coffee Candle",
         "image1": "/images/Products/product-image-86.jpg",
@@ -274,6 +271,7 @@
         "categories": "Decor,Furniture",
         "discount": "10% OFF",
         "brand": "Naisha Creation",
-        "rating":4
+        "rating": 4,
+        "collection": "Midnight Bliss Collection"
     }
 ]
