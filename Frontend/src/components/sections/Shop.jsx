@@ -3,25 +3,39 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ProductCard from "../ui/Cards/ProductCard";
 import MainBtn from "../ui/Buttons/MainBtn";
-import { useHomeData } from "../../hooks/useHomeData"; // Updated Hook
+import { useHomeData } from "../../hooks/useHomeData";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Shop = () => {
-  const shopRef = useRef();
-  const headingRef = useRef();
+  const shopRef = useRef(null);
+  const headingRef = useRef(null);
 
-  // 1. TanStack Query Hook (Replaces useStore and manual useEffect)
+  // 1. TanStack Query Hook
   const { data: homeData, isLoading } = useHomeData();
 
-  // ✅ GSAP animation for product cards
+  // 2. GSAP Animations (Combined & Protected)
   useEffect(() => {
-    if (!homeData) return;
+    // CRITICAL FIX: Don't run any GSAP until the loading spinner is gone 
+    // and the refs are securely attached to the real DOM.
+    if (isLoading || !shopRef.current || !headingRef.current) return;
 
     const ctx = gsap.context(() => {
-      const cards = shopRef.current.querySelectorAll(".product-card");
 
-      gsap.from(cards, {
+      // Heading Animation
+      gsap.from(headingRef.current, {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: "top 90%",
+        },
+      });
+
+      // Products Animation (Animates the direct children of the grid!)
+      gsap.from(shopRef.current.children, {
         y: 50,
         opacity: 0,
         duration: 0.8,
@@ -33,30 +47,13 @@ const Shop = () => {
           toggleActions: "play none none reset",
         },
       });
-    }, shopRef);
+
+    });
 
     return () => ctx.revert();
-  }, [homeData]);
+  }, [isLoading, homeData]); // Re-run when loading finishes and data is available
 
-  // ✅ Heading animation
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(headingRef.current, {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: headingRef.current,
-          start: "top 90%",
-        },
-      });
-    }, headingRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // 2. Loading State Handling
+  // 3. Loading State
   if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">

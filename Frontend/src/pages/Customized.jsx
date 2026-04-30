@@ -17,6 +17,9 @@ import {
   X
 } from 'lucide-react';
 import PageBanner from '../components/ui/PageBanner';
+import { useCart } from '../hooks/useCart';
+import { useCustomCandleBuilder } from '../hooks/useProducts'; // Or wherever you put it
+import toast from 'react-hot-toast';
 
 // --- Mock Data ---
 const VESSELS = [
@@ -120,11 +123,13 @@ const STEPS = [
 ];
 
 export default function Customized() {
+  const { addToCart } = useCart();
+  const createMutation = useCustomCandleBuilder();
   const [step, setStep] = useState(1);
   const [selectedVessel, setSelectedVessel] = useState(VESSELS[0]);
   const [selectedScent, setSelectedScent] = useState(SCENTS[0]);
   const [selectedToppings, setSelectedToppings] = useState([TOPPINGS[0]]);
-  const [labelText, setLabelText] = useState('YOUR TEXT HERE');
+  const [labelText, setLabelText] = useState("");
 
   const basePrice = 24.00;
   const toppingsPrice = selectedToppings.reduce((sum, t) => sum + t.price, 0);
@@ -154,6 +159,37 @@ export default function Customized() {
       // Default back to "none" if everything was deselected
       return next.length === 0 ? [TOPPINGS[0]] : next;
     });
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      // Create the payload matching your backend schema
+      const customPayload = {
+        vessel: selectedVessel.name, // Or send ID if backend expects it
+        scent: selectedScent.name,
+        toppings: selectedToppings.map(t => t.name),
+        label: labelText || 'YOUR TEXT HERE',
+        price: totalPrice
+      };
+
+      // 1. Save it to the database
+      const response = await createMutation.mutateAsync(customPayload);
+
+      // Assuming your backend returns the new candle in response.customCandle
+      const newCandleId = response.customCandle._id;
+
+      // 2. Add it to the cart using the ID!
+      // Remember our useCart hook expects { customCandleId: ... }
+      await addToCart({ customCandleId: newCandleId }, 1);
+
+      toast.success("Added your custom creation to cart!");
+
+      // Optional: Reset the form or redirect to cart
+      // setStep(1); 
+
+    } catch (error) {
+      console.error("Failed to add custom candle:", error);
+    }
   };
 
   const progressWidth = `${(step / STEPS.length) * 100}%`;
@@ -466,8 +502,12 @@ export default function Customized() {
                     <span className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter">${totalPrice.toFixed(2)}</span>
                   </div>
 
-                  <button className="w-full bg-black text-white py-4 sm:py-5 font-bold uppercase tracking-[0.2em] transition-all hover:bg-slate-800 active:scale-[0.98] shadow-lg text-xs sm:text-sm">
-                    Add to Cart
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={createMutation.isPending}
+                    className="w-full bg-black text-white py-4 sm:py-5 font-bold uppercase tracking-[0.2em] transition-all hover:bg-slate-800 active:scale-[0.98] shadow-lg text-xs sm:text-sm disabled:bg-gray-400 disabled:scale-100"
+                  >
+                    {createMutation.isPending ? "Crafting..." : "Add to Cart"}
                   </button>
                   
                   <p className="text-center text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold italic">

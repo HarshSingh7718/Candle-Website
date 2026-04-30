@@ -1,9 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import API from '../api';
 import toast from 'react-hot-toast';
+import { useUser } from './useAuth';
 
 export const useCart = () => {
   const queryClient = useQueryClient();
+  const { data: user } = useUser();
+
+
 
   // 1. Get Full Cart -> GET /api/cart/getcart
   const { data: cart = [], isLoading } = useQuery({
@@ -12,7 +16,10 @@ export const useCart = () => {
       const { data } = await API.get('/cart/getcart');
       return data.cart; // Assumes backend returns { cart: [...] }
     },
+    enabled: !!user
   });
+
+
 
   // 2. Add Item -> POST /api/cart/addtocart
   const addToCartMutation = useMutation({
@@ -27,6 +34,8 @@ export const useCart = () => {
     onError: (err) => toast.error(err.response?.data?.message || "Failed to add to cart")
   });
 
+
+
   // 3. Update Quantity -> PATCH /api/cart/:itemId
   const updateQuantityMutation = useMutation({
     mutationFn: async ({ itemId, quantity }) => {
@@ -38,6 +47,8 @@ export const useCart = () => {
     },
     onError: (err) => toast.error("Could not update quantity")
   });
+
+
 
   // 4. Remove Item -> DELETE /api/cart/:itemId
   const removeFromCartMutation = useMutation({
@@ -51,6 +62,8 @@ export const useCart = () => {
     }
   });
 
+
+
   // 5. Clear Cart -> DELETE /api/cart/clear
   const clearCartMutation = useMutation({
     mutationFn: async () => {
@@ -62,10 +75,18 @@ export const useCart = () => {
     }
   });
 
+
+  
   return { 
     cart, 
     isLoading, 
-    addToCart: (product, quantity) => addToCartMutation.mutate({ productId: product._id, quantity }),
+    addToCart: (product, quantity) => {
+
+      if (item.customCandleId) {
+        return addToCartMutation.mutate({ customCandleId: item.customCandleId, quantity });
+      }
+      return addToCartMutation.mutate({ productId: item._id, quantity });
+    },
     // Use item._id from the cart array for these:
     removeFromCart: (itemId) => removeFromCartMutation.mutate(itemId),
     updateQuantity: (itemId, quantity) => updateQuantityMutation.mutate({ itemId, quantity }),
