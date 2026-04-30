@@ -9,7 +9,7 @@ import { StoreProvider } from "./context/StoreContext.jsx";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1, // Don't spam the server on failure
+      retry: false, // Don't spam the server on failure
       refetchOnWindowFocus: false, // Prevents refetching every time you switch tabs
     },
   },

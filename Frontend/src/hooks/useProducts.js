@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import API from "../api";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { createCustomCandle } from '../api';
+import API from "../api"; 
+import toast from 'react-hot-toast';
 
 export const useProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const { data } = await API.get("/candles"); // Assuming your route is /api/products
+      const { data } = await API.get("/candles");
       return data.candles;
     },
     staleTime: 1000 * 60 * 5, // Fresh for 5 minutes
@@ -33,5 +35,15 @@ export const useSingleProduct = (id) => {
       return { product: data.product, similarProducts: data.similarProducts };
     },
     enabled: !!id,
+  });
+};
+
+
+export const useCustomCandleBuilder = () => {
+  return useMutation({
+    mutationFn: createCustomCandle,
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to create your custom candle.");
+    }
   });
 };

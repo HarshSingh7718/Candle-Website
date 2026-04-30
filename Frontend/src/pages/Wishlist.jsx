@@ -30,14 +30,14 @@ const Wishlist = () => {
         }
         const selectedProducts = wishlist.filter((item) => selected.includes(item._id));
         for (const product of selectedProducts) {
-            await addToCart(product);
+            await addToCart({ productId: product._id, quantity: 1 });
         }
         toast.success("Selected items added");
     };
 
     const addAllToCart = async () => {
         for (const product of wishlist) {
-            await addToCart(product);
+            await addToCart({ productId: product._id, quantity: 1 });
         }
         toast.success("All items added to cart");
     };

@@ -23,4 +23,10 @@ API.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+export const createCustomCandle = async (candleData) => {
+  // candleData should include: vessel, scent, toppings, label, and the calculated totalPrice
+  const { data } = await API.post('/custom-candle', candleData);
+  return data;
+};
+
 export default API;

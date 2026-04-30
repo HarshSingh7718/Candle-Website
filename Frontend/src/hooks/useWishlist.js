@@ -14,6 +14,7 @@ export const useWishlist = (productId = null) => {
             const { data } = await API.get("/wishlist");
             return data.wishlist;
         },
+        staleTime: 1000 * 60 * 5, // Fresh for 5 mins
         enabled: !!user, // Only fetch if user is logged in
     });
 

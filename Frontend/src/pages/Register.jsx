@@ -78,9 +78,9 @@ const Register = () => {
             </div>
 
             {/* Right Side (Form) */}
-            <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 overflow-y-auto bg-[#fafafa]">
+            <div className="w-full lg:w-[65%] h-full flex flex-col items-center px-6 py-12 overflow-y-auto bg-[#fafafa]">
                 
-                <div className="w-full max-w-[420px] my-auto">
+                <div className="w-full max-w-[420px]">
                     <header className='text-center mb-4'>
                         <h2 className='text-[32px] font-bold text-[#111827] tracking-tight mb-2'>
                             Create Account

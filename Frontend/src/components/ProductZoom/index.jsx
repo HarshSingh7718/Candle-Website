@@ -1,16 +1,17 @@
 import React, { useState, useRef } from "react";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Star, Heart, Plus } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Star, Heart, Plus, Minus } from "lucide-react";
 import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../hooks/useWishlist";
+import { useNavigate } from "react-router-dom";
 
 const ProductZoom = ({ product }) => {
+  const navigate = useNavigate();
   const { addToCart } = useCart();
-  
-  // ✅ Backend ID mapping for wishlist
   const { liked: isWishlisted, toggleWishlist } = useWishlist(product?._id);
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState(null);
+  const [qty, setQty] = useState(1); // Added Quantity State
 
   const toggleFaq = (index) => setOpenFaq(openFaq === index ? null : index);
 
@@ -27,7 +28,6 @@ const ProductZoom = ({ product }) => {
     }
   };
 
-  // ✅ Map Backend Images Array ({url, public_id}) to UI array
   const imageUrls = product?.images?.map(img => img.url) || ["/images/placeholder.jpg"];
 
   const nextImage = (e) => {
@@ -40,16 +40,19 @@ const ProductZoom = ({ product }) => {
     setActiveImageIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
   };
 
+  // Buy It Now Logic
+  const handleBuyNow = async () => {
+    await addToCart(product, qty);
+    navigate('/checkout');
+  };
+
   return (
     <div className="min-h-screen bg-light-yellow flex items-center justify-center p-0 sm:p-4 font-sans text-slate-900 overflow-x-hidden">
       <div className="bg-light-yellow rounded-none sm:rounded-sm w-full relative flex flex-col min-[1281px]:flex-row overflow-hidden min-h-screen sm:min-h-0">
-        
+
         {/* Left Column: Image Gallery */}
         <div className="flex flex-col md:flex-row w-full min-[1281px]:w-[45%] 2xl:w-[44%] p-3 sm:p-4 md:p-8 min-[1281px]:p-6 mx-auto md:max-w-4xl min-[1281px]:max-w-none min-[1281px]:mx-0 self-start sticky top-6">
           <div className="hidden md:flex flex-col gap-2 mr-4 justify-center">
-            <button className="flex items-center justify-center p-1 text-gray-400 hover:text-gray-600 cursor-pointer">
-              <ChevronUp size={20} />
-            </button>
             <div className="flex flex-col gap-2">
               {imageUrls.map((img, idx) => (
                 <button
@@ -61,9 +64,6 @@ const ProductZoom = ({ product }) => {
                 </button>
               ))}
             </div>
-            <button className="flex items-center justify-center p-1 text-gray-400 hover:text-gray-600 cursor-pointer">
-              <ChevronDown size={20} />
-            </button>
           </div>
 
           <div className="flex-1 relative group overflow-hidden bg-white md:cursor-none" ref={containerRef} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => { setIsHovering(false); setIsOverInteractive(false); }} onMouseMove={handleMouseMove}>
@@ -80,17 +80,13 @@ const ProductZoom = ({ product }) => {
             <div className="w-full aspect-[4/4] md:aspect-[4/5] overflow-hidden pointer-events-none select-none">
               <img src={imageUrls[activeImageIndex]} alt="Product Main" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             </div>
-
-            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 md:hidden pointer-events-none z-[60]">
-              <button onClick={prevImage} onMouseEnter={() => setIsOverInteractive(true)} onMouseLeave={() => setIsOverInteractive(false)} className="bg-white/90 p-1.5 rounded-full shadow-md text-gray-700 pointer-events-auto cursor-pointer"><ChevronLeft size={20} /></button>
-              <button onClick={nextImage} onMouseEnter={() => setIsOverInteractive(true)} onMouseLeave={() => setIsOverInteractive(false)} className="bg-white/90 p-1.5 rounded-full shadow-md text-gray-700 pointer-events-auto cursor-pointer"><ChevronRight size={20} /></button>
-            </div>
           </div>
         </div>
 
         {/* Right Column: Details */}
         <div className="flex-1 p-6 md:p-10 min-[1281px]:p-10 2xl:p-12 bg-light-yellow w-full min-[1281px]:w-[55%] 2xl:w-[56%] md:max-w-4xl mx-auto min-[1281px]:max-w-none min-[1281px]:mx-0">
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 leading-tight mb-3">{product.name}</h1>
+
           <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mb-4 text-sm">
             <div className="flex items-center text-gray-500">
               <span className="mr-1">Collection :</span>
@@ -113,12 +109,43 @@ const ProductZoom = ({ product }) => {
           </div>
 
           <p className="text-gray-600 text-sm leading-relaxed md:mb-8 border-b border-gray-100 pb-8">{product.description}</p>
-          
-          <div className="flex flex-col gap-3 mb-10 mt-6">
-            <button onClick={() => addToCart(product)} className="w-full h-14 bg-white border border-black hover:bg-black hover:text-white text-black text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.99] shadow-sm cursor-pointer">ADD TO CART</button>
-            <button className="w-full h-14 bg-black hover:bg-gray-900 text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.99] shadow-md cursor-pointer">BUY IT NOW</button>
+
+          {/* Quantity and Actions */}
+          <div className="flex flex-col gap-4 mb-10 mt-6">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center border border-black h-14 bg-white">
+                <button
+                  onClick={() => setQty(Math.max(1, qty - 1))}
+                  className="px-5 h-full hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="w-12 text-center font-bold text-lg">{qty}</span>
+                <button
+                  onClick={() => setQty(qty + 1)}
+                  className="px-5 h-full hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+
+              <button
+                onClick={() => addToCart(product, qty)}
+                className="flex-1 h-14 bg-white border border-black hover:bg-black hover:text-white text-black text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] cursor-pointer"
+              >
+                ADD TO CART
+              </button>
+            </div>
+
+            <button
+              onClick={handleBuyNow}
+              className="w-full h-14 bg-black hover:bg-gray-900 text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] shadow-md cursor-pointer"
+            >
+              BUY IT NOW
+            </button>
           </div>
 
+          {/* Delivery & FAQ Info */}
           <div className="mt-8 mb-6">
             <p className="text-[#333] text-[13.5px] tracking-widest uppercase mb-6 font-normal">- DELIVERY BETWEEN 5-7 BUSINESS DAYS</p>
             <div className="border-t border-gray-200">

@@ -9,7 +9,7 @@ import Logo from './Logo';
 import NavMenu from './NavMenu';
 import MobileMenu from './MobileMenu';
 import GlobalSearch from './GlobalSearch';
-import { useUser } from '../../../hooks/useAuth';
+import { useUser, useLogout } from '../../../hooks/useAuth';
 import { useCart } from '../../../hooks/useCart';
 import API from '../../../api';
 
@@ -41,19 +41,21 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      const { data } = await API.post("/auth/user/logout");
-      if (data.success) {
-        queryClient.setQueryData(['user'], null);
-        queryClient.invalidateQueries(['cart']);
+  const logoutMutation = useLogout();
+
+  // 2. Replace your old handleLogout with this clean version
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        // Only UI logic goes here now!
         setShowUserDropdown(false);
         toast.success("Logged out successfully");
         navigate("/signin");
+      },
+      onError: () => {
+        toast.error("Logout failed");
       }
-    } catch (error) {
-      toast.error("Logout failed");
-    }
+    });
   };
 
   const is404 = location.pathname === "/PATH404";
