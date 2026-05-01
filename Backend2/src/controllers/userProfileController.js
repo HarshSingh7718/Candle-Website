@@ -43,7 +43,7 @@ export const updateUserProfile = async (req, res) => {
             });
         }
 
-        const { firstName, lastName, email } = req.body;
+        const { firstName, lastName, email, phoneNumber } = req.body;
 
         // =========================
         // EMAIL UPDATE
@@ -69,6 +69,29 @@ export const updateUserProfile = async (req, res) => {
             }
 
             user.email = email;
+        }
+
+        //Phone Update
+        if (phoneNumber !== undefined && phoneNumber !== user.phoneNumber) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+
+            if (!phoneRegex.test(phoneNumber)) {
+                return res.status(400).json({ success: false, message: "Invalid phone number format" });
+            }
+
+            // Check if another user already has this phone number
+            const existingPhoneUser = await User.findOne({
+                phoneNumber,
+                _id: { $ne: req.user._id }
+            });
+
+            if (existingPhoneUser) {
+                return res.status(400).json({ success: false, message: "Phone number already in use" });
+            }
+
+            // Update the number and flag it as unverified!
+            user.phoneNumber = phoneNumber;
+            user.isPhoneVerified = false;
         }
 
         // =========================

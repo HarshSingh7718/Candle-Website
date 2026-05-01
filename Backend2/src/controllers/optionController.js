@@ -4,11 +4,11 @@ export const getOptionsByStep = async (req, res) => {
     try {
         const { step } = req.params;
 
+        // Step 4 is no longer here since it's a pure text input on the frontend
         const stepMap = {
             1: "vessel",
             2: "scent",
-            3: "addOsn",
-            4: "label"
+            3: "addon"
         };
 
         const type = stepMap[step];
@@ -16,7 +16,7 @@ export const getOptionsByStep = async (req, res) => {
         if (!type) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid step"
+                message: "Invalid step or step does not require database options"
             });
         }
 
@@ -29,7 +29,6 @@ export const getOptionsByStep = async (req, res) => {
             });
         }
 
-        //  Find step from steps array
         const stepData = customization.steps.find(
             s => s.type === type
         );
@@ -41,7 +40,6 @@ export const getOptionsByStep = async (req, res) => {
             });
         }
 
-        //  Filter active options
         const options = stepData.options.filter(
             item => item.isActive !== false
         );

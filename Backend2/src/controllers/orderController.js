@@ -1,9 +1,9 @@
 import { Order } from "../models/orderModel.js";
-import {User} from "../models/userModel.js";
-import {Product} from "../models/productModels.js";
+import { User } from "../models/userModel.js";
+import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { sendSMS } from "../services/otp_services.js";
-
+import { config } from "../config/index.js";
 
 
 export const createOrder = async (req, res) => {
@@ -70,7 +70,7 @@ export const createOrder = async (req, res) => {
                     if (!prod || prod.stock < item.quantity) {
                         return res.status(400).json({
                             success: false,
-                            message: `${prod.name} out of stock`
+                            message: `${prod?.name || 'Item'} out of stock`
                         });
                     }
 
@@ -98,7 +98,7 @@ export const createOrder = async (req, res) => {
                     orderItems.push({
                         type: "custom",
                         customCandle: candle._id,
-                        name: `Custom Candle (${candle.snapshot.sizeName})`,
+                        name: `Custom Candle (${candle.snapshot.vesselName} - ${candle.snapshot.scentName})`,
                         quantity: item.quantity,
                         price: candle.totalPrice,
                         image: "" // optional
@@ -143,19 +143,53 @@ export const createOrder = async (req, res) => {
             paymentMethod,
             paymentStatus:
                 paymentMethod === "cod" ? "pending" : "paid",
+            orderStatus: "processing",
             paidAt:
                 paymentMethod === "cod" ? null : Date.now(),
             statusHistory: [{ status: "processing" }]
         });
 
+        // =========================
+        //  FLOW A: RAZORPAY
+        // =========================
+        if (paymentMethod === "razorpay") {
+            const razorpayOrder = await razorpay.orders.create({
+                amount: totalAmount * 100, // Razorpay works in paise
+                currency: "INR",
+                receipt: `order_${order._id}`
+            });
 
-        //  SEND SMS ONLY FOR COD
-        if (paymentMethod === "cod") {
-            sendSMS(
-                user.phoneNumber,
-                `Your COD order ${order._id} has been placed successfully. Pay ₹${order.totalAmount} at delivery.`
-            );
+            order.razorpayOrderId = razorpayOrder.id;
+            await order.save();
+
+            // We DO NOT clear the cart or delete custom candles here yet. 
+            // We wait until `verifyPayment` succeeds to do that!
+            return res.status(200).json({
+                success: true,
+                razorpayOrder,
+                orderId: order._id,
+                amount: totalAmount
+            });
         }
+
+        // =========================
+        //  FLOW B: CASH ON DELIVERY
+        // =========================
+        if (paymentMethod === "cod") {
+            const shortOrderId = order._id.toString().slice(-6).toUpperCase();
+
+            // Awaiting the promise ensures we catch any SMS failures without crashing the order
+            await sendSMS(
+                user.phoneNumber,
+                config.msg91.orderConfirmTemplateId,
+                {
+                    NAME: user.firstName || "Customer",
+                    ORDER_ID: shortOrderId,
+                    AMOUNT: String(order.totalAmount)
+                }
+            ).catch(err => console.error("Failed to send COD SMS:", err.message));
+        }
+
         // =========================
         //  CLEAR CART
         // =========================
@@ -177,113 +211,3 @@ export const createOrder = async (req, res) => {
         });
     }
 };
-
-
-
-// import Razorpay from "razorpay";
-// import { Order } from "../models/orderModel.js";
-// import Product from "../models/productModel.js";
-// import { CandleCustomization } from "../models/candleCustomization.js";
-// import { CustomizedCandle } from "../models/customizedCandle.js";
-
-// const razorpay = new Razorpay({
-//     key_id: process.env.RAZORPAY_KEY_ID,
-//     key_secret: process.env.RAZORPAY_KEY_SECRET
-// });
-
-// export const cancelOrder = async (req, res) => {
-//     try {
-//         const { orderId, reason } = req.body;
-
-//         const order = await Order.findById(orderId);
-
-//         if (!order) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "Order not found"
-//             });
-//         }
-
-//         if (order.orderStatus === "delivered") {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: "Cannot cancel delivered order"
-//             });
-//         }
-
-//         // =========================
-//         //  RESTORE STOCK
-//         // =========================
-//         const customization = await CandleCustomization.findOne();
-
-//         for (let item of order.orderItems) {
-
-//             //  SIMPLE PRODUCT
-//             if (item.type === "simple") {
-//                 const prod = await Product.findById(item.product);
-//                 if (prod) {
-//                     prod.stock += item.quantity;
-//                     await prod.save();
-//                 }
-//             }
-
-//             //  CUSTOM CANDLE
-//             if (item.type === "custom") {
-//                 const candle = await CustomizedCandle.findById(item.customCandle);
-
-//                 if (candle && customization) {
-
-//                     const restore = (arr, id) => {
-//                         const opt = arr.find(i => i._id.toString() === id?.toString());
-//                         if (opt) opt.stock += item.quantity;
-//                     };
-
-//                     restore(customization.scents, candle.scent);
-//                     restore(customization.colors, candle.color);
-//                     restore(customization.sizes, candle.size);
-
-//                     candle.addOns.forEach(addOnId => {
-//                         restore(customization.addOns, addOnId);
-//                     });
-//                 }
-//             }
-//         }
-
-//         await customization.save();
-
-//         // =========================
-//         //  UPDATE STATUS
-//         // =========================
-//         order.orderStatus = "cancelled";
-//         order.cancelReason = reason;
-//         order.cancelledAt = Date.now();
-
-//         // =========================
-//         //  REFUND
-//         // =========================
-//         if (
-//             order.paymentMethod === "razorpay" &&
-//             order.paymentStatus === "paid"
-//         ) {
-//             const refund = await razorpay.payments.refund(order.paymentId, {
-//                 amount: order.totalAmount * 100
-//             });
-
-//             order.paymentStatus = "refunded";
-//             order.refundId = refund.id;
-//         }
-
-//         await order.save();
-
-//         res.status(200).json({
-//             success: true,
-//             message: "Order cancelled & stock restored"
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({
-//             success: false,
-//             message: error.message
-//         });
-//     }
-// };

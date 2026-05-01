@@ -7,18 +7,17 @@ export const createCustomCandle = async (req, res) => {
             vesselId,
             scentId,
             addOnIds = [],
-            labelId,
-            message,
+            message, // This captures the Step 4 text input
             quantity = 1
         } = req.body;
 
         // =========================
         //  REQUIRED FIELD CHECK
         // =========================
-        if (!vesselId || !scentId || !labelId) {
+        if (!vesselId || !scentId) {
             return res.status(400).json({
                 success: false,
-                message: "Vessel, Scent and Label are required"
+                message: "Vessel and Scent are required"
             });
         }
 
@@ -68,9 +67,7 @@ export const createCustomCandle = async (req, res) => {
         //  ADD-ONS
         // =========================
         const addOnStep = findStep("addon");
-
         const uniqueAddOns = [...new Set(addOnIds)];
-
         let validAddOns = [];
         let addOnNames = [];
 
@@ -84,14 +81,6 @@ export const createCustomCandle = async (req, res) => {
         }
 
         // =========================
-        //  LABEL
-        // =========================
-        const labelStep = findStep("label");
-        const label = findOption(labelStep, labelId);
-        validateOption(label, "Label");
-        customizationPrice += label.price;
-
-        // =========================
         //  TOTAL PRICE
         // =========================
         const totalPrice =
@@ -102,24 +91,19 @@ export const createCustomCandle = async (req, res) => {
         // =========================
         const candle = await CustomizedCandle.create({
             user: req.user._id,
-
             vessel: vessel._id,
             scent: scent._id,
-            label: label._id,
             addOns: validAddOns,
-
-            message,
+            message, // Saved directly from req.body
             quantity,
-
             basePrice: customization.basePrice,
             customizationPrice,
             totalPrice,
 
-            // 📸 SNAPSHOT (VERY IMPORTANT)
+            // 📸 SNAPSHOT 
             snapshot: {
                 vesselName: vessel.name,
                 scentName: scent.name,
-                labelName: label.name,
                 addOnNames
             }
         });
@@ -137,5 +121,3 @@ export const createCustomCandle = async (req, res) => {
         });
     }
 };
-
-

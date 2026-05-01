@@ -6,6 +6,8 @@ import { generateToken, setTokenCookie, clearTokenCookie } from "../utils/token.
 import { verifyGoogleToken, findOrCreateGoogleUser } from "../services/googleAuthService.js";
 
 import { sendOtp, verifyOtpService } from "../services/otp_services.js";
+import jwt from "jsonwebtoken";
+
 
 
 
@@ -338,7 +340,7 @@ export const googleAuth = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Google login successful",
-            // user
+            user,
             needsPhone: user.needsPhone
         });
 
@@ -358,7 +360,7 @@ export const googleAuth = async (req, res) => {
 export const saveGooglePhone = async (req, res) => {
     try {
         const { phoneNumber, otp } = req.body;
-        const user_Id = req.userId;
+        const user_Id = req.user;
 
         if (!phoneNumber || !otp) {
             return res.status(400).json({
@@ -706,12 +708,7 @@ export const resetPassword = async (req, res) => {
         }
 
 
-        if (!user.isOtpVerified) {
-            return res.status(403).json({
-                success: false,
-                message: "OTP not verified"
-            });
-        }
+
         if (newPassword.length < 6) {
             return res.status(400).json({
                 message: "Password must be at least 6 characters"

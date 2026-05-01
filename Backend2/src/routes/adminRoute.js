@@ -7,7 +7,7 @@ import { getAdminDashboard } from "../controllers/adminDasboardController.js";
 import { upload } from "../middleware/multerMiddleware.js";
 import { getAllContacts, updateContactStatus } from "../controllers/adminContactController.js";
 import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin } from "../controllers/adminCategoryController.js";
-import { createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
+import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
 import { createBanner, getAllBanners, deleteBanner } from "../controllers/adminBannerController.js"
 import { getAllOrdersAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
 
@@ -213,11 +213,19 @@ router.get(
     getAllStepOptions
 );
 
+router.post(
+    "/customization/init-customization",
+    isAuthenticated,
+    isAdmin,
+    initCustomization
+);
+
 // Create option
 router.post(
     "/customization/:stepNumber",
     isAuthenticated,
     isAdmin,
+    upload.single("image"),
     createOption
 );
 
@@ -226,6 +234,7 @@ router.put(
     "/customization/:stepNumber/:optionId",
     isAuthenticated,
     isAdmin,
+    upload.single("image"),
     updateOption
 );
 

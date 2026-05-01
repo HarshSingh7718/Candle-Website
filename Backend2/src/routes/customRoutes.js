@@ -5,7 +5,7 @@ import { isAuthenticated } from "../middleware/authmiddleware.js";
 
 const router = express.Router();
 
-router.get("/customization-options", getOptionsByStep);
+router.get("/customization-options/:step", getOptionsByStep);
 router.post("/custom-candle", isAuthenticated, createCustomCandle);
 
 

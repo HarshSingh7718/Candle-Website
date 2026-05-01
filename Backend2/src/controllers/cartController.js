@@ -39,6 +39,17 @@ export const addToCart = async (req, res) => {
           item.type === correctType
       );
 
+      const currentQtyInCart = existingItem ? existingItem.quantity : 0;
+      const newTotalQuantity = currentQtyInCart + Number(quantity);
+
+      // 3. CRITICAL CHECK: Does the NEW total exceed stock?
+      if (newTotalQuantity > prod.stock) {
+        return res.status(400).json({
+          success: false,
+          message: `Stock exceeded, You have ${currentQtyInCart} in cart.`,
+        });
+      }
+
       if (existingItem) {
         // 4. Update quantity of existing item
         existingItem.quantity += Number(quantity);

@@ -2,6 +2,7 @@ import router from './routes/authRoute.js'
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { config } from "./config/index.js";
 import addressRoutes from "./routes/addressRoute.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import adminRoutes from "./routes/adminRoute.js";
@@ -13,7 +14,7 @@ import orderRoutes from "./routes/orderRoute.js";
 import paymentRoutes from "./routes/paymentsRoute.js";
 import productRoutes from "./routes/productRoute.js";
 import searchRoutes from "./routes/searchRoute.js";
-import shipmentRoutes from "./routes/shipmentRoutes.js";
+// import shipmentRoutes from "./routes/shipmentRoutes.js";
 import userRoutes from "./routes/userProfileRoute.js";
 import wishlistRoutes from "./routes/whishlistRoute.js";
 
@@ -27,8 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const allowedOrigins = [
-    "http://localhost:5174",// Local development
-    "http://localhost:5175",
+    config.url.frontend,
+    config.url.admin
 ];
 
 app.use(cors({
@@ -74,7 +75,7 @@ app.use("/api", productRoutes);
 app.use("/api", searchRoutes);
 
 // SHIPMENT ROUTES
-app.use("/api", shipmentRoutes);
+// app.use("/api", shipmentRoutes);
 
 // USER ROUTES
 app.use("/api", userRoutes);
