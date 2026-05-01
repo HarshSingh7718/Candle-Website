@@ -38,12 +38,42 @@ export const useSingleProduct = (id) => {
   });
 };
 
+// 1. Hook to fetch options for Steps 1 (Vessel), 2 (Scent), and 3 (Add-ons)
+export const useCustomizationOptions = (step) => {
+  return useQuery({
+    queryKey: ['customizationOptions', step],
+    queryFn: async () => {
+      // Step 4 is just a custom message string now, so we don't need to hit the DB!
+      if (step === 4) return [];
 
-export const useCustomCandleBuilder = () => {
+      const { data } = await API.get(`/customization-options/${step}`);
+      return data.options;
+    },
+    // Only trigger the API call if we are on steps 1, 2, or 3
+    enabled: step >= 1 && step <= 3,
+
+    // Cache the options for 30 minutes. This makes navigating "Back" and "Next" instant!
+    staleTime: 1000 * 60 * 30,
+  });
+};
+
+// 2. Hook to create the final Custom Candle
+export const useCreateCustomCandle = () => {
   return useMutation({
-    mutationFn: createCustomCandle,
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to create your custom candle.");
+    mutationFn: async (payload) => {
+      /* 
+         The payload perfectly matches your createCustomCandle controller:
+         {
+             vesselId: "...",
+             scentId: "...",
+             addOnIds: ["...", "..."],
+             message: "HAPPY BIRTHDAY",
+             quantity: 1
+         }
+      */
+      // Double check this URL matches exactly where your customRoute.js is mounted!
+      const { data } = await API.post('/custom-candle', payload);
+      return data;
     }
   });
 };

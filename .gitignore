@@ -23,7 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-Backend2
 Admin-panel
 
 .env

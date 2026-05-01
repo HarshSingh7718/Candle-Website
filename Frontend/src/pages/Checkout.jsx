@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  ChevronDown, Search, HelpCircle, CreditCard, Truck, CheckCircle2, Lock
+  ChevronDown, Search, HelpCircle, CreditCard, Truck, CheckCircle2, Lock, Plus
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -9,6 +9,7 @@ import PageBanner from '../components/ui/PageBanner';
 // Custom Hooks
 import { useCart } from '../hooks/useCart';
 import { useCheckout } from '../hooks/useCheckout';
+import { useUser } from '../hooks/useAuth';
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
@@ -21,19 +22,33 @@ const INDIAN_STATES = [
 const Checkout = () => {
   const navigate = useNavigate();
 
-  // Connect to our Hooks
+  const { data: user } = useUser();
   const { cart, isLoading: isCartLoading } = useCart();
   const { createOrder, initRazorpay, verifyPayment, isPlacingOrder } = useCheckout();
 
-  // Form States
+  const savedAddresses = user?.addresses || [];
+
+  // Form & UI States
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(savedAddresses.length === 0);
+  const [isAddressExpanded, setIsAddressExpanded] = useState(false); // <-- NEW STATE
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+
   const [shippingAddress, setShippingAddress] = useState({
     country: "India", firstName: "", lastName: "", address: "",
     apartment: "", city: "", state: "Uttarakhand", pinCode: "", phone: ""
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  useEffect(() => {
+    if (savedAddresses.length > 0 && !selectedAddressId) {
+      const defaultAddr = savedAddresses.find(a => a.isDefault) || savedAddresses[0];
+      setSelectedAddressId(defaultAddr._id);
+      setShowNewAddressForm(false);
+    } else if (savedAddresses.length === 0) {
+      setShowNewAddressForm(true);
+    }
+  }, [savedAddresses, selectedAddressId]);
 
-  // Real Calculations
   const subtotal = useMemo(() => {
     return cart.reduce((acc, item) => {
       const isCustom = item.type === "custom";
@@ -43,9 +58,8 @@ const Checkout = () => {
     }, 0);
   }, [cart]);
 
-  // If subtotal is greater than 999, shipping is free (matching your backend logic)
   const shippingCost = subtotal > 999 ? 0 : 99;
-  const taxes = subtotal * 0.05; // 5% tax matching your backend
+  const taxes = subtotal * 0.05;
   const totalAmount = Math.round(subtotal + shippingCost + taxes);
 
   const formatCurrency = (val) => {
@@ -57,40 +71,47 @@ const Checkout = () => {
     setShippingAddress(prev => ({ ...prev, [name]: value }));
   };
 
-  // --- THE MASTER CHECKOUT FUNCTION ---
   const handleCheckout = async () => {
-    // 1. Basic Validation
-    if (!shippingAddress.firstName || !shippingAddress.address || !shippingAddress.city || !shippingAddress.pinCode || !shippingAddress.phone) {
-      return toast.error("Please fill in all required shipping details.");
-    }
     if (cart.length === 0) return toast.error("Your cart is empty!");
 
+    let finalAddress = {};
+
+    if (showNewAddressForm) {
+      if (!shippingAddress.firstName || !shippingAddress.address || !shippingAddress.city || !shippingAddress.pinCode || !shippingAddress.phone) {
+        return toast.error("Please fill in all required shipping details.");
+      }
+      finalAddress = {
+        ...shippingAddress,
+        pincode: shippingAddress.pinCode
+      };
+    } else {
+      const selected = savedAddresses.find(a => a._id === selectedAddressId);
+      if (!selected) return toast.error("Please select a shipping address.");
+      finalAddress = selected;
+    }
+
     const orderPayload = {
-      address: shippingAddress.address + (shippingAddress.apartment ? `, ${shippingAddress.apartment}` : ''),
-      city: shippingAddress.city,
-      state: shippingAddress.state,
-      pincode: shippingAddress.pinCode,
-      phone: shippingAddress.phone,
-      paymentMethod: paymentMethod === 'paytm' ? 'razorpay' : paymentMethod, // Assuming paytm routes through razorpay for now
+      address: finalAddress.address + (finalAddress.apartment ? `, ${finalAddress.apartment}` : ''),
+      city: finalAddress.city,
+      state: finalAddress.state,
+      pincode: finalAddress.pincode,
+      phone: finalAddress.phone,
+      paymentMethod: paymentMethod === 'paytm' ? 'razorpay' : paymentMethod,
     };
 
     try {
-      // 2a. FLOW: CASH ON DELIVERY
       if (paymentMethod === 'cod') {
         await createOrder(orderPayload);
         toast.success("Order placed successfully!");
-        navigate('/orders');
+        navigate('/account/orders');
         return;
       }
 
-      // 2b. FLOW: RAZORPAY
       if (paymentMethod === 'razorpay' || paymentMethod === 'paytm') {
-        // Step 1: Initialize Razorpay order on backend
         const rpOrder = await initRazorpay({ amount: totalAmount });
 
-        // Step 2: Open Razorpay Window
         const options = {
-          key: "YOUR_RAZORPAY_KEY_ID", // TODO: Replace with your actual key or import.meta.env.VITE_RAZORPAY_KEY_ID
+          key: "YOUR_RAZORPAY_KEY_ID",
           amount: rpOrder.order.amount,
           currency: "INR",
           name: "Naisha Creations",
@@ -98,14 +119,12 @@ const Checkout = () => {
           order_id: rpOrder.order.id,
           handler: async function (response) {
             try {
-              // Step 3: Verify Payment Signature
               await verifyPayment({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
               });
 
-              // Step 4: Create Order in DB
               await createOrder({
                 ...orderPayload,
                 paymentId: response.razorpay_payment_id,
@@ -114,14 +133,14 @@ const Checkout = () => {
               });
 
               toast.success("Payment successful! Order placed.");
-              navigate('/orders');
+              navigate('/account/orders');
             } catch (err) {
               toast.error("Payment verification failed. Please contact support.");
             }
           },
           prefill: {
-            name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
-            contact: shippingAddress.phone,
+            name: `${finalAddress.firstName} ${finalAddress.lastName || ''}`,
+            contact: finalAddress.phone,
           },
           theme: { color: "#D19D94" }
         };
@@ -139,6 +158,11 @@ const Checkout = () => {
 
   if (isCartLoading) return <div className="py-20 text-center">Loading checkout...</div>;
 
+  // Filter addresses based on expansion state
+  const displayAddresses = isAddressExpanded
+    ? savedAddresses
+    : savedAddresses.filter(a => a._id === selectedAddressId);
+
   return (
     <div className="md:overflow-hidden bg-white text-slate-800 font-sans flex flex-col">
       <PageBanner title="Checkout" currentPage="Checkout" />
@@ -146,37 +170,99 @@ const Checkout = () => {
 
         {/* LEFT COLUMN: Checkout Form */}
         <div className="w-full md:w-[58%] p-6 md:p-12 border-r border-gray-100 md:h-full md:overflow-y-auto bg-white">
-          <header className="mb-8">
-            <h1 className="text-2xl font-semibold mb-6">Delivery</h1>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" name="firstName" placeholder="First name" value={shippingAddress.firstName} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-                <input type="text" name="lastName" placeholder="Last name" value={shippingAddress.lastName} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-              </div>
-
-              <div className="relative">
-                <input type="text" name="address" placeholder="Address" value={shippingAddress.address} onChange={handleShippingChange} className="w-full p-3.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-              </div>
-
-              <input type="text" name="apartment" placeholder="Apartment, suite, etc. (optional)" value={shippingAddress.apartment} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" name="city" placeholder="City" value={shippingAddress.city} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-                <div className="relative">
-                  <label className="absolute left-3 top-1.5 text-[11px] text-gray-500 font-medium">State</label>
-                  <select name="state" value={shippingAddress.state} onChange={handleShippingChange} className="w-full pt-6 pb-2 px-3 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-stone-400 bg-white">
-                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-5 text-gray-400 w-4 h-4 pointer-events-none" />
-                </div>
-                <input type="text" name="pinCode" placeholder="PIN code" value={shippingAddress.pinCode} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-              </div>
-
-              <div className="relative">
-                <input type="text" name="phone" placeholder="Phone" value={shippingAddress.phone} onChange={handleShippingChange} className="w-full p-3.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
-              </div>
+          <header className="mb-10">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-semibold">Delivery Address</h1>
+              {savedAddresses.length > 0 && !showNewAddressForm && !isAddressExpanded && (
+                <button
+                  onClick={() => setIsAddressExpanded(true)}
+                  className="text-sm font-medium text-[#D19D94] hover:text-[#C28C83] underline transition-colors"
+                >
+                  Change
+                </button>
+              )}
             </div>
+
+            {/* ADDRESS SELECTOR OR FORM */}
+            {savedAddresses.length > 0 && !showNewAddressForm ? (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="grid grid-cols-1 gap-4">
+                  {displayAddresses.map(addr => (
+                    <div
+                      key={addr._id}
+                      onClick={() => {
+                        setSelectedAddressId(addr._id);
+                        setIsAddressExpanded(false); // Auto-collapse on selection!
+                      }}
+                      className={`p-4 border rounded-md cursor-pointer transition-all ${selectedAddressId === addr._id ? 'border-stone-800 bg-stone-50' : 'border-gray-200 hover:border-gray-300'}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`mt-1 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${selectedAddressId === addr._id ? 'border-stone-800' : 'border-gray-300'}`}>
+                          {selectedAddressId === addr._id && <div className="w-2 h-2 bg-stone-800 rounded-full" />}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-center mb-1">
+                            <p className="font-semibold text-sm text-black">{addr.firstName} {addr.lastName}</p>
+                            {addr.isDefault && <span className="text-[10px] bg-stone-200 text-stone-700 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Default</span>}
+                          </div>
+                          <p className="text-sm text-gray-600">{addr.address}</p>
+                          <p className="text-sm text-gray-600">{addr.city}, {addr.state} {addr.pincode}</p>
+                          <p className="text-sm text-gray-600 mt-1">Phone: +91 {addr.phone}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {isAddressExpanded && (
+                  <button
+                    onClick={() => setShowNewAddressForm(true)}
+                    className="text-sm font-medium text-[#D19D94] hover:text-[#C28C83] flex items-center gap-1 mt-4 transition-colors"
+                  >
+                    <Plus size={16} /> Add a new address
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in">
+                {savedAddresses.length > 0 && (
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-gray-800">New Address</h3>
+                    <button
+                      onClick={() => {
+                        setShowNewAddressForm(false);
+                        setIsAddressExpanded(true); // Return to list view
+                      }}
+                      className="text-sm text-gray-500 hover:text-stone-800 underline transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input type="text" name="firstName" placeholder="First name" value={shippingAddress.firstName} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                  <input type="text" name="lastName" placeholder="Last name" value={shippingAddress.lastName} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                </div>
+                <div className="relative">
+                  <input type="text" name="address" placeholder="Address" value={shippingAddress.address} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                </div>
+                <input type="text" name="apartment" placeholder="Apartment, suite, etc. (optional)" value={shippingAddress.apartment} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input type="text" name="city" placeholder="City" value={shippingAddress.city} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                  <div className="relative">
+                    <label className="absolute left-3 top-1.5 text-[11px] text-gray-500 font-medium">State</label>
+                    <select name="state" value={shippingAddress.state} onChange={handleShippingChange} className="w-full pt-6 pb-2 px-3 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-stone-400 bg-white">
+                      {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-5 text-gray-400 w-4 h-4 pointer-events-none" />
+                  </div>
+                  <input type="text" name="pinCode" placeholder="PIN code" value={shippingAddress.pinCode} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                </div>
+                <div className="relative">
+                  <input type="text" name="phone" placeholder="Phone" value={shippingAddress.phone} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                </div>
+              </div>
+            )}
           </header>
 
           {/* Payment Section */}
@@ -188,7 +274,7 @@ const Checkout = () => {
               {/* Razorpay Option */}
               <div className={`p-4 cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'bg-stone-50' : 'bg-white'}`} onClick={() => setPaymentMethod('razorpay')}>
                 <div className="flex items-center space-x-3">
-                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-stone-800' : 'border-gray-300'}`}>
+                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${paymentMethod === 'razorpay' ? 'border-stone-800' : 'border-gray-300'}`}>
                     {paymentMethod === 'razorpay' && <div className="w-2.5 h-2.5 bg-stone-800 rounded-full" />}
                   </div>
                   <span className="text-sm font-medium">Razorpay Secure (UPI, Cards, Wallets)</span>
@@ -205,7 +291,7 @@ const Checkout = () => {
               {/* COD Option */}
               <div className={`p-4 border-t border-gray-200 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'bg-stone-50' : 'bg-white'}`} onClick={() => setPaymentMethod('cod')}>
                 <div className="flex items-center space-x-3">
-                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'cod' ? 'border-stone-800' : 'border-gray-300'}`}>
+                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${paymentMethod === 'cod' ? 'border-stone-800' : 'border-gray-300'}`}>
                     {paymentMethod === 'cod' && <div className="w-2.5 h-2.5 bg-stone-800 rounded-full" />}
                   </div>
                   <span className="text-sm font-medium">Cash on Delivery (COD)</span>
@@ -228,7 +314,6 @@ const Checkout = () => {
         <div className="w-full md:w-[42%] bg-gray-50/50 p-6 md:p-12 md:h-full md:overflow-y-auto border-l border-gray-100">
           <div className="space-y-6 mb-8">
             {cart.map(item => {
-              // Dynamic logic for Custom vs Simple candles
               const isCustom = item.type === "custom";
               const productData = isCustom ? item.customCandle : item.product;
 

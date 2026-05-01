@@ -23,8 +23,8 @@ export const useCart = () => {
 
   // 2. Add Item -> POST /api/cart/addtocart
   const addToCartMutation = useMutation({
-    mutationFn: async ({ productId, quantity = 1 }) => {
-      const { data } = await API.post('/cart/addtocart', { productId, quantity });
+    mutationFn: async (payload) => {
+      const { data } = await API.post('/cart/addtocart', payload);
       return data;
     },
     onSuccess: () => {
@@ -80,12 +80,25 @@ export const useCart = () => {
   return { 
     cart, 
     isLoading, 
-    addToCart: (product, quantity) => {
+    addToCart: (item, quantity = 1) => {
 
+      // Scenario 1: It's a Custom Candle object from Customized.jsx
       if (item.customCandleId) {
         return addToCartMutation.mutate({ customCandleId: item.customCandleId, quantity });
       }
-      return addToCartMutation.mutate({ productId: item._id, quantity });
+
+      // Scenario 2: It's a standard Product object from your store pages
+      if (item._id) {
+        return addToCartMutation.mutate({ productId: item._id, quantity });
+      }
+
+      // Scenario 3: Safety fallback just in case you pass a raw string ID directly
+      if (typeof item === 'string') {
+        return addToCartMutation.mutate({ productId: item, quantity });
+      }
+
+      // Catch-all error if something weird gets passed
+      console.error("Invalid item passed to cart:", item);
     },
     // Use item._id from the cart array for these:
     removeFromCart: (itemId) => removeFromCartMutation.mutate(itemId),
