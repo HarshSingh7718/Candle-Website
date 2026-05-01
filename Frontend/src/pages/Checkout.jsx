@@ -100,49 +100,56 @@ const Checkout = () => {
     };
 
     try {
+      // ==========================
+      // CASH ON DELIVERY FLOW
+      // ==========================
       if (paymentMethod === 'cod') {
+        // Hits your /order API
         await createOrder(orderPayload);
         toast.success("Order placed successfully!");
         navigate('/account/orders');
         return;
       }
 
-      if (paymentMethod === 'razorpay' || paymentMethod === 'paytm') {
-        const rpOrder = await initRazorpay({ amount: totalAmount });
+      // ==========================
+      // RAZORPAY FLOW
+      // ==========================
+      if (paymentMethod === 'razorpay') {
+        // 1. Hit your /payment/create-order API
+        // 👉 FIX: Pass the full orderPayload so the backend can save the address!
+        const rpResponse = await initRazorpay(orderPayload);
 
         const options = {
-          key: "YOUR_RAZORPAY_KEY_ID",
-          amount: rpOrder.order.amount,
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: rpResponse.razorpayOrder.amount, // 👉 FIX: Matches backend JSON
           currency: "INR",
           name: "Naisha Creations",
           description: "Premium Candles",
-          order_id: rpOrder.order.id,
+          order_id: rpResponse.razorpayOrder.id, // 👉 FIX: Matches backend JSON
+
           handler: async function (response) {
             try {
+              // 2. Hit your /payment/verify API
               await verifyPayment({
+                orderId: rpResponse.orderId, // 👉 FIX: Passing the DB order ID!
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
               });
 
-              await createOrder({
-                ...orderPayload,
-                paymentId: response.razorpay_payment_id,
-                razorpayOrderId: response.razorpay_order_id,
-                razorpaySignature: response.razorpay_signature
-              });
+              // 👉 FIX: Removed the duplicate createOrder call. verifyPayment handles everything now!
 
               toast.success("Payment successful! Order placed.");
               navigate('/account/orders');
             } catch (err) {
-              toast.error("Payment verification failed. Please contact support.");
+              toast.error(err.response?.data?.message || "Payment verification failed. Please contact support.");
             }
           },
           prefill: {
             name: `${finalAddress.firstName} ${finalAddress.lastName || ''}`,
             contact: finalAddress.phone,
           },
-          theme: { color: "#D19D94" }
+          theme: { color: "#ea580c" } // Standardized to your orange theme
         };
 
         const rzp = new window.Razorpay(options);
