@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
 import { useStore } from "../context/StoreContext";
-import { useLogin } from '../hooks/useAuth'; // Imported the new hook
+import { useLogin, useGoogleLogin } from '../hooks/useAuth'; // IMPORT THE NEW HOOK
 
 const SignIn = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
-    const { setUser } = useStore(); // Kept this in case you rely on it elsewhere
+    const { setUser } = useStore();
 
-    const loginMutation = useLogin(); // Initialize the hook
+    // Pull in our mutations
+    const loginMutation = useLogin();
+    const googleLoginMutation = useGoogleLogin();
 
     // Form State
     const [formData, setFormData] = useState({
-        identifier: '', // This will hold either email or phone
+        identifier: '',
         password: ''
     });
 
@@ -29,15 +32,14 @@ const SignIn = () => {
             return toast.error("Please enter your credentials");
         }
 
-        // Use the mutation instead of the try/catch API call
         loginMutation.mutate({
             identifier: formData.identifier,
             password: formData.password
         }, {
             onSuccess: (data) => {
                 toast.success(`Welcome back, ${data.user.firstName}!`);
-                setUser(data.user); // Update your global context
-                navigate('/'); // Redirect to home
+                setUser(data.user);
+                navigate('/');
             },
             onError: (error) => {
                 toast.error(error.response?.data?.message || "Invalid credentials");
@@ -48,7 +50,7 @@ const SignIn = () => {
     return (
         <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
 
-            {/* Left Side (Fixed/Static) - UI UNCHANGED */}
+            {/* Left Side (Fixed/Static) */}
             <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
                 <img
                     src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000"
@@ -71,7 +73,7 @@ const SignIn = () => {
                 </div>
             </div>
 
-            {/* Right Side (Form) - UI UNCHANGED */}
+            {/* Right Side (Form) */}
             <div className="w-full lg:w-[65%] h-full flex flex-col items-center px-6 py-12 overflow-y-auto bg-[#fafafa]">
 
                 <div className="w-full max-w-[420px] my-auto">
@@ -86,15 +88,34 @@ const SignIn = () => {
 
                     <form className='space-y-4' onSubmit={handleSubmit}>
 
-                        <button type="button" className="flex items-center justify-center gap-2 w-full py-2.5 bg-white text-gray-700 font-semibold rounded-[20px] border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm">
-                            <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                            </svg>
-                            Google
-                        </button>
+                        {/* 👉 CLEANED UP GOOGLE BUTTON 👈 */}
+                        <div className="flex justify-center w-full">
+                            <GoogleLogin
+                                onSuccess={(credentialResponse) => {
+                                    // Pass callbacks here so the UI can react!
+                                    googleLoginMutation.mutate(credentialResponse.credential, {
+                                        onSuccess: (data) => {
+                                            if (data.needsPhone) {
+                                                toast.success("Almost done! Please link your mobile number.");
+                                                navigate('/complete-google-profile');
+                                            } else {
+                                                toast.success("Signed in with Google successfully!");
+                                                if (data.user) setUser(data.user);
+                                                navigate('/');
+                                            }
+                                        },
+                                        onError: (error) => {
+                                            toast.error(error.response?.data?.message || "Google Authentication Failed");
+                                        }
+                                    });
+                                }}
+                                onError={() => toast.error('Google Login Popup Closed or Failed')}
+                                shape="pill"
+                                size="large"
+                                width="100%"
+                                text="continue_with"
+                            />
+                        </div>
 
                         <div className="flex items-center my-6">
                             <div className="flex-1 h-px bg-gray-200"></div>
@@ -120,7 +141,7 @@ const SignIn = () => {
                         <div className="space-y-1.5 text-left">
                             <div className="flex justify-between items-center">
                                 <label className="block text-[13px] font-medium text-gray-600">Password</label>
-                                <Link to="/forgot-password" university-link="true" className="text-[13px] font-bold text-[#ea580c] hover:underline">
+                                <Link to="/forgot-password" className="text-[13px] font-bold text-[#ea580c] hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -158,7 +179,7 @@ const SignIn = () => {
 
                         {/* Submit Button */}
                         <button
-                            disabled={loginMutation.isPending}
+                            disabled={loginMutation.isPending || googleLoginMutation.isPending}
                             type="submit"
                             className='w-full py-2.5 mt-2 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] cursor-pointer disabled:bg-gray-400'
                         >

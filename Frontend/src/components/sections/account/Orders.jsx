@@ -1,13 +1,12 @@
 import React, { useRef, useEffect } from 'react';
-import PageBanner from '../components/ui/PageBanner';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
-import MainBtn from '../components/ui/Buttons/MainBtn';
+import MainBtn from '../../ui/Buttons/MainBtn';
 import { Loader2 } from 'lucide-react';
 
 // Import your custom hook
-import { useOrders } from '../hooks/useOrders';
+import { useOrders } from '../../../hooks/useOrders';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -83,7 +82,6 @@ const Orders = () => {
     if (isLoading) {
         return (
             <>
-                <PageBanner title="My Orders" currentPage="Orders" />
                 <div className="h-[50vh] flex items-center justify-center">
                     <Loader2 className="animate-spin text-gray-400" size={48} />
                 </div>
@@ -93,7 +91,6 @@ const Orders = () => {
 
     return (
         <>
-            <PageBanner title="My Orders" currentPage="Orders" />
             <div ref={ordersRef} className="container mx-auto py-[8%] px-4 orders-section">
 
                 {orders.length === 0 ? (

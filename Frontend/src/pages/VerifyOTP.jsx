@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import API from '../api';
-import { useStore } from "../context/StoreContext";
-import { useAuthActions } from '../hooks/useAuth'; // Using our custom hooks
+import { useAuthActions, useRegister } from '../hooks/useAuth';
 
 const VerifyOTP = () => {
     const [otp, setOtp] = useState(new Array(6).fill(""));
-    const [loading, setLoading] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const { setUser } = useStore();
-    const { verifyOtp } = useAuthActions(); // From our useAuth.js
+
+    // Pull in our mutations
+    const { verifyOtp, isVerifying } = useAuthActions();
+    const { registerUser, isPending: isRegistering } = useRegister();
 
     // Determine the Mode
     // 1. Registration Mode (has registrationData)
@@ -40,10 +40,8 @@ const VerifyOTP = () => {
 
     const handleResendOtp = async () => {
         try {
-            // Adjust endpoint based on mode if necessary, 
-            // otherwise use a generic resend if your backend allows it
-            const endpoint = isResetMode ? "/user/forgot-password" : "/auth/user/send-otp";
-            await API.post(endpoint, { phoneNumber: phoneNumber, phoneNumber: phoneNumber });
+            const endpoint = isResetMode ? "/auth/user/forgot-password" : "/auth/user/send-otp";
+            await API.post(endpoint, { phoneNumber });
             toast.success("OTP resent successfully!");
         } catch (error) {
             toast.error("Failed to resend OTP");
@@ -55,44 +53,34 @@ const VerifyOTP = () => {
         const code = otp.join("");
         if (code.length !== 6) return toast.error("Please enter 6 digits");
 
-        setLoading(true);
         try {
             if (isResetMode) {
                 // --- FORGOT PASSWORD FLOW ---
-                // Step 1: Just verify it works
                 await verifyOtp({ phoneNumber, otp: code });
-                // Step 2: Move to the final reset page
                 navigate('/reset-password', { state: { phoneNumber, otp: code } });
             } else {
                 // --- REGISTRATION FLOW ---
-                const verifyRes = await API.post("/auth/user/verify-otp", {
-                    phoneNumber: phoneNumber,
-                    otp: code
+                await registerUser({
+                    otp: code,
+                    ...registrationData // Sends firstName, lastName, phone, password, etc.
                 });
 
-                if (verifyRes.data.success) {
-                    const tempToken = verifyRes.data.tempToken;
-                    const completeRes = await API.post("/auth/user/complete-profile", registrationData, {
-                        headers: { Authorization: `Bearer ${tempToken}` }
-                    });
-
-                    if (completeRes.data.success) {
-                        toast.success("Account created!");
-                        setUser(completeRes.data.user);
-                        navigate('/');
-                    }
-                }
+                // Hook handles the login state cache, just redirect to dashboard!
+                navigate('/');
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || "Verification failed");
-        } finally {
-            setLoading(false);
+            // We catch the error here just to prevent the navigate() from running,
+            // but the toast notification is already handled gracefully by the hooks!
+            console.error("Verification error:", error);
         }
     };
 
+    // Combine loading states so the button disables appropriately
+    const isProcessing = isVerifying || isRegistering;
+
     return (
         <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
-            {/* Left Side (Same as your UI) */}
+            {/* Left Side */}
             <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000" alt="Candle" className="absolute inset-0 w-full h-full object-cover opacity-60" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -143,8 +131,12 @@ const VerifyOTP = () => {
                             </button>
                         </div>
 
-                        <button disabled={loading} type="submit" className='w-full py-3 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400'>
-                            {loading ? "Verifying..." : "Verify and Proceed"}
+                        <button
+                            disabled={isProcessing}
+                            type="submit"
+                            className='w-full py-3 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none'
+                        >
+                            {isProcessing ? "Verifying..." : "Verify and Proceed"}
                         </button>
                     </form>
                 </div>

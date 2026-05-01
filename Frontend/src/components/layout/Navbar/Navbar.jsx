@@ -117,10 +117,10 @@ const Navbar = () => {
                     <Link to="/account" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
                       <User size={18} strokeWidth={1.5} className="text-[#333]" /> My Account
                     </Link>
-                    <Link to="/orders" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
+                    <Link to="/account/orders" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
                       <ShoppingBag size={18} strokeWidth={1.5} className="text-[#333]" /> Orders
                     </Link>
-                    <Link to="/wishlist" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
+                    <Link to="/account/wishlist" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
                       <Heart size={18} strokeWidth={1.5} className="text-[#333]" /> Wishlist
                     </Link>
                     <button 

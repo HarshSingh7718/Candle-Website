@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import PageBanner from '../components/ui/PageBanner';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import toast from "react-hot-toast";
-import MainBtn from "../components/ui/Buttons/MainBtn";
+import MainBtn from "../../ui/Buttons/MainBtn";
 import { X } from "lucide-react";
-import { useCart } from '../hooks/useCart';
-import { useWishlist } from '../hooks/useWishlist'; // Refactored Hook
+import { useCart } from '../../../hooks/useCart';
+import { useWishlist } from '../../../hooks/useWishlist'; // Refactored Hook
 import { Icon } from "@iconify/react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,7 +16,7 @@ const Wishlist = () => {
     const [selected, setSelected] = useState([]);
 
     const toggleSelect = (id) => {
-        setSelected((prev) => 
+        setSelected((prev) =>
             prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
         );
     };
@@ -82,7 +81,6 @@ const Wishlist = () => {
 
     return (
         <>
-            <PageBanner title="wishlist" currentPage="Wishlist" />
             <div ref={wishlistRef} className="container mx-auto py-[8%] px-4">
                 {wishlist.length === 0 ? (
                     <p className="text-center text-lg bg-gray-50 shadow-md py-5 wishlist-empty">
@@ -166,11 +164,11 @@ const Wishlist = () => {
                                         <span className="text-green-600">{item.stock > 0 ? "In Stock" : "Out of Stock"}</span>
                                     </div>
                                     <div className="mt-4">
-                                        <MainBtn 
-                                            type="button" 
-                                            onClick={() => addToCart(item)} 
-                                            className='w-full! bg-transparent! border! border-gray-200! shadow-none! rounded-sm!' 
-                                            text={"Add to Cart"} 
+                                        <MainBtn
+                                            type="button"
+                                            onClick={() => addToCart(item)}
+                                            className='w-full! bg-transparent! border! border-gray-200! shadow-none! rounded-sm!'
+                                            text={"Add to Cart"}
                                         />
                                     </div>
                                 </div>
