@@ -24,7 +24,7 @@ export const clearTokenCookie = (res) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: isProduction,  // MUST be false for http://localhost
-        sameSite: isProduction ? "none" : "lax", , // Use 'lax' for local dev. 'none' requires 'secure: true'
+        sameSite: isProduction ? "none" : "lax", // Use 'lax' for local dev. 'none' requires 'secure: true'
     });
 };
 
