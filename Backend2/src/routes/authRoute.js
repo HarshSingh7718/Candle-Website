@@ -24,7 +24,7 @@ router.post("/forgot-password/reset-password", resetPassword);
 
 
 // GOOGLE AUTH
-router.post("/google-auth", googleAuth);
+router.post("/google-auth", googleAuth); 
 
 // PHONE NUMBER (Google users)
 router.post("/send-phone-otp", isAuthenticated, sendOtpMiddleware);

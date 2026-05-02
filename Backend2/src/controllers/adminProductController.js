@@ -1,10 +1,6 @@
 import { Product } from "../models/productModels.js";
 import cloudinary from "../services/cloudinaryService.js";
 
-
-
-
-
 export const createProduct = async (req, res) => {
     try {
         const {
@@ -88,11 +84,6 @@ export const createProduct = async (req, res) => {
     }
 };
 
-
-
-
-
-
 export const deleteProduct = async (req, res) => {
     try {
         const prod = await Product.findById(req.params.id);
@@ -125,7 +116,6 @@ export const deleteProduct = async (req, res) => {
         });
     }
 };
-
 
 export const updateProduct = async (req, res) => {
     try {
@@ -208,12 +198,15 @@ export const updateProduct = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
+export const getSingleProductAdmin = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+        res.status(200).json({ success: true, product });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 export const getAllProductsAdmin = async (req, res) => {
     try {

@@ -99,6 +99,16 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    totalStar: {
+        type: Number,
+        default: 0
+    },
+
+    numOfPublishedReviews: {
+        type: Number,
+        default: 0
+    },
+
 
     reviews: [
         {

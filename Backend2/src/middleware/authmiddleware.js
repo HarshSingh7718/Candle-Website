@@ -66,7 +66,10 @@ export const sendOtpMiddleware = async (req, res, next) => {
         req.phoneNumber = phoneNumber;
         req.id = userId
         
-        next();
+        res.status(200).json({
+            success: true,
+            message: "OTP sent"
+        });
 
     } catch (error) {
         return res.status(500).json({

@@ -6,6 +6,8 @@ import { generateToken, setTokenCookie, clearTokenCookie } from "../utils/token.
 import { verifyGoogleToken, findOrCreateGoogleUser } from "../services/googleAuthService.js";
 
 import { sendOtp, verifyOtpService } from "../services/otp_services.js";
+import jwt from "jsonwebtoken";
+
 
 
 
@@ -338,7 +340,7 @@ export const googleAuth = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Google login successful",
-            // user
+            user,
             needsPhone: user.needsPhone
         });
 
@@ -358,7 +360,7 @@ export const googleAuth = async (req, res) => {
 export const saveGooglePhone = async (req, res) => {
     try {
         const { phoneNumber, otp } = req.body;
-        const user_Id = req.userId;
+        const user_Id = req.user;
 
         if (!phoneNumber || !otp) {
             return res.status(400).json({
@@ -451,6 +453,79 @@ export const login = async (req, res) => {
                 message: "User not exists"
             })
         }
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({
+                success: false,
+                message: "Password is invalid"
+            })
+
+        }
+        const token = generateToken(existingUser);
+        setTokenCookie(res, token);
+
+        existingUser.isLoggedIn = true;
+        // existingUser.isAdmin =  existingUser.role === "admin";
+        await existingUser.save()
+        return res.status(200).json({
+            success: true,
+            message: `Welcome back ${existingUser.firstName}`,
+            user: existingUser,
+            role: existingUser.role,
+            // isAdmin: existingUser.role === "admin"
+
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+export const adminLogin = async (req, res) => {
+    try {
+        let { identifier, password } = req.body;
+        if (!identifier || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            })
+        }
+        identifier = identifier.trim().replace(/\s+/g, "");
+        const isEmail = /^\S+@\S+\.\S+$/.test(identifier);
+        const query = isEmail
+            ? { email: identifier.toLowerCase() }
+            : { phoneNumber: identifier };
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!isEmail && !phoneRegex.test(identifier)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid phone number"
+            });
+        }
+        
+        const existingUser = await User.findOne(query);
+        // if (!existingUser.isActive) {
+        //     return res.status(403).json({
+        //         success: false,
+        //         message: "Access revoked by admin"
+        //     });
+        // }
+        if (!existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User not exists"
+            })
+        }
+        
+        if (existingUser.role !== "admin") {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied: Admin only"
+            });
+        }
+
         const isPasswordValid = await bcrypt.compare(password, existingUser.password);
         if (!isPasswordValid) {
             return res.status(400).json({
@@ -706,12 +781,7 @@ export const resetPassword = async (req, res) => {
         }
 
 
-        if (!user.isOtpVerified) {
-            return res.status(403).json({
-                success: false,
-                message: "OTP not verified"
-            });
-        }
+
         if (newPassword.length < 6) {
             return res.status(400).json({
                 message: "Password must be at least 6 characters"

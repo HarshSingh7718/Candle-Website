@@ -2,6 +2,7 @@ import router from './routes/authRoute.js'
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { config } from "./config/index.js";
 import addressRoutes from "./routes/addressRoute.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import adminRoutes from "./routes/adminRoute.js";
@@ -13,28 +14,47 @@ import orderRoutes from "./routes/orderRoute.js";
 import paymentRoutes from "./routes/paymentsRoute.js";
 import productRoutes from "./routes/productRoute.js";
 import searchRoutes from "./routes/searchRoute.js";
-import shipmentRoutes from "./routes/shipmentRoutes.js";
+// import shipmentRoutes from "./routes/shipmentRoutes.js";
 import userRoutes from "./routes/userProfileRoute.js";
 import wishlistRoutes from "./routes/whishlistRoute.js";
-
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 
 
 const app = express();
+
+// CORS
+const allowedOrigins = [
+    config.url.frontend,
+    config.url.admin
+];
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true
+}));
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const allowedOrigins = [
-    "http://localhost:5174",// Local development
-    "http://localhost:5175",
-];
+app.use(helmet());
 
-app.use(cors({
-    origin: allowedOrigins, // your frontend
-    credentials: true
+// Security
+app.use("/api", rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 20, // Limit each IP to 20 requests per `window
+    message: 'Too many requests from this IP, please try again'
 }));
+app.use("/api/auth", rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 5, // Limit each IP to 5 requests per `window
+    message: 'Too many requests from this IP, please try again'
+}))
+
+
+
+
 // ==========================
 //  ADMIN ROUTES
 // ==========================
@@ -74,7 +94,7 @@ app.use("/api", productRoutes);
 app.use("/api", searchRoutes);
 
 // SHIPMENT ROUTES
-app.use("/api", shipmentRoutes);
+// app.use("/api", shipmentRoutes);
 
 // USER ROUTES
 app.use("/api", userRoutes);

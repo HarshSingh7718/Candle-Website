@@ -1,7 +1,8 @@
 import Razorpay from "razorpay";
+import crypto from "crypto";
 import { User } from "../models/userModel.js";
 import { Product } from "../models/productModels.js";
-import {Order} from "../models/orderModel.js";
+import { Order } from "../models/orderModel.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
@@ -32,19 +33,11 @@ export const createRazorpayOrder = async (req, res) => {
         let orderItems = [];
         let itemsPrice = 0;
 
-        // =========================
-        //  BUILD ORDER ITEMS
-        // =========================
         for (let item of user.cart) {
-
-            // SIMPLE
             if (item.type === "simpleCandle" || item.type === "simpleRaw") {
                 const prod = item.product;
-
                 const price = prod.discountPrice || prod.price;
-
                 itemsPrice += price * item.quantity;
-
                 orderItems.push({
                     type: prod.type,
                     product: prod._id,
@@ -55,12 +48,9 @@ export const createRazorpayOrder = async (req, res) => {
                 });
             }
 
-            // CUSTOM
             if (item.type === "custom") {
                 const candle = item.customCandle;
-
                 itemsPrice += candle.totalPrice * item.quantity;
-
                 orderItems.push({
                     type: "custom",
                     customCandle: candle._id,
@@ -78,9 +68,6 @@ export const createRazorpayOrder = async (req, res) => {
             itemsPrice + shippingPrice + taxPrice
         );
 
-        // =========================
-        //  CREATE ORDER (PENDING)
-        // =========================
         const order = await Order.create({
             user: user._id,
             orderItems,
@@ -90,19 +77,15 @@ export const createRazorpayOrder = async (req, res) => {
             totalAmount,
             paymentMethod: "razorpay",
             paymentStatus: "pending",
-            orderStatus: "pending"
+            orderStatus: "processing"
         });
 
-        // =========================
-        //  CREATE RAZORPAY ORDER
-        // =========================
         const razorpayOrder = await razorpay.orders.create({
             amount: totalAmount * 100,
             currency: "INR",
             receipt: `order_${order._id}`
         });
 
-        // Save Razorpay Order ID
         order.razorpayOrderId = razorpayOrder.id;
         await order.save();
 
@@ -120,7 +103,6 @@ export const createRazorpayOrder = async (req, res) => {
         });
     }
 };
-
 
 // =========================
 //  VERIFY PAYMENT
@@ -158,7 +140,7 @@ export const verifyPayment = async (req, res) => {
         const body = razorpay_order_id + "|" + razorpay_payment_id;
 
         const expectedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+            .createHmac("sha256", config.razor.k_secret)
             .update(body)
             .digest("hex");
 
@@ -194,21 +176,30 @@ export const verifyPayment = async (req, res) => {
                 const candle = await CustomizedCandle.findById(item.customCandle);
 
                 if (candle && customization) {
-                    const reduce = (arr, id) => {
-                        const opt = arr.find(i => i._id.toString() === id.toString());
-                        if (opt) opt.stock -= item.quantity;
+                    const reduceStock = (stepType, optionId) => {
+                        if (!optionId) return;
+                        const step = customization.steps.find(s => s.type === stepType);
+                        if (step) {
+                            const opt = step.options.find(i => i._id.toString() === optionId.toString());
+                            if (opt && opt.stock >= item.quantity) {
+                                opt.stock -= item.quantity;
+                            }
+                        }
                     };
 
-                    reduce(customization.scents, candle.scent);
+                    reduceStock("vessel", candle.vessel);
+                    reduceStock("scent", candle.scent);
 
-                    candle.addOns.forEach(id => {
-                        reduce(customization.addOns, id);
-                    });
+                    if (candle.addOns && candle.addOns.length > 0) {
+                        candle.addOns.forEach(id => reduceStock("addon", id));
+                    }
                 }
             }
         }
 
         if (customization) {
+            // Signal Mongoose that the nested array changed before saving
+            customization.markModified('steps');
             await customization.save();
         }
 
@@ -227,13 +218,21 @@ export const verifyPayment = async (req, res) => {
         await order.save();
 
         // =========================
-        //  SEND SMS
+        //  SEND MSG91 SMS
         // =========================
         if (user?.phoneNumber) {
+            const shortOrderId = order._id.toString().slice(-6).toUpperCase();
+
+            // 👉 Updated to use the MSG91 Flow API pattern
             await sendSMS(
                 user.phoneNumber,
-                `Your order ${order._id} is confirmed. Payment received ₹${order.totalAmount}`
-            );
+                config.msg91.orderConfirmTemplateId, // Use the same template ID you used in the COD block
+                {
+                    NAME: user.firstName || "Customer",
+                    ORDER_ID: shortOrderId,
+                    AMOUNT: String(order.totalAmount)
+                }
+            ).catch(err => console.error("Failed to send Razorpay SMS:", err.message));
         }
 
         // =========================
@@ -245,15 +244,21 @@ export const verifyPayment = async (req, res) => {
         // =========================
         //  CREATE SHIPMENT
         // =========================
-        const shipment = await createShipment(order);
 
-        if (shipment?.shipment_id) {
-            order.trackingId = shipment.shipment_id;
-            order.awbCode = shipment.awb_code;
-            order.courierName = shipment.courier_name;
-            order.trackingUrl = shipment.tracking_url;
-            await order.save();
-        }
+        // try {
+        //     const shipment = await createShipment(order);
+
+        //     if (shipment?.shipment_id) {
+        //         order.trackingId = shipment.shipment_id;
+        //         order.awbCode = shipment.awb_code;
+        //         order.courierName = shipment.courier_name;
+        //         order.trackingUrl = shipment.tracking_url;
+        //         await order.save();
+        //     }
+        // } catch (shipmentError) {
+        //     // We log the error for you to fix later, but we let the code continue!
+        //     console.error("Shiprocket Error (Order saved successfully though!):", shipmentError.message);
+        // }
 
         res.status(200).json({
             success: true,

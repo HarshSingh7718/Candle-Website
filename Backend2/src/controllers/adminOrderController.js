@@ -1,4 +1,6 @@
 import {Order} from "../models/orderModel.js";
+import { sendSMS } from "../services/otp_services.js";
+import { config } from "../config/index.js";
 
 export const getAllOrdersAdmin = async (req, res) => {
     try {
@@ -44,7 +46,8 @@ export const updateOrderStatus = async (req, res) => {
     try {
         const { status } = req.body;
 
-        const order = await Order.findById(req.params.id);
+        // 👉 FIX: Added .populate("user") so we can get their phone number and name!
+        const order = await Order.findById(req.params.id).populate("user");
 
         if (!order) {
             return res.status(404).json({
@@ -54,11 +57,8 @@ export const updateOrderStatus = async (req, res) => {
         }
 
         order.orderStatus = status;
-        await sendSMS(
-            user.phoneNumber,
-            `Your order ${order._id} is now ${order.orderStatus}`
-        );
-        //  Auto update dates
+
+        // Auto update dates
         if (status === "shipped") {
             order.shippedAt = Date.now();
         }
@@ -68,6 +68,25 @@ export const updateOrderStatus = async (req, res) => {
         }
 
         await order.save();
+
+        // =========================
+        //  SEND MSG91 SMS NOTIFICATION
+        // =========================
+        if (order.user && order.user.phoneNumber) {
+            // We use a short, clean version of the Order ID for the text message
+            const shortOrderId = order._id.toString().slice(-6).toUpperCase();
+
+            // Calling our new MSG91 Flow API function
+            await sendSMS(
+                order.user.phoneNumber,
+                config.msg91.orderStatusTemplateId, // Make sure to add this to your config!
+                {
+                    NAME: order.user.firstName || "Customer",
+                    ORDER_ID: shortOrderId,
+                    STATUS: status.toUpperCase() // e.g., "SHIPPED", "DELIVERED"
+                }
+            );
+        }
 
         res.status(200).json({
             success: true,

@@ -1,6 +1,11 @@
 import 'dotenv/config'
 export const config = {
     port: process.env.PORT,
+    url : {
+        frontend:process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL_DEV,
+        admin:process.env.NODE_ENV === 'production' ? process.env.ADMIN_URL_PROD : process.env.ADMIN_URL_DEV,
+
+    },
 
     db: {
         uri: process.env.MONGO_URI
@@ -10,11 +15,19 @@ export const config = {
         secret: process.env.SECRET_KEY
     },
 
-    twilio: {
-        sid: process.env.TWILIO_SID,
-        secret: process.env.TWILIO_AUTH_TOKEN,
-        ssid: process.env.SERVICE_SID,
-        phone: process.env.TWILIO_PHONE
+    // twilio: {
+    //     sid: process.env.TWILIO_SID,
+    //     secret: process.env.TWILIO_AUTH_TOKEN,
+    //     ssid: process.env.TWILIO_SERVICE_SID,
+    //     phone: process.env.TWILIO_PHONE
+    // },
+
+    msg91: {
+        authKey: process.env.MSG91_AUTH_KEY,
+        otpTemplateId: process.env.MSG91_OTP_TEMPLATE_ID,
+        senderId: process.env.MSG91_SENDER_ID,
+        orderStatusTemplateId: process.env.MSG91_ORDER_STATUS_TEMPLATE_ID,
+        orderConfirmTemplateId: process.env.MSG91_ORDER_CONFIRM_TEMPLATE_ID
     },
 
     google: {

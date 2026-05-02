@@ -6,7 +6,7 @@ import { Category } from "../models/categoryModel.js";
 
 export const updateReviewStatus = async (req, res) => {
     try {
-        const { productId, reviewId } = req.params;
+        const { productId, userId } = req.params;
         const { status } = req.body; // "pending" or "published"
 
         //  validate status
@@ -26,7 +26,7 @@ export const updateReviewStatus = async (req, res) => {
             });
         }
 
-        const review = prod.reviews.id(reviewId);
+        const review = prod.reviews.findById(userId);
 
         if (!review) {
             return res.status(404).json({
@@ -37,6 +37,9 @@ export const updateReviewStatus = async (req, res) => {
 
         //  update status
         review.status = status;
+        prod.numOfPublishedReviews = status === "published" ? prod.numofPublishedReviews + 1 : prod.numofPublishedReviews;
+        prod.totalStar = status === "published" ? prod.totalStar + review.rating : prod.totalStar;
+        prod.ratings = Math.round(totalStar / prod.numOfPublishedReviews * 10) / 10;;
 
         await prod.save();
 

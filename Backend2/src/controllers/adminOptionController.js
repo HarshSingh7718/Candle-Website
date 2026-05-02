@@ -1,6 +1,41 @@
 import { CandleCustomization } from "../models/optionModel.js";
 import cloudinary from "../services/cloudinaryService.js";
 
+
+export const initCustomization = async (req, res) => {
+    try {
+        const { basePrice, steps } = req.body;
+
+        if (!basePrice) {
+            return res.status(400).json({
+                success: false,
+                message: "Base price is required"
+            });
+        }
+
+        // 1. Wipe any existing configuration so we start completely fresh
+        await CandleCustomization.deleteMany({});
+
+        // 2. Create the master document with your base price and full steps array
+        const masterCustomization = await CandleCustomization.create({
+            basePrice,
+            steps: steps || []
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Customization settings initialized successfully",
+            customization: masterCustomization
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 export const createOption = async (req, res) => {
     try {
         const { stepNumber } = req.params;
@@ -103,7 +138,7 @@ export const updateOption = async (req, res) => {
         }
 
         //  Update fields
-        if (name) option.name = name;
+        if (name != null) option.name = name;
         if (price != null) option.price = price;
         if (stock != null) option.stock = stock;
 

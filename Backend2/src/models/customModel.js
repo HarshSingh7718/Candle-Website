@@ -11,9 +11,6 @@ const customizedCandleSchema = new mongoose.Schema({
     vessel: {
         type: mongoose.Schema.Types.ObjectId
     },
-    label: {
-        type: mongoose.Schema.Types.ObjectId
-    },
     addOns: [
         {
             type: mongoose.Schema.Types.ObjectId
@@ -29,15 +26,18 @@ const customizedCandleSchema = new mongoose.Schema({
         type: String,
         default: "custom"
     },
-    message: String,
+    message: String, // Step 4 is now just this string!
     basePrice: Number,
     customizationPrice: Number,
-    totalPrice: Number
+    totalPrice: Number,
+    snapshot: { // Added the snapshot definition here for completeness
+        vesselName: String,
+        scentName: String,
+        addOnNames: [String]
+    }
 }, { timestamps: true });
 
 export const CustomizedCandle = mongoose.model(
     "CustomizedCandle",
     customizedCandleSchema
 );
-
-

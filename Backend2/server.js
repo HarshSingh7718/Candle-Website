@@ -8,7 +8,7 @@ import express from 'express'
 
 
 app.listen(config.port, ()=>{
-    console.log('server is running at 3000 port')
+    console.log(`server is running at ${config.port} port`)
 
 })
 
