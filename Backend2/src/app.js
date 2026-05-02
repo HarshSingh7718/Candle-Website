@@ -17,7 +17,9 @@ import searchRoutes from "./routes/searchRoute.js";
 // import shipmentRoutes from "./routes/shipmentRoutes.js";
 import userRoutes from "./routes/userProfileRoute.js";
 import wishlistRoutes from "./routes/whishlistRoute.js";
-
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import xss from 'xss-clean';
 
 
 const app = express();
@@ -27,15 +29,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Security
+app.use("/api", rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 20, // Limit each IP to 20 requests per `window
+    message: 'Too many requests from this IP, please try again'
+}));
+app.use("/api/auth", rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 5, // Limit each IP to 5 requests per `window
+    message: 'Too many requests from this IP, please try again'
+}))
+app.use(helmet());
+app.use(xss());
+
+// CORS
 const allowedOrigins = [
     config.url.frontend,
     config.url.admin
 ];
-
 app.use(cors({
-    origin: allowedOrigins, // your frontend
+    origin: allowedOrigins,
     credentials: true
 }));
+
+
+
 // ==========================
 //  ADMIN ROUTES
 // ==========================

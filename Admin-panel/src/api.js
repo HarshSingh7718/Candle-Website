@@ -1,32 +1,22 @@
-// src/api.js
 import axios from "axios";
+import toast from "react-hot-toast";
 
-const API = axios.create({
-  baseURL: "http://localhost:3000/api",
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
-API.interceptors.request.use((config) => {
-  // 1. Find the 'token' cookie in the browser
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="))
-    ?.split("=")[1];
-
-  // 2. If it exists, manually set the Authorization header
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Keep the response interceptor to handle the 1-day expiration
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("adminAuthenticated");
+      toast.error("Session expired. Please log in again.");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
+    }
+    return Promise.reject(error);
   }
-
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
-
-export const createCustomCandle = async (candleData) => {
-  // candleData should include: vessel, scent, toppings, label, and the calculated totalPrice
-  const { data } = await API.post('/custom-candle', candleData);
-  return data;
-};
-
-export default API;
+);

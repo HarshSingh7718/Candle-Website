@@ -483,6 +483,79 @@ export const login = async (req, res) => {
         })
     }
 }
+export const adminLogin = async (req, res) => {
+    try {
+        let { identifier, password } = req.body;
+        if (!identifier || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            })
+        }
+        identifier = identifier.trim().replace(/\s+/g, "");
+        const isEmail = /^\S+@\S+\.\S+$/.test(identifier);
+        const query = isEmail
+            ? { email: identifier.toLowerCase() }
+            : { phoneNumber: identifier };
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!isEmail && !phoneRegex.test(identifier)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid phone number"
+            });
+        }
+        
+        const existingUser = await User.findOne(query);
+        // if (!existingUser.isActive) {
+        //     return res.status(403).json({
+        //         success: false,
+        //         message: "Access revoked by admin"
+        //     });
+        // }
+        if (!existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User not exists"
+            })
+        }
+        
+        if (existingUser.role !== "admin") {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied: Admin only"
+            });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({
+                success: false,
+                message: "Password is invalid"
+            })
+
+        }
+        const token = generateToken(existingUser);
+        setTokenCookie(res, token);
+
+        existingUser.isLoggedIn = true;
+        // existingUser.isAdmin =  existingUser.role === "admin";
+        await existingUser.save()
+        return res.status(200).json({
+            success: true,
+            message: `Welcome back ${existingUser.firstName}`,
+            user: existingUser,
+            role: existingUser.role,
+            // isAdmin: existingUser.role === "admin"
+
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 
 

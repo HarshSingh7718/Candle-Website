@@ -1,5 +1,6 @@
 import express from "express";
-import { createProduct, updateProduct, deleteProduct, getAllProductsAdmin } from "../controllers/adminProductController.js";
+import { adminLogin } from "../controllers/authController.js";
+import { createProduct, updateProduct, deleteProduct, getSingleProductAdmin, getAllProductsAdmin } from "../controllers/adminProductController.js";
 import { updateReviewStatus, toggleOptionStatus, toggleBannerStatus, toggleProductStatus, toggleCategoryStatus } from "../controllers/adminToggleController.js";
 import { isAuthenticated, isAdmin } from "../middleware/authmiddleware.js";
 import { getAllReviewsAdmin } from "../controllers/adminReviewController.js";
@@ -8,16 +9,19 @@ import { upload } from "../middleware/multerMiddleware.js";
 import { getAllContacts, updateContactStatus } from "../controllers/adminContactController.js";
 import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin } from "../controllers/adminCategoryController.js";
 import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
-import { createBanner, getAllBanners, deleteBanner } from "../controllers/adminBannerController.js"
+import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
 import { getAllOrdersAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
 
 const router = express.Router();
 
-
+//Admin Login
+router.post("/login", adminLogin);
 
 // ==========================
 //  PRODUCT ROUTES
 // ==========================
+
+router.get("/product/:id", isAuthenticated, isAdmin, getSingleProductAdmin);
 
 // Get all products (Admin)
 router.get("/products", isAuthenticated, isAdmin, getAllProductsAdmin);
@@ -180,8 +184,25 @@ router.post(
   createBanner
 );
 
+// Get single banner (For pre-filling the edit form)
+router.get(
+    "/banner/:id",
+    isAuthenticated,
+    isAdmin,
+    getSingleBanner
+);
+
 // Get all banners
 router.get("/banners", isAuthenticated, isAdmin, getAllBanners);
+
+// Update banner
+router.put( // or router.patch, depending on your preference
+    "/banner/:id",
+    isAuthenticated,
+    isAdmin,
+    upload.single("image"), // 🔥 REQUIRED: In case they change the image!
+    updateBanner
+);
 
 // Toggle banner
 router.patch(

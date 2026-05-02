@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
@@ -26,45 +26,55 @@ import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import { Toaster } from 'react-hot-toast';
 
+import { ProtectedRoutes } from "./components/ProtectedRoutes";
+
+const PublicRoute = ({ children }) => {
+  const token = localStorage.getItem("adminAuthenticated");
+  return token ? <Navigate to="/dashboard" replace /> : children;
+};
+
 function App() {
   return (
     <>
       <Toaster position="top-center" />
       <CategoryProvider>
-      <ProductProvider>
-        <BannerProvider>
-          <OptionProvider>
-            <BrowserRouter>
-              <Routes>
-                
-                <Route path="/" element={<SignIn />}/>
-                <Route element={<Layout />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/inventory" element={<Inventory />} />
-                  <Route path="/inventory/add" element={<AddProduct />} />
-                  <Route path="/inventory/edit/:id" element={<EditProduct />} />
-                  <Route path="/categories" element={<Categories />} />
-                  <Route path="/categories/add" element={<AddCategory />} />
-                  <Route path="/categories/edit/:id" element={<EditCategory />} />
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="/reviews" element={<Reviews />} />
-                  <Route path="/contacts" element={<Contacts />} />
-                  <Route path="/banners" element={<Banners />} />
-                  <Route path="/banners/add" element={<AddBanner />} />
-                  <Route path="/banners/edit/:id" element={<EditBanner />} />
-                  <Route path="/options" element={<Options />} />
-                  <Route path="/options/add" element={<AddOption />} />
-                  <Route path="/options/edit/:id" element={<EditOption />} />
-                </Route>
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/verify-otp" element={<VerifyOTP />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-              </Routes>
-            </BrowserRouter>
-          </OptionProvider>
-        </BannerProvider>
-      </ProductProvider>
-    </CategoryProvider>
+        <ProductProvider>
+          <BannerProvider>
+            <OptionProvider>
+              <BrowserRouter>
+                <Routes>
+
+                  <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
+                  {/* === PROTECTED ROUTES === */}
+                  <Route element={<ProtectedRoutes />}>
+                    <Route element={<Layout />}>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/inventory" element={<Inventory />} />
+                      <Route path="/inventory/add" element={<AddProduct />} />
+                      <Route path="/inventory/edit/:id" element={<EditProduct />} />
+                      <Route path="/categories" element={<Categories />} />
+                      <Route path="/categories/add" element={<AddCategory />} />
+                      <Route path="/categories/edit/:id" element={<EditCategory />} />
+                      <Route path="/orders" element={<Orders />} />
+                      <Route path="/reviews" element={<Reviews />} />
+                      <Route path="/contacts" element={<Contacts />} />
+                      <Route path="/banners" element={<Banners />} />
+                      <Route path="/banners/add" element={<AddBanner />} />
+                      <Route path="/banners/edit/:id" element={<EditBanner />} />
+                      <Route path="/options" element={<Options />} />
+                      <Route path="/options/add" element={<AddOption />} />
+                      <Route path="/options/edit/:id" element={<EditOption />} />
+                    </Route>
+                  </Route>
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/verify-otp" element={<VerifyOTP />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                </Routes>
+              </BrowserRouter>
+            </OptionProvider>
+          </BannerProvider>
+        </ProductProvider>
+      </CategoryProvider>
     </>
   );
 }
