@@ -19,15 +19,26 @@ import userRoutes from "./routes/userProfileRoute.js";
 import wishlistRoutes from "./routes/whishlistRoute.js";
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
-import xss from 'xss-clean';
 
 
 const app = express();
+
+// CORS
+const allowedOrigins = [
+    config.url.frontend,
+    config.url.admin
+];
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true
+}));
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(helmet());
 
 // Security
 app.use("/api", rateLimit({
@@ -40,18 +51,7 @@ app.use("/api/auth", rateLimit({
     max: 5, // Limit each IP to 5 requests per `window
     message: 'Too many requests from this IP, please try again'
 }))
-app.use(helmet());
-app.use(xss());
 
-// CORS
-const allowedOrigins = [
-    config.url.frontend,
-    config.url.admin
-];
-app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
-}));
 
 
 
