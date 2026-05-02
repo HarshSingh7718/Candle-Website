@@ -27,10 +27,10 @@ export const getAllReviewsAdmin = async (req, res) => {
                     reviews: [
                         {
                             $project: {
-                                _id: "$reviews._id",
+                                userId: "$reviews.user._id",
                                 productId: "$_id",
                                 productName: "$name",
-                                user: "$reviews.name",
+                                userName: "$reviews.name",
                                 rating: "$reviews.rating",
                                 comment: "$reviews.comment",
                                 status: "$reviews.status",

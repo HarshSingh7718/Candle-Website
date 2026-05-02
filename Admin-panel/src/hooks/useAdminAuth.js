@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export const useAdminLogin = () => {
     return useMutation({
@@ -22,19 +23,34 @@ export const useAdminLogin = () => {
 
 export const useAdminLogout = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate(); // 👉 Added for redirection
 
     return useMutation({
         mutationFn: async () => {
-            // 👉 CRITICAL GOTCHA: Because the cookie is HttpOnly, frontend JS cannot delete it.
-            // You MUST have a route on your backend that runs `res.clearCookie('token')`.
+            // 👉 Hits your backend to clear the HttpOnly cookie. 
+            // (Double-check that '/auth/user/logout' is your correct admin route!)
             await api.post('/auth/user/logout');
-
-            // Remove the frontend wristband
-            localStorage.removeItem("adminAuthenticated");
         },
         onSuccess: () => {
+            // 1. Remove the frontend wristband
+            localStorage.removeItem("adminAuthenticated");
+
+            // 2. Clear all TanStack queries (purges sensitive cached data from memory)
             queryClient.clear();
+
+            // 3. Show success message
             toast.success("Logged out successfully");
+
+            // 4. Redirect to login page
+            navigate('/');
+        },
+        onError: () => {
+            // 👉 CRITICAL FALLBACK: 
+            // If the server fails or network drops, force log them out locally anyway.
+            // We don't want an admin trapped in the dashboard!
+            localStorage.removeItem("adminAuthenticated");
+            queryClient.clear();
+            navigate('/');
         }
     });
 };

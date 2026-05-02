@@ -22,7 +22,7 @@ const AddProduct = () => {
   const [size, setSize] = useState('medium');
   const [price, setPrice] = useState('');
   const [discountedPrice, setDiscountedPrice] = useState('');
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState('');
   const [stock, setStock] = useState('');
   const [type, setType] = useState('simpleCandle');
 
@@ -63,16 +63,6 @@ const AddProduct = () => {
     setToggles(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleCategoryToggle = (categoryId) => {
-    setSelectedCategories(prev => {
-      if (prev.includes(categoryId)) {
-        return prev.filter(id => id !== categoryId);
-      } else {
-        return [...prev, categoryId];
-      }
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !price || !stock) return;
@@ -82,18 +72,7 @@ const AddProduct = () => {
     formData.append('description', description);
     formData.append('price', price);
     formData.append('stock', stock);
-
-    if (selectedCategories.length > 0) {
-      selectedCategories.forEach(categoryId => {
-        // Depending on your backend schema, this might be 'category' or 'categories'
-        formData.append('category', categoryId);
-      });
-    } else {
-      // Optional: Add a quick toast error here if categories are mandatory!
-      console.error("Please select at least one category");
-      return;
-    }
-
+    formData.append('category', category);
     formData.append('type', type);
     formData.append('scent', scentProfile);
     formData.append('color', vesselColor);
@@ -204,40 +183,52 @@ const AddProduct = () => {
             <h3 className="font-heading text-headline-md text-primary mb-6">Inventory</h3>
             <div className="space-y-6">
               <div>
-                <label className="block font-label-md text-on-surface-variant mb-2">
-                  CATEGORIES *
-                </label>
+                <div className="flex justify-between items-end mb-2">
+                  <label className="block font-label-md text-on-surface-variant">
+                    CATEGORY *
+                  </label>
+                </div>
 
                 {isLoadingCategories ? (
-                  <div className="text-sm text-on-surface-variant animate-pulse">Loading categories...</div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                    {/* This automatically handles 1, 5, or 100 categories perfectly! */}
-                    {dbCategories.map(cat => (
-                      <label
-                        key={cat._id}
-                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${selectedCategories.includes(cat._id)
-                            ? 'border-primary bg-primary/5'
-                            : 'border-outline-variant hover:bg-surface-container-low'
-                          }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(cat._id)}
-                          onChange={() => handleCategoryToggle(cat._id)}
-                          className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 accent-primary cursor-pointer"
-                        />
-                        <span className="font-label-md text-on-surface-variant select-none">
-                          {cat.name}
-                        </span>
-                      </label>
-                    ))}
+                  <div className="w-full h-[120px] bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                   </div>
-                )}
+                ) : (
+                  <div className="w-full bg-surface-container-low border border-outline-variant rounded-xl overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
 
-                {/* Quick fallback if the database is empty */}
-                {!isLoadingCategories && dbCategories.length === 0 && (
-                  <p className="text-sm text-error mt-2">No categories found. Please add some first!</p>
+                    {/* Scrollable Container */}
+                      <div className="max-h-[240px] overflow-y-auto hide-scrollbar p-3 space-y-2">
+
+                      {dbCategories.map(cat => (
+                        <label
+                          key={cat._id}
+                          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${category === cat._id
+                              ? 'bg-primary/5 text-primary' // Selected state
+                              : 'hover:bg-surface-container text-on-surface-variant' // Unselected hover state
+                            }`}
+                        >
+                          {/* 👉 Changed to Radio Button */}
+                          <input
+                            type="radio"
+                            name="productCategory" // Groups them together
+                            checked={category === cat._id}
+                            onChange={() => setCategory(cat._id)}
+                            className="w-5 h-5 border-outline-variant text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                          />
+                          <span className={`font-label-md select-none ${category === cat._id ? 'font-semibold' : ''}`}>
+                            {cat.name}
+                          </span>
+                        </label>
+                      ))}
+
+                      {dbCategories.length === 0 && (
+                        <div className="p-4 text-center text-sm text-error">
+                          No categories found.
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
                 )}
               </div>
               <div><label className="block font-label-md text-on-surface-variant mb-1">STOCK LEVEL *</label><input type="number" value={stock} onChange={(e) => setStock(e.target.value)} required className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>

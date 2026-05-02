@@ -58,7 +58,7 @@ const VerifyOTP = () => {
             </div>
 
             {/* Right Side (Form) */}
-            <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 overflow-y-auto bg-[#fafafa]">
+            <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
                 
                 <div className="w-full max-w-[420px]">
                     <header className='text-center mb-10'>

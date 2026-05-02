@@ -4,7 +4,7 @@ const TopProducts = ({ products = [] }) => {
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-heading text-headline-md text-on-background">Top Products</h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hide-scrollbar">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-surface-container font-label-md text-label-md text-on-surface-variant uppercase tracking-wide">

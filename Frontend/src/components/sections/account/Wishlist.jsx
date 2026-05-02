@@ -88,7 +88,7 @@ const Wishlist = () => {
                     </p>
                 ) : (
                     <>
-                        <div className="hidden lg:block overflow-x-auto">
+                            <div className="hidden lg:block overflow-x-auto hide-scrollbar">
                             <table className="w-full">
                                 <thead className="bg-black text-white wishlist-head">
                                     <tr>

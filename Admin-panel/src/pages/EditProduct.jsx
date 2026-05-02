@@ -23,9 +23,13 @@ const EditProduct = () => {
   const [size, setSize] = useState('large');
   const [price, setPrice] = useState('');
   const [discountedPrice, setDiscountedPrice] = useState([]);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState('');
   const [stock, setStock] = useState('');
   const [type, setType] = useState('simpleCandle');
+  // Toggles
+  const [toggles, setToggles] = useState({
+    isFeatured: false, isTrending: false, isBestSeller: false, isDiscounted: false, isLatest: true
+  });
 
   const fileInputRefs = useRef([null, null, null, null]);
   const [imagePreviews, setImagePreviews] = useState([null, null, null, null]);
@@ -39,6 +43,7 @@ const EditProduct = () => {
       setPrice(product.price || '');
       setStock(product.stock || '');
       setType(product.type || '');
+      setCategory(product.category || '');
       setScentProfile(product.scent || '');
       setVesselColor(product.color || '');
       setWeight(product.weight || '');
@@ -57,7 +62,7 @@ const EditProduct = () => {
         isLatest: !!product.isLatest
       });
 
-      
+
 
       const initialPreviews = [null, null, null, null];
       if (product.images && product.images.length > 0) {
@@ -92,15 +97,6 @@ const EditProduct = () => {
     setToggles(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleCategoryToggle = (categoryId) => {
-    setSelectedCategories(prev => {
-      if (prev.includes(categoryId)) {
-        return prev.filter(id => id !== categoryId);
-      } else {
-        return [...prev, categoryId];
-      }
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -224,40 +220,52 @@ const EditProduct = () => {
             <h3 className="font-heading text-headline-md text-primary mb-6">Inventory</h3>
             <div className="space-y-6">
               <div>
-                <label className="block font-label-md text-on-surface-variant mb-2">
-                  CATEGORIES *
-                </label>
+                <div className="flex justify-between items-end mb-2">
+                  <label className="block font-label-md text-on-surface-variant">
+                    CATEGORY *
+                  </label>
+                </div>
 
                 {isLoadingCategories ? (
-                  <div className="text-sm text-on-surface-variant animate-pulse">Loading categories...</div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                    {/* This automatically handles 1, 5, or 100 categories perfectly! */}
-                    {dbCategories.map(cat => (
-                      <label
-                        key={cat._id}
-                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${selectedCategories.includes(cat._id)
-                            ? 'border-primary bg-primary/5'
-                            : 'border-outline-variant hover:bg-surface-container-low'
-                          }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(cat._id)}
-                          onChange={() => handleCategoryToggle(cat._id)}
-                          className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 accent-primary cursor-pointer"
-                        />
-                        <span className="font-label-md text-on-surface-variant select-none">
-                          {cat.name}
-                        </span>
-                      </label>
-                    ))}
+                  <div className="w-full h-[120px] bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                   </div>
-                )}
+                ) : (
+                  <div className="w-full bg-surface-container-low border border-outline-variant rounded-xl overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
 
-                {/* Quick fallback if the database is empty */}
-                {!isLoadingCategories && dbCategories.length === 0 && (
-                  <p className="text-sm text-error mt-2">No categories found. Please add some first!</p>
+                    {/* Scrollable Container */}
+                      <div className="max-h-[240px] overflow-y-auto p-3 space-y-2 hide-scrollbar">
+
+                      {dbCategories.map(cat => (
+                        <label
+                          key={cat._id}
+                          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${category === cat._id
+                            ? 'bg-primary/5 text-primary' // Selected state
+                            : 'hover:bg-surface-container text-on-surface-variant' // Unselected hover state
+                            }`}
+                        >
+                          {/* 👉 Changed to Radio Button */}
+                          <input
+                            type="radio"
+                            name="productCategory" // Groups them together
+                            checked={category === cat._id}
+                            onChange={() => setCategory(cat._id)}
+                            className="w-5 h-5 border-outline-variant text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                          />
+                          <span className={`font-label-md select-none ${category === cat._id ? 'font-semibold' : ''}`}>
+                            {cat.name}
+                          </span>
+                        </label>
+                      ))}
+
+                      {dbCategories.length === 0 && (
+                        <div className="p-4 text-center text-sm text-error">
+                          No categories found.
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
                 )}
               </div>
               <div><label className="block font-label-md text-on-surface-variant mb-1">STOCK LEVEL *</label><input type="number" value={stock} onChange={(e) => setStock(e.target.value)} required className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
@@ -288,8 +296,8 @@ const EditProduct = () => {
         <div className="col-span-12 flex justify-end gap-4 pt-stack-lg border-t border-surface-container-highest">
           <button type="button" onClick={() => navigate('/inventory')} disabled={isPending} className="px-8 py-4 border border-outline-variant text-on-surface-variant font-heading text-headline-md rounded-lg hover:bg-surface-container transition-all cursor-pointer">Cancel</button>
           <button type="submit" disabled={isPending} className="px-12 py-4 bg-primary text-on-primary font-heading text-headline-md rounded-lg shadow-[0_2px_0_rgba(141,75,0,0.3)] hover:bg-primary-container active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-3 cursor-pointer">
-            {isPending ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-on-primary"></div> : <span className="material-symbols-outlined text-[24px]">add</span>}
-            {isPending ? 'Saving...' : 'Add Product'}
+            {isPending ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-on-primary"></div> : <span className="material-symbols-outlined text-[24px]">edit</span>}
+            {isPending ? 'Saving...' : 'Edit Product'}
           </button>
         </div>
       </form>
