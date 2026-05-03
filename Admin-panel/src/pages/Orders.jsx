@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useNavigate } from 'react-router-dom'; // 👉 1. Import useNavigate
 import { useGetOrders, useUpdateOrderStatus } from '../hooks/useOrders';
 
-// The exact statuses from your backend
 const ORDER_STATUSES = [
   'All',
   'processing',
   'confirmed',
+  'packaged',
   'shipped',
   'out_for_delivery',
   'delivered',
@@ -20,14 +21,13 @@ const Orders = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
 
+  const navigate = useNavigate(); // 👉 2. Initialize navigate
   const mainRef = useRef(null);
   const rowsRef = useRef([]);
 
-  // Fetch from backend
   const { data, isLoading } = useGetOrders(page, limit, activeFilter);
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateOrderStatus();
 
-  // Extract pagination data safely
   const orders = data?.orders || [];
   const totalOrders = data?.totalOrders || 0;
   const totalPages = data?.totalPages || 1;
@@ -37,7 +37,6 @@ const Orders = () => {
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
   }, [isLoading]);
 
-  // Re-animate rows when data changes
   useEffect(() => {
     if (rowsRef.current.length > 0) {
       gsap.fromTo(
@@ -52,12 +51,11 @@ const Orders = () => {
     updateStatus({ id: orderId, status: newStatus });
   };
 
-  // Frontend search filter (Optional: You can move this to backend later if needed)
   const filteredOrders = orders.filter(order => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     const orderIdStr = order._id.toLowerCase();
-    const userNameStr = order.user?.name?.toLowerCase() || '';
+    const userNameStr = (order.user?.firstName + ' ' + order.user?.lastName)?.toLowerCase() || '';
     return orderIdStr.includes(query) || userNameStr.includes(query);
   });
 
@@ -67,12 +65,11 @@ const Orders = () => {
     }
   };
 
-  // Dynamic badge colors based on exact backend strings
   const getStatusBadgeClasses = (status) => {
     switch (status) {
       case 'processing': return 'bg-blue-100 text-blue-800';
       case 'confirmed': return 'bg-purple-100 text-purple-800';
-      case 'shipped': return 'bg-amber-100 text-amber-800';
+      case 'shipped': return 'bg-orange-100 text-orange-800';
       case 'out_for_delivery': return 'bg-orange-100 text-orange-800';
       case 'delivered': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
@@ -89,7 +86,6 @@ const Orders = () => {
 
   return (
     <main ref={mainRef} className="p-gutter md:p-margin-page max-w-container-max mx-auto w-full opacity-0 pb-20">
-      {/* Page Content */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-stack-lg gap-4">
         <div>
           <h2 className="font-heading text-headline-xl text-on-surface mb-unit">Order Management</h2>
@@ -107,7 +103,6 @@ const Orders = () => {
         </div>
       </div>
 
-      {/* 👉 Mobile-Optimized Horizontally Scrollable Filters */}
       <div className="mb-6 w-full overflow-x-auto hide-scrollbar pb-2">
         <div className="flex items-center gap-2 whitespace-nowrap min-w-max">
           {ORDER_STATUSES.map(filter => (
@@ -115,7 +110,7 @@ const Orders = () => {
               key={filter}
               onClick={() => {
                 setActiveFilter(filter);
-                setPage(1); // Reset to page 1 on filter change
+                setPage(1);
               }}
               className={`inline-flex items-center px-4 py-2 rounded-full font-label-sm text-label-sm cursor-pointer transition-colors capitalize ${activeFilter === filter ? 'bg-primary text-on-primary shadow-sm' : 'bg-surface-container text-on-surface-variant border border-outline-variant hover:bg-surface-container-high'}`}
             >
@@ -125,7 +120,6 @@ const Orders = () => {
         </div>
       </div>
 
-      {/* Orders Table */}
       <div className="bg-surface-container-lowest border border-surface-variant rounded-xl shadow-[0_4px_24px_-12px_rgba(0,0,0,0.05)] overflow-hidden">
         <div className="overflow-x-auto hide-scrollbar">
           <table className="w-full text-left border-collapse min-w-[800px]">
@@ -141,14 +135,18 @@ const Orders = () => {
             </thead>
             <tbody className="divide-y divide-surface-variant font-body-md text-body-md text-on-surface">
               {filteredOrders.map((order) => {
-                const customerName = order.user?.name || "Guest User";
+                const customerName = (order.user?.firstName + ' ' + order.user?.lastName) || "Guest User";
                 const initials = customerName.charAt(0).toUpperCase();
                 const formattedDate = new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                // Fallback to totalPrice or totalAmount depending on your schema
                 const total = order.totalPrice || order.totalAmount || 0;
 
                 return (
-                  <tr key={order._id} ref={addToRowsRef} className="hover:bg-surface-container-low/50 transition-colors">
+                  <tr
+                    key={order._id}
+                    ref={addToRowsRef}
+                    onClick={() => navigate(`/orders/${order._id}`)} // 👉 3. Added navigation click
+                    className="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" // 👉 Added cursor-pointer
+                  >
                     <td className="py-4 px-6 font-label-md text-label-md">{formatId(order._id)}</td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
@@ -157,7 +155,7 @@ const Orders = () => {
                         </div>
                         <div className="flex flex-col">
                           <span className="whitespace-nowrap font-medium">{customerName}</span>
-                          <span className="text-xs text-on-surface-variant">{order.user?.email}</span>
+                          <span className="text-xs text-on-surface-variant">{order.user?.phoneNumber}</span>
                         </div>
                       </div>
                     </td>
@@ -169,10 +167,10 @@ const Orders = () => {
                     </td>
                     <td className="py-4 px-6 font-label-md text-label-md">₹{total}</td>
                     <td className="py-4 px-6 text-right">
-                      {/* 👉 Instant Status Update Dropdown */}
                       <select
                         disabled={isUpdating}
                         value={order.orderStatus}
+                        onClick={(e) => e.stopPropagation()} // 👉 4. Stop click from triggering row navigation
                         onChange={(e) => handleStatusChange(order._id, e.target.value)}
                         className="px-3 py-2 bg-surface-container border border-outline-variant text-on-surface rounded font-label-sm text-label-sm hover:bg-surface-container-high transition-colors cursor-pointer outline-none capitalize disabled:opacity-50"
                       >
@@ -195,7 +193,6 @@ const Orders = () => {
           </table>
         </div>
 
-        {/* Database Pagination */}
         <div className="px-6 py-4 border-t border-surface-variant bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="font-body-md text-body-md text-on-surface-variant">
             Showing {totalOrders === 0 ? 0 : (page - 1) * limit + 1} to {Math.min(page * limit, totalOrders)} of {totalOrders} orders

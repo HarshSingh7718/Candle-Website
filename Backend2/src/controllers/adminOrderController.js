@@ -2,6 +2,31 @@ import {Order} from "../models/orderModel.js";
 import { sendSMS } from "../services/otp_services.js";
 import { config } from "../config/index.js";
 
+export const getSingleOrderAdmin = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate("user", "firstName lastName phoneNumber"); // Populate user details
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            order
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 export const getAllOrdersAdmin = async (req, res) => {
     try {
         let { page = 1, limit = 10, status } = req.query;
@@ -17,7 +42,7 @@ export const getAllOrdersAdmin = async (req, res) => {
         }
 
         const orders = await Order.find(query)
-            .populate("user", "name email")
+            .populate("user", "firstName lastName phoneNumber")
             .sort({ createdAt: -1 })
             .skip((page - 1) * limit)
             .limit(limit);
@@ -44,9 +69,8 @@ export const getAllOrdersAdmin = async (req, res) => {
 
 export const updateOrderStatus = async (req, res) => {
     try {
-        const { status } = req.body;
+        const { status, packaging, weight } = req.body;
 
-        // 👉 FIX: Added .populate("user") so we can get their phone number and name!
         const order = await Order.findById(req.params.id).populate("user");
 
         if (!order) {
@@ -56,9 +80,16 @@ export const updateOrderStatus = async (req, res) => {
             });
         }
 
-        order.orderStatus = status;
+        // 1. Update the main status
+        if (status) {
+            order.orderStatus = status;
+        }
 
-        // Auto update dates
+        // 👉 2. FLEXIBLE LOGIC: Always save packaging and weight if the admin provides them!
+        if (packaging) order.packaging = packaging.toLowerCase();
+        if (weight !== undefined) order.weight = Number(weight);
+
+        // 3. Auto update dates
         if (status === "shipped") {
             order.shippedAt = Date.now();
         }
@@ -72,25 +103,24 @@ export const updateOrderStatus = async (req, res) => {
         // =========================
         //  SEND MSG91 SMS NOTIFICATION
         // =========================
-        if (order.user && order.user.phoneNumber) {
-            // We use a short, clean version of the Order ID for the text message
+        // Only send SMS if the status actually changed
+        if (status && order.user && order.user.phoneNumber) {
             const shortOrderId = order._id.toString().slice(-6).toUpperCase();
 
-            // Calling our new MSG91 Flow API function
             await sendSMS(
                 order.user.phoneNumber,
-                config.msg91.orderStatusTemplateId, // Make sure to add this to your config!
+                config.msg91.orderStatusTemplateId,
                 {
                     NAME: order.user.firstName || "Customer",
                     ORDER_ID: shortOrderId,
-                    STATUS: status.toUpperCase() // e.g., "SHIPPED", "DELIVERED"
+                    STATUS: status.toUpperCase()
                 }
             );
         }
 
         res.status(200).json({
             success: true,
-            message: "Order status updated",
+            message: "Order updated successfully",
             order
         });
 

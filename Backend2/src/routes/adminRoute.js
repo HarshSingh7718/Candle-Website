@@ -10,7 +10,7 @@ import { getAllContacts, updateContactStatus } from "../controllers/adminContact
 import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin, getSingleCategoryAdmin } from "../controllers/adminCategoryController.js";
 import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
 import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
-import { getAllOrdersAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
+import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
 
 const router = express.Router();
 
@@ -105,6 +105,13 @@ router.patch(
 //  ORDER ROUTES
 // ==========================
 
+router.get(
+    "/orders/:id",
+    isAuthenticated,
+    isAdmin,
+    getSingleOrderAdmin
+);
+
 // Get all orders
 router.get(
     "/orders",
@@ -115,7 +122,7 @@ router.get(
 
 // Update order status
 router.put(
-    "/orders/:id/status",
+    "/orders/:id/update",
     isAuthenticated,
     isAdmin,
     updateOrderStatus

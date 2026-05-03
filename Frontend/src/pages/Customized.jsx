@@ -19,43 +19,45 @@ const STEPS = [
 
 export default function Customized() {
   const { addToCart } = useCart();
-  const queryClient = useQueryClient(); // 👈 1. Initialize Query Client
+  const queryClient = useQueryClient();
 
-  // API Hooks
+  // 👉 1. API Hooks (Gets both basePrice and options from one route)
   const [step, setStep] = useState(1);
-  const { data: options = [], isLoading } = useCustomizationOptions(step);
+  const { data: stepData, isLoading } = useCustomizationOptions(step);
   const createMutation = useCreateCustomCandle();
 
-  // 👇 2. Add this background Prefetching Effect
+  // Safely extract data
+  const options = stepData?.options || [];
+  const basePrice = stepData?.basePrice || 0;
+
+  // 👉 2. Background Prefetching (Anticipatory Design)
   useEffect(() => {
-    // If we are on step 1 or 2, prefetch the next step in the background!
     if (step < 3) {
       const nextStep = step + 1;
       queryClient.prefetchQuery({
         queryKey: ['customizationOptions', nextStep],
         queryFn: async () => {
           const { data } = await API.get(`/customization-options/${nextStep}`);
-          return data.options;
+          return data; // Fixed: Return the whole object so cache matches exactly!
         },
-        staleTime: 1000 * 60 * 30, // Keep in cache for 30 mins
+        staleTime: 1000 * 60 * 30, // 30 mins
       });
     }
   }, [step, queryClient]);
-  
-  // Selections State
+
+  // 👉 3. Selections State
   const [selectedVessel, setSelectedVessel] = useState(null);
   const [selectedScent, setSelectedScent] = useState(null);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [message, setMessage] = useState("");
 
-  // Dynamic Pricing (Assume base price is 24, or fetch it if needed)
-  const basePrice = 100.00;
+  // 👉 4. Dynamic Pricing Calculations
   const vesselPrice = selectedVessel?.price || 0;
   const scentPrice = selectedScent?.price || 0;
   const addOnsPrice = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
   const totalPrice = basePrice + vesselPrice + scentPrice + addOnsPrice;
 
-  // Navigation logic
+  // 👉 5. Navigation & Logic
   const canGoNext = () => {
     if (step === 1 && !selectedVessel) return false;
     if (step === 2 && !selectedScent) return false;
@@ -69,7 +71,6 @@ export default function Customized() {
 
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-  // Multi-select logic for Add-ons (Step 3)
   const toggleAddOn = (addon) => {
     setSelectedAddOns(prev => {
       const exists = prev.find(item => item._id === addon._id);
@@ -87,7 +88,6 @@ export default function Customized() {
     }
 
     try {
-      // Exact payload your backend expects!
       const customPayload = {
         vesselId: selectedVessel._id,
         scentId: selectedScent._id,
@@ -103,7 +103,7 @@ export default function Customized() {
 
       toast.success("Added your custom creation to cart!");
 
-      // Reset to step 1 so they can build another!
+      // Reset Builder
       setStep(1);
       setSelectedVessel(null);
       setSelectedScent(null);
@@ -111,7 +111,7 @@ export default function Customized() {
       setMessage("");
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create custom candle");
+      toast.error(error.response?.data?.message || "Failed to craft your candle");
     }
   };
 
@@ -144,11 +144,9 @@ export default function Customized() {
                   <div
                     key={s.n}
                     onClick={() => (s.n < step || canGoNext()) ? setStep(s.n) : null}
-                    className={`flex items-center gap-1.5 sm:gap-3 transition-all duration-300 ${step >= s.n ? 'opacity-100 cursor-pointer' : 'opacity-40'
-                      }`}
+                    className={`flex items-center gap-1.5 sm:gap-3 transition-all duration-300 ${step >= s.n ? 'opacity-100 cursor-pointer' : 'opacity-40'}`}
                   >
-                    <span className={`size-6 sm:size-8 shrink-0 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-sm transition-all duration-300 ${step >= s.n ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20' : 'bg-slate-200 text-slate-600'
-                      }`}>
+                    <span className={`size-6 sm:size-8 shrink-0 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-sm transition-all duration-300 ${step >= s.n ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20' : 'bg-slate-200 text-slate-600'}`}>
                       {s.n}
                     </span>
                     <span className={`font-bold leading-tight text-sm md:text-base hidden sm:block ${step === s.n ? 'text-slate-900' : 'text-slate-600'}`}>
@@ -166,7 +164,7 @@ export default function Customized() {
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400">
                   <Loader2 className="size-8 animate-spin mb-4 text-orange-600" />
-                  <p>Loading options...</p>
+                  <p>Loading builder...</p>
                 </div>
               ) : (
                 <>
@@ -185,8 +183,8 @@ export default function Customized() {
                             key={vessel._id}
                             onClick={() => setSelectedVessel(vessel)}
                             className={`group relative bg-white p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${selectedVessel?._id === vessel._id
-                                ? 'border-orange-600 ring-4 ring-orange-600/10 shadow-xl shadow-orange-600/5'
-                                : 'border-white hover:border-orange-200 hover:ring-4 hover:ring-orange-100/50 shadow-sm'
+                              ? 'border-orange-600 ring-4 ring-orange-600/10 shadow-xl shadow-orange-600/5'
+                              : 'border-white hover:border-orange-200 hover:ring-4 hover:ring-orange-100/50 shadow-sm'
                               }`}
                           >
                             <div className="aspect-square rounded-xl bg-slate-100 mb-4 overflow-hidden">
@@ -196,8 +194,8 @@ export default function Customized() {
                               <div>
                                 <h4 className="font-bold text-base sm:text-lg text-slate-900">{vessel.name}</h4>
                               </div>
-                              <span className={`font-bold text-sm sm:text-base transition-colors ${selectedVessel?._id === vessel._id || vessel.price > 0 ? 'text-orange-600' : 'text-slate-400'}`}>
-                                {vessel.price === 0 ? 'Included' : `+₹${vessel.price}`}
+                              <span className={`font-bold text-sm sm:text-base transition-colors ${selectedVessel?._id === vessel._id ? 'text-orange-600' : 'text-slate-500'}`}>
+                                +₹{Number(vessel.price).toFixed(2)}
                               </span>
                             </div>
                             <div className={`absolute top-6 right-6 bg-orange-600 text-white rounded-full p-1 shadow-lg ring-2 ring-white transition-all duration-300 ${selectedVessel?._id === vessel._id ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
@@ -233,7 +231,9 @@ export default function Customized() {
                               </div>
                               <div className="flex items-center justify-between w-full">
                                 <span className={`font-bold text-sm sm:text-base ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>{scent.name}</span>
-                                <span className="text-xs font-bold text-orange-600">{scent.price === 0 ? 'Included' : `+₹${scent.price}`}</span>
+                                <span className={`text-xs font-bold ${isSelected ? 'text-orange-600' : 'text-slate-500'}`}>
+                                  +₹{Number(scent.price).toFixed(2)}
+                                </span>
                               </div>
                             </button>
                           );
@@ -266,8 +266,8 @@ export default function Customized() {
                               </div>
                               <div className="flex justify-between items-center w-full">
                                 <span className={`block font-bold ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>{addon.name}</span>
-                                <span className={`text-[10px] sm:text-xs font-bold ${isSelected ? 'text-orange-600' : 'text-slate-400'}`}>
-                                  {addon.price === 0 ? 'Included' : `+₹${addon.price}`}
+                                <span className={`text-[10px] sm:text-xs font-bold ${isSelected ? 'text-orange-600' : 'text-slate-500'}`}>
+                                  +₹{Number(addon.price).toFixed(2)}
                                 </span>
                               </div>
                               {isSelected && (
@@ -282,26 +282,25 @@ export default function Customized() {
                     </section>
                   )}
 
-                  {/* STEP 4: MESSAGE */}
+                  {/* STEP 4: MESSAGE / SPECIAL INSTRUCTIONS */}
                   {step === 4 && (
                     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
                           <span className="p-2 bg-orange-100 text-orange-600 rounded-lg"><Sparkles className="size-5" /></span>
-                          Step 4: Custom Message
+                          Step 4: Special Instructions
                         </h3>
                       </div>
                       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
-                        <label className="block text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Your Label Text</label>
-                        <input
-                          type="text"
-                          maxLength={20}
+                        <label className="block text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Any special notes?</label>
+                        <textarea
+                          maxLength={100}
                           value={message}
-                          onChange={(e) => setMessage(e.target.value.toUpperCase())}
-                          className="w-full text-lg sm:text-2xl font-black p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-orange-500 focus:outline-none transition-all shadow-inner uppercase"
-                          placeholder="E.G., HAPPY BIRTHDAY"
+                          onChange={(e) => setMessage(e.target.value)}
+                          className="w-full text-base sm:text-lg p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-orange-500 focus:outline-none transition-all shadow-inner resize-none min-h-[120px]"
+                          placeholder="E.g., specific placement for add-ons, or gift instructions..."
                         />
-                        <p className="mt-4 text-slate-400 text-xs italic">* Max 20 characters.</p>
+                        <p className="mt-4 text-slate-400 text-xs italic">* Max 100 characters.</p>
                       </div>
                     </section>
                   )}
@@ -314,14 +313,14 @@ export default function Customized() {
               <button
                 onClick={prevStep}
                 disabled={step === 1}
-                className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:text-slate-900 disabled:opacity-0 transition-all"
+                className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:text-slate-900 disabled:opacity-0 transition-all cursor-pointer"
               >
                 Back
               </button>
               {step < STEPS.length ? (
                 <button
                   onClick={nextStep}
-                  className="bg-orange-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-orange-700 shadow-lg active:scale-95 transition-all"
+                  className="bg-orange-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-orange-700 shadow-lg active:scale-95 transition-all cursor-pointer"
                 >
                   Continue <ChevronRight className="size-5" />
                 </button>
@@ -335,16 +334,18 @@ export default function Customized() {
               <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-2xl border border-white">
                 <div className="space-y-6">
                   <div className="space-y-4">
+
+                    {/* Base Crafting Charge */}
                     <div className="flex justify-between items-center text-slate-500 text-sm font-medium">
-                      <span>Base Custom Candle</span>
-                      <span className="text-slate-900">₹{basePrice.toFixed(2)}</span>
+                      <span>Base Crafting Charge</span>
+                      <span className="text-slate-900 font-bold">₹{basePrice.toFixed(2)}</span>
                     </div>
 
                     {selectedVessel && (
                       <div className="flex justify-between items-center text-slate-500 text-sm font-medium">
-                        <span>{selectedVessel.name}</span>
-                        <span className={selectedVessel.price > 0 ? 'text-orange-600' : 'text-slate-900'}>
-                          {selectedVessel.price > 0 ? `+₹${selectedVessel.price.toFixed(2)}` : 'Included'}
+                        <span>Vessel: <span className="text-slate-900 font-bold">{selectedVessel.name}</span></span>
+                        <span className="text-orange-600 font-bold">
+                          +₹{selectedVessel.price.toFixed(2)}
                         </span>
                       </div>
                     )}
@@ -352,20 +353,20 @@ export default function Customized() {
                     {selectedScent && (
                       <div className="flex justify-between items-center text-slate-500 text-sm font-medium">
                         <span>Scent: <span className="text-slate-900 font-bold">{selectedScent.name}</span></span>
-                        <span className={selectedScent.price > 0 ? 'text-orange-600' : 'text-slate-900'}>
-                          {scentPrice > 0 ? `+₹${scentPrice.toFixed(2)}` : 'Included'}
+                        <span className="text-orange-600 font-bold">
+                          +₹{scentPrice.toFixed(2)}
                         </span>
                       </div>
                     )}
 
                     {selectedAddOns.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-slate-500 text-xs font-medium border-t border-slate-100 pt-2">Add-ons:</p>
+                        <p className="text-slate-500 text-xs font-bold uppercase tracking-wider border-t border-slate-100 pt-3">Add-ons:</p>
                         {selectedAddOns.map(t => (
                           <div key={t._id} className="flex justify-between items-center text-slate-500 text-sm font-medium pl-2">
                             <span className="text-slate-900 font-bold">• {t.name}</span>
-                            <span className={t.price > 0 ? 'text-orange-600' : 'text-slate-900'}>
-                              {t.price > 0 ? `+₹${t.price.toFixed(2)}` : 'Included'}
+                            <span className="text-orange-600 font-bold">
+                              +₹{t.price.toFixed(2)}
                             </span>
                           </div>
                         ))}
@@ -373,8 +374,9 @@ export default function Customized() {
                     )}
 
                     {message && (
-                      <div className="border-t border-slate-100 pt-2 text-xs font-medium text-slate-500">
-                        Label: <span className="text-slate-900 uppercase font-bold">"{message}"</span>
+                      <div className="border-t border-slate-100 pt-3 text-xs font-medium text-slate-500">
+                        <span className="font-bold uppercase tracking-wider">Instructions:</span>
+                        <p className="text-slate-900 italic mt-1 bg-slate-50 p-2 rounded">"{message}"</p>
                       </div>
                     )}
                   </div>
@@ -390,7 +392,7 @@ export default function Customized() {
                     <button
                       onClick={handleAddToCart}
                       disabled={createMutation.isPending || !selectedVessel || !selectedScent}
-                      className="w-full bg-black text-white py-4 sm:py-5 font-bold uppercase tracking-widest transition-all hover:bg-slate-800 shadow-lg text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      className="w-full bg-black text-white py-4 sm:py-5 font-bold uppercase tracking-widest transition-all hover:bg-slate-800 shadow-lg text-sm disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {createMutation.isPending ? "Crafting..." : "Add to Cart"}
                     </button>
