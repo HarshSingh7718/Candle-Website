@@ -60,7 +60,7 @@ const Banners = () => {
         </div>
         <button
           onClick={() => navigate('/banners/add')}
-          className="shrink-0 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg shadow-sm shadow-amber-900/20 transition-all flex items-center justify-center gap-2 border-b-2 border-primary-container hover:border-surface-tint cursor-pointer"
+          className="shrink-0 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg shadow-sm shadow-orange-900/20 transition-all flex items-center justify-center gap-2 border-b-2 border-primary-container hover:border-surface-tint cursor-pointer"
         >
           <span className="material-symbols-outlined text-lg">add</span>
           Add Banner
@@ -77,7 +77,7 @@ const Banners = () => {
             <article
               key={banner._id} // 👉 Use MongoDB _id
               ref={addToCardsRef}
-              className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col shadow-sm shadow-amber-900/5 group hover:shadow-md transition-shadow"
+              className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col shadow-sm shadow-orange-900/5 group hover:shadow-md transition-shadow"
             >
               {/* Preview Area */}
               <div className="w-full h-48 sm:h-64 relative bg-surface-container shrink-0 border-b border-surface-variant">

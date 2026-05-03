@@ -307,7 +307,7 @@ const ProductZoom = ({ product: inputProduct }) => {
                     className={
                       i < product.rating
                         ? "fill-[#ffb400] text-[#ffb400]"
-                        : "text-amber-400"
+                        : "text-orange-400"
                     }
                   />
                 ))}

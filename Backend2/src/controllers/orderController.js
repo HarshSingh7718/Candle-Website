@@ -84,7 +84,7 @@ export const createOrder = async (req, res) => {
                     });
                 }
 
-                //  CUSTOM CANDLE
+                // 🕯️ CUSTOM CANDLE
                 if (item.type === "custom") {
                     const candle = item.customCandle;
 
@@ -101,7 +101,15 @@ export const createOrder = async (req, res) => {
                         name: `Custom Candle (${candle.snapshot.vesselName} - ${candle.snapshot.scentName})`,
                         quantity: item.quantity,
                         price: candle.totalPrice,
-                        image: "" // optional
+                        image: "", // optional
+
+                        // 👉 FIX: ACTUALLY SAVE THE SNAPSHOT
+                        snapshot: {
+                            vesselName: candle.snapshot.vesselName,
+                            scentName: candle.snapshot.scentName,
+                            addOnNames: candle.snapshot.addOnNames || [],
+                            message: candle.message || ""
+                        }
                     });
                 }
             }

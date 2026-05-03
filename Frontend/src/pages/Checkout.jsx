@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-  ChevronDown, Search, HelpCircle, CreditCard, Truck, CheckCircle2, Lock, Plus
+  ChevronDown, Search, HelpCircle, CreditCard, Truck, CheckCircle2, Lock, Plus, Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -10,14 +10,8 @@ import PageBanner from '../components/ui/PageBanner';
 import { useCart } from '../hooks/useCart';
 import { useCheckout } from '../hooks/useCheckout';
 import { useUser } from '../hooks/useAuth';
-
-const INDIAN_STATES = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
-  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
-  "Uttarakhand", "West Bengal"
-];
+import { useAddress } from '../hooks/useAddress';
+import { usePincodeLookup } from '../hooks/usePincodeLookup';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -26,17 +20,21 @@ const Checkout = () => {
   const { cart, isLoading: isCartLoading } = useCart();
   const { createOrder, initRazorpay, verifyPayment, isPlacingOrder } = useCheckout();
 
+  // 👉 Extract addAddress AND isAdding directly from your hook!
+  const { addAddress, isAdding } = useAddress();
+  const { lookupPincode, isLookingUp, pincodeError } = usePincodeLookup();
+
   const savedAddresses = user?.addresses || [];
 
   // Form & UI States
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [showNewAddressForm, setShowNewAddressForm] = useState(savedAddresses.length === 0);
-  const [isAddressExpanded, setIsAddressExpanded] = useState(false); // <-- NEW STATE
+  const [isAddressExpanded, setIsAddressExpanded] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
 
   const [shippingAddress, setShippingAddress] = useState({
-    country: "India", firstName: "", lastName: "", address: "",
-    apartment: "", city: "", state: "Uttarakhand", pinCode: "", phone: ""
+    firstName: "", lastName: "", address: "", apartment: "",
+    city: "", state: "", pinCode: "", phone: ""
   });
 
   useEffect(() => {
@@ -66,78 +64,125 @@ const Checkout = () => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(val);
   };
 
-  const handleShippingChange = (e) => {
+  const handleShippingChange = async (e) => {
     const { name, value } = e.target;
-    setShippingAddress(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'pinCode') {
+      const val = value.replace(/\D/g, '').slice(0, 6);
+      setShippingAddress(prev => ({ ...prev, pinCode: val }));
+
+      if (val.length === 6) {
+        const locationData = await lookupPincode(val);
+        if (locationData) {
+          setShippingAddress(prev => ({
+            ...prev,
+            city: locationData.city,
+            state: locationData.state
+          }));
+        } else {
+          setShippingAddress(prev => ({ ...prev, city: '', state: '' }));
+        }
+      }
+    } else {
+      setShippingAddress(prev => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleCheckout = async () => {
+  // 👉 CLEANED UP: Save Address logic delegates toasts to the hook
+  const handleSaveAddress = async (e) => {
+    if (e) e.preventDefault();
+
+    const isMissingFields =
+      !shippingAddress.firstName?.trim() ||
+      !shippingAddress.address?.trim() ||
+      !shippingAddress.city?.trim() ||
+      !shippingAddress.state?.trim() ||
+      !shippingAddress.pinCode?.trim() ||
+      !shippingAddress.phone?.trim();
+
+    if (isMissingFields) {
+      toast.error("Please fill in all required shipping details.");
+      return;
+    }
+
+    if (shippingAddress.pinCode.trim().length !== 6) {
+      toast.error("Please enter a valid 6-digit Pincode.");
+      return;
+    }
+
+    const combinedAddress = shippingAddress.apartment?.trim()
+      ? `${shippingAddress.apartment.trim()}, ${shippingAddress.address.trim()}`
+      : shippingAddress.address.trim();
+
+    const finalAddress = {
+      firstName: shippingAddress.firstName.trim(),
+      lastName: shippingAddress.lastName.trim(),
+      address: combinedAddress,
+      city: shippingAddress.city.trim(),
+      state: shippingAddress.state.trim(),
+      pincode: shippingAddress.pinCode.trim(),
+      phone: shippingAddress.phone.trim()
+    };
+
+    try {
+      await addAddress(finalAddress);
+      // Only close/clear if it actually succeeded. Toasts are handled by useAddress hook!
+      setShowNewAddressForm(false);
+      setShippingAddress({ firstName: "", lastName: "", address: "", apartment: "", city: "", state: "", pinCode: "", phone: "" });
+    } catch (err) {
+      // Silently catch error to prevent app crash. The hook handles the error toast.
+    }
+  };
+
+  const handleCheckout = async (e) => {
+    if (e) e.preventDefault();
     if (cart.length === 0) return toast.error("Your cart is empty!");
 
-    let finalAddress = {};
-
     if (showNewAddressForm) {
-      if (!shippingAddress.firstName || !shippingAddress.address || !shippingAddress.city || !shippingAddress.pinCode || !shippingAddress.phone) {
-        return toast.error("Please fill in all required shipping details.");
-      }
-      finalAddress = {
-        ...shippingAddress,
-        pincode: shippingAddress.pinCode
-      };
-    } else {
-      const selected = savedAddresses.find(a => a._id === selectedAddressId);
-      if (!selected) return toast.error("Please select a shipping address.");
-      finalAddress = selected;
+      return toast.error("Please save your delivery address before checking out.");
+    }
+
+    const selected = savedAddresses.find(a => a._id === selectedAddressId);
+    if (!selected) {
+      return toast.error("Please select a shipping address.");
     }
 
     const orderPayload = {
-      address: finalAddress.address + (finalAddress.apartment ? `, ${finalAddress.apartment}` : ''),
-      city: finalAddress.city,
-      state: finalAddress.state,
-      pincode: finalAddress.pincode,
-      phone: finalAddress.phone,
+      address: selected.address,
+      city: selected.city,
+      state: selected.state,
+      pincode: selected.pincode,
+      phone: selected.phone,
       paymentMethod: paymentMethod === 'paytm' ? 'razorpay' : paymentMethod,
     };
 
     try {
-      // ==========================
-      // CASH ON DELIVERY FLOW
-      // ==========================
       if (paymentMethod === 'cod') {
-        // Hits your /order API
         await createOrder(orderPayload);
         toast.success("Order placed successfully!");
         navigate('/account/orders');
         return;
       }
 
-      // ==========================
-      // RAZORPAY FLOW
-      // ==========================
       if (paymentMethod === 'razorpay') {
-        // 1. Hit your /payment/create-order API
-        // 👉 FIX: Pass the full orderPayload so the backend can save the address!
         const rpResponse = await initRazorpay(orderPayload);
 
         const options = {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-          amount: rpResponse.razorpayOrder.amount, // 👉 FIX: Matches backend JSON
+          amount: rpResponse.razorpayOrder.amount,
           currency: "INR",
           name: "Naisha Creations",
           description: "Premium Candles",
-          order_id: rpResponse.razorpayOrder.id, // 👉 FIX: Matches backend JSON
+          order_id: rpResponse.razorpayOrder.id,
 
           handler: async function (response) {
             try {
-              // 2. Hit your /payment/verify API
               await verifyPayment({
-                orderId: rpResponse.orderId, // 👉 FIX: Passing the DB order ID!
+                orderId: rpResponse.orderId,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
               });
-
-              // 👉 FIX: Removed the duplicate createOrder call. verifyPayment handles everything now!
 
               toast.success("Payment successful! Order placed.");
               navigate('/account/orders');
@@ -146,10 +191,10 @@ const Checkout = () => {
             }
           },
           prefill: {
-            name: `${finalAddress.firstName} ${finalAddress.lastName || ''}`,
-            contact: finalAddress.phone,
+            name: `${selected.firstName} ${selected.lastName || ''}`,
+            contact: selected.phone,
           },
-          theme: { color: "#ea580c" } // Standardized to your orange theme
+          theme: { color: "#ea580c" }
         };
 
         const rzp = new window.Razorpay(options);
@@ -165,7 +210,6 @@ const Checkout = () => {
 
   if (isCartLoading) return <div className="py-20 text-center">Loading checkout...</div>;
 
-  // Filter addresses based on expansion state
   const displayAddresses = isAddressExpanded
     ? savedAddresses
     : savedAddresses.filter(a => a._id === selectedAddressId);
@@ -183,7 +227,7 @@ const Checkout = () => {
               {savedAddresses.length > 0 && !showNewAddressForm && !isAddressExpanded && (
                 <button
                   onClick={() => setIsAddressExpanded(true)}
-                  className="text-sm font-medium text-[#D19D94] hover:text-[#C28C83] underline transition-colors"
+                  className="text-sm font-medium text-[#D19D94] hover:text-[#C28C83] underline transition-colors cursor-pointer"
                 >
                   Change
                 </button>
@@ -199,7 +243,7 @@ const Checkout = () => {
                       key={addr._id}
                       onClick={() => {
                         setSelectedAddressId(addr._id);
-                        setIsAddressExpanded(false); // Auto-collapse on selection!
+                        setIsAddressExpanded(false);
                       }}
                       className={`p-4 border rounded-md cursor-pointer transition-all ${selectedAddressId === addr._id ? 'border-stone-800 bg-stone-50' : 'border-gray-200 hover:border-gray-300'}`}
                     >
@@ -224,7 +268,7 @@ const Checkout = () => {
                 {isAddressExpanded && (
                   <button
                     onClick={() => setShowNewAddressForm(true)}
-                    className="text-sm font-medium text-[#D19D94] hover:text-[#C28C83] flex items-center gap-1 mt-4 transition-colors"
+                    className="text-sm font-medium text-[#D19D94] hover:text-[#C28C83] flex items-center gap-1 mt-4 transition-colors cursor-pointer"
                   >
                     <Plus size={16} /> Add a new address
                   </button>
@@ -238,9 +282,9 @@ const Checkout = () => {
                     <button
                       onClick={() => {
                         setShowNewAddressForm(false);
-                        setIsAddressExpanded(true); // Return to list view
+                        setIsAddressExpanded(true);
                       }}
-                      className="text-sm text-gray-500 hover:text-stone-800 underline transition-colors"
+                      className="text-sm text-gray-500 hover:text-stone-800 underline transition-colors cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -254,19 +298,54 @@ const Checkout = () => {
                   <input type="text" name="address" placeholder="Address" value={shippingAddress.address} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
                 </div>
                 <input type="text" name="apartment" placeholder="Apartment, suite, etc. (optional)" value={shippingAddress.apartment} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <input type="text" name="city" placeholder="City" value={shippingAddress.city} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
                   <div className="relative">
-                    <label className="absolute left-3 top-1.5 text-[11px] text-gray-500 font-medium">State</label>
-                    <select name="state" value={shippingAddress.state} onChange={handleShippingChange} className="w-full pt-6 pb-2 px-3 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-stone-400 bg-white">
-                      {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-5 text-gray-400 w-4 h-4 pointer-events-none" />
+                    <input
+                      type="text"
+                      name="pinCode"
+                      placeholder="PIN code"
+                      value={shippingAddress.pinCode}
+                      onChange={handleShippingChange}
+                      className={`w-full p-3.5 border rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400 ${pincodeError ? 'border-red-300' : 'border-gray-300'}`}
+                    />
+                    {isLookingUp && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <Loader2 className="w-5 h-5 animate-spin text-[#D19D94]" />
+                      </div>
+                    )}
                   </div>
-                  <input type="text" name="pinCode" placeholder="PIN code" value={shippingAddress.pinCode} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                  <input type="text" name="city" placeholder="City" value={shippingAddress.city} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                  <input type="text" name="state" placeholder="State" value={shippingAddress.state} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
                 </div>
-                <div className="relative">
+                {pincodeError && <p className="text-red-500 text-xs mt-1">{pincodeError}</p>}
+
+                <div className="relative mt-4">
                   <input type="text" name="phone" placeholder="Phone" value={shippingAddress.phone} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
+                </div>
+
+                {/* 👉 Save Address Button using isAdding from hook */}
+                <div className="flex gap-4 mt-6 pt-4 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={handleSaveAddress}
+                    disabled={isAdding}
+                    className="px-6 py-3 bg-stone-800 hover:bg-stone-900 disabled:bg-stone-400 text-white font-medium rounded-md transition-colors cursor-pointer"
+                  >
+                    {isAdding ? "Saving..." : "Save Address"}
+                  </button>
+                  {savedAddresses.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowNewAddressForm(false);
+                        setIsAddressExpanded(true);
+                      }}
+                      className="px-6 py-3 border border-gray-300 text-gray-600 hover:bg-gray-50 font-medium rounded-md transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -278,7 +357,6 @@ const Checkout = () => {
             <p className="text-sm text-gray-500 mb-4">All transactions are secure and encrypted.</p>
 
             <div className="border border-gray-200 rounded-md overflow-hidden">
-              {/* Razorpay Option */}
               <div className={`p-4 cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'bg-stone-50' : 'bg-white'}`} onClick={() => setPaymentMethod('razorpay')}>
                 <div className="flex items-center space-x-3">
                   <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${paymentMethod === 'razorpay' ? 'border-stone-800' : 'border-gray-300'}`}>
@@ -295,7 +373,6 @@ const Checkout = () => {
                 )}
               </div>
 
-              {/* COD Option */}
               <div className={`p-4 border-t border-gray-200 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'bg-stone-50' : 'bg-white'}`} onClick={() => setPaymentMethod('cod')}>
                 <div className="flex items-center space-x-3">
                   <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${paymentMethod === 'cod' ? 'border-stone-800' : 'border-gray-300'}`}>
@@ -309,9 +386,10 @@ const Checkout = () => {
 
           {/* Pay Now Button */}
           <button
-            disabled={isPlacingOrder || cart.length === 0}
+            type="button"
+            disabled={isPlacingOrder || cart.length === 0 || showNewAddressForm}
             onClick={handleCheckout}
-            className="w-full py-4 bg-[#D19D94] hover:bg-[#C28C83] disabled:bg-gray-300 text-white font-semibold rounded-md transition-colors text-lg shadow-sm cursor-pointer"
+            className="w-full py-4 bg-[#D19D94] hover:bg-[#C28C83] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-md transition-colors text-lg shadow-sm cursor-pointer"
           >
             {isPlacingOrder ? "Processing..." : (paymentMethod === 'cod' ? "Place Order" : "Pay Now")}
           </button>

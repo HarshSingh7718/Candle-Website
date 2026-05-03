@@ -107,7 +107,7 @@ const AddBanner = () => {
         </div>
 
         {/* Main Form Area */}
-        <div className="flex-1 bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-surface-container shadow-sm shadow-amber-900/5">
+        <div className="flex-1 bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-surface-container shadow-sm shadow-orange-900/5">
           <form onSubmit={handleSubmit} className="space-y-10">
 
             {/* Banner Image Upload */}
@@ -199,7 +199,7 @@ const AddBanner = () => {
               <button
                 type="submit"
                 disabled={!title || !imageFile || isPending}
-                className="w-full sm:w-auto px-8 py-3.5 bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm shadow-amber-900/20 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3.5 bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm shadow-orange-900/20 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               >
                 {/* Show a spinner or icon based on state */}
                 {isPending ? (

@@ -25,6 +25,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import { Toaster } from 'react-hot-toast';
+import OrderDetails from './pages/OrderDetails';
+
 
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 
@@ -61,6 +63,7 @@ function App() {
                       <Route path="/banners" element={<Banners />} />
                       <Route path="/banners/add" element={<AddBanner />} />
                       <Route path="/banners/edit/:id" element={<EditBanner />} />
+                      <Route path="/orders/:id" element={<OrderDetails />} />
                       <Route path="/options" element={<Options />} />
                       <Route path="/options/add" element={<AddOption />} />
                       <Route path="/options/edit/:id" element={<EditOption />} />

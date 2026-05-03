@@ -28,10 +28,10 @@ const orderItemSchema = new mongoose.Schema({
 
     //  SNAPSHOT FOR CUSTOM (VERY IMPORTANT)
     snapshot: {
+        vesselName: String,
         scentName: String,
-        colorName: String,
-        sizeName: String,
-        addOnNames: [String]
+        addOnNames: [String],
+        message: String
     }
 
 });
@@ -66,7 +66,7 @@ const orderSchema = new mongoose.Schema({
     //  Payment
     paymentStatus: {
         type: String,
-        enum: ["pending", "paid", "failed", "refunded"], //  added refunded
+        enum: ["pending", "paid", "failed"], //  added refunded
         default: "pending"
     },
 
@@ -89,15 +89,22 @@ const orderSchema = new mongoose.Schema({
         enum: [
             "processing",
             "confirmed",
+            "packaged",
             "shipped",
             "out_for_delivery",
             "delivered",
-            "cancelled",
-            "returned"
+            "cancelled"
         ],
         default: "processing"
     },
-
+    packaging:{
+        type: String,
+        enum:["small", "medium", "large"],
+    },
+    weight:{
+        type: Number,
+        default: 0
+    },
     //  Tracking
     trackingId: String,
     awbCode: String,

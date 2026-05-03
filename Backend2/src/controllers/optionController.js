@@ -4,7 +4,6 @@ export const getOptionsByStep = async (req, res) => {
     try {
         const { step } = req.params;
 
-        // Step 4 is no longer here since it's a pure text input on the frontend
         const stepMap = {
             1: "vessel",
             2: "scent",
@@ -48,6 +47,7 @@ export const getOptionsByStep = async (req, res) => {
             success: true,
             step,
             type,
+            basePrice: customization.basePrice, // 👉 ADDED HERE
             options
         });
 

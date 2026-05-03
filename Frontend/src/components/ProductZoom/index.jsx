@@ -95,7 +95,7 @@ const ProductZoom = ({ product }) => {
             <div className="flex items-center">
               <div className="flex mr-1.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} className={i < product.ratings ? "fill-[#ffb400] text-[#ffb400]" : "text-amber-400"} />
+                  <Star key={i} size={14} className={i < product.ratings ? "fill-[#ffb400] text-[#ffb400]" : "text-orange-400"} />
                 ))}
               </div>
               <span className="text-gray-400 text-xs">Review ({product.reviews?.length || 0})</span>

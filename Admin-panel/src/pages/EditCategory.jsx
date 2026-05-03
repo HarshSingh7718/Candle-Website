@@ -84,7 +84,7 @@ const EditCategory = () => {
         </div>
 
         {/* Main Form Area */}
-        <div className="flex-1 bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-surface-container shadow-sm shadow-amber-900/5">
+        <div className="flex-1 bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-surface-container shadow-sm shadow-orange-900/5">
           <form onSubmit={handleSubmit} className="space-y-10">
 
             {/* Image Upload */}
@@ -122,7 +122,7 @@ const EditCategory = () => {
             {/* Actions */}
             <div className="pt-6 flex items-center justify-end gap-4 border-t border-surface-container border-dashed">
               <button type="button" onClick={() => navigate('/categories')} disabled={isPending} className="w-full sm:w-auto px-8 py-3.5 border border-surface-variant text-on-surface-variant font-label-md rounded-xl hover:bg-surface-container hover:text-on-surface transition-all active:scale-95 disabled:opacity-50 cursor-pointer">Cancel</button>
-              <button type="submit" disabled={!name || isPending} className="w-full sm:w-auto px-8 py-3.5 bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm shadow-amber-900/20 active:scale-95 disabled:opacity-50 cursor-pointer">
+              <button type="submit" disabled={!name || isPending} className="w-full sm:w-auto px-8 py-3.5 bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm shadow-orange-900/20 active:scale-95 disabled:opacity-50 cursor-pointer">
                 {isPending ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-on-primary"></div> : <span className="material-symbols-outlined text-[20px]">save</span>}
                 {isPending ? 'Saving...' : 'Save Changes'}
               </button>

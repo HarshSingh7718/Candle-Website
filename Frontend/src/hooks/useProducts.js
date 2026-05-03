@@ -47,7 +47,7 @@ export const useCustomizationOptions = (step) => {
       if (step === 4) return [];
 
       const { data } = await API.get(`/customization-options/${step}`);
-      return data.options;
+      return data;
     },
     // Only trigger the API call if we are on steps 1, 2, or 3
     enabled: step >= 1 && step <= 3,
