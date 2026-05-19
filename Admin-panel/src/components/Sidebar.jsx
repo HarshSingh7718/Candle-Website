@@ -56,7 +56,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         className={`bg-stone-50 dark:bg-black text-orange-700 dark:text-orange-500 font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-stone-200 dark:border-stone-800 shadow-[4px_0_24px_-12px_rgba(217,119,6,0.15)] flex-col py-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
         <div className="px-6 mb-8 mt-2 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-surface-container overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
+          <div className="w-7 md:w-10  h-7 md:h-10 rounded-full bg-surface-container overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
             <img
               alt="Store Logo"
               className="w-full h-full object-cover"
@@ -64,10 +64,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             />
           </div>
           <div>
-            <h1 className="font-heading text-lg font-bold text-stone-800 dark:text-stone-100 leading-tight">
+            <h1 className="font-heading text-sm md:text-lg font-bold text-stone-800 dark:text-stone-100 leading-tight">
               Naisha Admin
             </h1>
-            <p className="text-[11px] font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase">
+            <p className="text-[8px] md:text-[11px] font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase">
               Premium Candles
             </p>
           </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 // Using inline SVG to resolve lucide-react version compatibility issues
 const InstagramIcon = ({ className, strokeWidth = 2, ...props }) => (
@@ -21,21 +21,56 @@ const InstagramIcon = ({ className, strokeWidth = 2, ...props }) => (
   </svg>
 );
 
-// Sample image data - candle/lifestyle images for the website
+// Updated image data with both the photo URL and the original Instagram post URL
 const instagramImages = [
-  { id: 1, url: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=400&h=400' },
-  { id: 2, url: 'https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800' },
-  { id: 3, url: 'https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800' },
-  { id: 4, url: 'https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800' },
-  { id: 5, url: 'https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800' },
-  { id: 6, url: 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&q=80&w=400&h=400' },
+  {
+    id: 1,
+    photoUrl: "/post-Image1.jpg", // Local image for better performance
+    postUrl: "https://www.instagram.com/p/DXMjBMUjIoz/?igsh=djAxdjMyeHA1bjh1", // Replace with actual IG post link
+  },
+  {
+    id: 2,
+    photoUrl: "/post-Image2.jpg",
+    postUrl:
+      "https://www.instagram.com/reel/DYHq7D2sckf/?igsh=MWFjbTM4aHJnd2NoNQ==",
+  },
+  {
+    id: 3,
+    photoUrl: "/post-Image3.jpg",
+    postUrl:
+      "https://www.instagram.com/p/DYRTj5mk67t/?img_index=6&igsh=aGx5bG9wMG0xeHpn",
+  },
+  {
+    id: 4,
+    photoUrl: "/post-Image4.jpg",
+    postUrl:
+      "https://www.instagram.com/reel/DXHLHc2E_su/?igsh=MTkxaWpwaGp0OW1mbA==",
+  },
+  {
+    id: 5,
+    photoUrl: "/post-Image5.jpg",
+    postUrl:
+      "https://www.instagram.com/reel/DPc3XfqE0yT/?igsh=cWdtd25xNWhiYXpx",
+  },
+  {
+    id: 6,
+    photoUrl: "/post-Image6.jpg",
+    postUrl:
+      "https://www.instagram.com/reel/DXOJ0vPkyWJ/?igsh=MTdtbjYzMDYxcTkwMw==",
+  },
 ];
 
-const InstagramItem = ({ imageUrl }) => {
+// Changed from <div> to <a> to make the whole item a clickable link
+const InstagramItem = ({ photoUrl, postUrl }) => {
   return (
-    <div className="relative group overflow-hidden rounded-md cursor-pointer aspect-square">
+    <a
+      href={postUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative group overflow-hidden rounded-md cursor-pointer aspect-square block"
+    >
       <img
-        src={imageUrl}
+        src={photoUrl}
         alt="Instagram post"
         loading="lazy"
         className="w-full h-full object-cover transition-transform duration-500"
@@ -47,7 +82,7 @@ const InstagramItem = ({ imageUrl }) => {
           strokeWidth={1.5}
         />
       </div>
-    </div>
+    </a>
   );
 };
 
@@ -57,14 +92,23 @@ const Instagram = () => {
       <div className="w-full">
         {/* Header */}
         <div className="flex items-center justify-center gap-3 mb-5">
-          <h2 className="text-3xl md:text-4xl font-serif text-[#222]">Follow Our Journey</h2>
-          <InstagramIcon className="w-8 h-8 md:w-10 md:h-10 text-[#222]" strokeWidth={1.5} />
+          <h2 className="text-3xl md:text-4xl font-serif text-[#222]">
+            Follow Our Journey
+          </h2>
+          <InstagramIcon
+            className="w-8 h-8 md:w-10 md:h-10 text-[#222]"
+            strokeWidth={1.5}
+          />
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {instagramImages.map((img) => (
-            <InstagramItem key={img.id} imageUrl={img.url} />
+            <InstagramItem
+              key={img.id}
+              photoUrl={img.photoUrl}
+              postUrl={img.postUrl}
+            />
           ))}
         </div>
       </div>

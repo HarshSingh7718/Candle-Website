@@ -10,7 +10,8 @@ import "swiper/css/effect-fade";
 
 import MainBtn from "../ui/Buttons/MainBtn";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useHomeData } from '../../hooks/useHomeData';
+import { useHomeData } from "../../hooks/useHomeData";
+import Loader from "../ui/Loader";
 
 function Hero() {
   const { data: homeData, isLoading } = useHomeData();
@@ -23,7 +24,7 @@ function Hero() {
     setTimeout(() => {
       if (!heroRef.current) return;
 
-      const activeSlide = heroRef.current.querySelector('.swiper-slide-active');
+      const activeSlide = heroRef.current.querySelector(".swiper-slide-active");
       if (!activeSlide) return;
 
       gsap.fromTo(
@@ -42,9 +43,10 @@ function Hero() {
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-stone-50">
-        <div className="animate-pulse font-serif italic text-2xl text-stone-400">
-          Loading Aura...
-        </div>
+        {/* <div className="animate-pulse font-serif italic text-2xl text-stone-400">
+          Loading...
+        </div> */}
+        <Loader />
       </div>
     );
   }
@@ -73,22 +75,33 @@ function Hero() {
         {banners.map((banner) => (
           <SwiperSlide key={banner._id}>
             <div
-              className="min-h-screen w-full flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center transition-transform duration-1000"
+              className="min-h-[67vh] px-[4%] md:px-[8%] xl:px-[12%] py-[8%] xl:py-
+        [12%] md:min-h-screen w-full flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center transition-transform duration-1000"
               style={{
-                backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${banner.image?.url})`
+                backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${banner.image?.url})`,
               }}
             >
               <div className="hero-content text-white text-center px-6">
-                <h1 className="hero-title text-5xl md:text-7xl lg:text-8xl font-bold pb-5 tracking-tight">
+                <h1
+                  className="hero-title text-4xl sm:text-4xl md:text-6xl
+    lg:text-7xl xl:text-8xl font-bold pb-5 tracking-tight"
+                >
                   {banner.title || "Premium Candles"}
                 </h1>
 
-                <p className="hero-p max-w-2xl mx-auto pb-10 text-gray-100 font-light text-lg md:text-xl leading-relaxed">
-                  {banner.subtitle || "Experience luxury candles crafted with care."}
+                <p
+                  className="hero-p  max-w-4xl mx-auto pb-14 lg:pb-18
+    text-gray-50 font-light text-sm lg:text-lg"
+                >
+                  {banner.subtitle ||
+                    "Experience luxury candles crafted with care."}
                 </p>
 
                 <div className="hero-title">
-                  <MainBtn text="Explore Collection" path="/collections/candles" />
+                  <MainBtn
+                    text="Explore Collection"
+                    path="/collections/candles"
+                  />
                 </div>
               </div>
             </div>

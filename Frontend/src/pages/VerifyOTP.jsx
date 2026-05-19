@@ -1,148 +1,179 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import API from '../api';
-import { useAuthActions, useRegister } from '../hooks/useAuth';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import API from "../api";
+import { useAuthActions, useRegister } from "../hooks/useAuth";
 
 const VerifyOTP = () => {
-    const [otp, setOtp] = useState(new Array(6).fill(""));
-    const location = useLocation();
-    const navigate = useNavigate();
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    // Pull in our mutations
-    const { verifyOtp, isVerifying } = useAuthActions();
-    const { registerUser, isPending: isRegistering } = useRegister();
+  // Pull in our mutations
+  const { verifyOtp, isVerifying } = useAuthActions();
+  const { registerUser, isPending: isRegistering } = useRegister();
 
-    // Determine the Mode
-    // 1. Registration Mode (has registrationData)
-    // 2. Forgot Password Mode (has just phone)
-    const registrationData = location.state?.registrationData;
-    const resetPhone = location.state?.phoneNumber;
+  // Determine the Mode
+  // 1. Registration Mode (has registrationData)
+  // 2. Forgot Password Mode (has just phone)
+  const registrationData = location.state?.registrationData;
+  const resetPhone = location.state?.phoneNumber;
 
-    const isResetMode = !!resetPhone && !registrationData;
-    const phoneNumber = isResetMode ? resetPhone : (registrationData?.phoneNumber || "");
+  const isResetMode = !!resetPhone && !registrationData;
+  const phoneNumber = isResetMode
+    ? resetPhone
+    : registrationData?.phoneNumber || "";
 
-    useEffect(() => {
-        if (!registrationData && !resetPhone) {
-            toast.error("Session expired. Please try again.");
-            navigate('/signin');
-        }
-    }, [registrationData, resetPhone, navigate]);
+  useEffect(() => {
+    if (!registrationData && !resetPhone) {
+      toast.error("Session expired. Please try again.");
+      navigate("/signin");
+    }
+  }, [registrationData, resetPhone, navigate]);
 
-    const handleChange = (element, index) => {
-        if (isNaN(element.value)) return false;
-        setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+  const handleChange = (element, index) => {
+    if (isNaN(element.value)) return false;
+    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
 
-        if (element.nextSibling && element.value !== "") {
-            element.nextSibling.focus();
-        }
-    };
+    if (element.nextSibling && element.value !== "") {
+      element.nextSibling.focus();
+    }
+  };
 
-    const handleResendOtp = async () => {
-        try {
-            const endpoint = isResetMode ? "/auth/user/forgot-password" : "/auth/user/send-otp";
-            await API.post(endpoint, { phoneNumber });
-            toast.success("OTP resent successfully!");
-        } catch (error) {
-            toast.error("Failed to resend OTP");
-        }
-    };
+  const handleResendOtp = async () => {
+    try {
+      const endpoint = isResetMode
+        ? "/auth/user/forgot-password"
+        : "/auth/user/send-otp";
+      await API.post(endpoint, { phoneNumber });
+      toast.success("OTP resent successfully!");
+    } catch (error) {
+      toast.error("Failed to resend OTP");
+    }
+  };
 
-    const handleVerify = async (e) => {
-        e.preventDefault();
-        const code = otp.join("");
-        if (code.length !== 6) return toast.error("Please enter 6 digits");
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    const code = otp.join("");
+    if (code.length !== 6) return toast.error("Please enter 6 digits");
 
-        try {
-            if (isResetMode) {
-                // --- FORGOT PASSWORD FLOW ---
-                await verifyOtp({ phoneNumber, otp: code });
-                navigate('/reset-password', { state: { phoneNumber, otp: code } });
-            } else {
-                // --- REGISTRATION FLOW ---
-                await registerUser({
-                    otp: code,
-                    ...registrationData // Sends firstName, lastName, phone, password, etc.
-                });
+    try {
+      if (isResetMode) {
+        // --- FORGOT PASSWORD FLOW ---
+        await verifyOtp({ phoneNumber, otp: code });
+        navigate("/reset-password", { state: { phoneNumber, otp: code } });
+      } else {
+        // --- REGISTRATION FLOW ---
+        await registerUser({
+          otp: code,
+          ...registrationData, // Sends firstName, lastName, phone, password, etc.
+        });
 
-                // Hook handles the login state cache, just redirect to dashboard!
-                navigate('/');
-            }
-        } catch (error) {
-            // We catch the error here just to prevent the navigate() from running,
-            // but the toast notification is already handled gracefully by the hooks!
-            console.error("Verification error:", error);
-        }
-    };
+        // Hook handles the login state cache, just redirect to dashboard!
+        navigate("/");
+      }
+    } catch (error) {
+      // We catch the error here just to prevent the navigate() from running,
+      // but the toast notification is already handled gracefully by the hooks!
+      console.error("Verification error:", error);
+    }
+  };
 
-    // Combine loading states so the button disables appropriately
-    const isProcessing = isVerifying || isRegistering;
+  // Combine loading states so the button disables appropriately
+  const isProcessing = isVerifying || isRegistering;
 
-    return (
-        <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
-            {/* Left Side */}
-            <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000" alt="Candle" className="absolute inset-0 w-full h-full object-cover opacity-60" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <div className="absolute inset-x-14 bottom-20 text-white z-10 text-left">
-                    <Link to="/" className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
-                        <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center font-bold text-sm tracking-wider border border-white/30">nc</div>
-                        <span className="text-xl font-bold tracking-wide">Naisha Creations</span>
-                    </Link>
-                    <h1 className="text-[2rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif">Illuminate Your<br />Space with Soul.</h1>
-                </div>
+  return (
+    <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
+      {/* Left Side */}
+      <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000"
+          alt="Candle"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div className="absolute inset-x-14 bottom-20 text-white z-10 text-left">
+          <Link
+            to="/"
+            className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center font-bold text-sm tracking-wider border border-white/30">
+              nc
             </div>
-
-            {/* Right Side */}
-            <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 bg-[#fafafa]">
-                <div className="w-full max-w-[420px]">
-                    <header className='text-center mb-10'>
-                        <h2 className='text-[32px] font-bold text-[#111827] tracking-tight mb-2'>Verify OTP</h2>
-                        <p className='text-gray-500 text-[15px]'>
-                            Enter the 6-digit code sent to <br />
-                            <span className="font-semibold text-gray-700">+91 {phoneNumber}</span>
-                        </p>
-                    </header>
-
-                    <form className='space-y-8' onSubmit={handleVerify}>
-                        <div className="flex justify-center gap-2 md:gap-4">
-                            {otp.map((data, index) => (
-                                <input
-                                    className="w-12 h-12 md:w-16 md:h-16 bg-white border border-gray-200 rounded-[16px] text-center text-2xl font-bold text-gray-800 focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] outline-none transition-all shadow-sm"
-                                    type="text"
-                                    maxLength="1"
-                                    key={index}
-                                    value={data}
-                                    onChange={e => handleChange(e.target, index)}
-                                    onFocus={e => e.target.select()}
-                                    onKeyDown={e => {
-                                        if (e.key === 'Backspace' && !data && e.target.previousSibling) {
-                                            e.target.previousSibling.focus();
-                                        }
-                                    }}
-                                />
-                            ))}
-                        </div>
-
-                        <div className="text-center text-[13px] text-gray-500">
-                            Didn't receive the code? {" "}
-                            <button type="button" onClick={handleResendOtp} className="text-[#ea580c] font-bold hover:underline cursor-pointer">
-                                Resend OTP
-                            </button>
-                        </div>
-
-                        <button
-                            disabled={isProcessing}
-                            type="submit"
-                            className='w-full py-3 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none'
-                        >
-                            {isProcessing ? "Verifying..." : "Verify and Proceed"}
-                        </button>
-                    </form>
-                </div>
-            </div>
+            <span className="text-xl font-bold tracking-wide">
+              Naisha Creations
+            </span>
+          </Link>
+          <h1 className="text-[2rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif">
+            Illuminate Your
+            <br />
+            Space with Soul.
+          </h1>
         </div>
-    );
+      </div>
+
+      {/* Right Side */}
+      <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 bg-[#fafafa]">
+        <div className="w-full max-w-[420px]">
+          <header className="text-center mb-10">
+            <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
+              Verify OTP
+            </h2>
+            <p className="text-gray-500 text-[15px]">
+              Enter the 6-digit code sent to <br />
+              <span className="font-semibold text-gray-700">
+                +91 {phoneNumber}
+              </span>
+            </p>
+          </header>
+
+          <form className="space-y-8" onSubmit={handleVerify}>
+            <div className="flex justify-center gap-2 md:gap-4">
+              {otp.map((data, index) => (
+                <input
+                  className="w-12 h-12 md:w-16 md:h-16 bg-white border border-gray-200 rounded-[16px] text-center text-2xl font-bold text-gray-800 focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] outline-none transition-all shadow-sm"
+                  type="text"
+                  maxLength="1"
+                  key={index}
+                  value={data}
+                  onChange={(e) => handleChange(e.target, index)}
+                  onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === "Backspace" &&
+                      !data &&
+                      e.target.previousSibling
+                    ) {
+                      e.target.previousSibling.focus();
+                    }
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className="text-center text-[13px] text-gray-500">
+              Didn't receive the code?{" "}
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                className="text-[#ea580c] font-bold hover:underline cursor-pointer"
+              >
+                Resend OTP
+              </button>
+            </div>
+
+            <button
+              disabled={isProcessing}
+              type="submit"
+              className="w-full py-3 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none"
+            >
+              {isProcessing ? "Verifying..." : "Verify and Proceed"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default VerifyOTP;

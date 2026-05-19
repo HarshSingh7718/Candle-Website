@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 
 import ProductCard from "../components/ui/Cards/ProductCard";
 import PageBanner from "../components/ui/PageBanner";
+import Loader from "../components/ui/Loader";
 import { useProducts } from "../hooks/useProducts"; // Updated hook
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Candles = () => {
   const [searchParams] = useSearchParams();
   const querySearch = searchParams.get("search") || "";
-  
+
   // 1. TanStack Query Hook
   const { data: allProducts = [], isLoading } = useProducts();
 
@@ -43,7 +44,7 @@ const Candles = () => {
       const matchesSearch = product.name
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase());
-      
+
       // Match category name from the backend category object
       const matchesCategory =
         selectedCategory === "All" ||
@@ -54,7 +55,7 @@ const Candles = () => {
 
       // Handle tags (logic depends on your backend schema, usually isFeatured or type)
       const matchesTag =
-        selectedTag === "All" || 
+        selectedTag === "All" ||
         (selectedTag === "Discount" && product.discountPrice > 0) ||
         product.type === selectedTag.toLowerCase();
 
@@ -63,9 +64,13 @@ const Candles = () => {
 
     // Sorting Logic
     if (sortOption === "low-to-high") {
-      filtered.sort((a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price));
+      filtered.sort(
+        (a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price)
+      );
     } else if (sortOption === "high-to-low") {
-      filtered.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
+      filtered.sort(
+        (a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price)
+      );
     } else if (sortOption === "popularity") {
       filtered.sort((a, b) => b.ratings - a.ratings);
     } else if (sortOption === "latest") {
@@ -74,11 +79,21 @@ const Candles = () => {
 
     setProducts(filtered);
     setCurrentPage(1);
-  }, [allProducts, searchTerm, selectedCategory, sortOption, priceRange, selectedTag]);
+  }, [
+    allProducts,
+    searchTerm,
+    selectedCategory,
+    sortOption,
+    priceRange,
+    selectedTag,
+  ]);
 
   const indexOfLastProduct = currentPage * productPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
   const totalPages = Math.ceil(products.length / productPerPage);
 
   const handlePageChange = (pageNumber) => {
@@ -97,12 +112,27 @@ const Candles = () => {
       const boxes = q(".sidebar-box");
       boxes.forEach((box) => {
         gsap.from(box.querySelector(".sidebar-title"), {
-          x: 30, opacity: 0, duration: 0.6, ease: "power3.out",
-          scrollTrigger: { trigger: box, start: "top 85%", toggleActions: "play none none reverse" },
+          x: 30,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: box,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
         });
         gsap.from(box.querySelector(".sidebar-content"), {
-          y: 30, opacity: 0, duration: 0.6, delay: 0.2, ease: "power3.out",
-          scrollTrigger: { trigger: box, start: "top 85%", toggleActions: "play none none reverse" },
+          y: 30,
+          opacity: 0,
+          duration: 0.6,
+          delay: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: box,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
         });
       });
     }, sidebarRef);
@@ -114,18 +144,33 @@ const Candles = () => {
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(mainRef);
       gsap.from(q(".top-bar"), {
-        y: -40, opacity: 0, duration: 0.6, ease: "power3.out",
-        scrollTrigger: { trigger: q(".top-bar"), start: "top 85%", toggleActions: "play none none reverse" },
+        y: -40,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: q(".top-bar"),
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
       });
       gsap.from(q(".product-grid > *"), {
-        y: 60, opacity: 0, duration: 0.7, stagger: 0.15, ease: "power3.out",
-        scrollTrigger: { trigger: q(".product-grid"), start: "top 85%", toggleActions: "play none none reverse" },
+        y: 60,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: q(".product-grid"),
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
       });
     }, mainRef);
     return () => ctx.revert();
   }, [currentProducts, isLoading]);
 
-  if (isLoading) return <div className="py-20 text-center font-serif italic">Loading Collection...</div>;
+  if (isLoading) return <Loader />;
 
   return (
     <>
@@ -133,12 +178,16 @@ const Candles = () => {
       <div className="bg-light-yellow">
         <div className="container mx-auto px-4 py-[8%]">
           <div className="flex flex-col lg:flex-row gap-8">
-            
             {/* sidebar */}
-            <aside ref={sidebarRef} className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1">
+            <aside
+              ref={sidebarRef}
+              className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1"
+            >
               {/* Search */}
               <div className="bg-white p-6 rounded-sm shadow-sm sidebar-box">
-                <h3 className="text-xl font-medium mb-4 sidebar-title">Search</h3>
+                <h3 className="text-xl font-medium mb-4 sidebar-title">
+                  Search
+                </h3>
                 <div className="relative sidebar-content">
                   <input
                     type="text"
@@ -147,13 +196,18 @@ const Candles = () => {
                     className="w-full border p-2 pl-10 rounded-md outline-none focus:border-primary"
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                  <Search
+                    className="absolute left-3 top-2.5 text-gray-400"
+                    size={18}
+                  />
                 </div>
               </div>
 
               {/* Price filter */}
               <div className="bg-white hidden md:block p-6 rounded-sm shadow-sm sidebar-box">
-                <h3 className="text-xl font-medium mb-4 sidebar-title">Filter By Price</h3>
+                <h3 className="text-xl font-medium mb-4 sidebar-title">
+                  Filter By Price
+                </h3>
                 <div className="sidebar-content">
                   <input
                     type="range"
@@ -190,7 +244,8 @@ const Candles = () => {
               <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
                 <p className="text-gray-500 italic">
                   Showing {products.length > 0 ? indexOfFirstProduct + 1 : 0}-
-                  {Math.min(indexOfLastProduct, products.length)} of {products.length} results
+                  {Math.min(indexOfLastProduct, products.length)} of{" "}
+                  {products.length} results
                 </p>
               </div>
 
@@ -224,7 +279,9 @@ const Candles = () => {
               ) : (
                 <div className="text-center py-20 bg-white rounded-xl shadow-inner empty-state">
                   <Filter className="mx-auto text-gray-300 mb-4" size={48} />
-                  <h3 className="text-xl font-medium text-gray-500">No Product match your filters.</h3>
+                  <h3 className="text-xl font-medium text-gray-500">
+                    No Product match your filters.
+                  </h3>
                 </div>
               )}
             </main>
