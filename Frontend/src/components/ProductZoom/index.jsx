@@ -116,14 +116,14 @@ const ProductZoom = ({ product }) => {
               <div className="flex items-center border border-black h-14 bg-white">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-5 h-full hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="px-4 h-full hover:bg-gray-50 cursor-pointer transition-colors"
                 >
                   <Minus size={16} />
                 </button>
                 <span className="w-12 text-center font-bold text-lg">{qty}</span>
                 <button
                   onClick={() => setQty(qty + 1)}
-                  className="px-5 h-full hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="px-4 h-full hover:bg-gray-50 cursor-pointer transition-colors"
                 >
                   <Plus size={16} />
                 </button>

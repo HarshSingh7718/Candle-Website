@@ -82,13 +82,17 @@ const OurStory = () => {
             </p>
             <div className="pt-6 grid grid-cols-2 gap-8 border-t border-primary/10">
               <div>
-                <div className="text-2xl md:text-3xl font-black text-primary">2018</div>
+                <div className="text-2xl md:text-3xl font-black text-primary">
+                  2018
+                </div>
                 <div className="text-sm font-bold uppercase tracking-wider opacity-60">
                   Year Founded
                 </div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-black text-primary">100%</div>
+                <div className="text-2xl md:text-3xl font-black text-primary">
+                  100%
+                </div>
                 <div className="text-sm font-bold uppercase tracking-wider opacity-60">
                   Hand-Poured
                 </div>
@@ -113,7 +117,9 @@ const OurStory = () => {
         <div className="rounded-3xl bg-background-dark text-black overflow-hidden relative">
           <div className="grid  lg:grid-cols-2">
             <div className="p-12 lg:p-20 flex flex-col justify-center">
-              <h3 className="text-2xl md:text-4xl font-black mb-5 md:mb-8">Our Mission</h3>
+              <h3 className="text-2xl md:text-4xl font-black mb-5 md:mb-8">
+                Our Mission
+              </h3>
               <blockquote className="text-md md:text-2xl font-light italic border-l-4 border-primary pl-8 mb-5 md:mb-8 leading-relaxed">
                 "To illuminate the everyday moments and transform spaces into
                 sanctuaries of peace through sustainable, handcrafted
@@ -126,17 +132,17 @@ const OurStory = () => {
                 reforestation projects.
               </p>
               <div className="hidden md:flex">
-              <div className="flex flex-wrap gap-4">
-                <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
-                  Plastic-Free Packaging
-                </span>
-                <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
-                  Vegan &amp; Cruelty-Free
-                </span>
-                <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
-                  Phthalate-Free Oils
-                </span>
-              </div>
+                <div className="flex flex-wrap gap-4">
+                  <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
+                    Plastic-Free Packaging
+                  </span>
+                  <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
+                    Vegan &amp; Cruelty-Free
+                  </span>
+                  <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
+                    Phthalate-Free Oils
+                  </span>
+                </div>
               </div>
             </div>
             <div className="min-h-[400px]">
@@ -213,13 +219,19 @@ const OurStory = () => {
 
       {/* <!-- CTA --> */}
       <section className="py-24 text-center bg-background-light dark:bg-background-dark border-t border-primary/10">
-        <h3 className="text-2xl md:text-4xl font-black mb-6">Experience the Glow</h3>
+        <h3 className="text-2xl md:text-4xl font-black mb-6">
+          Experience the Glow
+        </h3>
         <p className="text-sm md:text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-xl mx-auto">
           Discover our signature collection and find the perfect scent for your
           sanctuary.
         </p>
         <div className="flex justify-center gap-4">
-        <MainBtn path="/collections/candles" text={" Shop All Candles"} className="!bg-black !text-white" />
+          <MainBtn
+            path="/collections/candles"
+            text={" Shop All Candles"}
+            className="!bg-black !text-white"
+          />
         </div>
       </section>
     </>

@@ -123,14 +123,14 @@ const EditProfile = ({ onCancel }) => {
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="w-full sm:w-auto px-6 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-[20px] transition-colors"
+                        className="w-full sm:w-auto px-6 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-[20px] transition-colors cursor-pointer"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={updateProfileMutation.isPending}
-                        className="w-full sm:w-auto px-6 py-2.5 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] disabled:bg-gray-400"
+                        className="w-full sm:w-auto px-6 py-2.5 bg-black hover:bg-black/85 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] disabled:bg-gray-400 cursor-pointer"
                     >
                         {updateProfileMutation.isPending ? "Saving Changes..." : "Save Changes"}
                     </button>

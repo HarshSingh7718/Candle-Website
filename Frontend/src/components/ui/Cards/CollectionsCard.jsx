@@ -1,16 +1,16 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
 
 function CollectionsCard({ image, title, description }) {
   // ✅ Create a URL-friendly slug: "Golden Glow" -> "golden-glow"
   const slug = title
     .toLowerCase()
-    .replace(/\s+/g, '-')           // Replace spaces with -
-    .replace(/[^\w-]+/g, '');       // Remove all non-word chars
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/[^\w-]+/g, ""); // Remove all non-word chars
 
   return (
-    <Link 
-      to={`/collections/${slug}`} 
+    <Link
+      to={`/collections/${slug}`}
       className="collections-card flex justify-center items-end pb-8 relative h-110 group overflow-hidden rounded-md cursor-pointer block"
     >
       <img
@@ -30,7 +30,7 @@ function CollectionsCard({ image, title, description }) {
         </p>
       </div>
     </Link>
-  )
+  );
 }
 
 export default CollectionsCard;

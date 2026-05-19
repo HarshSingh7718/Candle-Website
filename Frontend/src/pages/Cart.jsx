@@ -31,7 +31,7 @@ function Cart() {
     const productData = isCustom ? item.customCandle : item.product;
     const price = isCustom
       ? productData?.totalPrice
-      : (productData?.discountPrice || productData?.price);
+      : productData?.discountPrice || productData?.price;
 
     return acc + price * item.quantity;
   }, 0);
@@ -120,7 +120,12 @@ function Cart() {
     return () => ctx.revert();
   }, [cart, isLoading]);
 
-  if (isLoading) return <div className="py-20 text-center font-serif italic">Loading your cart...</div>;
+  if (isLoading)
+    return (
+      <div className="py-20 text-center font-serif italic">
+        Loading your cart...
+      </div>
+    );
 
   return (
     <>
@@ -141,7 +146,9 @@ function Cart() {
                 <thead className="bg-black">
                   <tr className="text-center text-white">
                     <th className="p-4 cart-th"></th>
-                    <th className="p-4 text-left font-medium cart-th">Product</th>
+                    <th className="p-4 text-left font-medium cart-th">
+                      Product
+                    </th>
                     <th className="p-4 font-medium cart-th">Price</th>
                     <th className="p-4 font-medium cart-th">Quantity</th>
                     <th className="p-4 font-medium cart-th">Status</th>
@@ -152,20 +159,26 @@ function Cart() {
                 <tbody>
                   {cart.map((item) => {
                     const isCustom = item.type === "custom";
-                    const productData = isCustom ? item.customCandle : item.product;
+                    const productData = isCustom
+                      ? item.customCandle
+                      : item.product;
 
-                    const displayName = isCustom ? "Customized Candle" : productData?.name;
+                    const displayName = isCustom
+                      ? "Customized Candle"
+                      : productData?.name;
                     const displayPrice = isCustom
                       ? productData?.totalPrice
-                      : (productData?.discountPrice || productData?.price || 0);
+                      : productData?.discountPrice || productData?.price || 0;
 
                     const displayImage = isCustom
                       ? "/placeholder.jpg" // Fallback for custom candles
-                      : (productData?.images?.[0]?.url || "/placeholder.jpg");
+                      : productData?.images?.[0]?.url || "/placeholder.jpg";
 
                     const stockStatus = isCustom
                       ? "Made to Order"
-                      : (productData?.stock > 0 ? "In stock" : "Out of stock");
+                      : productData?.stock > 0
+                      ? "In stock"
+                      : "Out of stock";
 
                     return (
                       <tr key={item._id} className="border-b cart-item">
@@ -198,7 +211,9 @@ function Cart() {
                               <Minus size={14} />
                             </button>
 
-                            <span className="w-4 text-center">{item.quantity}</span>
+                            <span className="w-4 text-center">
+                              {item.quantity}
+                            </span>
 
                             <button
                               onClick={() => increase(item._id, item.quantity)}
@@ -209,7 +224,15 @@ function Cart() {
                           </div>
                         </td>
 
-                        <td className={`text-center ${isCustom ? "text-blue-600" : (productData?.stock > 0 ? "text-green-600" : "text-red-600")}`}>
+                        <td
+                          className={`text-center ${
+                            isCustom
+                              ? "text-blue-600"
+                              : productData?.stock > 0
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
                           {stockStatus}
                         </td>
 
@@ -229,21 +252,28 @@ function Cart() {
                 const isCustom = item.type === "custom";
                 const productData = isCustom ? item.customCandle : item.product;
 
-                const displayName = isCustom ? "Customized Candle" : productData?.name;
+                const displayName = isCustom
+                  ? "Customized Candle"
+                  : productData?.name;
                 const displayPrice = isCustom
                   ? productData?.totalPrice
-                  : (productData?.discountPrice || productData?.price || 0);
+                  : productData?.discountPrice || productData?.price || 0;
 
                 const displayImage = isCustom
                   ? "/placeholder.jpg"
-                  : (productData?.images?.[0]?.url || "/placeholder.jpg");
+                  : productData?.images?.[0]?.url || "/placeholder.jpg";
 
                 const stockStatus = isCustom
                   ? "Made to Order"
-                  : (productData?.stock > 0 ? "In stock" : "Out of stock");
+                  : productData?.stock > 0
+                  ? "In stock"
+                  : "Out of stock";
 
                 return (
-                  <div key={item._id} className="border border-gray-200 bg-white shadow-sm p-4 rounded-lg cart-item">
+                  <div
+                    key={item._id}
+                    className="border border-gray-200 bg-white shadow-sm p-4 rounded-lg cart-item"
+                  >
                     <div className="flex justify-between items-center">
                       <button
                         className="cursor-pointer text-gray-400 hover:text-red-500"
@@ -251,7 +281,15 @@ function Cart() {
                       >
                         <Icon icon="mdi:close" width="20" />
                       </button>
-                      <span className={`text-sm font-medium ${isCustom ? "text-blue-600" : (productData?.stock > 0 ? "text-green-600" : "text-red-600")}`}>
+                      <span
+                        className={`text-sm font-medium ${
+                          isCustom
+                            ? "text-blue-600"
+                            : productData?.stock > 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
                         {stockStatus}
                       </span>
                     </div>
@@ -261,7 +299,9 @@ function Cart() {
                         className="w-20 h-20 object-cover rounded-sm border border-gray-100"
                         alt={displayName}
                       />
-                      <p className="font-semibold text-gray-800">{displayName}</p>
+                      <p className="font-semibold text-gray-800">
+                        {displayName}
+                      </p>
                     </div>
                     <div className="flex justify-between items-center mt-6">
                       <span className="text-gray-500 text-sm">Price:</span>
@@ -277,7 +317,9 @@ function Cart() {
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="w-4 text-center font-medium">{item.quantity}</span>
+                        <span className="w-4 text-center font-medium">
+                          {item.quantity}
+                        </span>
                         <button
                           onClick={() => increase(item._id, item.quantity)}
                           className="border border-gray-200 p-1.5 rounded-sm cursor-pointer active:bg-gray-100"
