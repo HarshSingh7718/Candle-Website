@@ -66,7 +66,7 @@ export const getAllCandles = async (req, res) => {
     const candles = await Product.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .select("name price discountPrice images ratings stock");
+      .select("name price discountPrice images ratings stock createdAt");
 
     const total = await Product.countDocuments(query);
 

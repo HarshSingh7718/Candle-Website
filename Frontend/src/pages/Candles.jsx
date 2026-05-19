@@ -204,7 +204,7 @@ const Candles = () => {
               </div>
 
               {/* Price filter */}
-              <div className="bg-white hidden md:block p-6 rounded-sm shadow-sm sidebar-box">
+              <div className="bg-white  p-6 rounded-sm shadow-sm hidden md:block sidebar-box">
                 <h3 className="text-xl font-medium mb-4 sidebar-title">
                   Filter By Price
                 </h3>
@@ -221,7 +221,7 @@ const Candles = () => {
                     <span>₹0</span>
                     <span>Max: ₹{priceRange}</span>
                   </div>
-
+                  
                   <div className="relative group mt-6">
                     <select
                       className="w-full appearance-none bg-white border border-gray-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
@@ -247,6 +247,18 @@ const Candles = () => {
                   {Math.min(indexOfLastProduct, products.length)} of{" "}
                   {products.length} results
                 </p>
+                 <div className="relative group block md:hidden">
+                  <select
+                    className="appearance-none bg-white border px-6 py-2 pr-10 rounded shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
+                    onChange={(e) => setSortOption(e.target.value)}
+                  >
+                    <option value="latest">Sort by latest</option>
+                    <option value="popularity">Sort by Popularity</option>
+                    <option value="low-to-high">Sort by Low to High</option>
+                    <option value="high-to-low">Sort by High to Low</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-3 text-gray-400 pointer-events-none" />
+                </div>
               </div>
 
               {currentProducts.length > 0 ? (

@@ -75,8 +75,7 @@ function Hero() {
         {banners.map((banner) => (
           <SwiperSlide key={banner._id}>
             <div
-              className="min-h-[67vh] px-[4%] md:px-[8%] xl:px-[12%] py-[8%] xl:py-
-        [12%] md:min-h-screen w-full flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center transition-transform duration-1000"
+              className="min-h-[67vh] px-[4%] md:px-[8%] xl:px-[12%] py-[8%] xl:py-[12%] md:min-h-screen w-full flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center transition-transform duration-1000"
               style={{
                 backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${banner.image?.url})`,
               }}
