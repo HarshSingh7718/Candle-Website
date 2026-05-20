@@ -98,7 +98,7 @@ const ProductZoom = ({ product }) => {
                   <Star key={i} size={14} className={i < product.ratings ? "fill-[#ffb400] text-[#ffb400]" : "text-orange-400"} />
                 ))}
               </div>
-              <span className="text-gray-400 text-xs">Review ({product.reviews?.length || 0})</span>
+              <span className="text-gray-400 text-xs">Review ({product.numOfReviews || 0})</span>
             </div>
           </div>
 

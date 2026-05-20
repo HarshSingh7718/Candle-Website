@@ -1,109 +1,97 @@
+import { CustomError } from "../middleware/errorHandler.js";
 import axios from "axios";
 import { Order } from "../models/orderModel.js";
 import { getShiprocketToken } from "../services/shipRocketService.js";
-import {Product} from "../models/productModels.js";
+import { Product } from "../models/productModels.js";
 import Review from "../models/reviewModel.js";
-
-
 export const getMyOrders = async (req, res) => {
-    try {
-        const orders = await Order.find({ user: req.user._id })
-            .sort({ createdAt: -1 });
-
-        res.status(200).json({
-            success: true,
-            count: orders.length,
-            orders
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+  const orders = await Order.find({
+    user: req.user._id
+  }).sort({
+    createdAt: -1
+  });
+  res.status(200).json({
+    success: true,
+    count: orders.length,
+    orders
+  });
 };
-
 
 //we can track also by using order
 
-
 export const getSingleOrder = async (req, res) => {
-    try {
-        const order = await Order.findById(req.params.id)
-            .populate("orderItems.product", "name images reviews")
-            .populate("user", "name email"); // Populate basic user info just in case
+  // 👉 1. Removed "reviews" from populate and added .lean()
+  const order = await Order.findById(req.params.id).populate("orderItems.product", "name images").populate("user", "name email").lean(); // Converts Mongoose Document to standard JS Object
 
-        if (!order) {
-            return res.status(404).json({
-                success: false,
-                message: "Order not found"
-            });
-        }
+  if (!order) {
+    throw new CustomError("Order not found", 404);
+  }
 
-        // =========================
-        //  SECURITY CHECK
-        // =========================
-        // Safely check if the user requesting is the owner OR an admin
-        const isOwner = req.user && order.user && order.user._id.toString() === req.user._id.toString();
-        const isAdmin = req.user && req.user.role === "admin";
+  // =========================
+  //  SECURITY CHECK
+  // =========================
+  const isOwner = req.user && order.user && order.user._id.toString() === req.user._id.toString();
+  const isAdmin = req.user && req.user.role === "admin";
+  if (!isOwner && !isAdmin) {
+    throw new CustomError("Unauthorized access", 403);
+  }
 
-        if (!isOwner && !isAdmin) {
-            return res.status(403).json({
-                success: false,
-                message: "Unauthorized access"
-            });
-        }
+  // =========================
+  //  INJECT USER REVIEWS
+  // =========================
+  // Extract IDs only for standard products (skip custom candles)
+  const productIds = order.orderItems.filter(item => item.product).map(item => item.product._id);
+  if (productIds.length > 0) {
+    // Fetch reviews made by this user for these specific products
+    const existingReviews = await Review.find({
+      user: order.user._id,
+      product: {
+        $in: productIds
+      }
+    }).lean();
 
-        // =========================
-        //  DEFAULT TRACKING (ADMIN)
-        // =========================
-        let tracking = {
-            source: "admin",
-            status: order.orderStatus,
-            timeline: order.statusHistory || []
-        };
+    // Attach the review data directly to the order items
+    order.orderItems.forEach(item => {
+      if (item.product) {
+        const review = existingReviews.find(r => r.product.toString() === item.product._id.toString());
+        item.userReview = review || null;
+      }
+    });
+  }
 
-        // =========================
-        //  SHIPROCKET TRACKING
-        // =========================
-        if (order.awbCode) {
-            try {
-                const token = await getShiprocketToken();
+  // =========================
+  //  DEFAULT TRACKING (ADMIN)
+  // =========================
+  let tracking = {
+    source: "admin",
+    status: order.orderStatus,
+    timeline: order.statusHistory || []
+  };
 
-                const trackingRes = await axios.get(
-                    `https://apiv2.shiprocket.in/v1/external/courier/track/awb/${order.awbCode}`,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-
-                const data = trackingRes.data?.tracking_data;
-
-                tracking = {
-                    source: "shiprocket",
-                    status: data?.shipment_track?.[0]?.current_status,
-                    location: data?.shipment_track?.[0]?.current_location,
-                    timeline: data?.shipment_track_activities || []
-                };
-            } catch (err) {
-                console.error("Tracking API failed:", err.message);
-                // Fails silently so the user still gets their order data even if Shiprocket is down
-            }
-        }
-
-        res.status(200).json({
-            success: true,
-            order,
-            tracking
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+  // =========================
+  //  SHIPROCKET TRACKING
+  // =========================
+  if (order.awbCode) {
+    const token = await getShiprocketToken();
+    const trackingRes = await axios.get(`https://apiv2.shiprocket.in/v1/external/courier/track/awb/${order.awbCode}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    const data = trackingRes.data?.tracking_data;
+    tracking = {
+      source: "shiprocket",
+      status: data?.shipment_track?.[0]?.current_status,
+      location: data?.shipment_track?.[0]?.current_location,
+      timeline: data?.shipment_track_activities || []
+    };
+  }
+  res.status(200).json({
+    success: true,
+    order,
+    tracking
+  });
 };
-
 // export const cancelOrder = async (req, res) => {
 //     try {
 //         const { reason } = req.body;
@@ -142,120 +130,66 @@ export const getSingleOrder = async (req, res) => {
 //     }
 // };
 
-
-
-
-
-
-
 export const addReviewAfterDelivery = async (req, res) => {
-    try {
-        const { orderId, productId, rating, comment } = req.body;
+  const {
+    orderId,
+    productId,
+    rating,
+    comment
+  } = req.body;
 
-        // 1. Find order
-        const order = await Order.findById(orderId);
+  // 1. Find order
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new CustomError("Order not found", 404);
+  }
 
-        if (!order) {
-            return res.status(404).json({
-                success: false,
-                message: "Order not found"
-            });
-        }
+  // 2. Check order belongs to user
+  if (order.user.toString() !== req.user._id.toString()) {
+    throw new CustomError("Not authorized", 403);
+  }
 
-        // 2. Check order belongs to user
-        if (order.user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({
-                success: false,
-                message: "Not authorized"
-            });
-        }
+  // 3. Check delivered
+  if (order.orderStatus !== "delivered") {
+    throw new CustomError("You can review only after delivery", 400);
+  }
 
-        // 3. Check delivered
-        if (order.orderStatus !== "delivered") {
-            return res.status(400).json({
-                success: false,
-                message: "You can review only after delivery"
-            });
-        }
+  // 4. Check product exists in order
+  const isProductInOrder = order.orderItems.find(item => item.product.toString() === productId);
+  if (!isProductInOrder) {
+    throw new CustomError("Product not in this order", 400);
+  }
 
-        // 4. Check product exists in order
-        const isProductInOrder = order.orderItems.find(
-            item => item.product.toString() === productId
-        );
+  // 5. Check product exists
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new CustomError("Product not found", 404);
+  }
 
-        if (!isProductInOrder) {
-            return res.status(400).json({
-                success: false,
-                message: "Product not in this order"
-            });
-        }
+  // 6. Prevent duplicate review (NEW WAY)
+  const alreadyReviewed = await Review.findOne({
+    product: productId,
+    user: req.user._id
+  });
+  if (alreadyReviewed) {
+    throw new CustomError("Already reviewed", 400);
+  }
 
-        // 5. Check product exists
-        const product = await Product.findById(productId);
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found"
-            });
-        }
-
-        // 6. Prevent duplicate review (NEW WAY)
-        const alreadyReviewed = await Review.findOne({
-            product: productId,
-            user: req.user._id
-        });
-
-        if (alreadyReviewed) {
-            return res.status(400).json({
-                success: false,
-                message: "Already reviewed"
-            });
-        }
-
-        // 7. Create review (NEW)
-        const review = await Review.create({
-            product: productId,
-            user: req.user._id,
-            name: req.user.firstName,
-            rating,
-            comment,
-            status: "pending" // optional moderation
-        });
-
-        // 8. Update product rating (IMPORTANT)
-        const reviews = await Review.find({
-            product: productId,
-            status: "published" // only count approved reviews
-        });
-
-        const numOfReviews = reviews.length;
-
-        const avgRating =
-            reviews.reduce((acc, item) => acc + item.rating, 0) /
-            (numOfReviews || 1);
-
-        product.numOfReviews = numOfReviews;
-        product.averageRating = avgRating;
-
-        await product.save();
-
-        res.status(201).json({
-            success: true,
-            message: "Review submitted successfully",
-            review
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+  // 7. Create review (NEW)
+  const review = await Review.create({
+    product: productId,
+    user: req.user._id,
+    name: req.user.firstName,
+    rating,
+    comment,
+    status: "pending" // optional moderation
+  });
+  res.status(201).json({
+    success: true,
+    message: "Review submitted successfully",
+    review
+  });
 };
-
-
-
 
 // export const trackOrder = async (req, res) => {
 //     try {

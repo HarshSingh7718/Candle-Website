@@ -73,7 +73,7 @@ const ShopDetails = () => {
                     : "text-gray-400 hover:text-black"
                 }`}
               >
-                {tab === "reviews" ? `Reviews (${reviews?.length || 0})` : tab}
+                {tab === "reviews" ? `Reviews (${reviews?.length})` : tab}
                 {activeTab === tab && (
                   <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black" />
                 )}
@@ -113,17 +113,17 @@ const ShopDetails = () => {
 
             {activeTab === "reviews" && (
               <div className="space-y-8">
-                {product.reviews?.length === 0 && (
+                {reviews?.length === 0 && (
                   <p className="text-gray-400 italic">
                     No reviews yet for this product.
                   </p>
                 )}
-                {product.reviews?.map((review, idx) => (
+                {reviews?.map((review, idx) => (
                   <div key={idx} className="border-b border-gray-100 pb-8">
                     <div className="flex justify-between items-center mb-4">
                       <div>
                         <h4 className="font-bold text-black uppercase tracking-widest text-s">
-                          {review.name}
+                          {review.user}
                         </h4>
                         <p className="text-[10px] text-gray-400 mt-1">
                           {new Date(review.createdAt).toLocaleDateString()}

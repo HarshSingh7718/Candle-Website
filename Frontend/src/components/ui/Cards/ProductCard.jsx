@@ -1,10 +1,11 @@
+import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { useWishlist } from "../../../hooks/useWishlist";
 import { useCart } from "../../../hooks/useCart";
 import { ShoppingCart, Star } from "lucide-react";
 import { Icon } from "@iconify/react";
 
-const ProductCard = ({ product }) => {
+const ProductCard = memo(({ product }) => {
   const { liked, toggleWishlist, isUpdating } = useWishlist(product._id);
   const { addToCart } = useCart();
 
@@ -30,12 +31,14 @@ const ProductCard = ({ product }) => {
             src={product.images?.[0]?.url || "/placeholder.jpg"}
             alt={product.name}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+            loading="lazy"
           />
 
           <img
             src={product.images?.[1]?.url || product.images?.[0]?.url}
             alt={`${product.name} alternate`}
             className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
+            loading="lazy"
           />
         </Link>
 
@@ -109,6 +112,6 @@ const ProductCard = ({ product }) => {
       </Link>
     </div>
   );
-};
+});
 
 export default ProductCard;

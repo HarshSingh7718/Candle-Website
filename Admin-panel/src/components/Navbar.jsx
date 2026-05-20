@@ -4,7 +4,7 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="flex items-center gap-3">
         <button 
           onClick={toggleSidebar}
-          className="md:hidden text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300 ease-out p-1.5 rounded-md flex items-center justify-center cursor-pointer active:scale-95"
+          className="lg:hidden text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300 ease-out p-1.5 rounded-md flex items-center justify-center cursor-pointer active:scale-95"
         >
           <span className="material-symbols-outlined text-[28px]">menu</span>
         </button>
@@ -13,18 +13,14 @@ const Navbar = ({ toggleSidebar }) => {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <button className="text-on-surface-variant hover:text-primary transition-colors duration-300 ease-out cursor-pointer">
-          <span className="material-symbols-outlined">notifications</span>
-        </button>
-        <button className="text-on-surface-variant hover:text-primary transition-colors duration-300 ease-out cursor-pointer">
-          <span className="material-symbols-outlined">settings</span>
-        </button>
         <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-container border border-surface-variant">
-          <img
-            alt="Administrator profile"
-            className="w-full h-full object-cover cursor-pointer"
-            src="https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800"
-          />
+          <a href="/profile">
+            <img
+              alt="Administrator profile"
+              className="w-full h-full object-cover cursor-pointer"
+              src="https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800"
+            />
+          </a>
         </div>
       </div>
     </header>

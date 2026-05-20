@@ -99,20 +99,6 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    totalStar: {
-        type: Number,
-        default: 0
-    },
-
-    numOfPublishedReviews: {
-        type: Number,
-        default: 0
-    },
-    averageRating: {
-        type: Number,
-        default: 0
-    },
-    
 
     // reviews: [
     //     {
@@ -148,5 +134,9 @@ const productSchema = new mongoose.Schema({
     }
 
 }, { timestamps: true });
+productSchema.index({ category: 1, isActive: 1 });
+productSchema.index({ type: 1, isActive: 1 });
+productSchema.index({ isBestSeller: -1, ratings: -1 });
+productSchema.index({ createdAt: -1 });
 
 export const Product = mongoose.model("Product", productSchema);

@@ -19,6 +19,7 @@ import userRoutes from "./routes/userProfileRoute.js";
 import wishlistRoutes from "./routes/whishlistRoute.js";
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import { errorHandler } from './middleware/errorHandler.js';
 
 
 const app = express();
@@ -103,5 +104,8 @@ app.use("/api", userRoutes);
 
 // WHISHLIST ROUTES
 app.use("/api", wishlistRoutes);
+
+// Error Handling Middleware (MUST BE LAST)
+app.use(errorHandler);
 
 export default app

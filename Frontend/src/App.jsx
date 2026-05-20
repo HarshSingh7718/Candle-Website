@@ -25,6 +25,7 @@ import Contact from "./components/sections/Contact";
 import Customized from "./pages/Customized";
 import Collections from "./components/sections/Collections";
 import CollectionProducts from "./pages/CollectionProducts";
+import PrivacyPolicyPage from "./pages/PrivacyPolicy";
 
 // Fix GSAP target not found errors globally
 gsap.config({ nullTargetWarn: false });
@@ -65,7 +66,7 @@ function App() {
       <div id="smooth-wrapper">
         <Navbar />
         <div id="smooth-content">
-          <div className="min-h-screen flex flex-col overflow-clip">
+          <div className="min-h-screen pt-19 md:pt-22 flex flex-col overflow-clip">
             <main className="flex-grow">
               <Suspense fallback={<PageLoader />}>
                 <Routes>
@@ -78,6 +79,7 @@ function App() {
                   />
                   <Route path="/about" element={<OurStory />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />}/>
                   <Route path="/collections/candles" element={<Candles />} />
                   <Route path="/customized" element={<Customized />} />
                   <Route path="/collections" element={<Collections />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useStore } from "../../../context/StoreContext";
-import { useUpdateProfile } from '../../../hooks/useAuth';
+import { useUpdateProfile, useChangePassword } from '../../../hooks/useAuth';
 
 const EditProfile = ({ onCancel }) => {
     const { user, setUser } = useStore();
@@ -14,6 +14,13 @@ const EditProfile = ({ onCancel }) => {
         email: '',
         phoneNumber: '',
     });
+
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: '',
+        newPassword: '',
+    });
+
+    const changePasswordMutation = useChangePassword();
 
     // 👉 2. Added email to the pre-fill logic
     useEffect(() => {
@@ -31,6 +38,10 @@ const EditProfile = ({ onCancel }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handlePasswordChange = (e) => {
+        setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -45,9 +56,17 @@ const EditProfile = ({ onCancel }) => {
         updateProfileMutation.mutate(formData, {
             onSuccess: (data) => {
                 if (data.user) setUser(data.user);
-                // If you are using a modal or toggle state to show this form,
-                // call onCancel() here to close it after a successful update!
-                if (onCancel) onCancel();
+                
+                // Also update password if provided
+                if (passwordData.oldPassword && passwordData.newPassword) {
+                    changePasswordMutation.mutate(passwordData, {
+                        onSuccess: () => {
+                            if (onCancel) onCancel();
+                        }
+                    });
+                } else {
+                    if (onCancel) onCancel();
+                }
             }
         });
     };
@@ -118,6 +137,33 @@ const EditProfile = ({ onCancel }) => {
                     />
                 </div>
 
+                <hr className="my-6 border-gray-100" />
+                <h3 className="text-lg font-bold text-gray-900 tracking-tight mb-4">Change Password</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1.5">
+                        <label className="block text-[13px] font-medium text-gray-600">Current Password</label>
+                        <input
+                            name="oldPassword"
+                            value={passwordData.oldPassword}
+                            onChange={handlePasswordChange}
+                            type="password"
+                            placeholder="••••••••"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                        />
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="block text-[13px] font-medium text-gray-600">New Password</label>
+                        <input
+                            name="newPassword"
+                            value={passwordData.newPassword}
+                            onChange={handlePasswordChange}
+                            type="password"
+                            placeholder="••••••••"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                        />
+                    </div>
+                </div>
+
                 {/* Actions */}
                 <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-100">
                     <button
@@ -129,10 +175,10 @@ const EditProfile = ({ onCancel }) => {
                     </button>
                     <button
                         type="submit"
-                        disabled={updateProfileMutation.isPending}
+                        disabled={updateProfileMutation.isPending || changePasswordMutation.isPending}
                         className="w-full sm:w-auto px-6 py-2.5 bg-black hover:bg-black/85 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] disabled:bg-gray-400 cursor-pointer"
                     >
-                        {updateProfileMutation.isPending ? "Saving Changes..." : "Save Changes"}
+                        {updateProfileMutation.isPending || changePasswordMutation.isPending ? "Saving Changes..." : "Save Changes"}
                     </button>
                 </div>
             </form>

@@ -11,14 +11,14 @@ const Layout = () => {
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity backdrop-blur-sm"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
       
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
-      <div className="flex-1 md:ml-64 flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen max-w-full">
         <Navbar toggleSidebar={() => setIsSidebarOpen(true)} />
         <div className="flex-1 w-full relative">
           <Outlet />

@@ -256,3 +256,18 @@ export const useUpdateProfile = () => {
     }
   });
 };
+
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: async (passwordData) => {
+      const { data } = await API.put('/user/password', passwordData);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Password changed successfully!");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to change password.");
+    }
+  });
+};

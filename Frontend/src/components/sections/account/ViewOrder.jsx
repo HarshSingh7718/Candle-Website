@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom'; // 👉 1. IMPORT REACT PORTAL
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom'; // 👉 1. IMPORT REACT PORTAL
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
     Package, Truck, CheckCircle, ChevronLeft, MapPin, CreditCard, Clock, ExternalLink, Loader2, Star, X
 } from 'lucide-react';
@@ -38,6 +40,8 @@ const formatOrderData = (data) => {
         displayStatus,
         statusSteps,
         formattedCreatedAt: formatDate(order.createdAt),
+        formattedPaidAt: order.paidAt ? formatDate(order.paidAt) : null,
+        currentUserId: order.user?._id || order.user // Get User ID to check reviews
         formattedPaidAt: order.paidAt ? formatDate(order.paidAt) : null,
         currentUserId: order.user?._id || order.user // Get User ID to check reviews
     };
@@ -205,7 +209,7 @@ const ViewOrder = () => {
                         </div>
                         <div className="divide-y divide-stone-100">
                             {order.orderItems.map((item, idx) => {
-                                const existingReview = item.product?.reviews?.find(r => r.user === currentUserId);
+                                const existingReview = item.userReview;
 
                                 // 👉 Construct the URL for standard products
                                 const productUrl = item.type !== "custom" && item.product?._id

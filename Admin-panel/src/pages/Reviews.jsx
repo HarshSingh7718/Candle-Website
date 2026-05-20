@@ -173,7 +173,7 @@ const Reviews = () => {
                 <div className="flex-1">
                   <div className="flex flex-col lg:flex-row justify-between items-start mb-2 gap-4">
                     <div>
-                      <h3 className="font-label-md text-label-md text-on-surface">{review.userName || 'Anonymous'}</h3>
+                      <h3 className="font-label-md text-label-md text-on-surface">{review.userName}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex text-primary text-sm">
                           {renderStars(review.rating)}

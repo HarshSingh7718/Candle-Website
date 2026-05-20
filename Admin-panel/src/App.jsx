@@ -26,6 +26,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import { Toaster } from 'react-hot-toast';
 import OrderDetails from './pages/OrderDetails';
+import Profile from './pages/Profile';
 
 
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
@@ -67,6 +68,7 @@ function App() {
                       <Route path="/options" element={<Options />} />
                       <Route path="/options/add" element={<AddOption />} />
                       <Route path="/options/edit/:id" element={<EditOption />} />
+                      <Route path="/profile" element={<Profile />} />
                     </Route>
                   </Route>
                   <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -65,7 +65,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className={`w-full z-50 fixed top-0 left-0 transition-all duration-300 ${is404 ? "bg-black text-white" : scroll ? "bg-black shadow-lg" : "bg-transparent"}`}>
+      <div className={`w-full z-50 fixed top-0 left-0 transition-all duration-300 ${is404 ? "bg-black text-white" : "bg-black shadow-lg" }`}>
         <div className="container mx-auto flex justify-between items-center h-19 md:h-22 px-4">
           
           <NavLink to="/">
