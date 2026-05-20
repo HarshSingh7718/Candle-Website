@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Package, Truck, CreditCard, ChevronDown, ArrowLeft, AlertCircle, CheckCircle2, Settings2, MessageSquare } from 'lucide-react';
+import { Package, Truck, CreditCard, ChevronDown, ArrowLeft, AlertCircle, CheckCircle2, Settings2, MessageSquare, ExternalLink } from 'lucide-react';
 import { useGetOrderDetails, useUpdateOrderStatus } from '../hooks/useOrders';
 
 const OrderDetails = () => {
@@ -50,7 +50,10 @@ const OrderDetails = () => {
     const isProcessing = order.orderStatus === 'processing';
     const isConfirmed = order.orderStatus === 'confirmed';
     const isPackaged = order.orderStatus === 'packaged';
+    const isShipped = order.orderStatus === 'shipped';
+    const isDelivered = order.orderStatus === 'delivered';
     const isLocked = !isProcessing && !isConfirmed;
+    const hasShiprocketData = !!order.shiprocketOrderId || !!order.awbCode;
 
     // 👉 Filter out custom items to display their snapshot
     const customItems = (order.orderItems || []).filter(item => item.type === 'custom');
@@ -295,13 +298,61 @@ const OrderDetails = () => {
                                                     <CheckCircle2 size={18} />
                                                     Order is packed and ready for dispatch.
                                                 </div>
-                                                <button
-                                                    onClick={handleMarkShipped}
-                                                    disabled={isUpdating}
-                                                    className="px-6 py-2.5 bg-[#945305] text-white text-sm font-medium rounded-md hover:bg-[#7a4404] transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
-                                                >
-                                                    {isUpdating ? 'Updating...' : 'Dispatch / Mark Shipped'}
-                                                </button>
+                                                {/* Only show manual ship button if Shiprocket didn't assign AWB */}
+                                                {!hasShiprocketData && (
+                                                    <button
+                                                        onClick={handleMarkShipped}
+                                                        disabled={isUpdating}
+                                                        className="px-6 py-2.5 bg-[#945305] text-white text-sm font-medium rounded-md hover:bg-[#7a4404] transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
+                                                    >
+                                                        {isUpdating ? 'Updating...' : 'Dispatch / Mark Shipped'}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Shiprocket Info Card */}
+                                        {hasShiprocketData && (isPackaged || isShipped || isDelivered) && (
+                                            <div className="mt-6 pt-6 border-t border-gray-50">
+                                                <div className="bg-blue-50 border border-blue-100 rounded-lg p-5">
+                                                    <div className="flex items-center gap-2 mb-4">
+                                                        <Truck size={18} className="text-blue-700" />
+                                                        <h4 className="font-bold text-sm text-blue-900">Shiprocket Shipment</h4>
+                                                    </div>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        {order.awbCode && (
+                                                            <div>
+                                                                <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-1 font-bold">AWB Code</span>
+                                                                <span className="font-mono font-bold text-sm text-gray-900">{order.awbCode}</span>
+                                                            </div>
+                                                        )}
+                                                        {order.courierName && (
+                                                            <div>
+                                                                <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-1 font-bold">Courier</span>
+                                                                <span className="font-medium text-sm text-gray-900">{order.courierName}</span>
+                                                            </div>
+                                                        )}
+                                                        {order.shiprocketOrderId && (
+                                                            <div>
+                                                                <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-1 font-bold">Shiprocket Order ID</span>
+                                                                <span className="font-mono text-sm text-gray-900">{order.shiprocketOrderId}</span>
+                                                            </div>
+                                                        )}
+                                                        {order.trackingUrl && (
+                                                            <div>
+                                                                <a
+                                                                    href={order.trackingUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-1 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors"
+                                                                >
+                                                                    <ExternalLink size={14} />
+                                                                    Track Shipment
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                     </>

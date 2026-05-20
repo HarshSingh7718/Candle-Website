@@ -20,6 +20,8 @@ import wishlistRoutes from "./routes/whishlistRoute.js";
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { errorHandler } from './middleware/errorHandler.js';
+import { razorpayWebhookHandler } from './webhooks/razorpay_webhook.js';
+import { shiprocketWebhookHandler } from './webhooks/shiprocket_webhook.js';
 
 
 const app = express();
@@ -34,10 +36,19 @@ app.use(cors({
     credentials: true
 }));
 
+// ==========================
+//  WEBHOOKS (MUST be before express.json())
+// ==========================
+// Razorpay needs raw body buffer for HMAC signature verification
+app.post("/api/webhook/razorpay", express.raw({ type: "application/json" }), razorpayWebhookHandler);
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Shiprocket webhook (uses normal JSON parsing, placed after express.json)
+app.post("/api/webhook/shiprocket", shiprocketWebhookHandler);
 
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -96,7 +107,7 @@ app.use("/api", productRoutes);
 // SEARCH ROUTES
 app.use("/api", searchRoutes);
 
-// SHIPMENT ROUTES
+// SHIPMENT ROUTES (replaced by Shiprocket webhook integration)
 // app.use("/api", shipmentRoutes);
 
 // USER ROUTES

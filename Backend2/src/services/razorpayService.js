@@ -6,7 +6,6 @@ import { Order } from "../models/orderModel.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
-import { createShipment } from "./shipRocketService.js";
 import { sendSMS } from "./otp_services.js";
 import mongoose from "mongoose";
 

@@ -106,6 +106,10 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    //  Shiprocket
+    shiprocketOrderId: Number,
+    shiprocketShipmentId: Number,
+
     //  Tracking
     trackingId: String,
     awbCode: String,

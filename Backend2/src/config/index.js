@@ -41,10 +41,12 @@ export const config = {
     },
     razor: {
         k_id: process.env.RAZORPAY_KEY_ID,
-        k_secret: process.env.RAZORPAY_KEY_SECRET
+        k_secret: process.env.RAZORPAY_KEY_SECRET,
+        webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET
     },
     shiprocket: {
         user_email: process.env.SHIPROCKET_EMAIL,
-        user_password: process.env.SHIPROCKET_PASSWORD
+        user_password: process.env.SHIPROCKET_PASSWORD,
+        webhookToken: process.env.SHIPROCKET_WEBHOOK_TOKEN
     }
 };
