@@ -1,20 +1,49 @@
-import React, { useState } from 'react'; // 👉 Added useState
+import React, { useState } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import MainBtn from '../../ui/Buttons/MainBtn';
-import EditProfile from './EditProfile'; // 👉 Import the component we just built
+import EditProfile from './EditProfile';
+import { useChangePassword } from '../../../hooks/useAuth'; // 👉 Imported password hook
 
 const Profile = () => {
     const { user } = useOutletContext();
     const [isEditing, setIsEditing] = useState(false);
 
+    // 👉 State for the new password section
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: '',
+        newPassword: '',
+    });
+
+    const changePasswordMutation = useChangePassword();
+
     const defaultAddress = user?.addresses?.find(addr => addr.isDefault) || user?.addresses?.[0];
 
-    // 👉 If editing is true, show the form instead of the profile details
+    const handlePasswordChange = (e) => {
+        setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+    };
+
+    const handlePasswordSubmit = (e) => {
+        e.preventDefault();
+
+        if (passwordData.newPassword.length < 6) {
+            return toast.error("New password must be at least 6 characters");
+        }
+
+        changePasswordMutation.mutate(passwordData, {
+            onSuccess: () => {
+                toast.success("Password updated successfully!");
+                setIsChangingPassword(false);
+                setPasswordData({ oldPassword: '', newPassword: '' });
+            }
+        });
+    };
+
     if (isEditing) {
         return <EditProfile onCancel={() => setIsEditing(false)} />;
     }
 
-    // Otherwise, show the standard profile view
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
 
@@ -35,7 +64,6 @@ const Profile = () => {
                         <p className="text-sm text-paragraph mb-1">Mobile Number</p>
                         <div className="flex items-center gap-2">
                             <p className="font-medium text-heading">{user?.phoneNumber ? `+91 ${user.phoneNumber}` : 'Not provided'}</p>
-                            {/* Optional: Show a badge if unverified */}
                             {user?.phoneNumber && !user?.isPhoneVerified && (
                                 <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">Unverified</span>
                             )}
@@ -47,10 +75,60 @@ const Profile = () => {
                     <MainBtn
                         type="button"
                         text="Edit Profile"
-                        onClick={() => setIsEditing(true)} // 👉 Attach the toggle!
+                        onClick={() => setIsEditing(true)}
                         className="bg-black! text-white! rounded-sm! shadow-none!"
                     />
                 </div>
+            </div>
+
+            {/* 👉 NEW: Change Password Card */}
+            <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
+                <h4 className="text-xl font-semibold mb-6 border-b border-gray-200 pb-3 text-heading">Security</h4>
+
+                <form onSubmit={handlePasswordSubmit} className="max-w-md space-y-5 animate-in fade-in slide-in-from-top-2">
+                    <div className="space-y-1.5">
+                        <label className="block text-[13px] font-medium text-gray-600">Current Password</label>
+                        <input
+                            required
+                            name="oldPassword"
+                            value={passwordData.oldPassword}
+                            onChange={handlePasswordChange}
+                            type="password"
+                            placeholder="••••••••"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                        />
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="block text-[13px] font-medium text-gray-600">New Password</label>
+                        <input
+                            required
+                            name="newPassword"
+                            value={passwordData.newPassword}
+                            onChange={handlePasswordChange}
+                            type="password"
+                            placeholder="••••••••"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                        />
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                        <MainBtn
+                            type="submit"
+                            text={changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                            disabled={changePasswordMutation.isPending}
+                            className="bg-black! text-white! rounded-sm! shadow-none! w-full sm:w-auto"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setIsChangingPassword(false);
+                                setPasswordData({ oldPassword: '', newPassword: '' });
+                            }}
+                            className="w-full sm:w-auto px-6 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-sm transition-colors cursor-pointer"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
 
             {/* Address Card */}

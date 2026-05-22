@@ -9,7 +9,10 @@ export const validate = (schema) => (req, res, next) => {
     });
     // Replace req properties with validated ones (which might have default values or type casting)
     req.body = validatedData.body;
-    req.query = validatedData.query;
+    if (validatedData.query) {
+      Object.keys(req.query).forEach(key => delete req.query[key]);
+      Object.assign(req.query, validatedData.data.query);
+    }
     req.params = validatedData.params;
     next();
   } catch (error) {

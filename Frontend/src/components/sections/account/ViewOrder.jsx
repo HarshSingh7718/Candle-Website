@@ -358,10 +358,6 @@ const ViewOrder = () => {
                                 <span>Shipping</span>
                                 <span>₹{(order.shippingPrice || 0).toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-stone-400">
-                                <span>Estimated Tax</span>
-                                <span>₹{(order.taxPrice || 0).toFixed(2)}</span>
-                            </div>
                             {order.discount > 0 && (
                                 <div className="flex justify-between text-green-400">
                                     <span>Discount</span>

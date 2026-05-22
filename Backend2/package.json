@@ -4,9 +4,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "server": "nodemon server.js"
+    "dev": "nodemon --env-file=.env.development server.js",
+    "start": "node --env-file=.env.production server.js"
   },
   "keywords": [],
   "author": "",

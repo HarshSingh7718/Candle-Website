@@ -59,7 +59,6 @@ const orderSchema = new mongoose.Schema({
     //  Pricing
     itemsPrice: { type: Number, default: 0 },
     shippingPrice: { type: Number, default: 0 },
-    taxPrice: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
 

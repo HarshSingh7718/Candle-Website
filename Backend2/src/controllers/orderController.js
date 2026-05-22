@@ -103,8 +103,7 @@ export const createOrder = async (req, res) => {
     itemsPrice += item.price * item.quantity;
   });
   const shippingPrice = itemsPrice > 999 ? 0 : 99;
-  const taxPrice = itemsPrice * 0.05;
-  const totalAmount = Math.round(itemsPrice + shippingPrice + taxPrice);
+  const totalAmount = Math.round(itemsPrice + shippingPrice);
 
   // =========================
   //  CREATE ORDER
@@ -121,7 +120,6 @@ export const createOrder = async (req, res) => {
     },
     itemsPrice,
     shippingPrice,
-    taxPrice,
     totalAmount,
     paymentMethod,
     paymentStatus: "pending",

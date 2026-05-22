@@ -1,0 +1,129 @@
+import React from 'react';
+
+export default function TermsOfServicePage() {
+    return (
+        <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl rounded-2xl bg-white p-8 sm:p-12 border-stone-100">
+
+                {/* Header */}
+                <div className="mb-10 border-b border-stone-200 pb-8 text-center">
+                    <h1 className="mb-2 text-3xl font-light text-stone-900 sm:text-4xl">Terms and Conditions</h1>
+                    <p className="text-sm font-medium text-[#D19D94] uppercase tracking-wider">
+                        Effective Date: May 20, 2026
+                    </p>
+                </div>
+
+                {/* Content */}
+                <div className="space-y-8 text-stone-600">
+
+                    <p className="leading-relaxed">
+                        Welcome to Naisha Creations. These Terms and Conditions ("Terms") govern your use of our website, <a href="https://naishacreations.com/" className="text-[#D19D94] hover:underline">https://naishacreations.com/</a> (the "Site"), and your purchase of products from us.
+                    </p>
+                    <p className="leading-relaxed">
+                        By accessing our Site, registering for an account, or making a purchase, you agree to be bound by these Terms. If you do not agree with any part of these Terms, please do not use our Site.
+                    </p>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">1. General Conditions and Eligibility</h2>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li><strong>Eligibility:</strong> While our Site is accessible to users of all ages, under the Indian Contract Act, 1872, you must be at least 18 years of age to enter into a legally binding contract. If you are under 18, you may use our Site only with the involvement and consent of a parent or legal guardian.</li>
+                            <li><strong>Site Modifications:</strong> We reserve the right to modify, suspend, or discontinue any part of the Site or our services at any time without prior notice.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">2. User Accounts</h2>
+                        <p className="mb-4 leading-relaxed">
+                            To access certain features, such as order tracking and faster checkout, you may register for a user account.
+                        </p>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li><strong>Accuracy of Information:</strong> You agree to provide current, complete, and accurate information during the registration and checkout process.</li>
+                            <li><strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your account login credentials. Naisha Creations is not liable for any loss or damage arising from your failure to protect your password.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">3. Products, Pricing, and Availability</h2>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li><strong>Product Descriptions:</strong> We make every effort to display our customised candles and other products (including colors, sizes, and features) as accurately as possible. However, we do not guarantee that your device's display will perfectly reflect the actual product.</li>
+                            <li><strong>Pricing:</strong> All prices are listed in Indian Rupees (INR) and are subject to change without notice. We reserve the right to correct any pricing errors that may inadvertently occur on the Site.</li>
+                            <li><strong>Availability:</strong> All orders are subject to product availability. We reserve the right to limit the quantities of any products or services that we offer, or to cancel orders if an item is out of stock.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">4. Payments and Billing</h2>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li><strong>Payment Gateway:</strong> We use Razorpay, a secure and authorized third-party payment gateway, to process all transactions.</li>
+                            <li><strong>Billing details:</strong> By placing an order, you agree to provide valid payment details. Naisha Creations does not collect or store your complete credit card, debit card, or UPI information on our servers.</li>
+                            <li><strong>Fraud Prevention:</strong> We reserve the right to refuse or cancel any order if we suspect fraudulent activity.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">5. Shipping and Delivery</h2>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li><strong>Logistics Partner:</strong> We partner with Shiprocket to manage our shipping and delivery services.</li>
+                            <li><strong>Timelines:</strong> Estimated delivery times are provided at checkout. While we strive to ensure timely delivery, Naisha Creations is not strictly liable for delays caused by the courier service, bad weather, or other unforeseen circumstances.</li>
+                            <li><strong>Risk of Loss:</strong> The risk of loss and title for items purchased pass to you upon our delivery of the items to the carrier.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">6. Returns, Refunds, and Cancellations</h2>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li><strong>Order Cancellations by Us:</strong> Naisha Creations reserves the right to cancel any order at any time due to personal reasons, operational constraints, or unforeseen circumstances. If we cancel your order, any payment made will be fully refunded.</li>
+                            <li><strong>Returns and Refunds:</strong> Due to the nature of our products, we maintain a strict <strong>no return and no refund policy once an order has been packaged</strong>. Once the packaging process is complete, the sale is considered final. For eligible cancellations made before packaging, approved refunds will be credited back to your original payment method via Razorpay within standard banking timelines (usually 5–7 business days).</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">7. Intellectual Property</h2>
+                        <p className="leading-relaxed">
+                            All content on this Site, including but not limited to text, graphics, logos, images, custom product designs, and software, is the property of Naisha Creations and is protected by Indian copyright and intellectual property laws. You may not reproduce, distribute, or use our content for commercial purposes without our express written permission.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">8. Prohibited Conduct</h2>
+                        <p className="mb-4 leading-relaxed">
+                            You agree not to use the Site for any unlawful purpose. You are prohibited from:
+                        </p>
+                        <ul className="ml-6 list-disc space-y-2 text-sm leading-relaxed">
+                            <li>Attempting to interfere with the Site's security or network.</li>
+                            <li>Using any automated tools, spiders, or bots to scrape data from our Site.</li>
+                            <li>Submitting false or misleading information.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">9. Limitation of Liability</h2>
+                        <p className="leading-relaxed">
+                            To the maximum extent permitted by law, Naisha Creations, its owners, and affiliates shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the Site, your inability to use the Site, or any products purchased through the Site.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">10. Governing Law and Jurisdiction</h2>
+                        <p className="leading-relaxed">
+                            These Terms and Conditions are governed by and construed in accordance with the laws of India. Any disputes arising out of or related to these Terms or your use of the Site shall be subject to the exclusive jurisdiction of the courts located in India.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-4 text-xl font-semibold text-stone-900">11. Contact Information</h2>
+                        <p className="mb-4 text-sm leading-relaxed text-stone-700">
+                            If you have any questions about these Terms and Conditions, please contact us at:
+                        </p>
+                        <address className="rounded-xl bg-stone-100 p-6 mt-8 not-italic text-stone-800 space-y-1">
+                            <strong>Naisha Creations</strong><br />
+                            Email: <a href="mailto:support@naishacreations.com" className="text-[#D19D94] hover:underline">support@naishacreations.com</a><br />
+                            Website: <a href="https://naishacreations.com/" className="text-[#D19D94] hover:underline">https://naishacreations.com/</a>
+                        </address>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    );
+}

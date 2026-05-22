@@ -403,10 +403,6 @@ const OrderDetails = () => {
                                         <span>Shipping</span>
                                         <span className="text-gray-900 font-medium">₹{(order.shippingPrice || 0).toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between text-sm text-gray-500">
-                                        <span>Tax</span>
-                                        <span className="text-gray-900 font-medium">₹{(order.taxPrice || 0).toFixed(2)}</span>
-                                    </div>
                                     <div className="pt-4 border-t border-gray-50 flex justify-between">
                                         <span className="text-base text-gray-900 font-medium">Total</span>
                                         <span className="text-lg font-bold text-[#945305]">₹{(order.totalAmount || 0).toFixed(2)}</span>

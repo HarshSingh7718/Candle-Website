@@ -147,7 +147,6 @@ const ProductZoom = ({ product }) => {
 
           {/* Delivery & FAQ Info */}
           <div className="mt-8 mb-6">
-            <p className="text-[#333] text-[13.5px] tracking-widest uppercase mb-6 font-normal">- DELIVERY BETWEEN 5-7 BUSINESS DAYS</p>
             <div className="border-t border-gray-200">
               {[
                 { title: "ABOUT Naisha Creations", content: "Premium range of home fragrances designed to elevate your living spaces." },

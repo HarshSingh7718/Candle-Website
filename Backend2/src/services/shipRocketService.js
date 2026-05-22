@@ -74,7 +74,6 @@ export const createShiprocketOrder = async (order) => {
                 units: item.quantity,
                 selling_price: item.price,
                 discount: 0,
-                tax: 0
             })),
 
             // Payment

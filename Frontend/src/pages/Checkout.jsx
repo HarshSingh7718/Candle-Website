@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronDown,
   Search,
@@ -26,7 +26,8 @@ const Checkout = () => {
 
   // --- Data Fetching ---
   const { data: user } = useUser();
-  const { cart, isLoading: isCartLoading } = useCart();
+  // 👉 1. Destructured the billing object from useCart
+  const { cart, billing, isLoading: isCartLoading } = useCart();
   const { createOrder, initRazorpay, verifyPayment, isPlacingOrder } = useCheckout();
 
   const { addAddress, isAdding } = useAddress();
@@ -57,21 +58,7 @@ const Checkout = () => {
     }
   }, [savedAddresses, selectedAddressId]);
 
-  // --- Logic & Calculations (Above Return) ---
-  const subtotal = useMemo(() => {
-    return cart.reduce((acc, item) => {
-      const isCustom = item.type === "custom";
-      const productData = isCustom ? item.customCandle : item.product;
-      const price = isCustom
-        ? productData?.totalPrice
-        : productData?.discountPrice || productData?.price || 0;
-      return acc + price * item.quantity;
-    }, 0);
-  }, [cart]);
-
-  const shippingCost = subtotal > 999 ? 0 : 99;
-  const taxes = subtotal * 0.05;
-  const totalAmount = Math.round(subtotal + shippingCost + taxes);
+  // 👉 2. Removed the manual subtotal, shippingCost, and totalAmount calculations!
 
   const displayAddresses = isAddressExpanded
     ? savedAddresses
@@ -122,7 +109,6 @@ const Checkout = () => {
       lastName,
     } = shippingAddress;
 
-    // 👉 UPDATED: Validate new fields
     const isMissingFields =
       !shippingAddress.firstName?.trim() ||
       !shippingAddress.flat?.trim() ||
@@ -142,7 +128,6 @@ const Checkout = () => {
       return;
     }
 
-    // 👉 UPDATED: Combine fields securely, ignoring empty landmarks
     const combinedAddress = [
       shippingAddress.flat?.trim(),
       shippingAddress.area?.trim(),
@@ -152,7 +137,7 @@ const Checkout = () => {
     const finalAddress = {
       firstName: shippingAddress.firstName.trim(),
       lastName: shippingAddress.lastName.trim(),
-      address: combinedAddress, // Send perfectly joined string to DB
+      address: combinedAddress,
       city: shippingAddress.city.trim(),
       state: shippingAddress.state.trim(),
       pincode: shippingAddress.pinCode.trim(),
@@ -162,7 +147,6 @@ const Checkout = () => {
     try {
       await addAddress(finalAddress);
       setShowNewAddressForm(false);
-      // 👉 UPDATED: Reset all specific fields
       setShippingAddress({ firstName: "", lastName: "", flat: "", area: "", landmark: "", city: "", state: "", pinCode: "", phone: "" });
     } catch (err) {
       // Silently catch error to prevent app crash. The hook handles the error toast.
@@ -270,19 +254,17 @@ const Checkout = () => {
                       setSelectedAddressId(addr._id);
                       setIsAddressExpanded(false);
                     }}
-                    className={`p-4 border rounded-md cursor-pointer transition-all ${
-                      selectedAddressId === addr._id
+                    className={`p-4 border rounded-md cursor-pointer transition-all ${selectedAddressId === addr._id
                         ? "border-stone-800 bg-stone-50"
                         : "border-gray-200"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
-                        className={`mt-1 w-4 h-4 rounded-full border flex items-center justify-center ${
-                          selectedAddressId === addr._id
+                        className={`mt-1 w-4 h-4 rounded-full border flex items-center justify-center ${selectedAddressId === addr._id
                             ? "border-stone-800"
                             : "border-gray-300"
-                        }`}
+                          }`}
                       >
                         {selectedAddressId === addr._id && (
                           <div className="w-2 h-2 bg-stone-800 rounded-full" />
@@ -329,7 +311,6 @@ const Checkout = () => {
                   <input type="text" name="lastName" placeholder="Last name" value={shippingAddress.lastName} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
                 </div>
 
-                {/* 👉 REPLACED WITH FLAT, AREA, LANDMARK */}
                 <div className="space-y-4">
                   <input type="text" name="flat" placeholder="Flat, House no., Building, Company, Apartment" value={shippingAddress.flat} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
                   <input type="text" name="area" placeholder="Area, Street, Sector, Village" value={shippingAddress.area} onChange={handleShippingChange} className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400" />
@@ -344,9 +325,8 @@ const Checkout = () => {
                       placeholder="PIN code"
                       value={shippingAddress.pinCode}
                       onChange={handleShippingChange}
-                      className={`w-full p-3.5 border rounded-md ${
-                        pincodeError ? "border-red-300" : "border-gray-300"
-                      }`}
+                      className={`w-full p-3.5 border rounded-md ${pincodeError ? "border-red-300" : "border-gray-300"
+                        }`}
                     />
                     {isLookingUp && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -406,17 +386,15 @@ const Checkout = () => {
             <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
             <div className="border border-gray-200 rounded-md overflow-hidden">
               <div
-                className={`p-4 cursor-pointer flex items-center space-x-3 ${
-                  paymentMethod === "razorpay" ? "bg-stone-50" : "bg-white"
-                }`}
+                className={`p-4 cursor-pointer flex items-center space-x-3 ${paymentMethod === "razorpay" ? "bg-stone-50" : "bg-white"
+                  }`}
                 onClick={() => setPaymentMethod("razorpay")}
               >
                 <div
-                  className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                    paymentMethod === "razorpay"
+                  className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === "razorpay"
                       ? "border-stone-800"
                       : "border-gray-300"
-                  }`}
+                    }`}
                 >
                   {paymentMethod === "razorpay" && (
                     <div className="w-2.5 h-2.5 bg-stone-800 rounded-full" />
@@ -427,17 +405,15 @@ const Checkout = () => {
                 </span>
               </div>
               <div
-                className={`p-4 border-t border-gray-200 cursor-pointer flex items-center space-x-3 ${
-                  paymentMethod === "cod" ? "bg-stone-50" : "bg-white"
-                }`}
+                className={`p-4 border-t border-gray-200 cursor-pointer flex items-center space-x-3 ${paymentMethod === "cod" ? "bg-stone-50" : "bg-white"
+                  }`}
                 onClick={() => setPaymentMethod("cod")}
               >
                 <div
-                  className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                    paymentMethod === "cod"
+                  className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === "cod"
                       ? "border-stone-800"
                       : "border-gray-300"
-                  }`}
+                    }`}
                 >
                   {paymentMethod === "cod" && (
                     <div className="w-2.5 h-2.5 bg-stone-800 rounded-full" />
@@ -459,8 +435,8 @@ const Checkout = () => {
             {isPlacingOrder
               ? "Processing..."
               : paymentMethod === "cod"
-              ? "Place Order"
-              : "Pay Now"}
+                ? "Place Order"
+                : "Pay Now"}
           </button>
         </div>
 
@@ -498,7 +474,7 @@ const Checkout = () => {
                       (isCustom
                         ? productData?.totalPrice
                         : productData?.discountPrice || productData?.price) *
-                        item.quantity
+                      item.quantity
                     )}
                   </span>
                 </div>
@@ -507,25 +483,21 @@ const Checkout = () => {
           </div>
 
           <div className="space-y-3 mb-6 pt-6 border-t border-gray-200">
+            {/* 👉 3. Mapped direct billing values here */}
             <div className="flex justify-between text-sm text-gray-600">
               <span>Subtotal</span>
-              <span>{formatCurrency(subtotal)}</span>
+              <span>{formatCurrency(billing?.itemsPrice || 0)}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-600">
               <span>Shipping</span>
               <span>
-                {shippingCost === 0 ? "Free" : formatCurrency(shippingCost)}
+                {billing?.shippingPrice === 0 ? "Free" : formatCurrency(billing?.shippingPrice || 0)}
               </span>
-            </div>
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Taxes (5%)</span>
-              <span>{formatCurrency(taxes)}</span>
             </div>
             <div className="flex justify-between items-baseline pt-4 text-lg font-bold border-t border-gray-100">
               <span>Total</span>
               <div className="text-right flex items-baseline gap-2">
-                <span className="text-xs text-gray-400 font-normal">INR</span>
-                {formatCurrency(totalAmount)}
+                {formatCurrency(billing?.totalPrice || 0)}
               </div>
             </div>
           </div>

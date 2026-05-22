@@ -11,7 +11,8 @@ import MainBtn from "../components/ui/Buttons/MainBtn";
 gsap.registerPlugin(ScrollTrigger);
 
 function Cart() {
-  const { cart, removeFromCart, updateQuantity, isLoading } = useCart();
+  // 👉 1. Destructure the new billing object from useCart
+  const { cart, billing, removeFromCart, updateQuantity, isLoading } = useCart();
 
   const increase = (itemId, currentQty) => {
     if (currentQty < 5) {
@@ -25,16 +26,7 @@ function Cart() {
     }
   };
 
-  // Subtotal calculation - Safely handles both simple and custom candles
-  const subtotal = cart.reduce((acc, item) => {
-    const isCustom = item.type === "custom";
-    const productData = isCustom ? item.customCandle : item.product;
-    const price = isCustom
-      ? productData?.totalPrice
-      : productData?.discountPrice || productData?.price;
-
-    return acc + price * item.quantity;
-  }, 0);
+  // 👉 2. Removed the manual subtotal calculation here!
 
   const cartRef = useRef();
   useEffect(() => {
@@ -177,8 +169,8 @@ function Cart() {
                     const stockStatus = isCustom
                       ? "Made to Order"
                       : productData?.stock > 0
-                      ? "In stock"
-                      : "Out of stock";
+                        ? "In stock"
+                        : "Out of stock";
 
                     return (
                       <tr key={item._id} className="border-b cart-item">
@@ -225,13 +217,12 @@ function Cart() {
                         </td>
 
                         <td
-                          className={`text-center ${
-                            isCustom
+                          className={`text-center ${isCustom
                               ? "text-blue-600"
                               : productData?.stock > 0
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
                         >
                           {stockStatus}
                         </td>
@@ -266,8 +257,8 @@ function Cart() {
                 const stockStatus = isCustom
                   ? "Made to Order"
                   : productData?.stock > 0
-                  ? "In stock"
-                  : "Out of stock";
+                    ? "In stock"
+                    : "Out of stock";
 
                 return (
                   <div
@@ -282,13 +273,12 @@ function Cart() {
                         <Icon icon="mdi:close" width="20" />
                       </button>
                       <span
-                        className={`text-sm font-medium ${
-                          isCustom
+                        className={`text-sm font-medium ${isCustom
                             ? "text-blue-600"
                             : productData?.stock > 0
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
                       >
                         {stockStatus}
                       </span>
@@ -338,40 +328,41 @@ function Cart() {
               })}
             </div>
 
-            {/* Subtotal Section */}
+            {/* 👉 3. Subtotal Section dynamically bound to billing object */}
             <div className="w-full flex justify-end mb-10 mt-8 lg:mt-0">
               <div className="w-full h-fit lg:w-120 border border-gray-200 lg:sticky lg:top-24 rounded-sm bg-white">
+
+                {/* Subtotal */}
                 <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
                   <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
                     Subtotal
                   </div>
                   <div className="p-6 text-right font-semibold">
-                    ₹{subtotal}.00
+                    ₹{billing?.itemsPrice || 0}.00
                   </div>
                 </div>
+
+                {/* Shipping */}
                 <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
                   <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
                     Shipping
                   </div>
-                  <div className="p-6 text-sm text-gray-600">
-                    <p className="mb-3">
-                      Enter your address to view shipping options.
-                    </p>
-                    <button className="flex items-center gap-2 font-semibold text-black border-b border-dashed border-black cursor-pointer hover:text-gray-600 transition-colors">
-                      CALCULATE SHIPPING
-                      <Icon icon="mdi:truck-delivery-outline" width="18" />
-                    </button>
+                  <div className={`p-6 text-right font-semibold ${billing?.shippingPrice === 0 ? "text-green-600" : ""}`}>
+                    {billing?.shippingPrice === 0 ? "Free" : `₹${billing?.shippingPrice || 0}.00`}
                   </div>
                 </div>
 
+                {/* Total */}
                 <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
                   <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200 text-lg">
                     Total
                   </div>
                   <div className="p-6 text-right font-bold text-xl text-[#ea580c]">
-                    ₹{subtotal}.00
+                    ₹{billing?.totalPrice || 0}.00
                   </div>
                 </div>
+
+                {/* Checkout Button */}
                 <div className="p-6 cart-actions">
                   <MainBtn
                     path="/checkout"

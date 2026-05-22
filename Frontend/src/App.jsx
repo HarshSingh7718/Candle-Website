@@ -26,6 +26,8 @@ import Customized from "./pages/Customized";
 import Collections from "./components/sections/Collections";
 import CollectionProducts from "./pages/CollectionProducts";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy";
+import TermsOfServicePage from "./pages/TermsOfService";
+
 
 // Fix GSAP target not found errors globally
 gsap.config({ nullTargetWarn: false });
@@ -80,6 +82,7 @@ function App() {
                   <Route path="/about" element={<OurStory />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicyPage />}/>
+                  <Route path="/term-of-service" element={<TermsOfServicePage />} />
                   <Route path="/collections/candles" element={<Candles />} />
                   <Route path="/customized" element={<Customized />} />
                   <Route path="/collections" element={<Collections />} />

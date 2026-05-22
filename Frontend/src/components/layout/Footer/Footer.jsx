@@ -45,12 +45,12 @@ const Footer = () => {
               </a>
             </li>
             <li>
-              <a href="https://wa.me/+917350479904" target="_blank" rel="noreferrer" className='p-3 rounded-full bg-gradient-to-tr from-green-400 to-green-600 transition-transform duration-300 hover:scale-110 flex items-center justify-center'>
+              <a href="https://wa.me/+919457583956" target="_blank" rel="noreferrer" className='p-3 rounded-full bg-gradient-to-tr from-green-400 to-green-600 transition-transform duration-300 hover:scale-110 flex items-center justify-center'>
                 <FaWhatsapp className="text-white text-xl" />
               </a>
             </li>
             <li>
-              <a href="mailto:" className='p-3 rounded-full bg-gradient-to-tr from-red-400 to-red-600 transition-transform duration-300 hover:scale-110 flex items-center justify-center'>
+              <a href="mailto:support@naishcreations.com" className='p-3 rounded-full bg-gradient-to-tr from-red-400 to-red-600 transition-transform duration-300 hover:scale-110 flex items-center justify-center'>
                 <FaEnvelope className="text-white text-xl" />
               </a>
             </li>

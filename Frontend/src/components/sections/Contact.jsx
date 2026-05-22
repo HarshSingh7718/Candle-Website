@@ -188,7 +188,8 @@ export default function Contact() {
               </span>
             </div>
 
-            <div
+            <a
+              href="tel:+919876543210"
               onMouseEnter={(e) => handleIconHover(e, true)}
               onMouseLeave={(e) => handleIconHover(e, false)}
               className="flex items-center space-x-5 group cursor-pointer"
@@ -197,9 +198,10 @@ export default function Contact() {
                 <Phone size={20} />
               </div>
               <span className="text-[#444444] text-lg">+91 98765 43210</span>
-            </div>
+            </a>
 
-            <div
+            <a
+              href="mailto:support@naishacreation.com"
               onMouseEnter={(e) => handleIconHover(e, true)}
               onMouseLeave={(e) => handleIconHover(e, false)}
               className="flex items-center space-x-5 group cursor-pointer"
@@ -208,9 +210,9 @@ export default function Contact() {
                 <Mail size={20} />
               </div>
               <span className="text-[#444444] text-lg">
-                hello@naishacreation.com
+                support@naishacreation.com
               </span>
-            </div>
+            </a>
           </div>
         </div>
 

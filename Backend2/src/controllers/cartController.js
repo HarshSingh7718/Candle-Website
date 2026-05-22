@@ -160,14 +160,12 @@ export const getCartBilling = async (req, res) => {
     }
   });
   const shippingPrice = itemsPrice > 999 ? 0 : 99;
-  const taxPrice = itemsPrice * 0.05;
-  const totalPrice = Math.round(itemsPrice + shippingPrice + taxPrice);
+  const totalPrice = Math.round(itemsPrice + shippingPrice);
   res.status(200).json({
     success: true,
     billing: {
       itemsPrice,
       shippingPrice,
-      taxPrice,
       totalPrice
     }
   });
