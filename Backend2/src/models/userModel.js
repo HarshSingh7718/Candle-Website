@@ -1,6 +1,42 @@
 import mongoose from "mongoose";
 
 
+const cartItemSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        enum: ["simpleCandle", "simpleRaw", "custom"],
+        required: true,
+        default: "simpleCandle"
+    },
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product"
+    },
+    customCandle: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CustomizedCandle"
+    },
+    quantity: {
+        type: Number,
+        default: 1
+    }
+});
+
+cartItemSchema.pre("validate", function (next) {
+    if (this.type === "custom") {
+        this.product = undefined;
+        if (!this.customCandle) {
+            this.invalidate("customCandle", "customCandle is required when type is custom");
+        }
+    } else {
+        this.customCandle = undefined;
+        if (!this.product) {
+            this.invalidate("product", "product is required when type is simple");
+        }
+    }
+    next();
+});
+
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true, default: "user", trim: true },
     lastName: { type: String, required: true, trim: true },
@@ -39,31 +75,7 @@ const userSchema = new mongoose.Schema({
             ref: "Product"
         }
     ],
-    cart: [
-        {
-            type: {
-                type: String,
-                enum: ["simpleCandle", "simpleRaw", "custom"],
-                required: true,
-                default: "simpleCandle"
-            },
-
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product"
-            },
-
-            customCandle: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "CustomizedCandle"
-            },
-
-            quantity: {
-                type: Number,
-                default: 1
-            }
-        }
-    ],
+    cart: [cartItemSchema],
     token: { type: String, default: null },
     isVerified: { type: Boolean, default: false },
     isLoggedIn: { type: Boolean, default: false },

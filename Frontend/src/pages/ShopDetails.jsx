@@ -10,17 +10,17 @@ import Loader from "../components/ui/Loader";
 import { useSingleProduct } from "../hooks/useProducts";
 
 const ShopDetails = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const { addToCart } = useCart();
 
-  const { data, isLoading } = useSingleProduct(id);
+  const { data, isLoading } = useSingleProduct(slug);
 
   // Extracting data safely
   const product = data?.product;
   const similarProducts = data?.similarProducts || [];
   const reviews = data?.reviews || [];
 
-  const { liked, toggleWishlist } = useWishlist(id);
+  const { liked, toggleWishlist } = useWishlist(product?._id);
 
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
@@ -28,7 +28,7 @@ const ShopDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setQty(1);
-  }, [id]);
+  }, [slug]);
 
   if (isLoading) {
     return <Loader />;

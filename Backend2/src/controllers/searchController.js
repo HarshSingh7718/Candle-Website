@@ -1,4 +1,7 @@
 import { Product } from "../models/productModels.js";
+
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 export const searchProducts = async (req, res) => {
   const {
     keyword,
@@ -13,21 +16,22 @@ export const searchProducts = async (req, res) => {
     isActive: true
   };
 
-  //  Search by keyword
+  //  Search by keyword (sanitized to prevent ReDoS)
   if (keyword) {
+    const safeKeyword = escapeRegex(keyword);
     query.$or = [{
       name: {
-        $regex: keyword,
+        $regex: safeKeyword,
         $options: "i"
       }
     }, {
       description: {
-        $regex: keyword,
+        $regex: safeKeyword,
         $options: "i"
       }
     }, {
       tags: {
-        $regex: keyword,
+        $regex: safeKeyword,
         $options: "i"
       }
     }];
@@ -60,7 +64,7 @@ export const searchProducts = async (req, res) => {
 
   //  Pagination logic
   const skip = (Number(page) - 1) * Number(limit);
-  const products = await Product.find(query).skip(skip).limit(Number(limit)).select("name price discountPrice images ratings type");
+  const products = await Product.find(query).skip(skip).limit(Number(limit)).select("name slug price discountPrice images ratings type");
   const totalProducts = await Product.countDocuments(query);
   res.status(200).json({
     success: true,

@@ -50,7 +50,7 @@ export const updateOrderStatus = async (req, res) => {
     packaging,
     weight
   } = req.body;
-  const order = await Order.findById(req.params.id).populate("user");
+  const order = await Order.findById(req.params.id).populate("user", "firstName lastName email phoneNumber");
   if (!order) {
     throw new CustomError("Order not found", 404);
   }

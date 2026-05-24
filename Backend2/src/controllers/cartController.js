@@ -150,12 +150,14 @@ export const getCartBilling = async (req, res) => {
   user.cart.forEach(item => {
     //  SIMPLE PRODUCT
     if (item.type === "simpleCandle" || item.type === "simpleRaw") {
+      if (!item.product) return; // Product was deleted, skip
       const price = item.product.discountPrice > 0 ? item.product.discountPrice : item.product.price;
       itemsPrice += price * item.quantity;
     }
 
     //  CUSTOM CANDLE
     if (item.type === "custom") {
+      if (!item.customCandle) return; // Custom candle was deleted, skip
       itemsPrice += item.customCandle.totalPrice * item.quantity;
     }
   });

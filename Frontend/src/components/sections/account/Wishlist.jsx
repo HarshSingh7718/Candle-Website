@@ -127,7 +127,7 @@ const Wishlist = () => {
                                                 <MainBtn
                                                     type="button"
                                                     onClick={() => addToCart(item)}
-                                                    className="bg-transparent! border! shadow-none! rounded-sm! hover:bg-primary!"
+                                                    className="bg-transparent! border! shadow-none! rounded-sm! hover:bg-black!"
                                                     text={"Add to Cart"}
                                                 />
                                             </td>
@@ -179,13 +179,13 @@ const Wishlist = () => {
                             <MainBtn
                                 type="button"
                                 onClick={addSelectedToCart}
-                                className="wishlist-btn w-full! md:w-60! bg-primary! text-white! shadow-none! rounded-sm!"
+                                className="wishlist-btn w-full! md:w-60! bg-black! text-white! shadow-none! rounded-sm!"
                                 text={"Add Selected to Cart"}
                             />
                             <MainBtn
                                 type="button"
                                 onClick={addAllToCart}
-                                className="wishlist-btn w-full! md:w-50! bg-primary! text-white! shadow-none! rounded-sm!"
+                                className="wishlist-btn w-full! md:w-50! bg-black! text-white! shadow-none! rounded-sm!"
                                 text={"Add All to Cart"}
                             />
                         </div>

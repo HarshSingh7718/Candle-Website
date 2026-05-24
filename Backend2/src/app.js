@@ -22,6 +22,7 @@ import helmet from 'helmet';
 import { errorHandler } from './middleware/errorHandler.js';
 import { razorpayWebhookHandler } from './webhooks/razorpay_webhook.js';
 import { shiprocketWebhookHandler } from './webhooks/shiprocket_webhook.js';
+import seoRoute from './routes/seoRoute.js';
 
 
 const app = express();
@@ -67,7 +68,7 @@ app.use("/api/auth", rateLimit({
 }))
 
 
-
+app.use('/', seoRoute);
 
 // ==========================
 //  ADMIN ROUTES

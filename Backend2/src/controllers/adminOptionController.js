@@ -1,11 +1,9 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import { CandleCustomization } from "../models/optionModel.js";
-import cloudinary from "../services/cloudinaryService.js";
+import cloudinary, { uploadImage } from "../services/cloudinaryService.js"; // 👉 Import generic uploader
+
 export const initCustomization = async (req, res) => {
-  const {
-    basePrice,
-    steps
-  } = req.body;
+  const { basePrice, steps } = req.body;
   if (!basePrice) {
     throw new CustomError("Base price is required", 400);
   }
@@ -18,163 +16,158 @@ export const initCustomization = async (req, res) => {
     basePrice,
     steps: steps || []
   });
+
   res.status(201).json({
     success: true,
     message: "Customization settings initialized successfully",
     customization: masterCustomization
   });
 };
+
 export const createOption = async (req, res) => {
-  const {
-    stepNumber
-  } = req.params;
-  const {
-    name,
-    price,
-    stock = 0
-  } = req.body;
+  const { stepNumber } = req.params;
+  const { name, price, stock = 0 } = req.body;
+
   if (!name || price == null) {
     throw new CustomError("Name and price are required", 400);
   }
+
   const customization = await CandleCustomization.findOne();
   if (!customization) {
     throw new CustomError("Customization not found", 404);
   }
 
-  //  Find step
+  // Find step
   const step = customization.steps.find(s => s.stepNumber === Number(stepNumber));
   if (!step) {
     throw new CustomError("Step not found", 404);
   }
+
   let imageData = {};
 
-  //  Upload image
+  // 👉 Delegate to your generic service (800px for option thumbnails)
   if (req.file) {
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream({
-        folder: "candle_options"
-      }, (error, result) => {
-        if (error) reject(error);else resolve(result);
-      });
-      stream.end(req.file.buffer);
-    });
+    const result = await uploadImage(req.file.buffer, "candle_options", 800);
     imageData = {
-      url: result.secure_url,
+      url: result.url,
       public_id: result.public_id
     };
   }
 
-  //  Add option to step
+  // Add option to step
   step.options.push({
     name,
     price,
     stock,
     image: imageData
   });
+
   await customization.save();
+
   res.status(201).json({
     success: true,
     message: "Option added to step",
     data: step.options
   });
 };
+
 export const updateOption = async (req, res) => {
-  const {
-    stepNumber,
-    optionId
-  } = req.params;
-  const {
-    name,
-    price,
-    stock
-  } = req.body;
+  const { stepNumber, optionId } = req.params;
+  const { name, price, stock } = req.body;
+
   const customization = await CandleCustomization.findOne();
   if (!customization) {
     throw new CustomError("Customization not found", 404);
   }
+
   const step = customization.steps.find(s => s.stepNumber === Number(stepNumber));
   if (!step) {
     throw new CustomError("Step not found", 404);
   }
+
   const option = step.options.id(optionId);
   if (!option) {
     throw new CustomError("Option not found", 404);
   }
 
-  //  Update fields
+  // Update fields
   if (name != null) option.name = name;
   if (price != null) option.price = price;
   if (stock != null) option.stock = stock;
 
-  //  Update image (DELETE OLD FIRST)
+  // 👉 Update image (DELETE OLD FIRST)
   if (req.file) {
     if (option.image?.public_id) {
       await cloudinary.uploader.destroy(option.image.public_id);
     }
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream({
-        folder: "candle_options"
-      }, (error, result) => {
-        if (error) reject(error);else resolve(result);
-      });
-      stream.end(req.file.buffer);
-    });
+    
+    // 👉 Delegate to your generic service
+    const result = await uploadImage(req.file.buffer, "candle_options", 800);
+    
     option.image = {
-      url: result.secure_url,
+      url: result.url,
       public_id: result.public_id
     };
   }
+
   await customization.save();
+
   res.status(200).json({
     success: true,
     message: "Option updated successfully",
     option
   });
 };
+
 export const deleteOption = async (req, res) => {
-  const {
-    stepNumber,
-    optionId
-  } = req.params;
+  const { stepNumber, optionId } = req.params;
+
   const customization = await CandleCustomization.findOne();
   if (!customization) {
     throw new CustomError("Customization not found", 404);
   }
+
   const step = customization.steps.find(s => s.stepNumber === Number(stepNumber));
   if (!step) {
     throw new CustomError("Step not found", 404);
   }
+
   const option = step.options.id(optionId);
   if (!option) {
     throw new CustomError("Option not found", 404);
   }
 
-  //  DELETE IMAGE
+  // DELETE IMAGE
   if (option.image?.public_id) {
     await cloudinary.uploader.destroy(option.image.public_id);
   }
 
-  //  REMOVE OPTION
+  // REMOVE OPTION
   option.deleteOne();
   await customization.save();
+
   res.status(200).json({
     success: true,
     message: "Option deleted successfully"
   });
 };
+
 export const getAllStepOptions = async (req, res) => {
   const customization = await CandleCustomization.findOne();
   if (!customization) {
     throw new CustomError("Customization not found", 404);
   }
 
-  //  Sort steps by stepNumber (important for UI)
-  const steps = [...customization.steps].sort((a, b) => a.stepNumber - b.stepNumber).map(step => ({
-    stepNumber: step.stepNumber,
-    title: step.title,
-    type: step.type,
-    options: step.options
-  }));
+  // Sort steps by stepNumber (important for UI)
+  const steps = [...customization.steps]
+    .sort((a, b) => a.stepNumber - b.stepNumber)
+    .map(step => ({
+      stepNumber: step.stepNumber,
+      title: step.title,
+      type: step.type,
+      options: step.options
+    }));
+
   res.status(200).json({
     success: true,
     basePrice: customization.basePrice,

@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/categories", getAllCategories);
 
 // Get products by category
-router.get("/products/category/:id", isAuthenticated, getProductsByCategory);
+router.get("/products/category/:slug", getProductsByCategory);
 
 
 

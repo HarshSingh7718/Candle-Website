@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useStore } from "../context/StoreContext";
 import { useSendGooglePhoneOtp, useVerifyGooglePhone } from "../hooks/useAuth";
 
 const CompleteGoogleProfile = () => {
@@ -11,7 +10,6 @@ const CompleteGoogleProfile = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
 
   const navigate = useNavigate();
-  const { setUser } = useStore();
 
   // Pull in our mutations
   const sendOtpMutation = useSendGooglePhoneOtp();
@@ -57,7 +55,6 @@ const CompleteGoogleProfile = () => {
       },
       {
         onSuccess: (data) => {
-          if (data.user) setUser(data.user);
           navigate("/account"); // Send to dashboard!
         },
       }

@@ -3,38 +3,51 @@ import { createCustomCandle } from '../api';
 import API from "../api"; 
 import toast from 'react-hot-toast';
 
-export const useProducts = () => {
+export const useProducts = (params = {}) => {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", params],
     queryFn: async () => {
-      const { data } = await API.get("/candles");
-      return data.candles;
+      const searchParams = new URLSearchParams();
+      if (params.page) searchParams.append("page", params.page);
+      if (params.search) searchParams.append("search", params.search);
+      if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
+      if (params.sort) searchParams.append("sort", params.sort);
+      searchParams.append("limit", "8");
+
+      const { data } = await API.get(`/candles?${searchParams.toString()}`);
+      return data;
     },
     staleTime: 1000 * 60 * 5, // Fresh for 5 minutes
   });
 };
 
-export const useProductsByCategory = (categoryId) => {
+export const useProductsByCategory = (categorySlug, params = {}) => {
   return useQuery({
-    queryKey: ["products", categoryId],
+    queryKey: ["products", categorySlug, params],
     queryFn: async () => {
-      // API call: GET /api/products/category/69f1...
-      const { data } = await API.get(`/products/category/${categoryId}`);
-      return data.products;
+      const searchParams = new URLSearchParams();
+      if (params.page) searchParams.append("page", params.page);
+      if (params.search) searchParams.append("search", params.search);
+      if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
+      if (params.sort) searchParams.append("sort", params.sort);
+      searchParams.append("limit", "8");
+
+      const { data } = await API.get(`/products/category/${categorySlug}?${searchParams.toString()}`);
+      return data;
     },
-    enabled: !!categoryId, // Only run if we have an ID
+    enabled: !!categorySlug, // Only run if we have a slug
   });
 };
 
-// Fetch a single product by ID
-export const useSingleProduct = (id) => {
+// Fetch a single product by slug
+export const useSingleProduct = (slug) => {
   return useQuery({
-    queryKey: ["product", id],
+    queryKey: ["product", slug],
     queryFn: async () => {
-      const { data } = await API.get(`/product/${id}`); // Adjust route to your backend
+      const { data } = await API.get(`/product/${slug}`); // Adjust route to your backend
       return { product: data.product, similarProducts: data.similarProducts, reviews: data.reviews };
     },
-    enabled: !!id,
+    enabled: !!slug,
   });
 };
 

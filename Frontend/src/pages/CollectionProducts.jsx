@@ -22,70 +22,27 @@ const CollectionProducts = () => {
   // 1. UI State
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("latest");
-  const [priceRange, setPriceRange] = useState(5000);
+  const [priceRange, setPriceRange] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPage = 8;
 
-  // 2. Lookup logic: Find category _id by the URL slug
-  const { data: categories = [] } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const { data } = await API.get("/categories");
-      return data.categories;
-    },
-  });
-
-  const categoryId = useMemo(() => {
-    const slugify = (text) =>
-      text
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, "");
-    const match = categories.find((cat) => slugify(cat.name) === categoryName);
-    return match?._id;
-  }, [categories, categoryName]);
-
-  // 3. Fetch specific products using found categoryId
-  const { data: categoryProducts = [], isLoading } =
-    useProductsByCategory(categoryId);
-
-  // 4. Derived State: Filtering & Sorting
-  const filteredAndSortedProducts = useMemo(() => {
-    let results = [...categoryProducts];
-
-    results = results.filter((product) => {
-      const matchesSearch = product.name
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const currentPrice = product.discountPrice || product.price;
-      return matchesSearch && currentPrice <= priceRange;
+  // 3. Fetch specific products using category slug from URL
+  const { data: responseData, isLoading } =
+    useProductsByCategory(categoryName, {
+      page: currentPage,
+      search: searchTerm,
+      sort: sortOption,
+      maxPrice: priceRange
     });
 
-    if (sortOption === "low-to-high") {
-      results.sort(
-        (a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price)
-      );
-    } else if (sortOption === "high-to-low") {
-      results.sort(
-        (a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price)
-      );
-    } else if (sortOption === "popularity") {
-      results.sort((a, b) => (b.ratings || 0) - (a.ratings || 0));
-    } else {
-      results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
+  const categoryProducts = responseData?.products || [];
+  const totalPages = responseData?.totalPages || 0;
+  const currentProducts = categoryProducts; // Backend handles slicing now!
 
-    return results;
-  }, [categoryProducts, searchTerm, sortOption, priceRange]);
-
-  // Pagination Logic
-  const totalPages = Math.ceil(
-    filteredAndSortedProducts.length / productPerPage
-  );
-  const currentProducts = useMemo(() => {
-    const start = (currentPage - 1) * productPerPage;
-    return filteredAndSortedProducts.slice(start, start + productPerPage);
-  }, [filteredAndSortedProducts, currentPage]);
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortOption, priceRange]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -159,7 +116,7 @@ const CollectionProducts = () => {
     return () => ctx.revert();
   }, [currentProducts, isLoading]);
 
-  if (isLoading || !categoryId) return <Loader />;
+  if (isLoading || !categoryName) return <Loader />;
 
   const collectionDisplayName =
     categoryProducts[0]?.category?.name || categoryName.replace(/-/g, " ");
@@ -200,15 +157,25 @@ const CollectionProducts = () => {
               </div>
 
               <div className="bg-white hidden md:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
-                <h3 className="text-xl font-medium mb-4 sidebar-title">
+                <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
                   Price Filter
+                  {priceRange !== null && (
+                    <button
+                      onClick={() => setPriceRange(null)}
+                      className="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded cursor-pointer hover:bg-red-200 transition-colors"
+                    >
+                      Reset
+                    </button>
+                  )}
                 </h3>
+
                 <div className="sidebar-content">
                   <input
                     type="range"
                     min="0"
                     max="5000"
-                    value={priceRange}
+                    // 👉 Default to 5000 if null so the slider doesn't look empty
+                    value={priceRange || 5000}
                     onChange={(e) => {
                       setPriceRange(e.target.value);
                       setCurrentPage(1);
@@ -217,7 +184,8 @@ const CollectionProducts = () => {
                   />
                   <div className="flex justify-between text-sm mt-2 font-medium text-stone-600">
                     <span>₹0</span>
-                    <span>Max: ₹{priceRange}</span>
+                    {/* 👉 Only show price text if a filter is actually applied */}
+                    <span>{priceRange ? `Max: ₹${priceRange}` : "No Max"}</span>
                   </div>
                   <div className="relative group mt-6">
                     <select
@@ -240,15 +208,12 @@ const CollectionProducts = () => {
               <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
                 <p className="text-stone-500 italic">
                   Showing{" "}
-                  {filteredAndSortedProducts.length > 0
+                  {categoryProducts.length > 0
                     ? (currentPage - 1) * productPerPage + 1
                     : 0}
                   -
-                  {Math.min(
-                    currentPage * productPerPage,
-                    filteredAndSortedProducts.length
-                  )}{" "}
-                  of {filteredAndSortedProducts.length} results
+                  {((currentPage - 1) * productPerPage) + categoryProducts.length}{" "}
+                  of {responseData?.totalProducts || 0} results
                 </p>
               </div>
 

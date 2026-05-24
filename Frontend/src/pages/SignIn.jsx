@@ -3,13 +3,11 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
-import { useStore } from "../context/StoreContext";
 import { useLogin, useGoogleLogin } from "../hooks/useAuth"; // IMPORT THE NEW HOOK
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useStore();
 
   // Pull in our mutations
   const loginMutation = useLogin();
@@ -40,7 +38,6 @@ const SignIn = () => {
       {
         onSuccess: (data) => {
           toast.success(`Welcome back, ${data.user.firstName}!`);
-          setUser(data.user);
           navigate("/");
         },
         onError: (error) => {
@@ -112,7 +109,6 @@ const SignIn = () => {
                         navigate("/complete-google-profile");
                       } else {
                         toast.success("Signed in with Google successfully!");
-                        if (data.user) setUser(data.user);
                         navigate("/");
                       }
                     },

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useStore } from "../../../context/StoreContext";
-import { useUpdateProfile } from '../../../hooks/useAuth';
+import { useUpdateProfile, useUser } from '../../../hooks/useAuth';
 
 const EditProfile = ({ onCancel }) => {
-    const { user, setUser } = useStore();
+    const { data: user } = useUser();
     const updateProfileMutation = useUpdateProfile();
 
     const [formData, setFormData] = useState({
@@ -42,7 +41,6 @@ const EditProfile = ({ onCancel }) => {
 
         updateProfileMutation.mutate(formData, {
             onSuccess: (data) => {
-                if (data.user) setUser(data.user);
                 toast.success("Profile updated successfully!");
                 if (onCancel) onCancel();
             }

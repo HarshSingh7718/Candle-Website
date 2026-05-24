@@ -224,12 +224,12 @@ const Checkout = () => {
     );
 
   return (
-    <div className="md:overflow-hidden bg-white text-slate-800 font-sans flex flex-col">
+    <div className="bg-white text-slate-800 font-sans flex flex-col">
       <PageBanner title="Checkout" currentPage="Checkout" />
 
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row flex-1 h-full w-full">
         {/* LEFT COLUMN: Delivery & Payment */}
-        <div className="w-full md:w-[58%] p-6 md:p-12 border-r border-gray-100 md:h-full md:overflow-y-auto bg-white">
+        <div className="w-full md:w-[58%] p-6 md:p-12 border-r border-gray-100 bg-white">
           <header className="mb-10">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-semibold">Delivery Address</h1>
@@ -430,7 +430,7 @@ const Checkout = () => {
             type="button"
             disabled={isSubmitDisabled}
             onClick={handleCheckout}
-            className="w-full py-4 bg-black hover:bg-black/85 disabled:bg-gray-300 in-enabled:bg-gray-500 text-white font-semibold rounded-md transition-colors text-lg shadow-sm cursor-pointer"
+            className="w-full py-4 bg-black hover:bg-black/85 disabled:bg-gray-300 text-white font-semibold rounded-md transition-colors text-lg shadow-sm cursor-pointer"
           >
             {isPlacingOrder
               ? "Processing..."
@@ -441,7 +441,7 @@ const Checkout = () => {
         </div>
 
         {/* RIGHT COLUMN: Summary */}
-        <div className="w-full md:w-[42%] bg-gray-50/50 p-6 md:p-12 md:h-full md:overflow-y-auto border-l border-gray-100">
+        <div className="w-full md:w-[42%] bg-gray-50/50 p-6 md:p-12 border-l border-gray-100">
           <div className="space-y-6 mb-8">
             {cart.map((item) => {
               const isCustom = item.type === "custom";

@@ -16,85 +16,39 @@ const Candles = () => {
   const [searchParams] = useSearchParams();
   const querySearch = searchParams.get("search") || "";
 
-  // 1. TanStack Query Hook
-  const { data: allProducts = [], isLoading } = useProducts();
-
-  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState(querySearch);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortOption, setSortOption] = useState("latest");
-  const [priceRange, setPriceRange] = useState(3000); // Updated to match Rupee scale
+  const [priceRange, setPriceRange] = useState(null); // Updated to match Rupee scale
   const [selectedTag, setSelectedTag] = useState("All");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 8;
+  const productPerPage = 8; // Controlled by backend limit
 
-  const tags = ["All", "Discount", "Simple", "Signature", "Seasonal"];
+  // 1. TanStack Query Hook (Pass filters to Backend)
+  const { data: responseData, isLoading } = useProducts({
+    page: currentPage,
+    search: searchTerm,
+    maxPrice: priceRange,
+    sort: sortOption
+  });
+
+  const products = responseData?.candles || [];
+  const totalPages = responseData?.totalPages || 0;
+  const currentProducts = products; // No need to slice, backend does it!
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortOption, priceRange]);
 
   // Sync search term from URL
   useEffect(() => {
     setSearchTerm(searchParams.get("search") || "");
   }, [searchParams]);
 
-  // 2. Logic: Filtering & Sorting (Now using backend data)
-  useEffect(() => {
-    if (!allProducts) return;
-
-    let filtered = allProducts.filter((product) => {
-      const matchesSearch = product.name
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
-
-      // Match category name from the backend category object
-      const matchesCategory =
-        selectedCategory === "All" ||
-        product.category?.name === selectedCategory;
-
-      const currentPrice = product.discountPrice || product.price;
-      const matchesPrice = currentPrice <= priceRange;
-
-      // Handle tags (logic depends on your backend schema, usually isFeatured or type)
-      const matchesTag =
-        selectedTag === "All" ||
-        (selectedTag === "Discount" && product.discountPrice > 0) ||
-        product.type === selectedTag.toLowerCase();
-
-      return matchesSearch && matchesCategory && matchesPrice && matchesTag;
-    });
-
-    // Sorting Logic
-    if (sortOption === "low-to-high") {
-      filtered.sort(
-        (a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price)
-      );
-    } else if (sortOption === "high-to-low") {
-      filtered.sort(
-        (a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price)
-      );
-    } else if (sortOption === "popularity") {
-      filtered.sort((a, b) => b.ratings - a.ratings);
-    } else if (sortOption === "latest") {
-      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
-
-    setProducts(filtered);
-    setCurrentPage(1);
-  }, [
-    allProducts,
-    searchTerm,
-    selectedCategory,
-    sortOption,
-    priceRange,
-    selectedTag,
-  ]);
-
-  const indexOfLastProduct = currentPage * productPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productPerPage;
-  const currentProducts = products.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-  const totalPages = Math.ceil(products.length / productPerPage);
+  const indexOfFirstProduct = (currentPage - 1) * productPerPage;
+  const indexOfLastProduct = indexOfFirstProduct + products.length;
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -204,24 +158,35 @@ const Candles = () => {
               </div>
 
               {/* Price filter */}
-              <div className="bg-white  p-6 rounded-sm shadow-sm hidden md:block sidebar-box">
-                <h3 className="text-xl font-medium mb-4 sidebar-title">
+              <div className="bg-white p-6 rounded-sm shadow-sm hidden md:block sidebar-box">
+                <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
                   Filter By Price
+                  {priceRange !== null && (
+                    <button
+                      onClick={() => setPriceRange(null)}
+                      className="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded cursor-pointer hover:bg-red-200"
+                    >
+                      Reset
+                    </button>
+                  )}
                 </h3>
+
                 <div className="sidebar-content">
                   <input
                     type="range"
                     min="0"
                     max="5000"
-                    value={priceRange}
+                    // 👉 Default to 5000 if null, so the slider doesn't jump
+                    value={priceRange || 5000}
                     onChange={(e) => setPriceRange(e.target.value)}
                     className="w-full accent-primary cursor-pointer"
                   />
                   <div className="flex justify-between text-sm mt-2 font-medium">
                     <span>₹0</span>
-                    <span>Max: ₹{priceRange}</span>
+                    {/* 👉 Only show the price if a filter is active */}
+                    <span>{priceRange ? `Max: ₹${priceRange}` : "No Max"}</span>
                   </div>
-                  
+
                   <div className="relative group mt-6">
                     <select
                       className="w-full appearance-none bg-white border border-gray-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
@@ -244,10 +209,10 @@ const Candles = () => {
               <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
                 <p className="text-gray-500 italic">
                   Showing {products.length > 0 ? indexOfFirstProduct + 1 : 0}-
-                  {Math.min(indexOfLastProduct, products.length)} of{" "}
-                  {products.length} results
+                  {indexOfLastProduct} of{" "}
+                  {responseData?.total || 0} results
                 </p>
-                 <div className="relative group block md:hidden">
+                <div className="relative group block md:hidden">
                   <select
                     className="appearance-none bg-white border px-6 py-2 pr-10 rounded shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
                     onChange={(e) => setSortOption(e.target.value)}

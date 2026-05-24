@@ -234,7 +234,13 @@ export const completeProfile = async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Registration completed",
-    user: newUser
+    user: {
+      _id: newUser._id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      phoneNumber: newUser.phoneNumber
+    }
   });
 };
 export const googleAuth = async (req, res) => {
@@ -254,7 +260,13 @@ export const googleAuth = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Google login successful",
-    user,
+    user: {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber
+    },
     needsPhone: user.needsPhone
   });
 };
@@ -331,9 +343,14 @@ export const login = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: `Welcome back ${existingUser.firstName}`,
-    user: existingUser,
+    user: {
+      _id: existingUser._id,
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      email: existingUser.email,
+      phoneNumber: existingUser.phoneNumber
+    },
     role: existingUser.role
-    // isAdmin: existingUser.role === "admin"
   });
 };
 export const adminLogin = async (req, res) => {
@@ -380,9 +397,14 @@ export const adminLogin = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: `Welcome back ${existingUser.firstName}`,
-    user: existingUser,
+    user: {
+      _id: existingUser._id,
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      email: existingUser.email,
+      phoneNumber: existingUser.phoneNumber
+    },
     role: existingUser.role
-    // isAdmin: existingUser.role === "admin"
   });
 };
 
@@ -525,6 +547,9 @@ export const resetPassword = async (req, res) => {
   });
   if (!user) {
     throw new CustomError("User not found", 400);
+  }
+  if (!user.isOtpVerified) {
+    throw new CustomError("OTP verification required", 401);
   }
   if (newPassword.length < 6) {
     throw new CustomError("Password must be at least 6 characters", 400);

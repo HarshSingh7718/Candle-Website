@@ -74,7 +74,7 @@ export const sendOtpMiddleware = async (req, res, next) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "Failed to send OTP. Please try again."
         });
     }
 };

@@ -27,6 +27,7 @@ import Collections from "./components/sections/Collections";
 import CollectionProducts from "./pages/CollectionProducts";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy";
 import TermsOfServicePage from "./pages/TermsOfService";
+import NotFound from './pages/NotFound';
 
 
 // Fix GSAP target not found errors globally
@@ -76,7 +77,7 @@ function App() {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route
-                    path="/collections/candles/product/:id"
+                    path="/collections/candles/product/:slug"
                     element={<ShopDetails />}
                   />
                   <Route path="/about" element={<OurStory />} />
@@ -108,6 +109,8 @@ function App() {
                     <Route path="addresses" element={<Addresses />} />
                     <Route path="orders/:orderId" element={<ViewOrder />} />
                   </Route>
+                  {/* 404 page */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </main>

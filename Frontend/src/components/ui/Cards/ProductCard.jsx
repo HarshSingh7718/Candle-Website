@@ -4,6 +4,7 @@ import { useWishlist } from "../../../hooks/useWishlist";
 import { useCart } from "../../../hooks/useCart";
 import { ShoppingCart, Star } from "lucide-react";
 import { Icon } from "@iconify/react";
+import { optimizeCloudinaryUrl } from "../../../utils/imageOptimizer";
 
 const ProductCard = memo(({ product }) => {
   const { liked, toggleWishlist, isUpdating } = useWishlist(product._id);
@@ -26,16 +27,16 @@ const ProductCard = memo(({ product }) => {
           </div>
         )}
 
-        <Link to={`/collections/candles/product/${product._id}`}>
+        <Link to={`/collections/candles/product/${product.slug || product._id}`}>
           <img
-            src={product.images?.[0]?.url || "/placeholder.jpg"}
+            src={optimizeCloudinaryUrl(product.images?.[0]?.url) || "/placeholder.jpg"}
             alt={product.name}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
             loading="lazy"
           />
 
           <img
-            src={product.images?.[1]?.url || product.images?.[0]?.url}
+            src={optimizeCloudinaryUrl(product.images?.[1]?.url || product.images?.[0]?.url)}
             alt={`${product.name} alternate`}
             className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
             loading="lazy"
@@ -73,7 +74,7 @@ const ProductCard = memo(({ product }) => {
         </div>
       </div>
 
-      <Link to={`/collections/candles/product/${product._id}`}>
+      <Link to={`/collections/candles/product/${product.slug || product._id}`}>
         <div className="product-content py-3">
           <p className="text-gray-500 text-[13px] mb-1 font-medium tracking-widest uppercase">
             {product.category?.name || "Premium Candle"}

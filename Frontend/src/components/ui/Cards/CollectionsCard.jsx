@@ -11,7 +11,7 @@ function CollectionsCard({ image, title, description }) {
   return (
     <Link
       to={`/collections/${slug}`}
-      className="collections-card flex justify-center items-end pb-8 relative h-110 group overflow-hidden rounded-md cursor-pointer block"
+      className="collections-card flex justify-center items-end pb-8 relative h-72 md:h-96 lg:h-110 group overflow-hidden rounded-md cursor-pointer block"
     >
       <img
         src={image}

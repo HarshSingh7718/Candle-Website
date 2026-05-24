@@ -17,7 +17,7 @@ const ResetPassword = () => {
   const phoneNumber = location.state?.phoneNumber;
   const otp = location.state?.otp;
 
-  console.log(otp);
+
 
   // Pull in the mutation from our hook
   const { resetPassword, isResetting } = useAuthActions();
