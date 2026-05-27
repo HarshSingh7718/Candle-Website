@@ -181,6 +181,7 @@ export const getAllProductsAdmin = async (req, res) => {
 
   // FETCH PRODUCTS
   const products = await Product.find(query).populate("category", "name").sort({
+    isActive: -1,
     createdAt: -1
   }).skip(skip).limit(pageLimit);
   

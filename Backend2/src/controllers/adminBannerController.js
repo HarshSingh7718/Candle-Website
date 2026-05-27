@@ -56,6 +56,7 @@ export const getSingleBanner = async (req, res) => {
 
 export const getAllBanners = async (req, res) => {
   const banners = await Banner.find().sort({
+    isActive: -1,
     createdAt: -1
   });
   res.status(200).json({

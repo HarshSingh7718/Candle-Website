@@ -3,9 +3,14 @@ import { Category } from "../models/categoryModel.js";
 import { Product } from "../models/productModels.js";
 
 export const getAllCategories = async (req, res) => {
+  // Find all category IDs that have at least one active product
+  const activeProductCategories = await Product.distinct("category", { isActive: true });
+
   const categories = await Category.find({
+    _id: { $in: activeProductCategories },
     isActive: true
   });
+  
   res.status(200).json({
     success: true,
     categories

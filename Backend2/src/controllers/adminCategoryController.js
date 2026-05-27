@@ -92,6 +92,7 @@ export const deleteCategory = async (req, res) => {
 
 export const getAllCategoriesAdmin = async (req, res) => {
   const categories = await Category.find().sort({
+    isActive: -1,
     createdAt: -1
   });
   
