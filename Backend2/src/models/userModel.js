@@ -22,7 +22,7 @@ const cartItemSchema = new mongoose.Schema({
     }
 });
 
-cartItemSchema.pre("validate", function (next) {
+cartItemSchema.pre("validate", function () {
     if (this.type === "custom") {
         this.product = undefined;
         if (!this.customCandle) {
@@ -34,7 +34,6 @@ cartItemSchema.pre("validate", function (next) {
             this.invalidate("product", "product is required when type is simple");
         }
     }
-    next();
 });
 
 const userSchema = new mongoose.Schema({

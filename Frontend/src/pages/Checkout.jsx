@@ -20,6 +20,7 @@ import { useCheckout } from "../hooks/useCheckout";
 import { useUser } from "../hooks/useAuth";
 import { useAddress } from "../hooks/useAddress";
 import { usePincodeLookup } from "../hooks/usePincodeLookup";
+import { loadRazorpayScript } from '../utils/loadRazorpay';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -181,6 +182,12 @@ const Checkout = () => {
       }
 
       // Branch 2: Razorpay Handshake
+      const isRazorpayLoaded = await loadRazorpayScript();
+      if (!isRazorpayLoaded) {
+        toast.error("Razorpay SDK failed to load. Please check your connection.");
+        return;
+      }
+      
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: response.razorpayOrder.amount,
