@@ -63,7 +63,7 @@ export const createOrder = async (req, res) => {
           product: prod._id,
           name: prod.name,
           quantity: item.quantity,
-          price: prod.discountPrice || prod.price,
+          price: prod.discountPrice || prod.price || 0,
           image: prod.images?.[0]?.url || ""
         });
       }
@@ -79,7 +79,7 @@ export const createOrder = async (req, res) => {
           customCandle: candle._id,
           name: `Custom Candle (${candle.snapshot.vesselName} - ${candle.snapshot.scentName})`,
           quantity: item.quantity,
-          price: candle.totalPrice,
+          price: candle.totalPrice || 0,
           image: "",
           // optional
 
@@ -100,8 +100,11 @@ export const createOrder = async (req, res) => {
   // =========================
   let itemsPrice = 0;
   orderItems.forEach(item => {
-    itemsPrice += item.price * item.quantity;
+    itemsPrice += (item.price || 0) * (item.quantity || 1);
   });
+  if (isNaN(itemsPrice)) {
+    throw new CustomError("Failed to calculate total price (invalid item price).", 400);
+  }
   const shippingPrice = itemsPrice > 999 ? 0 : 99;
   const totalAmount = Math.round(itemsPrice + shippingPrice);
 
@@ -134,6 +137,9 @@ export const createOrder = async (req, res) => {
   //  FLOW A: RAZORPAY
   // =========================
   if (paymentMethod === "razorpay") {
+    if (totalAmount < 1) {
+      throw new CustomError("Total amount must be at least ₹1 to use Razorpay.", 400);
+    }
     const razorpayOrder = await razorpay.orders.create({
       amount: totalAmount * 100,
       // Razorpay works in paise

@@ -7,7 +7,7 @@ import { getAllReviewsAdmin } from "../controllers/adminReviewController.js";
 import { getAdminDashboard } from "../controllers/adminDasboardController.js";
 import { upload } from "../middleware/multerMiddleware.js";
 import { getAllContacts, updateContactStatus } from "../controllers/adminContactController.js";
-import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin, getSingleCategoryAdmin } from "../controllers/adminCategoryController.js";
+import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin, getSingleCategoryAdmin, getCategoryProducts, updateCategoryProducts, migrateCategoryToArray } from "../controllers/adminCategoryController.js";
 import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
 import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
 import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
@@ -182,6 +182,30 @@ router.get(
     isAuthenticated,
     isAdmin,
     getAllCategoriesAdmin
+);
+
+// Get products assigned to a category (for category-product management UI)
+router.get(
+    "/category/:id/products",
+    isAuthenticated,
+    isAdmin,
+    getCategoryProducts
+);
+
+// Bulk assign/unassign products to a category
+router.put(
+    "/category/:id/products",
+    isAuthenticated,
+    isAdmin,
+    updateCategoryProducts
+);
+
+// One-time migration: convert single category ObjectId to array
+router.post(
+    "/migrate-categories",
+    isAuthenticated,
+    isAdmin,
+    migrateCategoryToArray
 );
 
 

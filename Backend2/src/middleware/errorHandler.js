@@ -33,6 +33,12 @@ export const errorHandler = (err, req, res, next) => {
     message = "Token expired, please login again";
   }
 
+  // Razorpay or third-party SDK errors that nest the message inside err.error
+  if (err.error && err.error.description) {
+    statusCode = err.statusCode || 400;
+    message = err.error.description;
+  }
+
   res.status(statusCode).json({
     success: false,
     message,

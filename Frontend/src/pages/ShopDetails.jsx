@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import ProductZoom from "../components/ProductZoom";
 import { useCart } from "../hooks/useCart";
 import { useWishlist } from "../hooks/useWishlist";
 import { Star } from "lucide-react";
 import ProductCard from "../components/ui/Cards/ProductCard";
-import PageBanner from "../components/ui/PageBanner";
 import Loader from "../components/ui/Loader";
 import { useSingleProduct } from "../hooks/useProducts";
 
+/**
+ * ShopDetails – Product detail page.
+ *
+ * Features:
+ *  - Image zoom via ProductZoom
+ *  - Tabs: Description (with Show More/Less), Additional Info, Reviews
+ *  - Short description click scrolls to & opens the Description tab
+ *  - Similar products grid
+ */
 const ShopDetails = () => {
   const { slug } = useParams();
   const { addToCart } = useCart();
@@ -24,11 +32,32 @@ const ShopDetails = () => {
 
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
+  // Ref for the tabs section so we can scroll to it
+  const tabsSectionRef = useRef(null);
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setQty(1);
+    setShowFullDescription(false);
   }, [slug]);
+
+  /**
+   * Scrolls to the Description tab section and opens it.
+   * Passed down to ProductZoom so the short description acts as an anchor link.
+   */
+  const handleScrollToDescription = useCallback(() => {
+    setActiveTab("description");
+    // Slight delay so the tab content renders before we scroll
+    setTimeout(() => {
+      tabsSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  }, []);
 
   if (isLoading) {
     return <Loader />;
@@ -49,19 +78,17 @@ const ShopDetails = () => {
     );
   }
 
+
   return (
-    <div className="bg-light-yellow pb-1">
-      <PageBanner
-        title="Shop Details"
-        currentPage="Shop Details"
-        productName={product.name}
-      />
-
+    <div className="bg-light-yellow pb-1 pt-24">
       <div className="container mx-auto py-5 px-4 lg:px-8 w-full">
-        <ProductZoom product={product} />
+        <ProductZoom
+          product={product}
+          onScrollToDescription={handleScrollToDescription}
+        />
 
-        {/* Tabs Area */}
-        <div className="mt-8">
+        {/* ─────────────── Tabs Area ─────────────── */}
+        <div className="mt-8" ref={tabsSectionRef} id="product-tabs">
           <div className="flex border-b border-gray-200 gap-8 md:gap-10">
             {["description", "additional", "reviews"].map((tab) => (
               <button
@@ -82,14 +109,35 @@ const ShopDetails = () => {
           </div>
 
           <div className="py-10 min-h-[200px]">
+            {/* ── Description Tab with Show More / Show Less ── */}
             {activeTab === "description" && (
               <div className="text-gray-600 text-[15px] leading-8 max-w-4xl">
-                <p>{product.description}</p>
+                <p className={`whitespace-pre-line ${showFullDescription ? 'line-clamp-none' : 'line-clamp-4'}`}>
+                  {product.description}
+                </p>
+
+                {product.description && (
+                  <button
+                    onClick={() => setShowFullDescription((prev) => !prev)}
+                    className="mt-4 text-sm font-semibold text-coffee hover:text-coffee-light transition-colors cursor-pointer underline underline-offset-4"
+                  >
+                    {showFullDescription ? "Show Less" : "Show More"}
+                  </button>
+                )}
               </div>
             )}
 
+            {/* ── Additional Info Tab ── */}
             {activeTab === "additional" && (
               <div className="text-gray-600 text-sm max-w-lg">
+                {product.vessel && (
+                  <div className="grid grid-cols-2 py-3 border-b border-gray-100">
+                    <span className="font-bold text-black uppercase tracking-wider">
+                      Vessel
+                    </span>
+                    <span>{product.vessel}</span>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 py-3 border-b border-gray-100">
                   <span className="font-bold text-black uppercase tracking-wider">
                     Weight
@@ -111,6 +159,7 @@ const ShopDetails = () => {
               </div>
             )}
 
+            {/* ── Reviews Tab ── */}
             {activeTab === "reviews" && (
               <div className="space-y-8">
                 {reviews?.length === 0 && (
@@ -154,7 +203,7 @@ const ShopDetails = () => {
           </div>
         </div>
 
-        {/* Similar Products */}
+        {/* ─────────────── Similar Products ─────────────── */}
         <div>
           <span className="title-span">- You may also like -</span>
           <h2 className="heading-1 mb-5">

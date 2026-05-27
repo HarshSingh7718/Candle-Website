@@ -15,14 +15,14 @@ const AddProduct = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [scentProfile, setScentProfile] = useState('');
-  const [vesselColor, setVesselColor] = useState('');
+  const [vessel, setVessel] = useState('');
   const [weight, setWeight] = useState('');
   const [burnTime, setBurnTime] = useState('');
   const [material, setMaterial] = useState('');
   const [size, setSize] = useState('medium');
   const [price, setPrice] = useState('');
   const [discountedPrice, setDiscountedPrice] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState([]);
   const [stock, setStock] = useState('');
   const [type, setType] = useState('simpleCandle');
 
@@ -72,10 +72,10 @@ const AddProduct = () => {
     formData.append('description', description);
     formData.append('price', price);
     formData.append('stock', stock);
-    formData.append('category', category);
+    formData.append('category', JSON.stringify(category));
     formData.append('type', type);
     formData.append('scent', scentProfile);
-    formData.append('color', vesselColor);
+    formData.append('vessel', vessel);
     formData.append('weight', weight);
     formData.append('burnTime', burnTime);
     formData.append('material', material);
@@ -155,7 +155,7 @@ const AddProduct = () => {
             <h3 className="font-heading text-headline-md text-primary mb-6">Product Attributes</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               <div><label className="block font-label-md text-on-surface-variant mb-2">SCENT PROFILE</label><input type="text" value={scentProfile} onChange={(e) => setScentProfile(e.target.value)} className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
-              <div><label className="block font-label-md text-on-surface-variant mb-2">VESSEL COLOR</label><input type="text" value={vesselColor} onChange={(e) => setVesselColor(e.target.value)} className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
+              <div><label className="block font-label-md text-on-surface-variant mb-2">VESSEL</label><input type="text" value={vessel} onChange={(e) => setVessel(e.target.value)} className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
               <div><label className="block font-label-md text-on-surface-variant mb-2">WEIGHT (Gram)</label><input type="text" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
               <div><label className="block font-label-md text-on-surface-variant mb-2">BURN TIME (Hour)</label><input type="text" value={burnTime} onChange={(e) => setBurnTime(e.target.value)} className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
               <div><label className="block font-label-md text-on-surface-variant mb-2">MATERIAL</label><input type="text" value={material} onChange={(e) => setMaterial(e.target.value)} className="w-full bg-surface-container-low border-b border-outline-variant py-2 px-3 outline-none" /></div>
@@ -202,20 +202,24 @@ const AddProduct = () => {
                       {dbCategories.map(cat => (
                         <label
                           key={cat._id}
-                          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${category === cat._id
-                              ? 'bg-primary/5 text-primary' // Selected state
-                              : 'hover:bg-surface-container text-on-surface-variant' // Unselected hover state
+                          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${category.includes(cat._id)
+                              ? 'bg-primary/5 text-primary'
+                              : 'hover:bg-surface-container text-on-surface-variant'
                             }`}
                         >
-                          {/* 👉 Changed to Radio Button */}
                           <input
-                            type="radio"
-                            name="productCategory" // Groups them together
-                            checked={category === cat._id}
-                            onChange={() => setCategory(cat._id)}
-                            className="w-5 h-5 border-outline-variant text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                            type="checkbox"
+                            checked={category.includes(cat._id)}
+                            onChange={() => {
+                              setCategory(prev =>
+                                prev.includes(cat._id)
+                                  ? prev.filter(id => id !== cat._id)
+                                  : [...prev, cat._id]
+                              );
+                            }}
+                            className="w-5 h-5 border-outline-variant text-primary focus:ring-primary/20 accent-primary cursor-pointer rounded"
                           />
-                          <span className={`font-label-md select-none ${category === cat._id ? 'font-semibold' : ''}`}>
+                          <span className={`font-label-md select-none ${category.includes(cat._id) ? 'font-semibold' : ''}`}>
                             {cat.name}
                           </span>
                         </label>

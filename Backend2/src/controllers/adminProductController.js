@@ -4,7 +4,7 @@ import cloudinary, { uploadImage } from "../services/cloudinaryService.js"; // �
 
 export const createProduct = async (req, res) => {
   const {
-    name, description, price, discountPrice, category, type, scent, color, size,
+    name, description, price, discountPrice, category, type, scent, vessel, size,
     burnTime, stock, isFeatured, isTrending, isBestSeller, isDiscounted, isLatest,
     weight, material
   } = req.body;
@@ -32,8 +32,19 @@ export const createProduct = async (req, res) => {
   }
 
   // Create product
+  // Parse category — arrives as a JSON string from FormData (e.g. '["id1","id2"]')
+  let parsedCategory = [];
+  if (category) {
+    try {
+      parsedCategory = JSON.parse(category);
+    } catch {
+      // Fallback: if it's a single ID string, wrap it
+      parsedCategory = [category];
+    }
+  }
+
   const newProduct = await Product.create({
-    name, description, price, discountPrice, category, type, scent, color, size,
+    name, description, price, discountPrice, category: parsedCategory, type, scent, vessel, size,
     burnTime, stock, images: uploadedImages, isFeatured, isTrending, isBestSeller,
     isDiscounted, isLatest, weight, material,
     createdBy: req.user._id
@@ -76,8 +87,8 @@ export const updateProduct = async (req, res) => {
 
   // 1. Update normal fields
   const fields = [
-    "name", "description", "price", "discountPrice", "category", "type", "scent", 
-    "color", "size", "burnTime", "stock", "isFeatured", "isTrending", "isBestSeller", 
+    "name", "description", "price", "discountPrice", "type", "scent", 
+    "vessel", "size", "burnTime", "stock", "isFeatured", "isTrending", "isBestSeller", 
     "isDiscounted", "isLatest", "weight", "material"
   ];
   
@@ -86,6 +97,15 @@ export const updateProduct = async (req, res) => {
       prod[field] = req.body[field];
     }
   });
+
+  // Handle category separately — arrives as JSON string from FormData
+  if (req.body.category !== undefined) {
+    try {
+      prod.category = JSON.parse(req.body.category);
+    } catch {
+      prod.category = [req.body.category];
+    }
+  }
 
   // 2. Handle image update (optional)
   if (req.files && req.files.length > 0) {

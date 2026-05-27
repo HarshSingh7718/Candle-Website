@@ -64,7 +64,10 @@ const Categories = () => {
             ref={addToCardsRef}
             className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col group ${!category.isActive ? 'opacity-75' : ''}`}
           >
-            <div className={`h-48 relative bg-surface-container-low overflow-hidden ${!category.isActive ? 'grayscale-[50%]' : ''}`}>
+            <div
+              onClick={() => navigate(`/categories/${category._id}/products`)}
+              className={`h-48 relative bg-surface-container-low overflow-hidden cursor-pointer ${!category.isActive ? 'grayscale-[50%]' : ''}`}
+            >
               {/* 👉 Use backend image.url */}
               {category.image?.url ? (
                 <img alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={category.image.url} />
@@ -74,6 +77,7 @@ const Categories = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-on-surface/60 to-transparent"></div>
               <div className="absolute bottom-0 left-0 p-4">
                 <h3 className="font-heading text-headline-md text-on-primary">{category.name}</h3>
+                <p className="text-on-primary/70 text-xs mt-1 font-label-sm">Click to manage products →</p>
               </div>
             </div>
 

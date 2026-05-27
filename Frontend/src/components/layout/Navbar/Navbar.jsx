@@ -15,10 +15,10 @@ import API from '../../../api';
 
 const navLinks = [
   { name: "Candles", path: "/collections/candles" },
-  { name: "Our Story", path: "/about" },
   { name: "Collections", path: "/collections" },
   { name: "Customized", path: "/customized" },
   { name: "Contact", path: "/contact" },
+  { name: "Our Story", path: "/about" },
 ];
 
 const Navbar = () => {

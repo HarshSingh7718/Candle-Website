@@ -1,51 +1,32 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
-import gsap from "gsap";
 
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 
-import MainBtn from "../ui/Buttons/MainBtn";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useHomeData } from "../../hooks/useHomeData";
 import Loader from "../ui/Loader";
 
+/**
+ * Hero – Full-width banner carousel.
+ *
+ * Each banner is a clickable image that navigates to /collections/candles.
+ * No overlay text or buttons — the image speaks for itself.
+ * Responsive aspect ratio: taller on mobile (4/3), 16/9 on md+.
+ */
 function Hero() {
   const { data: homeData, isLoading } = useHomeData();
   const banners = homeData?.banners || [];
   const heroRef = useRef(null);
 
-  // GSAP Animation scoped to the active slide
-  const handleSlideChange = () => {
-    // A tiny delay ensures Swiper has applied the active classes to the DOM
-    setTimeout(() => {
-      if (!heroRef.current) return;
-
-      const activeSlide = heroRef.current.querySelector(".swiper-slide-active");
-      if (!activeSlide) return;
-
-      gsap.fromTo(
-        activeSlide.querySelectorAll(".hero-title"),
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: "power3.out", stagger: 0.2 }
-      );
-      gsap.fromTo(
-        activeSlide.querySelectorAll(".hero-p"),
-        { opacity: 0 },
-        { opacity: 1, duration: 1.5, delay: 0.5, ease: "power2.out" }
-      );
-    }, 50);
-  };
-
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-stone-50">
-        {/* <div className="animate-pulse font-serif italic text-2xl text-stone-400">
-          Loading...
-        </div> */}
         <Loader />
       </div>
     );
@@ -65,50 +46,28 @@ function Hero() {
           nextEl: ".hero-next",
           prevEl: ".hero-prev",
         }}
-        // FIX: Only loop if there are enough banners
+        // Only loop if there are enough banners
         loop={banners.length > 1}
-        onSlideChange={handleSlideChange}
-        // Also trigger the animation on the very first load!
-        onInit={handleSlideChange}
         className="heroSwiper"
       >
         {banners.map((banner) => (
           <SwiperSlide key={banner._id}>
-            <div
-              className="min-h-[67vh] px-[4%] md:px-[8%] xl:px-[12%] py-[8%] xl:py-[12%] md:min-h-screen w-full flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center transition-transform duration-1000"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${banner.image?.url})`,
-              }}
+            {/* Entire banner image is a clickable link — no overlay text */}
+            <Link
+              to="/collections/candles"
+              className="block w-full aspect-[4/3] md:aspect-video"
             >
-              <div className="hero-content text-white text-center px-6">
-                <h1
-                  className="hero-title text-4xl sm:text-4xl md:text-6xl
-    lg:text-7xl xl:text-8xl font-bold pb-5 tracking-tight"
-                >
-                  {banner.title || "Premium Candles"}
-                </h1>
-
-                <p
-                  className="hero-p  max-w-4xl mx-auto pb-14 lg:pb-18
-    text-gray-50 font-light text-sm lg:text-lg"
-                >
-                  {banner.subtitle ||
-                    "Experience luxury candles crafted with care."}
-                </p>
-
-                <div className="hero-title">
-                  <MainBtn
-                    text="Explore Collection"
-                    path="/collections/candles"
-                  />
-                </div>
-              </div>
-            </div>
+              <img
+                src={banner.image?.url}
+                alt={banner.title || "Shop our candle collection"}
+                className="w-full h-full object-cover"
+              />
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* CUSTOM NAV */}
+      {/* CUSTOM NAV — only shown when multiple banners exist */}
       <button className="hero-prev absolute left-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
         <ChevronLeft size={24} />
       </button>

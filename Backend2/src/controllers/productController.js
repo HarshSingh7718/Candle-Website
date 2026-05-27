@@ -18,8 +18,10 @@ export const getSingleProduct = async (req, res) => {
   const id = prod._id;
 
   //  2. Get similar products (same category, exclude current)
+  // category is now an array — extract IDs whether populated or raw
+  const categoryIds = (prod.category || []).map(c => c._id || c);
   const similarProducts = await Product.find({
-    category: prod.category._id,
+    category: { $in: categoryIds },
     _id: {
       $ne: id
     } // exclude current product

@@ -26,10 +26,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    category: {
+    category: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
-    },
+    }],
     type: {
         type: String,
         enum: ["simpleCandle", "simpleRaw"],
@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
     scent: {
         type: String,
     },
-    color: {
+    vessel: {
         type: String
     },
     size: {

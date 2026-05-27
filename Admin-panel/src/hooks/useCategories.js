@@ -84,3 +84,31 @@ export const useToggleCategoryStatus = () => {
         onError: (error) => toast.error(error.response?.data?.message || "Failed to update status")
     });
 };
+
+export const useGetCategoryProducts = (categoryId) => {
+    return useQuery({
+        queryKey: ['categoryProducts', categoryId],
+        queryFn: async () => {
+            const { data } = await api.get(`/admin/category/${categoryId}/products`);
+            return data;
+        },
+        enabled: !!categoryId,
+    });
+};
+
+export const useUpdateCategoryProducts = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ categoryId, productIds }) => {
+            const { data } = await api.put(`/admin/category/${categoryId}/products`, { productIds });
+            return data;
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries(['categoryProducts', variables.categoryId]);
+            // Also invalidate general products list since category assignments changed
+            queryClient.invalidateQueries(['products']);
+            toast.success("Products assigned successfully!");
+        },
+        onError: (error) => toast.error(error.response?.data?.message || "Failed to assign products")
+    });
+};

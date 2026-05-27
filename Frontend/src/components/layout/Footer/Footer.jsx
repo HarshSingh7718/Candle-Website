@@ -62,10 +62,10 @@ const Footer = () => {
           <h3 className="text-xl font-bold text-white mb-4 md:mb-6">Useful Links</h3>
           <ul className="space-y-3">
             <FooterLink href="/">Home</FooterLink>
-            <FooterLink href="/about">Our Story</FooterLink>
             <FooterLink href="/collections">Shop Collections</FooterLink>
             <FooterLink href="/custom-candle">Customise</FooterLink>
             <FooterLink href="/contact">Contact Support</FooterLink>
+            <FooterLink href="/about">Our Story</FooterLink>
           </ul>
         </div>
 

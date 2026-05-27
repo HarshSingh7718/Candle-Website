@@ -7,22 +7,28 @@ import { useHomeData } from "../../hooks/useHomeData";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Shop = () => {
-  const shopRef = useRef(null);
+/**
+ * Section configuration — each object renders its own heading + product grid.
+ * Maps to the keys returned by the backend's /home endpoint.
+ */
+const SECTIONS = [
+  { key: "bestSeller", subtitle: "- Top Picks -", title: "Best", highlight: "Sellers" },
+  { key: "trending", subtitle: "- What's Hot -", title: "Trending", highlight: "Now" },
+  { key: "latest", subtitle: "- Just Arrived -", title: "Latest", highlight: "Arrivals" },
+];
+
+/**
+ * ProductSection – A single heading + product grid.
+ * Extracted to keep Shop clean and allow per-section GSAP triggers.
+ */
+const ProductSection = ({ section, products }) => {
+  const gridRef = useRef(null);
   const headingRef = useRef(null);
 
-  // 1. TanStack Query Hook
-  const { data: homeData, isLoading } = useHomeData();
-
-  // 2. GSAP Animations (Combined & Protected)
   useEffect(() => {
-    // CRITICAL FIX: Don't run any GSAP until the loading spinner is gone 
-    // and the refs are securely attached to the real DOM.
-    if (isLoading || !shopRef.current || !headingRef.current) return;
+    if (!gridRef.current || !headingRef.current || products.length === 0) return;
 
     const ctx = gsap.context(() => {
-
-      // Heading Animation
       gsap.from(headingRef.current, {
         y: 50,
         opacity: 0,
@@ -34,26 +40,50 @@ const Shop = () => {
         },
       });
 
-      // Products Animation (Animates the direct children of the grid!)
-      gsap.from(shopRef.current.children, {
+      gsap.from(gridRef.current.children, {
         y: 50,
         opacity: 0,
         duration: 0.8,
-        stagger: 0.2,
+        stagger: 0.15,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: shopRef.current,
+          trigger: gridRef.current,
           start: "top 85%",
           toggleActions: "play none none reset",
         },
       });
-
     });
 
     return () => ctx.revert();
-  }, [isLoading, homeData]); // Re-run when loading finishes and data is available
+  }, [products]);
 
-  // 3. Loading State
+  if (!products || products.length === 0) return null;
+
+  return (
+    <div className="mb-20 last:mb-0">
+      <div ref={headingRef} className="text-center w-full mb-16">
+        <span className="title-span">{section.subtitle}</span>
+        <h2 className="heading-1 mb-5">
+          {section.title}
+          <span className="text-coffee"> {section.highlight} </span>
+        </h2>
+      </div>
+
+      <div
+        ref={gridRef}
+        className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10"
+      >
+        {products.map((product) => (
+          <ProductCard key={product._id} product={product} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Shop = () => {
+  const { data: homeData, isLoading } = useHomeData();
+
   if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
@@ -65,24 +95,13 @@ const Shop = () => {
   return (
     <section className="bg-light-yellow" id="collections">
       <div className="container py-[8%] mx-auto px-4">
-        {/* Heading */}
-        <div ref={headingRef} className="text-center w-full mb-16">
-          <span className="title-span">- Curated Selection -</span>
-          <h2 className="heading-1 mb-5">
-            Our Artisanal
-            <span className="text-coffee"> Collections </span>
-          </h2>
-        </div>
-
-        {/* FEATURED PRODUCTS */}
-        <div
-          ref={shopRef}
-          className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10"
-        >
-          {homeData?.featured?.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
+        {SECTIONS.map((section) => (
+          <ProductSection
+            key={section.key}
+            section={section}
+            products={homeData?.[section.key] || []}
+          />
+        ))}
 
         <div className="flex justify-center mt-12 w-full">
           <MainBtn

@@ -13,6 +13,7 @@ import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
 import AddCategory from './pages/AddCategory';
 import EditCategory from './pages/EditCategory';
+import CategoryProducts from './pages/CategoryProducts';
 import Options from './pages/Options';
 import AddOption from './pages/AddOption';
 import EditOption from './pages/EditOption';
@@ -58,6 +59,7 @@ function App() {
                       <Route path="/categories" element={<Categories />} />
                       <Route path="/categories/add" element={<AddCategory />} />
                       <Route path="/categories/edit/:id" element={<EditCategory />} />
+                      <Route path="/categories/:id/products" element={<CategoryProducts />} />
                       <Route path="/orders" element={<Orders />} />
                       <Route path="/reviews" element={<Reviews />} />
                       <Route path="/contacts" element={<Contacts />} />
