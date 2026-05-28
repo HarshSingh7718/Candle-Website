@@ -57,11 +57,14 @@ function Hero() {
               to="/collections/candles"
               className="block w-full relative aspect-[4/5] md:aspect-video overflow-hidden"
             >
-              <img
-                src={banner.image?.url}
-                alt={banner.title || "Shop our candle collection"}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
+              <picture className="absolute inset-0 w-full h-full">
+                <source media="(min-width: 768px)" srcSet={banner.desktopImage?.url} />
+                <img
+                  src={banner.mobileImage?.url}
+                  alt={banner.title || "Shop our candle collection"}
+                  className="w-full h-full object-cover"
+                />
+              </picture>
             </Link>
           </SwiperSlide>
         ))}

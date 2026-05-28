@@ -219,7 +219,7 @@ router.post(
   "/banner",
   isAuthenticated,
   isAdmin,
-  upload.single("image"), // 🔥 THIS LINE IS REQUIRED
+  upload.fields([{ name: 'desktopImage', maxCount: 1 }, { name: 'mobileImage', maxCount: 1 }]), // 🔥 THIS LINE IS REQUIRED
   createBanner
 );
 
@@ -239,7 +239,7 @@ router.put( // or router.patch, depending on your preference
     "/banner/:id",
     isAuthenticated,
     isAdmin,
-    upload.single("image"), // 🔥 REQUIRED: In case they change the image!
+    upload.fields([{ name: 'desktopImage', maxCount: 1 }, { name: 'mobileImage', maxCount: 1 }]), // 🔥 REQUIRED: In case they change the image!
     updateBanner
 );
 

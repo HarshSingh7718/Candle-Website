@@ -4,18 +4,23 @@ import cloudinary, { uploadImage } from "../services/cloudinaryService.js";
 
 export const createBanner = async (req, res) => {
   const { title, subtitle } = req.body;
-  if (!req.file) {
-    throw new CustomError("Image is required", 400);
+  if (!req.files || !req.files.desktopImage || !req.files.mobileImage) {
+    throw new CustomError("Both desktop and mobile images are required", 400);
   }
 
-  const result = await uploadImage(req.file.buffer, "banners", 1920);
+  const desktopResult = await uploadImage(req.files.desktopImage[0].buffer, "banners", 1920);
+  const mobileResult = await uploadImage(req.files.mobileImage[0].buffer, "banners", 1080); // You can adjust width
 
   const banner = await Banner.create({
     title,
     subtitle,
-    image: {
-      url: result.url,
-      public_id: result.public_id
+    desktopImage: {
+      url: desktopResult.url,
+      public_id: desktopResult.public_id
+    },
+    mobileImage: {
+      url: mobileResult.url,
+      public_id: mobileResult.public_id
     }
   });
 
@@ -31,9 +36,12 @@ export const deleteBanner = async (req, res) => {
     throw new CustomError("Banner not found", 404);
   }
 
-  // Delete image from cloudinary
-  if (banner.image?.public_id) {
-    await cloudinary.uploader.destroy(banner.image.public_id);
+  // Delete images from cloudinary
+  if (banner.desktopImage?.public_id) {
+    await cloudinary.uploader.destroy(banner.desktopImage.public_id);
+  }
+  if (banner.mobileImage?.public_id) {
+    await cloudinary.uploader.destroy(banner.mobileImage.public_id);
   }
   await banner.deleteOne();
   
@@ -73,18 +81,27 @@ export const updateBanner = async (req, res) => {
   }
   const { title, subtitle } = req.body;
 
-  // If new image uploaded
-  if (req.file) {
-    // delete old image
-    if (banner.image?.public_id) {
-      await cloudinary.uploader.destroy(banner.image.public_id);
+  // If new desktop image uploaded
+  if (req.files && req.files.desktopImage) {
+    if (banner.desktopImage?.public_id) {
+      await cloudinary.uploader.destroy(banner.desktopImage.public_id);
     }
-    
-    const result = await uploadImage(req.file.buffer, "banners", 1920);
-    
-    banner.image = {
-      url: result.url,
-      public_id: result.public_id
+    const desktopResult = await uploadImage(req.files.desktopImage[0].buffer, "banners", 1920);
+    banner.desktopImage = {
+      url: desktopResult.url,
+      public_id: desktopResult.public_id
+    };
+  }
+
+  // If new mobile image uploaded
+  if (req.files && req.files.mobileImage) {
+    if (banner.mobileImage?.public_id) {
+      await cloudinary.uploader.destroy(banner.mobileImage.public_id);
+    }
+    const mobileResult = await uploadImage(req.files.mobileImage[0].buffer, "banners", 1080);
+    banner.mobileImage = {
+      url: mobileResult.url,
+      public_id: mobileResult.public_id
     };
   }
 

@@ -82,7 +82,7 @@ const Banners = () => {
               {/* Preview Area */}
               <div className="w-full h-48 sm:h-64 relative bg-surface-container shrink-0 border-b border-surface-variant">
                 <img
-                  src={banner.image?.url} // 👉 Match backend image object
+                  src={banner.desktopImage?.url} // 👉 Match backend image object
                   alt={banner.title}
                   className={`w-full h-full object-cover object-center absolute inset-0 transition-all duration-300 ${isActive ? '' : 'grayscale opacity-80'}`}
                 />

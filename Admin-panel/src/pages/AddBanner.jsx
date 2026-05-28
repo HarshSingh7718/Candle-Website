@@ -7,12 +7,15 @@ import { useCreateBanner } from '../hooks/useBanners';
 const AddBanner = () => {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
+  const [desktopPreview, setDesktopPreview] = useState(null);
+  const [mobilePreview, setMobilePreview] = useState(null);
 
   // 👉 2. New state to hold the actual File object for the backend
-  const [imageFile, setImageFile] = useState(null);
+  const [desktopFile, setDesktopFile] = useState(null);
+  const [mobileFile, setMobileFile] = useState(null);
 
-  const fileInputRef = useRef(null);
+  const desktopInputRef = useRef(null);
+  const mobileInputRef = useRef(null);
   const navigate = useNavigate();
 
   // 👉 3. Initialize the mutation
@@ -28,34 +31,39 @@ const AddBanner = () => {
     );
   }, []);
 
-  const handleFileChange = (e) => {
+  const handleDesktopFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // 👉 4. Save the actual file for the API payload
-      setImageFile(file);
-
-      // Save the preview for the UI
+      setDesktopFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
+      reader.onloadend = () => setDesktopPreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
+  const handleMobileFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMobileFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setMobilePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
+
+  const handleDesktopUploadClick = () => desktopInputRef.current?.click();
+  const handleMobileUploadClick = () => mobileInputRef.current?.click();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !imageFile) return;
+    if (!title || !desktopFile || !mobileFile) return;
 
     // 👉 5. Build the FormData object exactly how Multer expects it
     const formData = new FormData();
     formData.append('title', title);
     if (subtitle) formData.append('subtitle', subtitle);
-    formData.append('image', imageFile); // 'image' matches upload.single('image')
+    formData.append('desktopImage', desktopFile);
+    formData.append('mobileImage', mobileFile);
 
     try {
       await createBanner(formData);
@@ -110,49 +118,96 @@ const AddBanner = () => {
         <div className="flex-1 bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-surface-container shadow-sm shadow-orange-900/5">
           <form onSubmit={handleSubmit} className="space-y-10">
 
-            {/* Banner Image Upload */}
-            <div className="space-y-3">
-              <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
-                Banner Image *
-              </label>
-              <div
-                onClick={handleUploadClick}
-                className={`relative w-full aspect-[16/9] sm:aspect-[2.5/1] rounded-xl border-2 border-dashed ${imagePreview ? 'border-primary' : 'border-outline-variant'} bg-surface-container-low flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container hover:border-primary transition-all group overflow-hidden ${isPending ? 'opacity-50 pointer-events-none' : ''}`}
-                style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
-              >
-                {!imagePreview && (
-                  <div className="flex flex-col items-center text-center p-6">
-                    <div className="w-16 h-16 bg-surface-container-lowest rounded-full flex items-center justify-center mb-5 text-primary shadow-sm">
-                      <div className="relative">
-                        <span className="material-symbols-outlined text-[28px]">image</span>
-                        <div className="absolute -top-1 -right-1 bg-surface-container-lowest rounded-full p-0.5 border border-surface-container">
-                          <span className="material-symbols-outlined text-[14px]">add</span>
+            {/* Banner Image Uploads */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Desktop Banner Image */}
+              <div className="space-y-3">
+                <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
+                  Desktop Banner (16:9) *
+                </label>
+                <div
+                  onClick={handleDesktopUploadClick}
+                  className={`relative w-full aspect-[16/9] rounded-xl border-2 border-dashed ${desktopPreview ? 'border-primary' : 'border-outline-variant'} bg-surface-container-low flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container hover:border-primary transition-all group overflow-hidden ${isPending ? 'opacity-50 pointer-events-none' : ''}`}
+                  style={{ backgroundImage: desktopPreview ? `url(${desktopPreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                >
+                  {!desktopPreview && (
+                    <div className="flex flex-col items-center text-center p-6">
+                      <div className="w-16 h-16 bg-surface-container-lowest rounded-full flex items-center justify-center mb-5 text-primary shadow-sm">
+                        <div className="relative">
+                          <span className="material-symbols-outlined text-[28px]">image</span>
+                          <div className="absolute -top-1 -right-1 bg-surface-container-lowest rounded-full p-0.5 border border-surface-container">
+                            <span className="material-symbols-outlined text-[14px]">add</span>
+                          </div>
                         </div>
                       </div>
+                      <h3 className="text-xl font-heading font-bold text-on-surface mb-1">Upload Desktop</h3>
+                      <span className="px-4 py-1.5 bg-surface-variant rounded-full text-[11px] font-bold text-on-surface-variant">
+                        1920 x 1080px (Recommended)
+                      </span>
                     </div>
-                    <h3 className="text-xl font-heading font-bold text-on-surface mb-1">Click to Upload</h3>
-                    <p className="text-on-surface-variant mb-6 text-sm">The banner image will appear here</p>
-                    <span className="px-4 py-1.5 bg-surface-variant rounded-full text-[11px] font-bold text-on-surface-variant">
-                      1920 x 1080px (Recommended)
-                    </span>
-                  </div>
-                )}
-                {imagePreview && !isPending && (
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="bg-surface-container-lowest text-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px]">edit</span>
-                      Change Image
-                    </span>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="hidden"
-                  disabled={isPending}
-                />
+                  )}
+                  {desktopPreview && !isPending && (
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-surface-container-lowest text-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        Change Desktop
+                      </span>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    ref={desktopInputRef}
+                    onChange={handleDesktopFileChange}
+                    accept="image/*"
+                    className="hidden"
+                    disabled={isPending}
+                  />
+                </div>
+              </div>
+
+              {/* Mobile Banner Image */}
+              <div className="space-y-3">
+                <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
+                  Mobile Banner (4:3 or 9:16) *
+                </label>
+                <div
+                  onClick={handleMobileUploadClick}
+                  className={`relative w-full aspect-[4/5] sm:aspect-[4/5] rounded-xl border-2 border-dashed ${mobilePreview ? 'border-primary' : 'border-outline-variant'} bg-surface-container-low flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container hover:border-primary transition-all group overflow-hidden ${isPending ? 'opacity-50 pointer-events-none' : ''}`}
+                  style={{ backgroundImage: mobilePreview ? `url(${mobilePreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                >
+                  {!mobilePreview && (
+                    <div className="flex flex-col items-center text-center p-6">
+                      <div className="w-16 h-16 bg-surface-container-lowest rounded-full flex items-center justify-center mb-5 text-primary shadow-sm">
+                        <div className="relative">
+                          <span className="material-symbols-outlined text-[28px]">image</span>
+                          <div className="absolute -top-1 -right-1 bg-surface-container-lowest rounded-full p-0.5 border border-surface-container">
+                            <span className="material-symbols-outlined text-[14px]">add</span>
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-heading font-bold text-on-surface mb-1">Upload Mobile</h3>
+                      <span className="px-4 py-1.5 bg-surface-variant rounded-full text-[11px] font-bold text-on-surface-variant">
+                        1080 x 1350px (Recommended)
+                      </span>
+                    </div>
+                  )}
+                  {mobilePreview && !isPending && (
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-surface-container-lowest text-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        Change Mobile
+                      </span>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    ref={mobileInputRef}
+                    onChange={handleMobileFileChange}
+                    accept="image/*"
+                    className="hidden"
+                    disabled={isPending}
+                  />
+                </div>
               </div>
             </div>
 
@@ -198,7 +253,7 @@ const AddBanner = () => {
               </button>
               <button
                 type="submit"
-                disabled={!title || !imageFile || isPending}
+                disabled={!title || !desktopFile || !mobileFile || isPending}
                 className="w-full sm:w-auto px-8 py-3.5 bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm shadow-orange-900/20 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               >
                 {/* Show a spinner or icon based on state */}

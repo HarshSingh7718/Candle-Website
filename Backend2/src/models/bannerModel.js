@@ -1,7 +1,17 @@
 import mongoose from "mongoose";
 
 const bannerSchema = new mongoose.Schema({
-    image: {
+    desktopImage: {
+        url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        }
+    },
+    mobileImage: {
         url: {
             type: String,
             required: true
