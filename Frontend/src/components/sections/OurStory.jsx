@@ -1,4 +1,5 @@
 import React from "react";
+import SEO from "../SEO";
 import PageBanner from "../ui/PageBanner";
 import Steps from "../ui/Cards/Steps";
 import { useRef } from "react";
@@ -57,6 +58,10 @@ const OurStory = () => {
 
   return (
     <>
+      <SEO 
+        title="Our Story | Naisha Creations" 
+        description="Learn about the story behind Naisha Creations, our mission, and our handcrafted artisanal candles." 
+      />
       <PageBanner title="our story" currentPage="Our Story" />
       <section
         ref={container}

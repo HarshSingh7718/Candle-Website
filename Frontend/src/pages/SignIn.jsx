@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import { useLogin, useGoogleLogin } from "../hooks/useAuth"; // IMPORT THE NEW HOOK
+import SEO from '../components/SEO';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +49,11 @@ const SignIn = () => {
   };
 
   return (
+    <>
+    <SEO
+      title="Sign In - Naisha Creations"
+      description="Sign in to start shopping and enjoy exclusive benefits."
+    />
     <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
       {/* Left Side (Fixed/Static) */}
       <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -230,6 +236,7 @@ const SignIn = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../api";
 import { useAuthActions, useRegister } from "../hooks/useAuth";
+import SEO from '../components/SEO';
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -83,6 +84,11 @@ const VerifyOTP = () => {
   const isProcessing = isVerifying || isRegistering;
 
   return (
+    <>
+    <SEO
+      title="Verify OTP - Naisha Creations"
+      description="Enter the OTP sent to your phone number to verify your account."
+    />
     <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
       {/* Left Side */}
       <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -173,6 +179,7 @@ const VerifyOTP = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

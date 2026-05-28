@@ -5,6 +5,7 @@ import API from "../api"; // Assuming your axios instance is here
 import toast from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuthActions, useGoogleLogin } from "../hooks/useAuth";
+import SEO from '../components/SEO';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,6 +57,11 @@ const Register = () => {
   };
 
   return (
+    <>
+    <SEO
+      title="Register - Naisha Creations"
+      description="Create a free account to start shopping."
+    />
     <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
       {/* Left Side (Image & Brand) - UI Unchanged */}
       <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -271,6 +277,7 @@ const Register = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

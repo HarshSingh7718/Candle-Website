@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSendGooglePhoneOtp, useVerifyGooglePhone } from "../hooks/useAuth";
+import SEO from '../components/SEO';
 
 const CompleteGoogleProfile = () => {
   // UI State
@@ -62,6 +63,11 @@ const CompleteGoogleProfile = () => {
   };
 
   return (
+    <>
+    <SEO
+      title="Complete Profile - Naisha Creations"
+      description="Complete your profile to start shopping."
+    />
     <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
       {/* Left Side (Fixed/Static) */}
       <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -211,6 +217,7 @@ const CompleteGoogleProfile = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

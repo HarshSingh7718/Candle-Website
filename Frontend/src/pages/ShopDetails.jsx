@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import SEO from "../components/SEO";
 import ProductZoom from "../components/ProductZoom";
 import { useCart } from "../hooks/useCart";
 import { useWishlist } from "../hooks/useWishlist";
@@ -36,7 +37,6 @@ const ShopDetails = () => {
 
   // Ref for the tabs section so we can scroll to it
   const tabsSectionRef = useRef(null);
-
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,145 +78,175 @@ const ShopDetails = () => {
     );
   }
 
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.name,
+    image: product.images?.[0]?.url || "",
+    description: product.description,
+    brand: {
+      "@type": "Brand",
+      name: "Naisha Creations",
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      price: product.discountPrice > 0 ? product.discountPrice : product.price,
+      availability:
+        product.stock > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+    },
+  };
 
   return (
-    <div className="bg-light-yellow pb-1 pt-24">
-      <div className="container mx-auto py-5 px-4 lg:px-8 w-full">
-        <ProductZoom
-          product={product}
-          onScrollToDescription={handleScrollToDescription}
-        />
+    <>
+      <SEO
+        title={`${product.name} | Naisha Creations`}
+        description={product.description}
+        image={product.images?.[0]?.url}
+        schema={productSchema}
+      />
+      <div className="bg-light-yellow pb-1 pt-24">
+        <div className="container mx-auto py-5 px-4 lg:px-8 w-full">
+          <ProductZoom
+            product={product}
+            onScrollToDescription={handleScrollToDescription}
+          />
 
-        {/* ─────────────── Tabs Area ─────────────── */}
-        <div className="mt-8" ref={tabsSectionRef} id="product-tabs">
-          <div className="flex border-b border-gray-200 gap-8 md:gap-10">
-            {["description", "additional", "reviews"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-4 text-xs cursor-pointer font-bold uppercase tracking-widest transition-all relative ${
-                  activeTab === tab
-                    ? "text-black"
-                    : "text-gray-400 hover:text-black"
-                }`}
-              >
-                {tab === "reviews" ? `Reviews (${reviews?.length})` : tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black" />
-                )}
-              </button>
-            ))}
-          </div>
+          {/* ─────────────── Tabs Area ─────────────── */}
+          <div className="mt-8" ref={tabsSectionRef} id="product-tabs">
+            <div className="flex border-b border-gray-200 gap-8 md:gap-10">
+              {["description", "additional", "reviews"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`pb-4 text-xs cursor-pointer font-bold uppercase tracking-widest transition-all relative ${
+                    activeTab === tab
+                      ? "text-black"
+                      : "text-gray-400 hover:text-black"
+                  }`}
+                >
+                  {tab === "reviews" ? `Reviews (${reviews?.length})` : tab}
+                  {activeTab === tab && (
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black" />
+                  )}
+                </button>
+              ))}
+            </div>
 
-          <div className="py-10 min-h-[200px]">
-            {/* ── Description Tab with Show More / Show Less ── */}
-            {activeTab === "description" && (
-              <div className="text-gray-600 text-[15px] leading-8 max-w-4xl">
-                <p className={`whitespace-pre-line ${showFullDescription ? 'line-clamp-none' : 'line-clamp-4'}`}>
-                  {product.description}
-                </p>
-
-                {product.description && (
-                  <button
-                    onClick={() => setShowFullDescription((prev) => !prev)}
-                    className="mt-4 text-sm font-semibold text-coffee hover:text-coffee-light transition-colors cursor-pointer underline underline-offset-4"
+            <div className="py-10 min-h-[200px]">
+              {/* ── Description Tab with Show More / Show Less ── */}
+              {activeTab === "description" && (
+                <div className="text-gray-600 text-[15px] leading-8 max-w-4xl">
+                  <p
+                    className={`whitespace-pre-line ${showFullDescription ? "line-clamp-none" : "line-clamp-4"}`}
                   >
-                    {showFullDescription ? "Show Less" : "Show More"}
-                  </button>
-                )}
-              </div>
-            )}
+                    {product.description}
+                  </p>
 
-            {/* ── Additional Info Tab ── */}
-            {activeTab === "additional" && (
-              <div className="text-gray-600 text-sm max-w-lg">
-                {product.vessel && (
+                  {product.description && (
+                    <button
+                      onClick={() => setShowFullDescription((prev) => !prev)}
+                      className="mt-4 text-sm font-semibold text-coffee hover:text-coffee-light transition-colors cursor-pointer underline underline-offset-4"
+                    >
+                      {showFullDescription ? "Show Less" : "Show More"}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* ── Additional Info Tab ── */}
+              {activeTab === "additional" && (
+                <div className="text-gray-600 text-sm max-w-lg">
+                  {product.vessel && (
+                    <div className="grid grid-cols-2 py-3 border-b border-gray-100">
+                      <span className="font-bold text-black uppercase tracking-wider">
+                        Vessel
+                      </span>
+                      <span>{product.vessel}</span>
+                    </div>
+                  )}
                   <div className="grid grid-cols-2 py-3 border-b border-gray-100">
                     <span className="font-bold text-black uppercase tracking-wider">
-                      Vessel
+                      Weight
                     </span>
-                    <span>{product.vessel}</span>
+                    <span>{product.weight} g</span>
                   </div>
-                )}
-                <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                  <span className="font-bold text-black uppercase tracking-wider">
-                    Weight
-                  </span>
-                  <span>{product.weight} g</span>
+                  <div className="grid grid-cols-2 py-3 border-b border-gray-100">
+                    <span className="font-bold text-black uppercase tracking-wider">
+                      Materials
+                    </span>
+                    <span>{product.material}</span>
+                  </div>
+                  <div className="grid grid-cols-2 py-3 border-b border-gray-100">
+                    <span className="font-bold text-black uppercase tracking-wider">
+                      Burn Time
+                    </span>
+                    <span>~{product.burnTime} Hours</span>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                  <span className="font-bold text-black uppercase tracking-wider">
-                    Materials
-                  </span>
-                  <span>{product.material}</span>
-                </div>
-                <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                  <span className="font-bold text-black uppercase tracking-wider">
-                    Burn Time
-                  </span>
-                  <span>~{product.burnTime} Hours</span>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* ── Reviews Tab ── */}
-            {activeTab === "reviews" && (
-              <div className="space-y-8">
-                {reviews?.length === 0 && (
-                  <p className="text-gray-400 italic">
-                    No reviews yet for this product.
-                  </p>
-                )}
-                {reviews?.map((review, idx) => (
-                  <div key={idx} className="border-b border-gray-100 pb-8">
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <h4 className="font-bold text-black uppercase tracking-widest text-s">
-                          {review.user}
-                        </h4>
-                        <p className="text-[10px] text-gray-400 mt-1">
-                          {new Date(review.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            fill={i < review.rating ? "black" : "none"}
-                            className={
-                              i < review.rating
-                                ? "fill-[#ffb400] text-[#ffb400]"
-                                : "text-orange-400"
-                            }
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {review.comment}
+              {/* ── Reviews Tab ── */}
+              {activeTab === "reviews" && (
+                <div className="space-y-8">
+                  {reviews?.length === 0 && (
+                    <p className="text-gray-400 italic">
+                      No reviews yet for this product.
                     </p>
-                  </div>
-                ))}
-              </div>
-            )}
+                  )}
+                  {reviews?.map((review, idx) => (
+                    <div key={idx} className="border-b border-gray-100 pb-8">
+                      <div className="flex justify-between items-center mb-4">
+                        <div>
+                          <h4 className="font-bold text-black uppercase tracking-widest text-s">
+                            {review.user}
+                          </h4>
+                          <p className="text-[10px] text-gray-400 mt-1">
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              size={14}
+                              fill={i < review.rating ? "black" : "none"}
+                              className={
+                                i < review.rating
+                                  ? "fill-[#ffb400] text-[#ffb400]"
+                                  : "text-orange-400"
+                              }
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {review.comment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* ─────────────── Similar Products ─────────────── */}
-        <div>
-          <span className="title-span">- You may also like -</span>
-          <h2 className="heading-1 mb-5">
-            Similar <span className="text-coffee"> Products </span>
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {similarProducts.map((p) => (
-              <ProductCard key={p._id} product={p} />
-            ))}
+          {/* ─────────────── Similar Products ─────────────── */}
+          <div>
+            <span className="title-span">- You may also like -</span>
+            <h2 className="heading-1 mb-5">
+              Similar <span className="text-coffee"> Products </span>
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {similarProducts.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

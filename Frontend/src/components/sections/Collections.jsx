@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import API from "../../api";
+import SEO from "../SEO";
 import PageBanner from "../ui/PageBanner";
 import CollectionsCard from "../../components/ui/Cards/CollectionsCard.jsx";
 
@@ -19,6 +20,10 @@ const Collections = () => {
 
   return (
     <>
+      <SEO 
+        title="Shop All Collections | Naisha Creations" 
+        description="Explore our curated collections of artisanal scented candles, designed to transform your space." 
+      />
       <PageBanner title="Collections" currentPage="Collections" />
       <div className="bg-light-yellow">
         <div className="container py-[2%] mx-auto px-4 space-y-10 mb-14 md:pb-10">

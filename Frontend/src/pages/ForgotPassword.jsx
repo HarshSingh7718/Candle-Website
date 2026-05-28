@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthActions } from "../hooks/useAuth"; // Import the new hook
+import SEO from '../components/SEO';
 
 const ForgotPassword = () => {
   const [phoneNumber, setPhone] = useState("");
@@ -27,6 +28,11 @@ const ForgotPassword = () => {
   };
 
   return (
+    <>
+    <SEO
+      title="Forgot Password - Naisha Creations"
+      description="Reset your password to continue shopping."
+    />
     <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
       {/* Left Side (Image & Brand) - Stays same as your code */}
       <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -115,6 +121,7 @@ const ForgotPassword = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

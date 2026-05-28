@@ -11,6 +11,7 @@ import {
   Info,
   Loader2,
 } from "lucide-react";
+import SEO from "../components/SEO";
 import PageBanner from "../components/ui/PageBanner"; // Adjust path
 import { useCart } from "../hooks/useCart";
 import {
@@ -132,6 +133,10 @@ export default function Customized() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+      <SEO 
+        title="Custom Candle Builder | Naisha Creations" 
+        description="Design your own custom candle. Choose your vessel, scent, add-ons, and add a personal message for the perfect gift." 
+      />
       <PageBanner title="Customized" currentPage="Customized" />
       <main className="max-w-7xl mx-auto px-4 md:px-8 pt-12 pb-24">
         {/* Intro Section */}

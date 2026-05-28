@@ -3,10 +3,8 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useParams } from "react-router-dom";
 import { Search, ChevronDown, Filter } from "lucide-react";
-import { Icon } from "@iconify/react";
-import { useQuery } from "@tanstack/react-query";
+import SEO from '../components/SEO';
 
-import API from "../api";
 import ProductCard from "../components/ui/Cards/ProductCard";
 import PageBanner from "../components/ui/PageBanner";
 import Loader from "../components/ui/Loader";
@@ -126,6 +124,11 @@ const CollectionProducts = () => {
       <PageBanner
         title={collectionDisplayName}
         currentPage={collectionDisplayName}
+      />
+      <SEO
+        title={`${collectionDisplayName} | Naisha Creations`}
+        description={`Discover our full range of ${collectionDisplayName} candles. Hand-poured with eco-friendly soy wax and premium fragrance oils.`}
+        image={categoryProducts[0]?.images?.[0]?.url}
       />
       <div className="bg-[#fcfaf5]">
         <div className="container mx-auto px-4 py-[8%]">

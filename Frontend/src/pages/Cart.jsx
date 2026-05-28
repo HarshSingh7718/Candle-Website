@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { useCart } from "../hooks/useCart";
 import { Minus, Plus } from "lucide-react";
 import MainBtn from "../components/ui/Buttons/MainBtn";
+import SEO from "../components/SEO";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -121,6 +122,10 @@ function Cart() {
 
   return (
     <>
+      <SEO 
+        title="Cart | Naisha Creations" 
+        description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils." 
+      />
       <PageBanner title="Cart" currentPage="Cart" />
 
       <div

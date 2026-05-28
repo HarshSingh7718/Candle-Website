@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SEO from "../SEO";
 import PageBanner from "../ui/PageBanner";
 import MainBtn from "../ui/Buttons/MainBtn";
 import { useSubmitContact } from "../../hooks/useContact";
@@ -153,6 +154,10 @@ export default function Contact() {
       ref={containerRef}
       className="min-h-screen bg-white font-sans text-[#1a1a1a] overflow-x-hidden"
     >
+      <SEO 
+        title="Contact Us | Naisha Creations" 
+        description="Get in touch with Naisha Creations for inquiries, bulk orders, or to find the perfect candle gift." 
+      />
       <PageBanner title="contact us" currentPage="Contact Us" />
 
       {/* Contact Section */}

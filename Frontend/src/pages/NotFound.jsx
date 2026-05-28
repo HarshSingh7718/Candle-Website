@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft, Search } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const NotFound = () => {
     const navigate = useNavigate();
 
-    return (
+    return (<>
+    <SEO
+      title="404 - Page Not Found - Naisha Creations"
+      description="The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+    />
         <div className="min-h-[75vh] flex flex-col items-center justify-center bg-stone-50 px-4 text-center py-20">
             {/* Massive subtle background text */}
             <h1 className="text-9xl md:text-[12rem] font-light text-stone-200 select-none tracking-tighter">
@@ -59,6 +64,7 @@ const NotFound = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom"; // Note the new imports
 import PageBanner from "../components/ui/PageBanner";
 import Loader from "../components/ui/Loader";
+import SEO from '../components/SEO';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -53,6 +54,10 @@ const MyAccount = () => {
 
   return (
     <>
+    <SEO
+      title="My Account - Naisha Creations"
+      description="Manage your profile, orders, saved addresses and wishlist at Naisha Creations."
+    />
       <PageBanner title="My Account" currentPage="My Account" />
       <div
         ref={accountRef}

@@ -6,6 +6,7 @@ import { Search, ChevronDown, Filter } from "lucide-react";
 import { Icon } from "@iconify/react";
 
 import ProductCard from "../components/ui/Cards/ProductCard";
+import SEO from "../components/SEO";
 import PageBanner from "../components/ui/PageBanner";
 import Loader from "../components/ui/Loader";
 import { useProducts } from "../hooks/useProducts"; // Updated hook
@@ -128,6 +129,10 @@ const Candles = () => {
 
   return (
     <>
+      <SEO 
+        title="Shop All Candles | Naisha Creations" 
+        description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils." 
+      />
       <PageBanner title="Candles" currentPage="Candles" />
       <div className="bg-light-yellow">
         <div className="container mx-auto px-4 py-[8%]">

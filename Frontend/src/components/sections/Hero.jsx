@@ -55,12 +55,12 @@ function Hero() {
             {/* Entire banner image is a clickable link — no overlay text */}
             <Link
               to="/collections/candles"
-              className="block w-full aspect-[4/3] md:aspect-video"
+              className="block w-full relative aspect-[4/5] md:aspect-video overflow-hidden"
             >
               <img
                 src={banner.image?.url}
                 alt={banner.title || "Shop our candle collection"}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </Link>
           </SwiperSlide>
@@ -68,13 +68,17 @@ function Hero() {
       </Swiper>
 
       {/* CUSTOM NAV — only shown when multiple banners exist */}
-      <button className="hero-prev absolute left-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
-        <ChevronLeft size={24} />
-      </button>
+      {banners.length > 1 && (
+        <>
+          <button className="hero-prev absolute left-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
+            <ChevronLeft size={24} />
+          </button>
 
-      <button className="hero-next absolute right-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
-        <ChevronRight size={24} />
-      </button>
+          <button className="hero-next absolute right-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
+            <ChevronRight size={24} />
+          </button>
+        </>
+      )}
     </section>
   );
 }

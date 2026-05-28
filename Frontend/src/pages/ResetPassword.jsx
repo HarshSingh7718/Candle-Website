@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuthActions } from "../hooks/useAuth"; // Import our hook
+import SEO from '../components/SEO';
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -53,6 +54,11 @@ const ResetPassword = () => {
   };
 
   return (
+  <>
+    <SEO
+      title="Reset Password - Naisha Creations"
+      description="Set a new password for your account."
+    />
     <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
       {/* Left Side (Image & Brand) */}
       <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -190,6 +196,7 @@ const ResetPassword = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
