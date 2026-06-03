@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-// 👉 Changed to react-icons/fa6 (FontAwesome 6)
 import { FaInstagram, FaWhatsapp, FaEnvelope } from 'react-icons/fa6';
 import FooterLink from './FooterLink';
 import API from '../../../api';
@@ -25,32 +24,32 @@ const Footer = () => {
   if (isAuthPage) return null;
 
   return (
-    <footer className="bg-footer pt-16 pb-8 md:pb-12 px-6 md:px-12 lg:px-24 relative z-10 w-full">
+    <footer className="bg-primary pt-16 pb-8 md:pb-12 px-6 md:px-12 lg:px-24 relative z-10 w-full">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-7 md:gap-12">
 
         {/* Brand & Social Section */}
         <div className="flex flex-col gap-4">
-          <h2 className="text-xl md:text-3xl font-bold tracking-tight text-heading">
+          <h2 className="text-xl md:text-3xl font-bold tracking-tight text-light-yellow">
             Naisha <span className="text-coffee">Creations</span>
           </h2>
-          <p className="text-paragraph leading-relaxed max-w-xs text-md md:text-md">
+          <p className="text-light-yellow/80 leading-relaxed max-w-xs text-md md:text-md">
             Discover the latest trends and enjoy seamless shopping with our exclusive artisan collections.
           </p>
 
-          {/* 👉 Updated Social Icons using react-icons */}
+          {/* 👉 BUTTONS: Using the new 500/600 scale you generated */}
           <ul className='flex items-center py-2 gap-3'>
             <li>
-              <a href="https://instagram.com/naishacreations_withlove" target="_blank" rel="noreferrer" className='p-3 rounded-full bg-coffee hover:bg-coffee-light transition-colors duration-300 hover:scale-110 flex items-center justify-center'>
+              <a href="https://instagram.com/naishacreations_withlove" target="_blank" rel="noreferrer" className='p-3 rounded-full bg-coffee-500 hover:bg-coffee-600 transition-colors duration-300 hover:scale-110 flex items-center justify-center'>
                 <FaInstagram className="text-light-yellow text-xl" />
               </a>
             </li>
             <li>
-              <a href="https://wa.me/+919457583956" target="_blank" rel="noreferrer" className='p-3 rounded-full bg-coffee hover:bg-coffee-light transition-colors duration-300 hover:scale-110 flex items-center justify-center'>
+              <a href="https://wa.me/+919457583956" target="_blank" rel="noreferrer" className='p-3 rounded-full bg-coffee-500 hover:bg-coffee-600 transition-colors duration-300 hover:scale-110 flex items-center justify-center'>
                 <FaWhatsapp className="text-light-yellow text-xl" />
               </a>
             </li>
             <li>
-              <a href="mailto:support@naishcreations.com" className='p-3 rounded-full bg-coffee hover:bg-coffee-light transition-colors duration-300 hover:scale-110 flex items-center justify-center'>
+              <a href="mailto:support@naishcreations.com" className='p-3 rounded-full bg-coffee-500 hover:bg-coffee-600 transition-colors duration-300 hover:scale-110 flex items-center justify-center'>
                 <FaEnvelope className="text-light-yellow text-xl" />
               </a>
             </li>
@@ -59,7 +58,7 @@ const Footer = () => {
 
         {/* Useful Links */}
         <div className='hidden md:block'>
-          <h3 className="text-xl font-bold text-heading mb-4 md:mb-6">Useful Links</h3>
+          <h3 className="text-xl font-bold text-light-yellow mb-4 md:mb-6">Useful Links</h3>
           <ul className="space-y-3">
             <FooterLink href="/">Home</FooterLink>
             <FooterLink href="/collections">Shop Collections</FooterLink>
@@ -71,10 +70,10 @@ const Footer = () => {
 
         {/* Dynamic Categories */}
         <div>
-          <h3 className="text-xl font-bold text-heading mb-4 md:mb-6">Categories</h3>
+          <h3 className="text-xl font-bold text-light-yellow mb-4 md:mb-6">Categories</h3>
           <ul className="space-y-3">
             {isLoading ? (
-              <li className="text-muted text-sm">Loading categories...</li>
+              <li className="text-light-yellow/60 text-sm">Loading categories...</li>
             ) : topCategories.length > 0 ? (
               topCategories.map((category) => (
                 <FooterLink key={category._id} href={`/collections/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')}`}>
@@ -82,7 +81,7 @@ const Footer = () => {
                 </FooterLink>
               ))
             ) : (
-              <li className="text-muted text-sm">No categories found</li>
+              <li className="text-light-yellow/60 text-sm">No categories found</li>
             )}
           </ul>
         </div>
@@ -90,11 +89,12 @@ const Footer = () => {
       </div>
 
       {/* Bottom Footer Section */}
-      <div className="mt-8 md:mt-16 pt-7 md:pt-8 border-t border-muted flex flex-col md:flex-row justify-between items-center gap-4 text-paragraph text-sm">
+      {/* 👉 BORDERS: Changed to a translucent light border so it shows up on dark background */}
+      <div className="mt-8 md:mt-16 pt-7 md:pt-8 border-t border-light-yellow/20 flex flex-col md:flex-row justify-between items-center gap-4 text-light-yellow/80 text-sm">
         <p>© {new Date().getFullYear()} Naisha Creations. All rights reserved.</p>
         <div className="flex gap-4 md:gap-6">
-          <Link to="/privacy-policy" className="hover:text-coffee transition-colors">Privacy Policy</Link>
-          <Link to="/term-of-service" className="hover:text-coffee transition-colors">Terms of Service</Link>
+          <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link to="/term-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
         </div>
       </div>
     </footer>

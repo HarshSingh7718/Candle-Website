@@ -132,7 +132,7 @@ export default function Customized() {
   const progressWidth = `${(step / STEPS.length) * 100}%`;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen bg-light-yellow text-slate-900 font-sans">
       <SEO 
         title="Custom Candle Builder | Naisha Creations" 
         description="Design your own custom candle. Choose your vessel, scent, add-ons, and add a personal message for the perfect gift." 
