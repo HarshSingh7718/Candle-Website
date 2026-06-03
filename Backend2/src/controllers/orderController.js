@@ -5,8 +5,10 @@ import { User } from "../models/userModel.js";
 import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
+import { Coupon } from "../models/couponModel.js";
 import { sendSMS } from "../services/otp_services.js";
 import { config } from "../config/index.js";
+import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
 const razorpay = new Razorpay({
   key_id: config.razor.k_id,
   key_secret: config.razor.k_secret
@@ -22,7 +24,9 @@ export const createOrder = async (req, res) => {
     paymentMethod = "razorpay",
     //  BUY NOW
     productId,
-    quantity = 1
+    quantity = 1,
+    //  COUPON (only the code string — never trust client-calculated amounts)
+    couponCode
   } = req.body;
   let orderItems = [];
 
@@ -81,9 +85,6 @@ export const createOrder = async (req, res) => {
           quantity: item.quantity,
           price: candle.totalPrice || 0,
           image: "",
-          // optional
-
-          // 👉 FIX: ACTUALLY SAVE THE SNAPSHOT
           snapshot: {
             vesselName: candle.snapshot.vesselName,
             scentName: candle.snapshot.scentName,
@@ -96,7 +97,7 @@ export const createOrder = async (req, res) => {
   }
 
   // =========================
-  //  PRICING
+  //  PRICING (SERVER-SIDE ONLY)
   // =========================
   let itemsPrice = 0;
   orderItems.forEach(item => {
@@ -106,7 +107,30 @@ export const createOrder = async (req, res) => {
     throw new CustomError("Failed to calculate total price (invalid item price).", 400);
   }
   const shippingPrice = itemsPrice > 999 ? 0 : 99;
-  const totalAmount = Math.round(itemsPrice + shippingPrice);
+
+  // =========================
+  //  COUPON VALIDATION
+  // =========================
+  let discountAmount = 0;
+  let couponId = null;
+
+  if (couponCode) {
+    try {
+      const result = await validateAndCalculateDiscount(
+        couponCode,
+        itemsPrice,
+        user._id.toString(),
+        user.usedCoupons || []
+      );
+      discountAmount = result.discountAmount;
+      couponId = result.coupon._id;
+    } catch (err) {
+      throw new CustomError(err.message || "Invalid coupon code", err.status || 400);
+    }
+  }
+
+  // Final total: items - discount + shipping (never below ₹0)
+  const totalAmount = Math.max(0, Math.round(itemsPrice - discountAmount + shippingPrice));
 
   // =========================
   //  CREATE ORDER
@@ -123,6 +147,9 @@ export const createOrder = async (req, res) => {
     },
     itemsPrice,
     shippingPrice,
+    discount: discountAmount,
+    couponApplied: couponId,
+    discountAmount,
     totalAmount,
     paymentMethod,
     paymentStatus: "pending",
@@ -168,6 +195,7 @@ export const createOrder = async (req, res) => {
       ORDER_ID: shortOrderId,
       AMOUNT: String(order.totalAmount)
     }).catch(err => console.error("Failed to send COD SMS:", err.message));
+
     // =========================
     //  UPDATE STOCK
     // =========================
@@ -209,6 +237,34 @@ export const createOrder = async (req, res) => {
       customization.markModified("steps");
       await customization.save();
     }
+
+    // =========================
+    //  ATOMIC COUPON CONSUMPTION (COD)
+    //  Only increment usedCount here — never during order creation for Razorpay
+    // =========================
+    if (couponId) {
+      // Atomic increment with race-condition guard
+      const updated = await Coupon.findOneAndUpdate(
+        {
+          _id: couponId,
+          $or: [
+            { usageLimit: null },
+            { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
+          ]
+        },
+        { $inc: { usedCount: 1 } },
+        { new: true }
+      );
+      if (!updated) {
+        console.error(`⚠️ Coupon ${couponId} could not be incremented (limit reached concurrently)`);
+      }
+
+      // Track on user (one-use-per-customer)
+      await User.findByIdAndUpdate(user._id, {
+        $addToSet: { usedCoupons: couponId }
+      });
+    }
+
     // =========================
     //  CLEAR CART
     // =========================
@@ -220,4 +276,4 @@ export const createOrder = async (req, res) => {
     message: "Order created successfully",
     order
   });
-};
+};

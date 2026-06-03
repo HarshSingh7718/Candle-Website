@@ -12,7 +12,7 @@ export const usePincodeLookup = () => {
         setPincodeError(null);
 
         try {
-            const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+            const response = await fetch(`http://postalpincode.in/api/pincode/${pincode}`);
             const data = await response.json();
 
             if (data[0].Status === "Success") {

@@ -117,7 +117,7 @@ const Profile = () => {
                             disabled={changePasswordMutation.isPending}
                             className="bg-black! text-white! rounded-sm! shadow-none! w-full sm:w-auto"
                         />
-                        <button
+                        {/* <button
                             type="button"
                             onClick={() => {
                                 setIsChangingPassword(false);
@@ -126,7 +126,7 @@ const Profile = () => {
                             className="w-full sm:w-auto px-6 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-sm transition-colors cursor-pointer"
                         >
                             Cancel
-                        </button>
+                        </button> */}
                     </div>
                 </form>
             </div>

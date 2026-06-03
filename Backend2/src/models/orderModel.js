@@ -60,6 +60,12 @@ const orderSchema = new mongoose.Schema({
     itemsPrice: { type: Number, default: 0 },
     shippingPrice: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
+    couponApplied: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Coupon",
+        default: null,
+    },
+    discountAmount: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
 
     //  Payment

@@ -168,7 +168,7 @@ const AddBanner = () => {
               {/* Mobile Banner Image */}
               <div className="space-y-3">
                 <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
-                  Mobile Banner (4:3 or 9:16) *
+                  Mobile Banner (4:5) *
                 </label>
                 <div
                   onClick={handleMobileUploadClick}

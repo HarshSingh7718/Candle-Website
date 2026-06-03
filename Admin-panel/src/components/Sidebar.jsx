@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { to: "/reviews", icon: "rate_review", label: "Reviews" },
   { to: "/orders", icon: "shopping_bag", label: "Orders" },
   { to: "/contacts", icon: "contact_support", label: "Contacts" },
+  { to: "/coupons", icon: "confirmation_number", label: "Coupons" },
   { to: "/options", icon: "settings", label: "Options" },
 ];
 

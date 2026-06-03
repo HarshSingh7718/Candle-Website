@@ -7,6 +7,7 @@ import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
 import { sendSMS } from "./otp_services.js";
+import { Coupon } from "../models/couponModel.js";
 import mongoose from "mongoose";
 
 const razorpay = new Razorpay({
@@ -222,6 +223,30 @@ export const verifyPayment = async (req, res) => {
 
         await order.save({session});
 
+        // =========================
+        //  ATOMIC COUPON CONSUMPTION (RAZORPAY)
+        //  Only increment usedCount AFTER successful signature verification
+        // =========================
+        if (order.couponApplied) {
+            await Coupon.findOneAndUpdate(
+                {
+                    _id: order.couponApplied,
+                    $or: [
+                        { usageLimit: null },
+                        { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
+                    ]
+                },
+                { $inc: { usedCount: 1 } },
+                { new: true, session }
+            );
+
+            // Track on user (one-use-per-customer)
+            await User.findByIdAndUpdate(
+                order.user,
+                { $addToSet: { usedCoupons: order.couponApplied } },
+                { session }
+            );
+        }
 
         // =========================
         //  CLEAR CART

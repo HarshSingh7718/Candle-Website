@@ -17,6 +17,7 @@ import searchRoutes from "./routes/searchRoute.js";
 // import shipmentRoutes from "./routes/shipmentRoutes.js";
 import userRoutes from "./routes/userProfileRoute.js";
 import wishlistRoutes from "./routes/whishlistRoute.js";
+import couponRoutes from "./routes/couponRoute.js";
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -116,6 +117,9 @@ app.use("/api", userRoutes);
 
 // WHISHLIST ROUTES
 app.use("/api", wishlistRoutes);
+
+// COUPON ROUTES
+app.use("/api/coupons", couponRoutes);
 
 // Error Handling Middleware (MUST BE LAST)
 app.use(errorHandler);

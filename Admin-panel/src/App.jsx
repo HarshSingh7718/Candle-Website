@@ -28,6 +28,9 @@ import ResetPassword from './pages/ResetPassword';
 import { Toaster } from 'react-hot-toast';
 import OrderDetails from './pages/OrderDetails';
 import Profile from './pages/Profile';
+import Coupons from './pages/Coupons';
+import AddCoupon from './pages/AddCoupon';
+import EditCoupon from './pages/EditCoupon';
 
 
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
@@ -70,6 +73,9 @@ function App() {
                       <Route path="/options" element={<Options />} />
                       <Route path="/options/add" element={<AddOption />} />
                       <Route path="/options/edit/:id" element={<EditOption />} />
+                      <Route path="/coupons" element={<Coupons />} />
+                      <Route path="/coupons/add" element={<AddCoupon />} />
+                      <Route path="/coupons/edit/:id" element={<EditCoupon />} />
                       <Route path="/profile" element={<Profile />} />
                     </Route>
                   </Route>

@@ -11,6 +11,7 @@ import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin, 
 import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
 import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
 import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
+import { createCoupon, getAllCoupons, getSingleCoupon, updateCoupon, toggleCouponStatus, deleteCoupon } from "../controllers/couponController.js";
 
 const router = express.Router();
 
@@ -326,4 +327,59 @@ router.get(
     isAdmin,
     getAdminDashboard
 );
+
+
+
+// ==========================
+//  COUPON ROUTES
+// ==========================
+
+// Create coupon
+router.post(
+    "/coupons",
+    isAuthenticated,
+    isAdmin,
+    createCoupon
+);
+
+// Get all coupons
+router.get(
+    "/coupons",
+    isAuthenticated,
+    isAdmin,
+    getAllCoupons
+);
+
+// Get single coupon
+router.get(
+    "/coupons/:id",
+    isAuthenticated,
+    isAdmin,
+    getSingleCoupon
+);
+
+// Update coupon
+router.put(
+    "/coupons/:id",
+    isAuthenticated,
+    isAdmin,
+    updateCoupon
+);
+
+// Toggle coupon status
+router.patch(
+    "/coupons/:id/toggle",
+    isAuthenticated,
+    isAdmin,
+    toggleCouponStatus
+);
+
+// Delete coupon
+router.delete(
+    "/coupons/:id",
+    isAuthenticated,
+    isAdmin,
+    deleteCoupon
+);
+
 export default router;
