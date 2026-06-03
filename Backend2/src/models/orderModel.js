@@ -66,6 +66,9 @@ const orderSchema = new mongoose.Schema({
         default: null,
     },
     discountAmount: { type: Number, default: 0 },
+    // Guards against double-increment: set to true after the first
+    // successful coupon consumption (verifyPayment OR webhook, whichever fires first)
+    couponProcessed: { type: Boolean, default: false },
     totalAmount: { type: Number, required: true },
 
     //  Payment

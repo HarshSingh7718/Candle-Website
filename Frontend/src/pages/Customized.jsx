@@ -172,7 +172,7 @@ export default function Customized() {
                     <span
                       className={`size-6 sm:size-8 shrink-0 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-sm transition-all duration-300 ${
                         step >= s.n
-                          ? "bg-orange-600 text-white shadow-lg shadow-orange-600/20"
+                          ? "bg-coffee-600 text-white shadow-lg shadow-coffee-600/20"
                           : "bg-slate-200 text-slate-600"
                       }`}
                     >
@@ -190,7 +190,7 @@ export default function Customized() {
               </div>
               <div className="absolute bottom-0 left-0 h-[2px] bg-slate-200 w-full"></div>
               <div
-                className="absolute bottom-0 left-0 h-[3px] bg-orange-600 transition-all duration-700 ease-out z-10"
+                className="absolute bottom-0 left-0 h-[3px] bg-coffee-600 transition-all duration-700 ease-out z-10"
                 style={{ width: progressWidth }}
               ></div>
             </div>
@@ -199,7 +199,7 @@ export default function Customized() {
             <div className="min-h-[400px]">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                  <Loader2 className="size-8 animate-spin mb-4 text-orange-600" />
+                  <Loader2 className="size-8 animate-spin mb-4 text-coffee-600" />
                   <p>Loading builder...</p>
                 </div>
               ) : (
@@ -209,7 +209,7 @@ export default function Customized() {
                     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
-                          <span className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                          <span className="p-2 bg-coffee-100 text-coffee-600 rounded-lg">
                             <Info className="size-5" />
                           </span>
                           Step 1: Choose Your Vessel
@@ -222,8 +222,8 @@ export default function Customized() {
                             onClick={() => setSelectedVessel(vessel)}
                             className={`group relative bg-white p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
                               selectedVessel?._id === vessel._id
-                                ? "border-orange-600 ring-4 ring-orange-600/10 shadow-xl shadow-orange-600/5"
-                                : "border-white hover:border-orange-200 hover:ring-4 hover:ring-orange-100/50 shadow-sm"
+                                ? "border-coffee-600 ring-4 ring-coffee-600/10 shadow-xl shadow-coffee-600/5"
+                                : "border-white hover:border-coffee-200 hover:ring-4 hover:ring-coffee-100/50 shadow-sm"
                             }`}
                           >
                             <div className="aspect-square rounded-xl bg-slate-100 mb-4 overflow-hidden">
@@ -242,7 +242,7 @@ export default function Customized() {
                               <span
                                 className={`font-bold text-sm sm:text-base transition-colors ${
                                   selectedVessel?._id === vessel._id
-                                    ? "text-orange-600"
+                                    ? "text-coffee-600"
                                     : "text-slate-500"
                                 }`}
                               >
@@ -250,7 +250,7 @@ export default function Customized() {
                               </span>
                             </div>
                             <div
-                              className={`absolute top-6 right-6 bg-orange-600 text-white rounded-full p-1 shadow-lg ring-2 ring-white transition-all duration-300 ${
+                              className={`absolute top-6 right-6 bg-coffee-600 text-white rounded-full p-1 shadow-lg ring-2 ring-white transition-all duration-300 ${
                                 selectedVessel?._id === vessel._id
                                   ? "opacity-100 scale-100"
                                   : "opacity-0 scale-50"
@@ -269,7 +269,7 @@ export default function Customized() {
                     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
-                          <span className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                          <span className="p-2 bg-coffee-100 text-coffee-600 rounded-lg">
                             <Flame className="size-5" />
                           </span>
                           Step 2: Scent Profile
@@ -284,8 +284,8 @@ export default function Customized() {
                               onClick={() => setSelectedScent(scent)}
                               className={`flex flex-col p-4 rounded-xl border-2 transition-all text-left group overflow-hidden ${
                                 isSelected
-                                  ? "border-orange-600 bg-orange-50 ring-4 ring-orange-600/5"
-                                  : "border-white shadow-sm hover:border-orange-200"
+                                  ? "border-coffee-600 bg-coffee-50 ring-4 ring-coffee-600/5"
+                                  : "border-white shadow-sm hover:border-coffee-200"
                               }`}
                             >
                               <div className="aspect-[16/10] w-full rounded-lg mb-4 overflow-hidden bg-slate-100">
@@ -308,7 +308,7 @@ export default function Customized() {
                                 <span
                                   className={`text-xs font-bold ${
                                     isSelected
-                                      ? "text-orange-600"
+                                      ? "text-coffee-600"
                                       : "text-slate-500"
                                   }`}
                                 >
@@ -327,7 +327,7 @@ export default function Customized() {
                     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
-                          <span className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                          <span className="p-2 bg-coffee-100 text-coffee-600 rounded-lg">
                             <Palette className="size-5" />
                           </span>
                           Step 3: Choose Add-ons
@@ -344,8 +344,8 @@ export default function Customized() {
                               onClick={() => toggleAddOn(addon)}
                               className={`flex flex-col p-4 rounded-xl border-2 transition-all text-left group overflow-hidden relative ${
                                 isSelected
-                                  ? "border-orange-600 bg-orange-50 ring-4 ring-orange-600/5"
-                                  : "border-white shadow-sm hover:border-orange-200"
+                                  ? "border-coffee-600 bg-coffee-50 ring-4 ring-coffee-600/5"
+                                  : "border-white shadow-sm hover:border-coffee-200"
                               }`}
                             >
                               <div className="aspect-[16/10] w-full rounded-lg mb-4 overflow-hidden bg-slate-100">
@@ -368,7 +368,7 @@ export default function Customized() {
                                 <span
                                   className={`text-[10px] sm:text-xs font-bold ${
                                     isSelected
-                                      ? "text-orange-600"
+                                      ? "text-coffee-600"
                                       : "text-slate-500"
                                   }`}
                                 >
@@ -376,7 +376,7 @@ export default function Customized() {
                                 </span>
                               </div>
                               {isSelected && (
-                                <div className="absolute top-6 right-6 bg-orange-600 text-white rounded-full p-1 shadow-lg ring-2 ring-white">
+                                <div className="absolute top-6 right-6 bg-coffee-600 text-white rounded-full p-1 shadow-lg ring-2 ring-white">
                                   <Check className="size-4" />
                                 </div>
                               )}
@@ -392,7 +392,7 @@ export default function Customized() {
                     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
-                          <span className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                          <span className="p-2 bg-coffee-100 text-coffee-600 rounded-lg">
                             <Sparkles className="size-5" />
                           </span>
                           Step 4: Special Instructions
@@ -406,7 +406,7 @@ export default function Customized() {
                           maxLength={100}
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
-                          className="w-full text-base sm:text-lg p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-orange-500 focus:outline-none transition-all shadow-inner resize-none min-h-[120px]"
+                          className="w-full text-base sm:text-lg p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-coffee-500 focus:outline-none transition-all shadow-inner resize-none min-h-[120px]"
                           placeholder="E.g., specific placement for add-ons, or gift instructions..."
                         />
                         <p className="mt-4 text-slate-400 text-xs italic">
@@ -431,7 +431,7 @@ export default function Customized() {
               {step < STEPS.length ? (
                 <button
                   onClick={nextStep}
-                  className="bg-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base flex items-center gap-3 hover:bg-orange-700 shadow-lg shadow-orange-600/20 active:scale-95 transition-all"
+                  className="bg-coffee-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base flex items-center gap-3 hover:bg-coffee-700 shadow-lg shadow-coffee-600/20 active:scale-95 transition-all"
                 >
                   {step === STEPS.length ? "Review" : "Continue"}
                   <ChevronRight className="size-5" />
@@ -462,7 +462,7 @@ export default function Customized() {
                             {selectedVessel.name}
                           </span>
                         </span>
-                        <span className="text-orange-600 font-bold">
+                        <span className="text-coffee-600 font-bold">
                           +₹{selectedVessel.price.toFixed(2)}
                         </span>
                       </div>
@@ -476,7 +476,7 @@ export default function Customized() {
                             {selectedScent.name}
                           </span>
                         </span>
-                        <span className="text-orange-600 font-bold">
+                        <span className="text-coffee-600 font-bold">
                           +₹{scentPrice.toFixed(2)}
                         </span>
                       </div>
@@ -495,7 +495,7 @@ export default function Customized() {
                             <span className="text-slate-900 font-bold">
                               • {t.name}
                             </span>
-                            <span className="text-orange-600 font-bold">
+                            <span className="text-coffee-600 font-bold">
                               +₹{t.price.toFixed(2)}
                             </span>
                           </div>
@@ -534,7 +534,7 @@ export default function Customized() {
                         !selectedVessel ||
                         !selectedScent
                       }
-                      className="w-full bg-black text-white py-4 sm:py-5 font-bold uppercase tracking-widest transition-all hover:bg-slate-800 shadow-lg text-sm disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+                      className="w-full bg-primary text-white py-4 sm:py-5 font-bold uppercase tracking-widest transition-all hover:bg-slate-800 shadow-lg text-sm disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {createMutation.isPending ? "Crafting..." : "Add to Cart"}
                     </button>
@@ -546,7 +546,7 @@ export default function Customized() {
               <div className="flex justify-around items-center bg-slate-100/50 py-4 sm:py-6 rounded-2xl border border-slate-200/50">
                 <div className="flex flex-col items-center gap-2">
                   <div className="bg-white p-2 rounded-full shadow-sm">
-                    <Leaf className="text-orange-600 size-4" />
+                    <Leaf className="text-coffee-600 size-4" />
                   </div>
                   <span className="text-[10px] font-black uppercase text-slate-500">
                     100% Soy
@@ -554,7 +554,7 @@ export default function Customized() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <div className="bg-white p-2 rounded-full shadow-sm">
-                    <Truck className="text-orange-600 size-4" />
+                    <Truck className="text-coffee-600 size-4" />
                   </div>
                   <span className="text-[10px] font-black uppercase text-slate-500">
                     Fast Ship
@@ -562,7 +562,7 @@ export default function Customized() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <div className="bg-white p-2 rounded-full shadow-sm">
-                    <ShieldCheck className="text-orange-600 size-4" />
+                    <ShieldCheck className="text-coffee-600 size-4" />
                   </div>
                   <span className="text-[10px] font-black uppercase text-slate-500">
                     Quality

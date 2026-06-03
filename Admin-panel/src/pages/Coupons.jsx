@@ -57,7 +57,7 @@ const Coupons = () => {
         <div>
           <h2 className="font-heading text-headline-lg text-on-surface mb-2">Coupon Management</h2>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl">
-            Create, manage, and track promotional discount codes. Monitor usage and toggle availability in real-time.
+            Create, manage, and track promotional discount codes. Per-user usage limits ensure fair distribution.
           </p>
         </div>
         <button
@@ -76,9 +76,10 @@ const Coupons = () => {
             <thead>
               <tr className="border-b border-surface-variant bg-surface-container-low">
                 <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Code</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Title</th>
                 <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Discount</th>
                 <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Validity</th>
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Usage</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Per User</th>
                 <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Status</th>
                 <th className="text-right px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Actions</th>
               </tr>
@@ -86,9 +87,6 @@ const Coupons = () => {
             <tbody>
               {coupons.map((coupon) => {
                 const expired = isExpired(coupon.endDate);
-                const usagePercent = coupon.usageLimit
-                  ? Math.min(100, Math.round((coupon.usedCount / coupon.usageLimit) * 100))
-                  : null;
 
                 return (
                   <tr
@@ -101,6 +99,16 @@ const Coupons = () => {
                       <span className="font-heading text-headline-md text-on-surface tracking-wider bg-surface-container px-3 py-1 rounded-md border border-surface-variant inline-block">
                         {coupon.code}
                       </span>
+                    </td>
+
+                    {/* Title */}
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-label-md text-on-surface">{coupon.title || '—'}</span>
+                        {coupon.description && (
+                          <span className="text-xs text-on-surface-variant line-clamp-1">{coupon.description}</span>
+                        )}
+                      </div>
                     </td>
 
                     {/* Discount */}
@@ -136,21 +144,11 @@ const Coupons = () => {
                       </div>
                     </td>
 
-                    {/* Usage */}
+                    {/* Per User Limit */}
                     <td className="px-6 py-4">
-                      <div className="flex flex-col gap-1.5 min-w-[120px]">
-                        <span className="text-sm font-label-md text-on-surface">
-                          {coupon.usedCount}{coupon.usageLimit ? ` / ${coupon.usageLimit}` : ' / ∞'}
-                        </span>
-                        {usagePercent !== null && (
-                          <div className="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all duration-500 ${usagePercent >= 90 ? 'bg-error' : usagePercent >= 60 ? 'bg-orange-500' : 'bg-primary'}`}
-                              style={{ width: `${usagePercent}%` }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      <span className="text-sm font-label-md text-on-surface">
+                        {coupon.usageLimitPerUser}× per user
+                      </span>
                     </td>
 
                     {/* Status Toggle */}

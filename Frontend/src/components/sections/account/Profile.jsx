@@ -76,7 +76,7 @@ const Profile = () => {
                         type="button"
                         text="Edit Profile"
                         onClick={() => setIsEditing(true)}
-                        className="bg-black! text-white! rounded-sm! shadow-none!"
+                        className="bg-primary! text-white! rounded-sm! shadow-none!"
                     />
                 </div>
             </div>
@@ -95,7 +95,7 @@ const Profile = () => {
                             onChange={handlePasswordChange}
                             type="password"
                             placeholder="••••••••"
-                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                         />
                     </div>
                     <div className="space-y-1.5">
@@ -107,7 +107,7 @@ const Profile = () => {
                             onChange={handlePasswordChange}
                             type="password"
                             placeholder="••••••••"
-                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                         />
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -115,7 +115,7 @@ const Profile = () => {
                             type="submit"
                             text={changePasswordMutation.isPending ? "Updating..." : "Update Password"}
                             disabled={changePasswordMutation.isPending}
-                            className="bg-black! text-white! rounded-sm! shadow-none! w-full sm:w-auto"
+                            className="bg-primary! text-white! rounded-sm! shadow-none! w-full sm:w-auto"
                         />
                         {/* <button
                             type="button"
@@ -153,7 +153,7 @@ const Profile = () => {
                         <MainBtn
                             type="button"
                             text={defaultAddress ? "View All" : "Add Address"}
-                            className="bg-black! text-white! rounded-sm! shadow-none!"
+                            className="bg-primary! text-white! rounded-sm! shadow-none!"
                         />
                     </Link>
                 </div>

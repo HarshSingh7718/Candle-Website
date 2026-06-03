@@ -66,7 +66,7 @@ const EditProfile = ({ onCancel }) => {
                             onChange={handleChange}
                             type="text"
                             placeholder="John"
-                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                         />
                     </div>
 
@@ -80,7 +80,7 @@ const EditProfile = ({ onCancel }) => {
                             onChange={handleChange}
                             type="text"
                             placeholder="Doe"
-                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                         />
                     </div>
                 </div>
@@ -95,7 +95,7 @@ const EditProfile = ({ onCancel }) => {
                         onChange={handleChange}
                         type="email"
                         placeholder="john@example.com"
-                        className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                        className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                     />
                 </div>
 
@@ -108,7 +108,7 @@ const EditProfile = ({ onCancel }) => {
                         onChange={handleChange}
                         type="tel"
                         placeholder="9876543210"
-                        className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-[#ea580c] focus:bg-white focus:ring-1 focus:ring-[#ea580c] transition-all text-[14px]"
+                        className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                     />
                 </div>
 
@@ -124,7 +124,7 @@ const EditProfile = ({ onCancel }) => {
                     <button
                         type="submit"
                         disabled={updateProfileMutation.isPending}
-                        className="w-full sm:w-auto px-6 py-2.5 bg-black hover:bg-black/85 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] disabled:bg-gray-400 cursor-pointer"
+                        className="w-full sm:w-auto px-6 py-2.5 bg-coffee hover:bg-coffee/85 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] disabled:bg-gray-400 cursor-pointer"
                     >
                         {updateProfileMutation.isPending ? "Saving Changes..." : "Save Changes"}
                     </button>

@@ -3,7 +3,7 @@ import MainBtn from "../ui/Buttons/MainBtn";
 
 const Customized = () => {
   return (
-    <section id="customized" className="py-10 md:py-20 bg-gray-50">
+    <section id="customized" className="py-10 md:py-20 bg-light-yellow">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="lg:w-1/2">
@@ -18,10 +18,10 @@ const Customized = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-coffee uppercase tracking-widest">
               Bespoke Creations
             </h2>
-            <h3 className="text-2xl font-semibold text-gray-800 italic">
+            <h3 className="text-2xl font-semibold text-heading italic">
               Tailored for your most precious moments.
             </h3>
-            <p className="text-gray-600 leading-relaxed text-md md:text-lg text-justify">
+            <p className="text-paragraph leading-relaxed text-md md:text-lg text-justify">
               At Naisha Creations, we believe every occasion deserves a unique
               glow. Whether it's a wedding, a corporate event, or a personal
               gift, we offer bespoke candle customization services. Choose your
@@ -32,7 +32,7 @@ const Customized = () => {
               <MainBtn
                 text="Custom Orders"
                 path="/customized"
-                className="!bg-black !text-white"
+                className="!bg-coffee !text-light-yellow"
               />
             </div>
           </div>

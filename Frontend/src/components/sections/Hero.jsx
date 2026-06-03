@@ -26,7 +26,7 @@ function Hero() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-stone-50">
+      <div className="h-screen flex items-center justify-center bg-light-yellow">
         <Loader />
       </div>
     );
@@ -73,11 +73,11 @@ function Hero() {
       {/* CUSTOM NAV — only shown when multiple banners exist */}
       {banners.length > 1 && (
         <>
-          <button className="hero-prev absolute left-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
+          <button className="hero-prev absolute left-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-light-yellow/10 hover:bg-light-yellow hover:text-heading p-4 rounded-full text-light-yellow backdrop-blur-sm border border-light-yellow/20 cursor-pointer">
             <ChevronLeft size={24} />
           </button>
 
-          <button className="hero-next absolute right-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10 hover:bg-white hover:text-black p-4 rounded-full text-white backdrop-blur-sm border border-white/20 cursor-pointer">
+          <button className="hero-next absolute right-10 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-light-yellow/10 hover:bg-light-yellow hover:text-heading p-4 rounded-full text-light-yellow backdrop-blur-sm border border-light-yellow/20 cursor-pointer">
             <ChevronRight size={24} />
           </button>
         </>

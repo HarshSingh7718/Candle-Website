@@ -122,7 +122,7 @@ lg:grid-cols-3 mx-auto mb-1 md:mb-18"
           <MainBtn
             path="/about"
             text={"Discover More"}
-            className="!bg-black !text-white"
+            className="!bg-coffee !text-light-yellow"
           />
         </div>
       </section>

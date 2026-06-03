@@ -7,7 +7,6 @@ import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
 import { sendSMS } from "./otp_services.js";
-import { Coupon } from "../models/couponModel.js";
 import mongoose from "mongoose";
 
 const razorpay = new Razorpay({
@@ -224,28 +223,23 @@ export const verifyPayment = async (req, res) => {
         await order.save({session});
 
         // =========================
-        //  ATOMIC COUPON CONSUMPTION (RAZORPAY)
-        //  Only increment usedCount AFTER successful signature verification
+        //  PER-USER COUPON CONSUMPTION (RAZORPAY)
+        //  couponProcessed guard prevents double-increment if webhook also fires
         // =========================
-        if (order.couponApplied) {
-            await Coupon.findOneAndUpdate(
-                {
-                    _id: order.couponApplied,
-                    $or: [
-                        { usageLimit: null },
-                        { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
-                    ]
-                },
-                { $inc: { usedCount: 1 } },
-                { new: true, session }
+        if (order.couponApplied && !order.couponProcessed) {
+            // Upsert into user.couponUsage
+            const existingEntry = user.couponUsage.find(
+                (e) => e.couponId.toString() === order.couponApplied.toString()
             );
+            if (existingEntry) {
+                existingEntry.count += 1;
+            } else {
+                user.couponUsage.push({ couponId: order.couponApplied, count: 1 });
+            }
+            // user.save happens below with cart clear
 
-            // Track on user (one-use-per-customer)
-            await User.findByIdAndUpdate(
-                order.user,
-                { $addToSet: { usedCoupons: order.couponApplied } },
-                { session }
-            );
+            order.couponProcessed = true;
+            await order.save({ session });
         }
 
         // =========================

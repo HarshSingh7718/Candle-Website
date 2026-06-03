@@ -133,15 +133,15 @@ function Cart() {
         className="container mx-auto py-[4%] px-4 flex flex-col lg:flex-row gap-8 lg:items-start wishlist-section"
       >
         {cart.length === 0 ? (
-          <p className="text-center w-full text-lg bg-gray-50 shadow-md py-5 wishlist-empty">
+          <p className="text-center w-full text-lg bg-light-yellow shadow-md py-5 wishlist-empty">
             Cart is empty
           </p>
         ) : (
           <>
             <div className="hidden lg:block overscroll-x-auto w-[180%]">
               <table className="w-full border-collapse">
-                <thead className="bg-black">
-                  <tr className="text-center text-white">
+                <thead className="bg-primary">
+                  <tr className="text-center text-light-yellow">
                     <th className="p-4 cart-th"></th>
                     <th className="p-4 text-left font-medium cart-th">
                       Product
@@ -203,7 +203,7 @@ function Cart() {
                           <div className="flex justify-center items-center gap-3">
                             <button
                               onClick={() => decrease(item._id, item.quantity)}
-                              className="border border-gray-200 p-2 cursor-pointer hover:bg-gray-50"
+                              className="border border-muted/20 p-2 cursor-pointer hover:bg-coffee/10"
                             >
                               <Minus size={14} />
                             </button>
@@ -214,7 +214,7 @@ function Cart() {
 
                             <button
                               onClick={() => increase(item._id, item.quantity)}
-                              className="border border-gray-200 p-2 cursor-pointer hover:bg-gray-50"
+                              className="border border-muted/20 p-2 cursor-pointer hover:bg-coffee/10"
                             >
                               <Plus size={14} />
                             </button>
@@ -268,11 +268,11 @@ function Cart() {
                 return (
                   <div
                     key={item._id}
-                    className="border border-gray-200 bg-white shadow-sm p-4 rounded-lg cart-item"
+                    className="border border-muted/20 bg-light-yellow shadow-sm p-4 rounded-lg cart-item"
                   >
                     <div className="flex justify-between items-center">
                       <button
-                        className="cursor-pointer text-gray-400 hover:text-red-500"
+                        className="cursor-pointer text-muted hover:text-red-500"
                         onClick={() => removeFromCart(item._id)}
                       >
                         <Icon icon="mdi:close" width="20" />
@@ -291,24 +291,24 @@ function Cart() {
                     <div className="flex items-center gap-4 mt-4">
                       <img
                         src={displayImage}
-                        className="w-20 h-20 object-cover rounded-sm border border-gray-100"
+                        className="w-20 h-20 object-cover rounded-sm border border-muted/20"
                         alt={displayName}
                       />
-                      <p className="font-semibold text-gray-800">
+                      <p className="font-semibold text-heading">
                         {displayName}
                       </p>
                     </div>
                     <div className="flex justify-between items-center mt-6">
-                      <span className="text-gray-500 text-sm">Price:</span>
+                      <span className="text-muted text-sm">Price:</span>
                       <span className="font-medium">₹{displayPrice}</span>
                     </div>
 
                     <div className="flex justify-between items-center mt-4">
-                      <span className="text-gray-500 text-sm">Quantity:</span>
+                      <span className="text-muted text-sm">Quantity:</span>
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => decrease(item._id, item.quantity)}
-                          className="border border-gray-200 p-1.5 rounded-sm cursor-pointer active:bg-gray-100"
+                          className="border border-muted/20 p-1.5 rounded-sm cursor-pointer active:bg-coffee/10"
                         >
                           <Minus size={14} />
                         </button>
@@ -317,14 +317,14 @@ function Cart() {
                         </span>
                         <button
                           onClick={() => increase(item._id, item.quantity)}
-                          className="border border-gray-200 p-1.5 rounded-sm cursor-pointer active:bg-gray-100"
+                          className="border border-muted/20 p-1.5 rounded-sm cursor-pointer active:bg-coffee/10"
                         >
                           <Plus size={14} />
                         </button>
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 font-bold text-lg">
+                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-muted/20 font-bold text-lg">
                       <span>Total:</span>
                       <span>₹{displayPrice * item.quantity}</span>
                     </div>
@@ -335,11 +335,11 @@ function Cart() {
 
             {/* 👉 3. Subtotal Section dynamically bound to billing object */}
             <div className="w-full flex justify-end mb-10 mt-8 lg:mt-0">
-              <div className="w-full h-fit lg:w-120 border border-gray-200 lg:sticky lg:top-24 rounded-sm bg-white">
+              <div className="w-full h-fit lg:w-120 border border-muted/20 lg:sticky lg:top-24 rounded-sm bg-light-yellow">
 
                 {/* Subtotal */}
-                <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
-                  <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
+                <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
+                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">
                     Subtotal
                   </div>
                   <div className="p-6 text-right font-semibold">
@@ -348,8 +348,8 @@ function Cart() {
                 </div>
 
                 {/* Shipping */}
-                <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
-                  <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200">
+                <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
+                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">
                     Shipping
                   </div>
                   <div className={`p-6 text-right font-semibold ${billing?.shippingPrice === 0 ? "text-green-600" : ""}`}>
@@ -358,11 +358,11 @@ function Cart() {
                 </div>
 
                 {/* Total */}
-                <div className="grid grid-cols-2 border-b border-gray-200 cart-item">
-                  <div className="p-6 font-semibold bg-gray-50 border-r border-gray-200 text-lg">
+                <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
+                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20 text-lg">
                     Total
                   </div>
-                  <div className="p-6 text-right font-bold text-xl text-[#ea580c]">
+                  <div className="p-6 text-right font-bold text-xl text-coffee">
                     ₹{billing?.totalPrice || 0}.00
                   </div>
                 </div>
@@ -372,7 +372,7 @@ function Cart() {
                   <MainBtn
                     path="/checkout"
                     text={"PROCEED TO CHECKOUT"}
-                    className="wishlist-btn shadow-none! bg-black! text-white! w-full! rounded-sm! hover:bg-gray-800!"
+                    className="wishlist-btn shadow-none! bg-coffee! text-light-yellow! w-full! rounded-sm! hover:bg-coffee-light!"
                   />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/layout/Navbar/Navbar";
 import { useRef, useEffect, lazy, Suspense } from "react";
@@ -51,6 +51,19 @@ const PageLoader = () => (
 function App() {
   const contactRef = useRef(null);
 
+  const location = useLocation();
+
+  const authPages = [
+    "/signin",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-otp",
+    "/complete-google-profile",
+  ];
+
+  const hasNavbarSpacing = !authPages.includes(location.pathname);
+
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
     const smoother = ScrollSmoother.create({
@@ -69,7 +82,8 @@ function App() {
       <div id="smooth-wrapper">
         <Navbar />
         <div id="smooth-content">
-          <div className="min-h-screen pt-19 md:pt-22 flex flex-col overflow-clip">
+          <div className={`min-h-screen flex flex-col overflow-clip ${hasNavbarSpacing ? "pt-19 md:pt-22" : ""
+            }`}>
             <main className="flex-grow">
               <Suspense fallback={<PageLoader />}>
                 <Routes>

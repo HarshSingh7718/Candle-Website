@@ -13,13 +13,15 @@ const EditCoupon = () => {
 
   const [form, setForm] = useState({
     code: '',
+    title: '',
+    description: '',
     discountType: 'percentage',
     discountValue: '',
     maxDiscountAmount: '',
     minOrderValue: '',
     startDate: '',
     endDate: '',
-    usageLimit: '',
+    usageLimitPerUser: '1',
     isActive: true,
   });
 
@@ -36,13 +38,15 @@ const EditCoupon = () => {
 
       setForm({
         code: coupon.code || '',
+        title: coupon.title || '',
+        description: coupon.description || '',
         discountType: coupon.discountType || 'percentage',
         discountValue: coupon.discountValue ?? '',
         maxDiscountAmount: coupon.maxDiscountAmount ?? '',
         minOrderValue: coupon.minOrderValue ?? '',
         startDate: toLocalDatetime(coupon.startDate),
         endDate: toLocalDatetime(coupon.endDate),
-        usageLimit: coupon.usageLimit ?? '',
+        usageLimitPerUser: coupon.usageLimitPerUser ?? 1,
         isActive: coupon.isActive ?? true,
       });
     }
@@ -66,6 +70,7 @@ const EditCoupon = () => {
     e.preventDefault();
 
     if (!form.code.trim()) return toast.error('Code is required');
+    if (!form.title.trim()) return toast.error('Title is required');
     if (!form.discountValue || Number(form.discountValue) <= 0) return toast.error('Discount value must be greater than 0');
     if (form.discountType === 'percentage' && Number(form.discountValue) > 100) return toast.error('Percentage cannot exceed 100');
     if (!form.startDate) return toast.error('Start date is required');
@@ -74,13 +79,15 @@ const EditCoupon = () => {
 
     const payload = {
       code: form.code.trim(),
+      title: form.title.trim(),
+      description: form.description.trim(),
       discountType: form.discountType,
       discountValue: Number(form.discountValue),
       maxDiscountAmount: form.discountType === 'percentage' && form.maxDiscountAmount ? Number(form.maxDiscountAmount) : null,
       minOrderValue: form.minOrderValue ? Number(form.minOrderValue) : 0,
       startDate: form.startDate,
       endDate: form.endDate,
-      usageLimit: form.usageLimit ? Number(form.usageLimit) : null,
+      usageLimitPerUser: form.usageLimitPerUser ? Number(form.usageLimitPerUser) : 1,
       isActive: form.isActive,
     };
 
@@ -115,34 +122,12 @@ const EditCoupon = () => {
         </div>
       </div>
 
-      {/* Usage Stats */}
-      {coupon && (
-        <div className="bg-surface-container border border-surface-variant rounded-lg p-4 mb-6 max-w-3xl flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">confirmation_number</span>
-            <span className="font-label-md text-on-surface">
-              Used: <strong>{coupon.usedCount}</strong>{coupon.usageLimit ? ` / ${coupon.usageLimit}` : ' / ∞'}
-            </span>
-          </div>
-          {coupon.usageLimit && (
-            <div className="flex-1 max-w-[200px]">
-              <div className="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${Math.min(100, Math.round((coupon.usedCount / coupon.usageLimit) * 100))}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Form */}
       <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-surface-variant rounded-xl p-6 md:p-8 shadow-sm max-w-3xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Code */}
-          <div className="md:col-span-2">
+          <div>
             <label className="block font-label-md text-label-md text-on-surface mb-2">Coupon Code *</label>
             <input
               type="text"
@@ -151,6 +136,32 @@ const EditCoupon = () => {
               onChange={handleChange}
               placeholder="e.g. SUMMER20"
               className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all uppercase placeholder:normal-case font-heading tracking-widest"
+            />
+          </div>
+
+          {/* Title */}
+          <div>
+            <label className="block font-label-md text-label-md text-on-surface mb-2">Title * <span className="text-xs text-on-surface-variant font-normal">(shown to customers)</span></label>
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder='e.g. "Flat 20% Off"'
+              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="md:col-span-2">
+            <label className="block font-label-md text-label-md text-on-surface mb-2">Description <span className="text-xs text-on-surface-variant font-normal">(shown to customers)</span></label>
+            <input
+              type="text"
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder='e.g. "On orders above ₹999"'
+              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
             />
           </div>
 
@@ -241,18 +252,19 @@ const EditCoupon = () => {
             />
           </div>
 
-          {/* Usage Limit */}
+          {/* Usage Limit Per User */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Usage Limit</label>
+            <label className="block font-label-md text-label-md text-on-surface mb-2">Usage Limit Per User</label>
             <input
               type="number"
-              name="usageLimit"
-              value={form.usageLimit}
+              name="usageLimitPerUser"
+              value={form.usageLimitPerUser}
               onChange={handleChange}
-              placeholder="Leave blank for unlimited"
+              placeholder="Default: 1"
               min="1"
               className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
             />
+            <p className="text-xs text-on-surface-variant mt-1.5">How many times each customer can use this coupon.</p>
           </div>
 
           {/* Active Toggle */}

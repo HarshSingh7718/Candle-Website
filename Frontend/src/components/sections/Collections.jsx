@@ -29,7 +29,7 @@ const Collections = () => {
         <div className="container py-[2%] mx-auto px-4 space-y-10 mb-14 md:pb-10">
           
           {/* Header Section */}
-          <div className="feature-content section-container flex justify-center lg:items-center!">
+          <div className="flex flex-col items-center justify-center w-full">
             <div className="flex flex-col items-center mb-14 md:mb-16">
               <div className="w-24 h-1 bg-[#8c7851] mb-6"></div>
               <h2 className="text-4xl md:text-5xl font-serif text-[#8c7851] tracking-tight">

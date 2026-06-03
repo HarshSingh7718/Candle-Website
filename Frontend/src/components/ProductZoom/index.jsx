@@ -78,7 +78,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   onClick={() => setActiveImageIndex(idx)}
                   className={`w-16 h-20 border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
                     activeImageIndex === idx
-                      ? "border-black"
+                      ? "border-coffee"
                       : "border-transparent opacity-70 hover:opacity-100"
                   }`}
                 >
@@ -93,7 +93,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
             {/* Main image (desktop) */}
             <div 
-              className="flex-1 relative group overflow-hidden bg-white cursor-zoom-in"
+              className="flex-1 relative group overflow-hidden bg-light-yellow cursor-zoom-in"
               onClick={() => setIsLightboxOpen(true)}
             >
               <button
@@ -101,14 +101,14 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   e.stopPropagation();
                   toggleWishlist();
                 }}
-                className="absolute top-4 right-4 z-[40] bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-md hover:bg-white transition-all group/heart cursor-pointer"
+                className="absolute top-4 right-4 z-[40] bg-light-yellow/90 backdrop-blur-sm p-2.5 rounded-full shadow-md hover:bg-light-yellow transition-all group/heart cursor-pointer"
               >
                 <Heart
                   size={20}
                   className={`transition-all ${
                     isWishlisted
                       ? "fill-red-500 text-red-500"
-                      : "text-gray-500 hover:text-red-500"
+                      : "text-muted hover:text-red-500"
                   }`}
                 />
               </button>
@@ -127,7 +127,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
           <div className="flex flex-col md:hidden">
             {/* Main image (no zoom on mobile — tap to see lightbox) */}
             <div 
-              className="relative group overflow-hidden bg-white cursor-zoom-in"
+              className="relative group overflow-hidden bg-light-yellow cursor-zoom-in"
               onClick={() => setIsLightboxOpen(true)}
             >
               <button
@@ -135,14 +135,14 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   e.stopPropagation();
                   toggleWishlist();
                 }}
-                className="absolute top-4 right-4 z-[40] bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-md hover:bg-white transition-all cursor-pointer"
+                className="absolute top-4 right-4 z-[40] bg-light-yellow/90 backdrop-blur-sm p-2.5 rounded-full shadow-md hover:bg-light-yellow transition-all cursor-pointer"
               >
                 <Heart
                   size={20}
                   className={`transition-all ${
                     isWishlisted
                       ? "fill-red-500 text-red-500"
-                      : "text-gray-500 hover:text-red-500"
+                      : "text-muted hover:text-red-500"
                   }`}
                 />
               </button>
@@ -165,7 +165,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                     onClick={() => setActiveImageIndex(idx)}
                     className={`w-16 h-20 border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
                       activeImageIndex === idx
-                        ? "border-black"
+                        ? "border-coffee"
                         : "border-transparent opacity-70 hover:opacity-100"
                     }`}
                   >
@@ -183,14 +183,14 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
         {/* ─────────────────── Right Column: Details ─────────────────── */}
         <div className="flex-1 p-6 md:p-10 min-[1281px]:p-10 2xl:p-12 bg-light-yellow w-full min-[1281px]:w-[55%] 2xl:w-[56%] md:max-w-4xl mx-auto min-[1281px]:max-w-none min-[1281px]:mx-0">
-          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 leading-tight mb-3">
+          <h1 className="text-xl sm:text-2xl font-semibold text-heading leading-tight mb-3">
             {product.name}
           </h1>
 
           <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mb-4 text-sm">
-            <div className="flex items-center text-gray-500">
+            <div className="flex items-center text-muted">
               <span className="mr-1">Collection :</span>
-              <span className="text-gray-900 font-medium">
+              <span className="text-heading font-medium">
                 {product.category?.map(c => c.name).join(', ') || "Naisha Creations"}
               </span>
             </div>
@@ -208,7 +208,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   />
                 ))}
               </div>
-              <span className="text-gray-400 text-xs">
+              <span className="text-muted text-xs">
                 Review ({product.numOfReviews || 0})
               </span>
             </div>
@@ -216,14 +216,14 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
           <div className="flex flex-wrap items-baseline gap-3 mb-6">
             {product.discountPrice > 0 && (
-              <span className="text-xl sm:text-2xl line-through text-gray-400 font-normal">
+              <span className="text-xl sm:text-2xl line-through text-muted font-normal">
                 ₹{product.price}
               </span>
             )}
-            <span className="text-2xl sm:text-3xl text-gray-900 font-bold">
+            <span className="text-2xl sm:text-3xl text-heading font-bold">
               ₹{product.discountPrice > 0 ? product.discountPrice : product.price}
             </span>
-            <span className="text-xs sm:text-sm text-gray-500 ml-0 sm:ml-2 w-full sm:w-auto">
+            <span className="text-xs sm:text-sm text-paragraph ml-0 sm:ml-2 w-full sm:w-auto">
               Availability:{" "}
               <span className="text-emerald-600 font-semibold">
                 {product.stock > 0 ? "In Stock" : "Out of Stock"}
@@ -234,7 +234,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
           {/* Short description — clicking scrolls to the full Description tab */}
           <button
             onClick={onScrollToDescription}
-            className="text-left w-full text-gray-600 text-sm leading-relaxed md:mb-8 border-b border-gray-100 pb-8 cursor-pointer hover:text-gray-900 transition-colors group/desc"
+            className="text-left w-full text-paragraph text-sm leading-relaxed border-b border-muted/20 pb-8 cursor-pointer hover:text-heading transition-colors group/desc"
           >
             <span className="line-clamp-3">{product.description}</span>
             <span className="text-xs text-coffee font-medium mt-1 inline-block group-hover/desc:underline">
@@ -245,19 +245,19 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
           {/* Quantity and Actions */}
           <div className="flex flex-col gap-4 mb-10 mt-6">
             <div className="flex items-center gap-4">
-              <div className="flex items-center border border-black h-14 bg-white">
+              <div className="flex items-center border border-coffee h-14 bg-light-yellow">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-4 h-full hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="px-4 h-full hover:bg-coffee/10 cursor-pointer transition-colors"
                 >
                   <Minus size={16} />
                 </button>
-                <span className="w-12 text-center font-bold text-lg">
+                <span className="w-12 text-center font-bold text-lg text-heading">
                   {qty}
                 </span>
                 <button
                   onClick={() => setQty(qty + 1)}
-                  className="px-4 h-full hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="px-4 h-full hover:bg-coffee/10 cursor-pointer transition-colors"
                 >
                   <Plus size={16} />
                 </button>
@@ -265,7 +265,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
               <button
                 onClick={() => addToCart(product, qty)}
-                className="flex-1 h-14 bg-white border border-black hover:bg-black hover:text-white text-black text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] cursor-pointer"
+                className="flex-1 h-14 bg-light-yellow border border-coffee hover:bg-coffee hover:text-light-yellow text-heading text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] cursor-pointer"
               >
                 ADD TO CART
               </button>
@@ -273,7 +273,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
             <button
               onClick={handleBuyNow}
-              className="w-full h-14 bg-black hover:bg-gray-900 text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] shadow-md cursor-pointer"
+              className="w-full h-14 bg-coffee hover:bg-coffee-light text-light-yellow text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] shadow-md cursor-pointer"
             >
               BUY IT NOW
             </button>
@@ -281,7 +281,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
           {/* Delivery & FAQ Info */}
           <div className="mt-8 mb-6">
-            <div className="border-t border-gray-200">
+            <div className="border-t border-muted/20">
               {[
                 {
                   title: "ABOUT Naisha Creations",
@@ -298,12 +298,12 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   content: `Burn Time: ${product.burnTime}h | Weight: ${product.weight}g | Material: ${product.material}${product.vessel ? ` | Vessel: ${product.vessel}` : ''}`,
                 },
               ].map((faq, idx) => (
-                <div key={idx} className="border-b border-gray-200">
+                <div key={idx} className="border-b border-muted/20">
                   <button
                     onClick={() => toggleFaq(idx)}
                     className="w-full flex justify-between items-center py-5 text-left cursor-pointer group"
                   >
-                    <span className="text-[13px] font-normal text-[#333] tracking-widest uppercase">
+                    <span className="text-[13px] font-normal text-heading tracking-widest uppercase">
                       {faq.title}
                     </span>
                     {openFaq === idx ? (
@@ -319,7 +319,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                         : "max-h-0 opacity-0"
                     }`}
                   >
-                    <p className="text-gray-500 text-[13px] leading-relaxed">
+                    <p className="text-paragraph text-[13px] leading-relaxed">
                       {faq.content}
                     </p>
                   </div>

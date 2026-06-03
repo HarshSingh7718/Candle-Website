@@ -83,42 +83,56 @@ const Orders = () => {
             ) : (
                 <>
                     {/* Desktop Table */}
-                    <div className="hidden lg:block overflow-x-auto hide-scrollbar">
-                        <table className="w-full text-left">
-                            <thead className="bg-black text-white orders-head opacity-0">
-                                <tr>
-                                    <th className="p-4 font-medium orders-th opacity-0">Order ID</th>
-                                    <th className="p-4 font-medium orders-th opacity-0">Date</th>
-                                    <th className="p-4 font-medium orders-th opacity-0">Items</th>
-                                    <th className="p-4 font-medium orders-th opacity-0">Total</th>
-                                    <th className="p-4 font-medium orders-th opacity-0">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((order, idx) => (
-                                    <tr
-                                        key={idx}
-                                        onClick={() => navigate(`/account/orders/${order.rawId}`)}
-                                        className="border-b border-gray-200 order-item opacity-0 hover:bg-gray-50 cursor-pointer transition-colors"
-                                    >
-                                        <td className="p-4 font-semibold text-heading border-r border-gray-100">{order.id}</td>
-                                        <td className="p-4 text-paragraph border-r border-gray-100">{order.date}</td>
-                                        <td className="p-4 text-paragraph border-r border-gray-100">{order.items} items</td>
-                                        <td className="p-4 text-heading font-medium border-r border-gray-100">{order.total}</td>
-                                        <td className="p-4">
-                                            <span className={`px-3 py-1 text-xs rounded-sm ${order.status.toLowerCase() === 'delivered'
-                                                ? 'bg-green-50 text-green-700 border border-green-200'
-                                                : order.status.toLowerCase() === 'cancelled'
-                                                    ? 'bg-red-50 text-red-700 border border-red-200'
-                                                    : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
-                                                }`}>
-                                                {order.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                    <div className="hidden lg:flex flex-col gap-4">
+                        {orders.map((order, idx) => (
+                            <div
+                                key={idx}
+                                onClick={() => navigate(`/account/orders/${order.rawId}`)}
+                                className="order-item opacity-0 bg-white border border-gray-200 rounded-lg p-5 cursor-pointer hover:border-primary/30 hover:shadow-md transition-all"
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h3 className="font-semibold text-heading">
+                                            {order.id}
+                                        </h3>
+                                        <p className="text-sm text-paragraph mt-1">
+                                            {order.date}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-12">
+                                        <div>
+                                            <p className="text-xs text-paragraph uppercase tracking-wide">
+                                                Items
+                                            </p>
+                                            <p className="font-medium text-heading">
+                                                {order.items}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-xs text-paragraph uppercase tracking-wide">
+                                                Total
+                                            </p>
+                                            <p className="font-semibold text-heading">
+                                                {order.total}
+                                            </p>
+                                        </div>
+
+                                        <span
+                                            className={`px-3 py-1 text-xs rounded-full ${order.status.toLowerCase() === "delivered"
+                                                ? "bg-green-50 text-green-700"
+                                                : order.status.toLowerCase() === "cancelled"
+                                                    ? "bg-red-50 text-red-700"
+                                                    : "bg-yellow-50 text-yellow-700"
+                                                }`}
+                                        >
+                                            {order.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Mobile View */}

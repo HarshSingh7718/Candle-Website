@@ -65,7 +65,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className={`w-full z-50 fixed top-0 left-0 transition-all duration-300 ${is404 ? "bg-black text-white" : "bg-black shadow-lg" }`}>
+      <div className={`w-full z-50 fixed top-0 left-0 transition-all duration-300 ${is404 ? "bg-primary text-light-yellow" : "bg-primary shadow-lg" }`}>
         <div className="container mx-auto flex justify-between items-center h-19 md:h-22 px-4">
           
           <NavLink to="/">
@@ -82,12 +82,12 @@ const Navbar = () => {
             
             <div className="nav-icons flex items-center gap-3">
               <button onClick={() => setIsSearchOpen(true)} className='cursor-pointer'>
-                <Search size={24} className='text-white cursor-pointer' />
+                <Search size={24} className='text-light-yellow cursor-pointer' />
               </button>
 
 
               <Link to='/cart' className='relative'>
-                <ShoppingBag size={24} className='text-white cursor-pointer' />
+                <ShoppingBag size={24} className='text-light-yellow cursor-pointer' />
                 {cart?.length > 0 && (
                   <span className='card-count'>{cart.length}</span>
                 )}
@@ -100,41 +100,39 @@ const Navbar = () => {
                     onBlur={() => setTimeout(() => setShowUserDropdown(false), 200)}
                     className='user cursor-pointer flex items-center'
                   >
-                    <User size={24} className='text-white cursor-pointer' />
+                    <User size={24} className='text-light-yellow cursor-pointer' />
                   </button>
                 ) : (
                   <Link to="/signin" className='user cursor-pointer flex items-center'>
-                    <User size={24} className='text-white cursor-pointer' />
+                    <User size={24} className='text-light-yellow cursor-pointer' />
                   </Link>
                 )}
 
-                <div 
-                  className={`absolute right-[-4px] top-12 w-[180px] bg-white rounded-md shadow-[0_4px_24px_rgba(0,0,0,0.15)] border border-gray-100 transition-all duration-200 transform origin-top-right ${showUserDropdown ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}
-                >
-                  <div className="absolute -top-1.5 right-[14px] w-3 h-3 bg-white transform rotate-45 border-t border-l border-gray-100 box-border z-[1]"></div>
+                <div className={`absolute right-[-4px] top-12 w-[180px] bg-light-yellow rounded-md shadow-[0_4px_24px_rgba(0,0,0,0.15)] border border-muted/20 transition-all duration-200 transform origin-top-right ${showUserDropdown ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}>
+                  <div className="absolute -top-1.5 right-[14px] w-3 h-3 bg-light-yellow transform rotate-45 border-t border-l border-muted/20 box-border z-[1]"></div>
                   
                   <div className="py-2.5 relative z-10 flex flex-col">
-                    <Link to="/account" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
-                      <User size={18} strokeWidth={1.5} className="text-[#333]" /> My Account
+                    <Link to="/account" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-heading hover:bg-coffee/10 transition-colors">
+                      <User size={18} strokeWidth={1.5} className="text-heading" /> My Account
                     </Link>
-                    <Link to="/account/orders" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
-                      <ShoppingBag size={18} strokeWidth={1.5} className="text-[#333]" /> Orders
+                    <Link to="/account/orders" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-heading hover:bg-coffee/10 transition-colors">
+                      <ShoppingBag size={18} strokeWidth={1.5} className="text-heading" /> Orders
                     </Link>
-                    <Link to="/account/wishlist" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors">
-                      <Heart size={18} strokeWidth={1.5} className="text-[#333]" /> Wishlist
+                    <Link to="/account/wishlist" className="flex items-center gap-3 px-5 py-2.5 text-[15px] text-heading hover:bg-coffee/10 transition-colors">
+                      <Heart size={18} strokeWidth={1.5} className="text-heading" /> Wishlist
                     </Link>
                     <button 
                       onClick={handleLogout} 
-                      className="w-full flex items-center gap-3 px-5 py-2.5 text-[15px] text-[#333] hover:bg-gray-50 transition-colors text-left"
+                      className="w-full flex items-center gap-3 px-5 py-2.5 text-[15px] text-heading hover:bg-coffee/10 transition-colors text-left"
                     >
-                      <LogOut size={18} strokeWidth={1.5} className="text-[#333]" /> Logout
+                      <LogOut size={18} strokeWidth={1.5} className="text-heading" /> Logout
                     </button>
                   </div>
                 </div>
               </div>
 
               <button className='relative ms-2 lg:hidden block' onClick={() => setMenuOpen(true)}>
-                <TextAlignJustify size={24} className='text-white cursor-pointer' />
+                <TextAlignJustify size={24} className='text-light-yellow cursor-pointer' />
               </button>
             </div>
           </div>

@@ -235,7 +235,7 @@ const OurStory = () => {
           <MainBtn
             path="/collections/candles"
             text={" Shop All Candles"}
-            className="!bg-black !text-white"
+            className="!bg-coffee !text-white"
           />
         </div>
       </section>

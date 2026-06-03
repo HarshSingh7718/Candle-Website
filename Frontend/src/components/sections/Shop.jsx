@@ -107,7 +107,7 @@ const Shop = () => {
           <MainBtn
             path="/collections/candles"
             text={"EXPLORE ALL CANDLES"}
-            className="!bg-coffee !text-white"
+            className="!bg-coffee !text-light-yellow"
           />
         </div>
       </div>

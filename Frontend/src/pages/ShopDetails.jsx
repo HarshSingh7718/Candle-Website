@@ -70,7 +70,7 @@ const ShopDetails = () => {
           <h2 className="text-3xl font-serif text-[#222] mb-4">
             Product Not Found
           </h2>
-          <Link to="/collections" className="text-[#ff5a5f] hover:underline">
+          <Link to="/collections" className="text-coffee hover:underline">
             Return to Collections
           </Link>
         </div>
@@ -116,20 +116,20 @@ const ShopDetails = () => {
 
           {/* ─────────────── Tabs Area ─────────────── */}
           <div className="mt-8" ref={tabsSectionRef} id="product-tabs">
-            <div className="flex border-b border-gray-200 gap-8 md:gap-10">
+            <div className="flex border-b border-muted gap-8 md:gap-10">
               {["description", "additional", "reviews"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`pb-4 text-xs cursor-pointer font-bold uppercase tracking-widest transition-all relative ${
                     activeTab === tab
-                      ? "text-black"
-                      : "text-gray-400 hover:text-black"
+                      ? "text-heading"
+                      : "text-muted hover:text-heading"
                   }`}
                 >
                   {tab === "reviews" ? `Reviews (${reviews?.length})` : tab}
                   {activeTab === tab && (
-                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black" />
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
                   )}
                 </button>
               ))}
@@ -138,7 +138,7 @@ const ShopDetails = () => {
             <div className="py-10 min-h-[200px]">
               {/* ── Description Tab with Show More / Show Less ── */}
               {activeTab === "description" && (
-                <div className="text-gray-600 text-[15px] leading-8 max-w-4xl">
+                <div className="text-paragraph text-[15px] leading-8 max-w-4xl">
                   <p
                     className={`whitespace-pre-line ${showFullDescription ? "line-clamp-none" : "line-clamp-4"}`}
                   >
@@ -158,29 +158,29 @@ const ShopDetails = () => {
 
               {/* ── Additional Info Tab ── */}
               {activeTab === "additional" && (
-                <div className="text-gray-600 text-sm max-w-lg">
+                <div className="text-paragraph text-sm max-w-lg">
                   {product.vessel && (
-                    <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                      <span className="font-bold text-black uppercase tracking-wider">
+                    <div className="grid grid-cols-2 py-3 border-b border-muted/20">
+                      <span className="font-bold text-heading uppercase tracking-wider">
                         Vessel
                       </span>
                       <span>{product.vessel}</span>
                     </div>
                   )}
-                  <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                    <span className="font-bold text-black uppercase tracking-wider">
+                  <div className="grid grid-cols-2 py-3 border-b border-muted/20">
+                    <span className="font-bold text-heading uppercase tracking-wider">
                       Weight
                     </span>
                     <span>{product.weight} g</span>
                   </div>
-                  <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                    <span className="font-bold text-black uppercase tracking-wider">
+                  <div className="grid grid-cols-2 py-3 border-b border-muted/20">
+                    <span className="font-bold text-heading uppercase tracking-wider">
                       Materials
                     </span>
                     <span>{product.material}</span>
                   </div>
-                  <div className="grid grid-cols-2 py-3 border-b border-gray-100">
-                    <span className="font-bold text-black uppercase tracking-wider">
+                  <div className="grid grid-cols-2 py-3 border-b border-muted/20">
+                    <span className="font-bold text-heading uppercase tracking-wider">
                       Burn Time
                     </span>
                     <span>~{product.burnTime} Hours</span>
@@ -192,18 +192,18 @@ const ShopDetails = () => {
               {activeTab === "reviews" && (
                 <div className="space-y-8">
                   {reviews?.length === 0 && (
-                    <p className="text-gray-400 italic">
+                    <p className="text-muted italic">
                       No reviews yet for this product.
                     </p>
                   )}
                   {reviews?.map((review, idx) => (
-                    <div key={idx} className="border-b border-gray-100 pb-8">
+                    <div key={idx} className="border-b border-muted/20 pb-8">
                       <div className="flex justify-between items-center mb-4">
                         <div>
-                          <h4 className="font-bold text-black uppercase tracking-widest text-s">
+                          <h4 className="font-bold text-heading uppercase tracking-widest text-s">
                             {review.user}
                           </h4>
-                          <p className="text-[10px] text-gray-400 mt-1">
+                          <p className="text-[10px] text-muted mt-1">
                             {new Date(review.createdAt).toLocaleDateString()}
                           </p>
                         </div>
@@ -222,7 +222,7 @@ const ShopDetails = () => {
                           ))}
                         </div>
                       </div>
-                      <p className="text-gray-600 text-sm leading-relaxed">
+                      <p className="text-paragraph text-sm leading-relaxed">
                         {review.comment}
                       </p>
                     </div>

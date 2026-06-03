@@ -12,6 +12,20 @@ const couponSchema = new mongoose.Schema(
             index: true,
         },
 
+        // Customer-facing title (e.g. "Flat 20% Off")
+        title: {
+            type: String,
+            required: [true, "Title is required"],
+            trim: true,
+        },
+
+        // Customer-facing description (e.g. "On orders above ₹999")
+        description: {
+            type: String,
+            default: "",
+            trim: true,
+        },
+
         // 'percentage' → applies discountValue as a % on item total
         // 'fixed'      → applies discountValue as flat ₹ off
         discountType: {
@@ -50,16 +64,10 @@ const couponSchema = new mongoose.Schema(
             required: [true, "End date is required"],
         },
 
-        // Total number of times this coupon can be used (null = unlimited)
-        usageLimit: {
+        // How many times a SINGLE USER can use this coupon (default 1)
+        usageLimitPerUser: {
             type: Number,
-            default: null,
-        },
-
-        // How many times it has already been consumed (atomic $inc only)
-        usedCount: {
-            type: Number,
-            default: 0,
+            default: 1,
         },
 
         // Master kill-switch for the admin

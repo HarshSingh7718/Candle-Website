@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nata+Sans:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prata&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nata+Sans:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prata&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
 
 @import "tailwindcss";
 
 @font-face {
   font-family: "impact01";
   src: url(/fonts/IMPACT.TTF);
-   font-display: swap;
+  font-display: swap;
 }
 
 .impact,
@@ -13,20 +13,35 @@
   font-family: "impact01", sans-serif !important;
 }
 
-
 @theme {
-  --color-primary: #051728;
-  --color-light-yellow: #f4f3e6;
-  --color-heading: #1e2831;
-  --color-paragraph: #656565;
-  --color-muted: #858D97;
-  --color-footer: #9aa0a8;
-  --color-coffee: #ae9775;
-  --color-coffee-light: #B19777;
+  --color-light-yellow: #fce8e8;
+  --color-coffee: #a67067;
+  --color-coffee-light: #ba847b;
+
+  /* Brand Primary */
+  --color-primary: #5e3232;
+  --color-heading: #221f1f;
+  --color-paragraph: #595554;
+  --color-muted: #9e9a99;
+  --color-footer: #f5dfdf;
+
+  --color-coffee-50: #f8f3f2;
+  --color-coffee-100: #f0e5e4;
+  --color-coffee-200: #dfcac7;
+  --color-coffee-300: #c8a8a3;
+  --color-coffee-400: #b0847d;
+  --color-coffee-500: #a67067;
+  /* Your exact client hex */
+  --color-coffee-600: #8b5952;
+  --color-coffee-700: #734943;
+  --color-coffee-800: #5f3e3a;
+  --color-coffee-900: #503734;
+  --color-coffee-950: #291a18;
 }
 
 body {
   font-family: "Sora", "Montserrat", sans-serif;
+  @apply bg-light-yellow text-paragraph;
 }
 
 .montserrat {
@@ -72,7 +87,7 @@ h6 {
 }
 
 .section-image {
-  @apply w-full h-full object-cover
+  @apply w-full h-full object-cover;
 }
 
 .title-span {
@@ -85,7 +100,7 @@ h6 {
 }
 
 .nav-link::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: -4px;
@@ -100,131 +115,129 @@ h6 {
   width: 100% !important;
 }
 
-
-
-
-.card-count{
+.card-count {
   font-size: 10px;
   font-weight: 500;
   min-width: 15px;
   min-height: 15px;
   text-align: center;
-  letter-spacing: .3px;
-  padding:0 2px;
-  top:auto;
-  bottom:-3px;
-  right:-6px;
+  letter-spacing: 0.3px;
+  padding: 0 2px;
+  top: auto;
+  bottom: -3px;
+  right: -6px;
   --webkit-transform: none;
-  --ms-transform:none;
+  --ms-transform: none;
   transform: none;
 
   border-radius: 8px;
-  position:absolute;
+  position: absolute;
   z-index: 1;
-  color:#fff;
+  color: #fff;
   background-color: #00a4b2;
-
 }
 
 /* Hero Section */
 
 .swiper-pagination-bullet {
-    background: white !important;
+  background: white !important;
 }
 
 .swiper-pagination-bullet-active {
-    background: var(--color-light-yellow) !important;
+  background: var(--color-light-yellow) !important;
 }
 /* About Section */
 
 .about-image img {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .about-bg-video {
-    height: 500px;
-    position: absolute;
-    inset: 0;
-    background-image: url('/images/Index/About/main-about-dots.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    z-index: -1;
+  height: 500px;
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/Index/About/main-about-dots.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: -1;
 }
-
 
 /* Product Section */
 
 .product-icons li {
-    display: block;
-    overflow: hidden;
-    color: #000000 !important;
-    background-color: #ffffff !important;
-    letter-spacing: 0 !important;
-    cursor: pointer;
-    text-align:center;
-    border: none !important;
-margin: 4px !important;
-width: 47px;
-height: 47px;
-padding: 13px;
-line-height: 48px !important;
-border-radius: 50% !important;
-transition: all 0.4s ease;
-box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.06);
-position: relative;
-visibility: visible !important;
-pointer-events: auto !important;
-top: 0;
-opacity: 0;
-transform: translateX(12px);
+  display: block;
+  overflow: hidden;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  letter-spacing: 0 !important;
+  cursor: pointer;
+  text-align: center;
+  border: none !important;
+  margin: 4px !important;
+  width: 47px;
+  height: 47px;
+  padding: 13px;
+  line-height: 48px !important;
+  border-radius: 50% !important;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.06);
+  position: relative;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  top: 0;
+  opacity: 0;
+  transform: translateX(12px);
 }
 
 .product-icons li svg {
-    display: block !important;
-    margin: 0 !important;
-    font-size: 14px !important;
-    line-height: inherit !important;
-    vertical-align: middle !important;
-    padding: 0 !important;
-    height: 100% !important;
-    width: 100% !important;
-    text-align: center !important;
+  display: block !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: inherit !important;
+  vertical-align: middle !important;
+  padding: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  text-align: center !important;
 }
 
 .product-image:hover .product-icons li {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .product-image:hover .product-icons li:nth-child(1) {
-    transition-delay: 0.1s;
+  transition-delay: 0.1s;
 }
 
 .product-image:hover .product-icons li:nth-child(2) {
-    transition-delay: 0.25s;
+  transition-delay: 0.25s;
 }
 
 .product-image:hover .product-icons li:nth-child(3) {
-    transition-delay: 0.4s;
+  transition-delay: 0.4s;
 }
 
 /* Collections Section */
 
 .collections-card::before {
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.9) 35%, rgba(255, 255, 255, 0)
-    100%);
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-height: 100%;
-display: block;
-opacity: 0.7;
-z-index: 1;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.9) 35%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.7;
+  z-index: 1;
 }
 
 .hide-scrollbar::-webkit-scrollbar {

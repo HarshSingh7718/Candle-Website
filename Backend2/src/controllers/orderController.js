@@ -5,7 +5,6 @@ import { User } from "../models/userModel.js";
 import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
-import { Coupon } from "../models/couponModel.js";
 import { sendSMS } from "../services/otp_services.js";
 import { config } from "../config/index.js";
 import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
@@ -120,7 +119,7 @@ export const createOrder = async (req, res) => {
         couponCode,
         itemsPrice,
         user._id.toString(),
-        user.usedCoupons || []
+        user.couponUsage || []
       );
       discountAmount = result.discountAmount;
       couponId = result.coupon._id;
@@ -150,6 +149,7 @@ export const createOrder = async (req, res) => {
     discount: discountAmount,
     couponApplied: couponId,
     discountAmount,
+    couponProcessed: false,
     totalAmount,
     paymentMethod,
     paymentStatus: "pending",
@@ -239,30 +239,25 @@ export const createOrder = async (req, res) => {
     }
 
     // =========================
-    //  ATOMIC COUPON CONSUMPTION (COD)
-    //  Only increment usedCount here — never during order creation for Razorpay
+    //  PER-USER COUPON CONSUMPTION (COD)
+    //  Uses couponProcessed guard to prevent double-increment
     // =========================
-    if (couponId) {
-      // Atomic increment with race-condition guard
-      const updated = await Coupon.findOneAndUpdate(
-        {
-          _id: couponId,
-          $or: [
-            { usageLimit: null },
-            { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
-          ]
-        },
-        { $inc: { usedCount: 1 } },
-        { new: true }
+    if (couponId && !order.couponProcessed) {
+      // Upsert into user.couponUsage: increment count if entry exists, push if not
+      const userDoc = await User.findById(user._id);
+      const existingEntry = userDoc.couponUsage.find(
+        (e) => e.couponId.toString() === couponId.toString()
       );
-      if (!updated) {
-        console.error(`⚠️ Coupon ${couponId} could not be incremented (limit reached concurrently)`);
+      if (existingEntry) {
+        existingEntry.count += 1;
+      } else {
+        userDoc.couponUsage.push({ couponId, count: 1 });
       }
+      await userDoc.save();
 
-      // Track on user (one-use-per-customer)
-      await User.findByIdAndUpdate(user._id, {
-        $addToSet: { usedCoupons: couponId }
-      });
+      // Mark order as processed
+      order.couponProcessed = true;
+      await order.save();
     }
 
     // =========================

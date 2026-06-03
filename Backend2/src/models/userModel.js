@@ -104,11 +104,17 @@ const userSchema = new mongoose.Schema({
         }
     ],
 
-    // Coupons this user has already consumed (enforces one-use-per-customer)
-    usedCoupons: [
+    // Per-user coupon usage tracking (array of { couponId, count })
+    couponUsage: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Coupon",
+            couponId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Coupon",
+            },
+            count: {
+                type: Number,
+                default: 0,
+            },
         }
     ],
 

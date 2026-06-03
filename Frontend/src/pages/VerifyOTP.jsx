@@ -85,100 +85,100 @@ const VerifyOTP = () => {
 
   return (
     <>
-    <SEO
-      title="Verify OTP - Naisha Creations"
-      description="Enter the OTP sent to your phone number to verify your account."
-    />
-    <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
-      {/* Left Side */}
-      <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000"
-          alt="Candle"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-        <div className="absolute inset-x-14 bottom-20 text-white z-10 text-left">
-          <Link
-            to="/"
-            className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center font-bold text-sm tracking-wider border border-white/30">
-              nc
-            </div>
-            <span className="text-xl font-bold tracking-wide">
-              Naisha Creations
-            </span>
-          </Link>
-          <h1 className="text-[2rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif">
-            Illuminate Your
-            <br />
-            Space with Soul.
-          </h1>
-        </div>
-      </div>
-
-      {/* Right Side */}
-      <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 bg-[#fafafa]">
-        <div className="w-full max-w-[420px]">
-          <header className="text-center mb-10">
-            <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
-              Verify OTP
-            </h2>
-            <p className="text-gray-500 text-[15px]">
-              Enter the 6-digit code sent to <br />
-              <span className="font-semibold text-gray-700">
-                +91 {phoneNumber}
-              </span>
-            </p>
-          </header>
-
-          <form className="space-y-8" onSubmit={handleVerify}>
-            <div className="flex justify-center gap-2 md:gap-4">
-              {otp.map((data, index) => (
-                <input
-                  className="w-12 h-12 md:w-16 md:h-16 bg-white border border-gray-200 rounded-[16px] text-center text-2xl font-bold text-gray-800 focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] outline-none transition-all shadow-sm"
-                  type="text"
-                  maxLength="1"
-                  key={index}
-                  value={data}
-                  onChange={(e) => handleChange(e.target, index)}
-                  onFocus={(e) => e.target.select()}
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === "Backspace" &&
-                      !data &&
-                      e.target.previousSibling
-                    ) {
-                      e.target.previousSibling.focus();
-                    }
-                  }}
-                />
-              ))}
-            </div>
-
-            <div className="text-center text-[13px] text-gray-500">
-              Didn't receive the code?{" "}
-              <button
-                type="button"
-                onClick={handleResendOtp}
-                className="text-[#ea580c] font-bold hover:underline cursor-pointer"
-              >
-                Resend OTP
-              </button>
-            </div>
-
-            <button
-              disabled={isProcessing}
-              type="submit"
-              className="w-full py-3 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none"
+      <SEO
+        title="Verify OTP - Naisha Creations"
+        description="Enter the OTP sent to your phone number to verify your account."
+      />
+      <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
+        {/* Left Side */}
+        <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000"
+            alt="Candle"
+            className="absolute inset-0 w-full h-full object-cover opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute inset-x-14 bottom-20 text-white z-10 text-left">
+            <Link
+              to="/"
+              className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
             >
-              {isProcessing ? "Verifying..." : "Verify and Proceed"}
-            </button>
-          </form>
+              <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center font-bold text-sm tracking-wider border border-white/30">
+                nc
+              </div>
+              <span className="text-xl font-bold tracking-wide">
+                Naisha Creations
+              </span>
+            </Link>
+            <h1 className="text-[2rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif">
+              Illuminate Your
+              <br />
+              Space with Soul.
+            </h1>
+          </div>
+        </div>
+
+        {/* Right Side */}
+        <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 bg-[#fafafa]">
+          <div className="w-full max-w-[420px]">
+            <header className="text-center mb-10">
+              <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
+                Verify OTP
+              </h2>
+              <p className="text-gray-500 text-[15px]">
+                Enter the 6-digit code sent to <br />
+                <span className="font-semibold text-gray-700">
+                  +91 {phoneNumber}
+                </span>
+              </p>
+            </header>
+
+            <form className="space-y-8" onSubmit={handleVerify}>
+              <div className="flex justify-center gap-2 md:gap-4">
+                {otp.map((data, index) => (
+                  <input
+                    className="w-12 h-12 md:w-16 md:h-16 bg-white border border-gray-200 rounded-[16px] text-center text-2xl font-bold text-gray-800 focus:border-coffee-600 focus:ring-1 focus:ring-coffee-600 outline-none transition-all shadow-sm"
+                    type="text"
+                    maxLength="1"
+                    key={index}
+                    value={data}
+                    onChange={(e) => handleChange(e.target, index)}
+                    onFocus={(e) => e.target.select()}
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "Backspace" &&
+                        !data &&
+                        e.target.previousSibling
+                      ) {
+                        e.target.previousSibling.focus();
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="text-center text-[13px] text-gray-500">
+                Didn't receive the code?{" "}
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  className="text-coffee-600 font-bold hover:underline cursor-pointer"
+                >
+                  Resend OTP
+                </button>
+              </div>
+
+              <button
+                disabled={isProcessing}
+                type="submit"
+                className="w-full py-3 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none"
+              >
+                {isProcessing ? "Verifying..." : "Verify and Proceed"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

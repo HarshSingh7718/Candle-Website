@@ -22,7 +22,7 @@ const ProductCard = memo(({ product }) => {
     <div className="product-item relative product-card group">
       <div className="product-image relative rounded-md aspect-square overflow-hidden">
         {hasDiscount && (
-          <div className="absolute top-2 left-2 z-20 bg-[#ff5a5f] text-white text-[11px] font-bold px-2 py-1 rounded shadow-sm">
+          <div className="absolute top-2 left-2 z-20 bg-coffee text-light-yellow text-[11px] font-bold px-2 py-1 rounded shadow-sm">
             {discountLabel}
           </div>
         )}
@@ -52,7 +52,7 @@ const ProductCard = memo(({ product }) => {
               toggleWishlist();
             }}
             disabled={isUpdating}
-            className="bg-white p-2 rounded-full  shadow hover:bg-gray-50 transition-colors cursor-pointer"
+            className="bg-light-yellow p-2 rounded-full  shadow hover:bg-muted/10 transition-colors cursor-pointer"
           >
             {liked ? (
               <Icon icon="mdi:heart" className="text-red-500" width="24" />
@@ -67,7 +67,7 @@ const ProductCard = memo(({ product }) => {
               e.stopPropagation();
               addToCart(product); // Defaults to qty 1 in our hook
             }}
-            className="bg-white p-2 rounded-full shadow hover:bg-gray-50 transition-colors cursor-pointer"
+            className="bg-light-yellow p-2 rounded-full shadow hover:bg-muted/10 transition-colors cursor-pointer"
           >
             <ShoppingCart size={24} />
           </button>
@@ -76,11 +76,11 @@ const ProductCard = memo(({ product }) => {
 
       <Link to={`/collections/candles/product/${product.slug || product._id}`}>
         <div className="product-content py-3">
-          <p className="text-gray-500 text-[13px] mb-1 font-medium tracking-widest uppercase">
+          <p className="text-muted text-[13px] mb-1 font-medium tracking-widest uppercase">
             {product.category?.[0]?.name || "Premium Candle"}
           </p>
 
-          <h3 className="text-[#333] font-semibold text-[15px] leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-[#ff5a5f] transition-colors">
+          <h3 className="text-heading font-semibold text-[15px] leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-coffee transition-colors">
             {product.name}
           </h3>
 
@@ -93,7 +93,7 @@ const ProductCard = memo(({ product }) => {
                 className={
                   i < Math.round(product.ratings || 0)
                     ? "text-[#ffb400]"
-                    : "text-gray-200"
+                    : "text-muted/30"
                 }
               />
             ))}
@@ -101,11 +101,11 @@ const ProductCard = memo(({ product }) => {
 
           <p className="text-sm font-bold flex items-center gap-2">
             {hasDiscount && (
-              <span className="line-through text-gray-400 font-normal">
+              <span className="line-through text-muted font-normal">
                 ₹{product.price}
               </span>
             )}
-            <span className="text-black">
+            <span className="text-heading">
               ₹{hasDiscount ? product.discountPrice : product.price}
             </span>
           </p>

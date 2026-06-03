@@ -7,15 +7,15 @@ import { Coupon } from "../models/couponModel.js";
  *   1. POST /api/coupons/apply   (preview for the customer)
  *   2. POST /api/order            (server-side re-validation at order time)
  *
- * @param {string}   code        – The coupon code to validate
- * @param {number}   cartTotal   – The server-calculated items subtotal
- * @param {string}   userId      – The current user's _id (for one-use-per-customer check)
- * @param {Array}    usedCoupons – The user's usedCoupons array of ObjectIds
+ * @param {string}   code            – The coupon code to validate
+ * @param {number}   cartTotal       – The server-calculated items subtotal
+ * @param {string}   userId          – The current user's _id
+ * @param {Array}    couponUsage     – The user's couponUsage array [{ couponId, count }]
  *
  * @returns {{ coupon, discountAmount, finalTotal }}
  * @throws  {Object} { status, message } on validation failure
  */
-export const validateAndCalculateDiscount = async (code, cartTotal, userId, usedCoupons = []) => {
+export const validateAndCalculateDiscount = async (code, cartTotal, userId, couponUsage = []) => {
     // 1. Find the coupon
     const coupon = await Coupon.findOne({ code: code.toUpperCase().trim() });
     if (!coupon) {
@@ -36,20 +36,16 @@ export const validateAndCalculateDiscount = async (code, cartTotal, userId, used
         throw { status: 400, message: "This coupon has expired" };
     }
 
-    // 4. Global usage limit check
-    if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit) {
-        throw { status: 400, message: "This coupon has reached its usage limit" };
-    }
-
-    // 5. One-use-per-customer check
-    const alreadyUsed = usedCoupons.some(
-        (id) => id.toString() === coupon._id.toString()
+    // 4. Per-user usage limit check
+    const userEntry = couponUsage.find(
+        (entry) => entry.couponId.toString() === coupon._id.toString()
     );
-    if (alreadyUsed) {
-        throw { status: 400, message: "You have already used this coupon" };
+    const currentCount = userEntry ? userEntry.count : 0;
+    if (currentCount >= coupon.usageLimitPerUser) {
+        throw { status: 400, message: "You have already used this coupon the maximum number of times" };
     }
 
-    // 6. Minimum order value check
+    // 5. Minimum order value check
     if (cartTotal < coupon.minOrderValue) {
         const diff = coupon.minOrderValue - cartTotal;
         throw {
@@ -58,7 +54,7 @@ export const validateAndCalculateDiscount = async (code, cartTotal, userId, used
         };
     }
 
-    // 7. Calculate discount
+    // 6. Calculate discount
     let discountAmount = 0;
 
     if (coupon.discountType === "percentage") {
@@ -72,7 +68,7 @@ export const validateAndCalculateDiscount = async (code, cartTotal, userId, used
         discountAmount = coupon.discountValue;
     }
 
-    // 8. Ensure discount never exceeds subtotal (total must never drop below ₹0)
+    // 7. Ensure discount never exceeds subtotal (total must never drop below ₹0)
     discountAmount = Math.min(discountAmount, cartTotal);
     discountAmount = Math.round(discountAmount);
 

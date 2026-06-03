@@ -6,7 +6,6 @@ import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
 import { sendSMS } from "../services/otp_services.js";
-import { Coupon } from "../models/couponModel.js";
 
 // =========================
 //  RAZORPAY WEBHOOK HANDLER
@@ -124,25 +123,23 @@ export const razorpayWebhookHandler = async (req, res) => {
                 await user.save();
             }
 
-            // 9. ATOMIC COUPON CONSUMPTION (WEBHOOK SAFETY NET)
-            if (order.couponApplied) {
-                await Coupon.findOneAndUpdate(
-                    {
-                        _id: order.couponApplied,
-                        $or: [
-                            { usageLimit: null },
-                            { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
-                        ]
-                    },
-                    { $inc: { usedCount: 1 } },
-                    { new: true }
-                );
-
+            // 9. PER-USER COUPON CONSUMPTION (WEBHOOK SAFETY NET)
+            //    couponProcessed guard prevents double-increment
+            if (order.couponApplied && !order.couponProcessed) {
                 if (user) {
-                    await User.findByIdAndUpdate(user._id, {
-                        $addToSet: { usedCoupons: order.couponApplied }
-                    });
+                    const existingEntry = user.couponUsage.find(
+                        (e) => e.couponId.toString() === order.couponApplied.toString()
+                    );
+                    if (existingEntry) {
+                        existingEntry.count += 1;
+                    } else {
+                        user.couponUsage.push({ couponId: order.couponApplied, count: 1 });
+                    }
+                    await user.save();
                 }
+
+                order.couponProcessed = true;
+                await order.save();
             }
 
             // 9. SEND SMS

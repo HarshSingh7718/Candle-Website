@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import API from '../api';
 import toast from 'react-hot-toast';
 
@@ -7,11 +7,25 @@ import toast from 'react-hot-toast';
  * useCoupon
  *
  * Manages the applied coupon state for the checkout flow.
- * Exposes: applyCoupon, removeCoupon, appliedCoupon, discountAmount, isApplying
+ * Fetches available coupons on mount for the Mamaearth-style UI.
+ * Exposes: applyCoupon, removeCoupon, appliedCoupon, discountAmount, isApplying,
+ *          availableCoupons, isLoadingCoupons
  */
 export const useCoupon = () => {
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [discountAmount, setDiscountAmount] = useState(0);
+
+    // Fetch available coupons for the current user on mount
+    const {
+        data: availableCoupons = [],
+        isLoading: isLoadingCoupons,
+    } = useQuery({
+        queryKey: ['availableCoupons'],
+        queryFn: async () => {
+            const { data } = await API.get('/coupons/available');
+            return data.coupons;
+        },
+    });
 
     const applyMutation = useMutation({
         mutationFn: async (code) => {
@@ -42,5 +56,7 @@ export const useCoupon = () => {
         appliedCoupon,
         discountAmount,
         isApplying: applyMutation.isPending,
+        availableCoupons,
+        isLoadingCoupons,
     };
 };

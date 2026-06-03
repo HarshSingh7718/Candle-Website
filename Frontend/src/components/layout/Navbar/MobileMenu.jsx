@@ -21,7 +21,7 @@ const MobileMenu = ({ menuOpen, setMenuOpen, navLinks }) => {
 
     return (
         <>
-            <div className={`z-50 fixed top-0 left-0 w-full bg-black text-white overflow-hidden transition-all duration-500 px-[2%] md:px-[8%] xl:px-[12%] ${menuOpen ? "h-screen opacity-100" : "h-0 opacity-0"}`}>
+            <div className={`z-50 fixed top-0 left-0 w-full bg-primary text-white overflow-hidden transition-all duration-500 px-[2%] md:px-[8%] xl:px-[12%] ${menuOpen ? "h-screen opacity-100" : "h-0 opacity-0"}`}>
                 <div className="flex justify-between items-center py-5 border-b border-gray-50/20">
                     <Logo />
                     <div className="">

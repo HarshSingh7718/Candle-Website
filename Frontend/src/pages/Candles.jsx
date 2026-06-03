@@ -143,7 +143,7 @@ const Candles = () => {
               className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1"
             >
               {/* Search */}
-              <div className="bg-white p-6 rounded-sm shadow-sm sidebar-box">
+              <div className="bg-light-yellow p-6 rounded-sm shadow-sm sidebar-box">
                 <h3 className="text-xl font-medium mb-4 sidebar-title">
                   Search
                 </h3>
@@ -156,14 +156,14 @@ const Candles = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                   <Search
-                    className="absolute left-3 top-2.5 text-gray-400"
+                    className="absolute left-3 top-2.5 text-muted"
                     size={18}
                   />
                 </div>
               </div>
 
               {/* Price filter */}
-              <div className="bg-white p-6 rounded-sm shadow-sm hidden md:block sidebar-box">
+              <div className="bg-light-yellow p-6 rounded-sm shadow-sm hidden md:block sidebar-box">
                 <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
                   Filter By Price
                   {priceRange !== null && (
@@ -194,7 +194,7 @@ const Candles = () => {
 
                   <div className="relative group mt-6">
                     <select
-                      className="w-full appearance-none bg-white border border-gray-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
+                      className="w-full appearance-none bg-light-yellow border border-muted/20 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
                       onChange={(e) => setSortOption(e.target.value)}
                       value={sortOption}
                     >
@@ -203,7 +203,7 @@ const Candles = () => {
                       <option value="low-to-high">Sort by Low to High</option>
                       <option value="high-to-low">Sort by High to Low</option>
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-4 h-4" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none w-4 h-4" />
                   </div>
                 </div>
               </div>
@@ -212,14 +212,14 @@ const Candles = () => {
             {/* Main Content */}
             <main ref={mainRef} className="w-full lg:w-3/4 order-1 lg:order-2">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
-                <p className="text-gray-500 italic">
+                <p className="text-paragraph italic">
                   Showing {products.length > 0 ? indexOfFirstProduct + 1 : 0}-
                   {indexOfLastProduct} of{" "}
                   {responseData?.total || 0} results
                 </p>
                 <div className="relative group block md:hidden">
                   <select
-                    className="appearance-none bg-white border px-6 py-2 pr-10 rounded shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
+                    className="appearance-none bg-light-yellow border border-muted/20 px-6 py-2 pr-10 rounded shadow-sm outline-none cursor-pointer focus:ring-2 ring-teal-500/20"
                     onChange={(e) => setSortOption(e.target.value)}
                   >
                     <option value="latest">Sort by latest</option>
@@ -227,7 +227,7 @@ const Candles = () => {
                     <option value="low-to-high">Sort by Low to High</option>
                     <option value="high-to-low">Sort by High to Low</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-3 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-3 text-muted pointer-events-none" />
                 </div>
               </div>
 
@@ -248,8 +248,8 @@ const Candles = () => {
                           onClick={() => handlePageChange(index + 1)}
                           className={`w-10 h-10 border rounded-sm transition-all cursor-pointer ${
                             currentPage === index + 1
-                              ? "bg-primary text-white border-primary"
-                              : "bg-white text-gray-600 hover:border-primary hover:text-primary"
+                              ? "bg-primary text-light-yellow border-primary"
+                              : "bg-light-yellow text-paragraph hover:border-primary hover:text-primary"
                           }`}
                         >
                           {index + 1}
@@ -259,9 +259,9 @@ const Candles = () => {
                   )}
                 </>
               ) : (
-                <div className="text-center py-20 bg-white rounded-xl shadow-inner empty-state">
-                  <Filter className="mx-auto text-gray-300 mb-4" size={48} />
-                  <h3 className="text-xl font-medium text-gray-500">
+                <div className="text-center py-20 bg-light-yellow rounded-xl shadow-inner empty-state">
+                  <Filter className="mx-auto text-muted mb-4" size={48} />
+                  <h3 className="text-xl font-medium text-paragraph">
                     No Product match your filters.
                   </h3>
                 </div>

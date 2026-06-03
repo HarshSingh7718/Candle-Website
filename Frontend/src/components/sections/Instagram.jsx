@@ -88,15 +88,15 @@ const InstagramItem = ({ photoUrl, postUrl }) => {
 
 const Instagram = () => {
   return (
-    <section className="px-[11px] pt-13 md:pt-16 pb-[15px] bg-gray-50 relative z-10 w-full">
+    <section className="px-[11px] pt-13 md:pt-16 pb-[15px] bg-light-yellow relative z-10 w-full">
       <div className="w-full">
         {/* Header */}
         <div className="flex items-center justify-center gap-3 mb-5">
-          <h2 className="text-3xl md:text-4xl font-serif text-[#222]">
+          <h2 className="text-3xl md:text-4xl font-serif text-heading">
             Follow Our Journey
           </h2>
           <InstagramIcon
-            className="w-8 h-8 md:w-10 md:h-10 text-[#222]"
+            className="w-8 h-8 md:w-10 md:h-10 text-heading"
             strokeWidth={1.5}
           />
         </div>

@@ -15,8 +15,8 @@ const Loader = () => {
           }
         `}
       </style>
-      <div className="w-48 sm:w-64 h-[2px] bg-gray-200 overflow-hidden relative">
-        <div className="absolute top-0 h-full bg-black w-1/3 animate-line-right-to-left"></div>
+      <div className="w-48 sm:w-64 h-[2px] bg-muted/30 overflow-hidden relative">
+        <div className="absolute top-0 h-full bg-coffee w-1/3 animate-line-right-to-left"></div>
       </div>
     </div>
   );

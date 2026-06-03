@@ -6,6 +6,48 @@ import { CustomError } from "../middleware/errorHandler.js";
 import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
 
 // ============================================================
+//  CUSTOMER: Get available coupons for current user
+//  GET /api/coupons/available
+// ============================================================
+export const getAvailableCoupons = async (req, res) => {
+    const now = new Date();
+
+    // 1. Fetch all active coupons within valid date range
+    const allCoupons = await Coupon.find({
+        isActive: true,
+        startDate: { $lte: now },
+        endDate: { $gte: now },
+    }).sort({ createdAt: -1 });
+
+    // 2. Fetch user's couponUsage array
+    const user = await User.findById(req.user._id).select("couponUsage");
+    const couponUsage = user?.couponUsage || [];
+
+    // 3. Filter: only include coupons the user hasn't exhausted
+    const available = allCoupons.filter((coupon) => {
+        const entry = couponUsage.find(
+            (u) => u.couponId.toString() === coupon._id.toString()
+        );
+        const currentCount = entry ? entry.count : 0;
+        return currentCount < coupon.usageLimitPerUser;
+    });
+
+    res.status(200).json({
+        success: true,
+        coupons: available.map((c) => ({
+            _id: c._id,
+            code: c.code,
+            title: c.title,
+            description: c.description,
+            discountType: c.discountType,
+            discountValue: c.discountValue,
+            maxDiscountAmount: c.maxDiscountAmount,
+            minOrderValue: c.minOrderValue,
+        })),
+    });
+};
+
+// ============================================================
 //  CUSTOMER: Apply coupon (preview discount before checkout)
 //  POST /api/coupons/apply
 // ============================================================
@@ -41,13 +83,13 @@ export const applyCoupon = async (req, res) => {
         }
     }
 
-    // 3. Validate & calculate using shared helper
+    // 3. Validate & calculate using shared helper (now uses couponUsage)
     try {
         const { coupon, discountAmount, finalTotal } = await validateAndCalculateDiscount(
             code,
             cartTotal,
             user._id.toString(),
-            user.usedCoupons || []
+            user.couponUsage || []
         );
 
         return res.status(200).json({
@@ -56,6 +98,8 @@ export const applyCoupon = async (req, res) => {
             coupon: {
                 _id: coupon._id,
                 code: coupon.code,
+                title: coupon.title,
+                description: coupon.description,
                 discountType: coupon.discountType,
                 discountValue: coupon.discountValue,
             },
@@ -75,17 +119,19 @@ export const applyCoupon = async (req, res) => {
 export const createCoupon = async (req, res) => {
     const {
         code,
+        title,
+        description,
         discountType,
         discountValue,
         maxDiscountAmount,
         minOrderValue,
         startDate,
         endDate,
-        usageLimit,
+        usageLimitPerUser,
         isActive,
     } = req.body;
 
-    if (!code || !discountType || discountValue === undefined || !startDate || !endDate) {
+    if (!code || !title || !discountType || discountValue === undefined || !startDate || !endDate) {
         throw new CustomError("Please fill all required fields", 400);
     }
 
@@ -100,13 +146,15 @@ export const createCoupon = async (req, res) => {
 
     const coupon = await Coupon.create({
         code,
+        title,
+        description: description || "",
         discountType,
         discountValue,
         maxDiscountAmount: discountType === "percentage" ? maxDiscountAmount : null,
         minOrderValue: minOrderValue || 0,
         startDate,
         endDate,
-        usageLimit: usageLimit || null,
+        usageLimitPerUser: usageLimitPerUser || 1,
         isActive: isActive !== undefined ? isActive : true,
     });
 
@@ -145,13 +193,15 @@ export const getSingleCoupon = async (req, res) => {
 export const updateCoupon = async (req, res) => {
     const {
         code,
+        title,
+        description,
         discountType,
         discountValue,
         maxDiscountAmount,
         minOrderValue,
         startDate,
         endDate,
-        usageLimit,
+        usageLimitPerUser,
         isActive,
     } = req.body;
 
@@ -173,13 +223,15 @@ export const updateCoupon = async (req, res) => {
     }
 
     if (code !== undefined) coupon.code = code;
+    if (title !== undefined) coupon.title = title;
+    if (description !== undefined) coupon.description = description;
     if (discountType !== undefined) coupon.discountType = discountType;
     if (discountValue !== undefined) coupon.discountValue = discountValue;
     if (maxDiscountAmount !== undefined) coupon.maxDiscountAmount = (discountType || coupon.discountType) === "percentage" ? maxDiscountAmount : null;
     if (minOrderValue !== undefined) coupon.minOrderValue = minOrderValue;
     if (startDate !== undefined) coupon.startDate = startDate;
     if (endDate !== undefined) coupon.endDate = endDate;
-    if (usageLimit !== undefined) coupon.usageLimit = usageLimit;
+    if (usageLimitPerUser !== undefined) coupon.usageLimitPerUser = usageLimitPerUser;
     if (isActive !== undefined) coupon.isActive = isActive;
 
     await coupon.save();

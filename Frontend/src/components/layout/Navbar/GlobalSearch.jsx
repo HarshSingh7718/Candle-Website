@@ -87,7 +87,7 @@ const GlobalSearch = ({ isOpen, onClose }) => {
                     <Link
                       to={`/collections/candles?search=${searchTerm}`}
                       onClick={onClose}
-                      className="text-sm tracking-[0.1em] text-black font-semibold uppercase hover:text-[#ff5a5f] transition-colors border-b border-black hover:border-[#ff5a5f]"
+                      className="text-sm tracking-[0.1em] text-black font-semibold uppercase hover:text-primary transition-colors border-b border-black hover:border-primary"
                     >
                       View All
                     </Link>

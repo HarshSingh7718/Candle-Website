@@ -11,6 +11,7 @@ import {
   Loader2,
   Tag,
   X,
+  Percent,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -49,9 +50,8 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
   // --- Coupon State ---
-  const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState("");
-  const { applyCoupon, removeCoupon, appliedCoupon, discountAmount, isApplying } = useCoupon();
+  const { applyCoupon, removeCoupon, appliedCoupon, discountAmount, isApplying, availableCoupons, isLoadingCoupons } = useCoupon();
 
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
@@ -269,12 +269,12 @@ const Checkout = () => {
         title="Checkout | Naisha Creations"
         description="Complete your purchase securely at Naisha Creations. Fast & reliable delivery. Pay with COD or Razorpay."
       />
-      <div className="bg-white text-slate-800 font-sans flex flex-col">
+      <div className="bg-light-yellow text-paragraph font-sans flex flex-col">
         <PageBanner title="Checkout" currentPage="Checkout" />
 
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row flex-1 h-full w-full">
           {/* LEFT COLUMN: Delivery & Payment */}
-          <div className="w-full md:w-[58%] p-6 md:p-12 border-r border-gray-100 bg-white">
+          <div className="w-full md:w-[58%] p-6 md:p-12 border-r border-muted/20 bg-light-yellow">
             <header className="mb-10">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold">Delivery Address</h1>
@@ -283,7 +283,7 @@ const Checkout = () => {
                   !isAddressExpanded && (
                     <button
                       onClick={() => setIsAddressExpanded(true)}
-                      className="text-sm font-medium text-[#D19D94] underline cursor-pointer"
+                      className="text-sm font-medium text-coffee underline cursor-pointer"
                     >
                       Change
                     </button>
@@ -301,20 +301,20 @@ const Checkout = () => {
                       }}
                       className={`p-4 border rounded-md cursor-pointer transition-all ${
                         selectedAddressId === addr._id
-                          ? "border-stone-800 bg-stone-50"
-                          : "border-gray-200"
+                          ? "border-coffee bg-muted/10"
+                          : "border-muted/20"
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         <div
                           className={`mt-1 w-4 h-4 rounded-full border flex items-center justify-center ${
                             selectedAddressId === addr._id
-                              ? "border-stone-800"
-                              : "border-gray-300"
+                              ? "border-coffee"
+                              : "border-muted/20"
                           }`}
                         >
                           {selectedAddressId === addr._id && (
-                            <div className="w-2 h-2 bg-stone-800 rounded-full" />
+                            <div className="w-2 h-2 bg-coffee rounded-full" />
                           )}
                         </div>
                         <div className="flex-1">
@@ -323,12 +323,12 @@ const Checkout = () => {
                               {addr.firstName} {addr.lastName}
                             </p>
                             {addr.isDefault && (
-                              <span className="text-[10px] bg-stone-200 px-2 py-0.5 rounded font-bold uppercase">
+                              <span className="text-[10px] bg-muted/20 px-2 py-0.5 rounded font-bold uppercase">
                                 Default
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-paragraph">
                             {addr.address}, {addr.city}, {addr.state}{" "}
                             {addr.pincode}
                           </p>
@@ -339,7 +339,7 @@ const Checkout = () => {
                   {isAddressExpanded && (
                     <button
                       onClick={() => setShowNewAddressForm(true)}
-                      className="text-sm font-medium text-[#D19D94] flex items-center gap-1 mt-4"
+                      className="text-sm font-medium text-coffee flex items-center gap-1 mt-4"
                     >
                       <Plus size={16} /> Add a new address
                     </button>
@@ -349,7 +349,7 @@ const Checkout = () => {
                 <div className="space-y-4 animate-in fade-in">
                   {savedAddresses.length > 0 && (
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-medium text-gray-800">New Address</h3>
+                      <h3 className="font-medium text-heading">New Address</h3>
                     </div>
                   )}
 
@@ -360,7 +360,7 @@ const Checkout = () => {
                       placeholder="First name"
                       value={shippingAddress.firstName}
                       onChange={handleShippingChange}
-                      className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400"
+                      className="w-full p-3.5 border border-muted rounded-md focus:outline-none focus:ring-1 focus:ring-coffee placeholder:text-muted"
                     />
                     <input
                       type="text"
@@ -368,7 +368,7 @@ const Checkout = () => {
                       placeholder="Last name"
                       value={shippingAddress.lastName}
                       onChange={handleShippingChange}
-                      className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400"
+                      className="w-full p-3.5 border border-muted rounded-md focus:outline-none focus:ring-1 focus:ring-coffee placeholder:text-muted"
                     />
                   </div>
 
@@ -379,7 +379,7 @@ const Checkout = () => {
                       placeholder="Flat, House no., Building, Company, Apartment"
                       value={shippingAddress.flat}
                       onChange={handleShippingChange}
-                      className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400"
+                      className="w-full p-3.5 border border-muted rounded-md focus:outline-none focus:ring-1 focus:ring-coffee placeholder:text-muted"
                     />
                     <input
                       type="text"
@@ -387,7 +387,7 @@ const Checkout = () => {
                       placeholder="Area, Street, Sector, Village"
                       value={shippingAddress.area}
                       onChange={handleShippingChange}
-                      className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400"
+                      className="w-full p-3.5 border border-muted rounded-md focus:outline-none focus:ring-1 focus:ring-coffee placeholder:text-muted"
                     />
                     <input
                       type="text"
@@ -395,7 +395,7 @@ const Checkout = () => {
                       placeholder="Landmark (Optional) E.g. Near Apollo Hospital"
                       value={shippingAddress.landmark}
                       onChange={handleShippingChange}
-                      className="w-full p-3.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 placeholder:text-gray-400"
+                      className="w-full p-3.5 border border-muted rounded-md focus:outline-none focus:ring-1 focus:ring-coffee placeholder:text-muted"
                     />
                   </div>
 
@@ -408,12 +408,12 @@ const Checkout = () => {
                         value={shippingAddress.pinCode}
                         onChange={handleShippingChange}
                         className={`w-full p-3.5 border rounded-md ${
-                          pincodeError ? "border-red-300" : "border-gray-300"
+                          pincodeError ? "border-red-300" : "border-muted"
                         }`}
                       />
                       {isLookingUp && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                          <Loader2 className="w-5 h-5 animate-spin text-[#D19D94]" />
+                          <Loader2 className="w-5 h-5 animate-spin text-coffee" />
                         </div>
                       )}
                     </div>
@@ -423,7 +423,7 @@ const Checkout = () => {
                       placeholder="City"
                       value={shippingAddress.city}
                       readOnly
-                      className="w-full p-3.5 border border-gray-100 bg-gray-50 rounded-md"
+                      className="w-full p-3.5 border border-muted/20 bg-muted/10 rounded-md"
                     />
                     <input
                       type="text"
@@ -431,7 +431,7 @@ const Checkout = () => {
                       placeholder="State"
                       value={shippingAddress.state}
                       readOnly
-                      className="w-full p-3.5 border border-gray-100 bg-gray-50 rounded-md"
+                      className="w-full p-3.5 border border-muted/20 bg-muted/10 rounded-md"
                     />
                   </div>
                   <input
@@ -440,14 +440,14 @@ const Checkout = () => {
                     placeholder="Phone"
                     value={shippingAddress.phone}
                     onChange={handleShippingChange}
-                    className="w-full p-3.5 border border-gray-300 rounded-md"
+                    className="w-full p-3.5 border border-muted rounded-md"
                   />
                   <div className="flex gap-4 mt-6">
                     <button
                       type="button"
                       onClick={handleSaveAddress}
                       disabled={isAdding}
-                      className="px-8 py-3 bg-stone-800 text-white rounded-md disabled:bg-stone-400 cursor-pointer"
+                      className="px-8 py-3 bg-coffee text-light-yellow rounded-md disabled:bg-muted cursor-pointer"
                     >
                       {isAdding ? "Saving..." : "Save Address"}
                     </button>
@@ -455,7 +455,7 @@ const Checkout = () => {
                       <button
                         type="button"
                         onClick={() => setShowNewAddressForm(false)}
-                        className="px-8 py-3 border border-gray-300 text-gray-600 rounded-md"
+                        className="px-8 py-3 border border-muted text-paragraph rounded-md"
                       >
                         Cancel
                       </button>
@@ -467,22 +467,22 @@ const Checkout = () => {
 
             <section className="mb-10">
               <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
-              <div className="border border-gray-200 rounded-md overflow-hidden">
+              <div className="border border-muted/20 rounded-md overflow-hidden">
                 <div
                   className={`p-4 cursor-pointer flex items-center space-x-3 ${
-                    paymentMethod === "razorpay" ? "bg-stone-50" : "bg-white"
+                    paymentMethod === "razorpay" ? "bg-muted/10" : "bg-light-yellow"
                   }`}
                   onClick={() => setPaymentMethod("razorpay")}
                 >
                   <div
                     className={`w-5 h-5 rounded-full border flex items-center justify-center ${
                       paymentMethod === "razorpay"
-                        ? "border-stone-800"
-                        : "border-gray-300"
+                        ? "border-coffee"
+                        : "border-muted"
                     }`}
                   >
                     {paymentMethod === "razorpay" && (
-                      <div className="w-2.5 h-2.5 bg-stone-800 rounded-full" />
+                      <div className="w-2.5 h-2.5 bg-coffee rounded-full" />
                     )}
                   </div>
                   <span className="text-sm font-medium">
@@ -490,20 +490,20 @@ const Checkout = () => {
                   </span>
                 </div>
                 <div
-                  className={`p-4 border-t border-gray-200 cursor-pointer flex items-center space-x-3 ${
-                    paymentMethod === "cod" ? "bg-stone-50" : "bg-white"
+                  className={`p-4 border-t border-muted/20 cursor-pointer flex items-center space-x-3 ${
+                    paymentMethod === "cod" ? "bg-muted/10" : "bg-light-yellow"
                   }`}
                   onClick={() => setPaymentMethod("cod")}
                 >
                   <div
                     className={`w-5 h-5 rounded-full border flex items-center justify-center ${
                       paymentMethod === "cod"
-                        ? "border-stone-800"
-                        : "border-gray-300"
+                        ? "border-coffee"
+                        : "border-muted"
                     }`}
                   >
                     {paymentMethod === "cod" && (
-                      <div className="w-2.5 h-2.5 bg-stone-800 rounded-full" />
+                      <div className="w-2.5 h-2.5 bg-coffee rounded-full" />
                     )}
                   </div>
                   <span className="text-sm font-medium">
@@ -517,7 +517,7 @@ const Checkout = () => {
               type="button"
               disabled={isSubmitDisabled}
               onClick={handleCheckout}
-              className="w-full py-4 bg-black hover:bg-black/85 disabled:bg-gray-300 text-white font-semibold rounded-md transition-colors text-lg shadow-sm cursor-pointer"
+              className="w-full py-4 bg-coffee hover:bg-coffee-light disabled:bg-muted/50 text-light-yellow font-semibold rounded-md transition-colors text-lg shadow-sm cursor-pointer"
             >
               {isPlacingOrder
                 ? "Processing..."
@@ -528,7 +528,7 @@ const Checkout = () => {
           </div>
 
           {/* RIGHT COLUMN: Summary */}
-          <div className="w-full md:w-[42%] bg-gray-50/50 p-6 md:p-12 border-l border-gray-100">
+          <div className="w-full md:w-[42%] bg-muted/5 p-6 md:p-12 border-l border-muted/20">
             <div className="space-y-6 mb-8">
               {cart.map((item) => {
                 const isCustom = item.type === "custom";
@@ -542,17 +542,17 @@ const Checkout = () => {
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="relative w-16 h-16 bg-white border border-gray-200 rounded-md overflow-hidden">
+                      <div className="relative w-16 h-16 bg-light-yellow border border-muted/20 rounded-md overflow-hidden">
                         <img
                           src={displayImage}
                           alt="product"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute -top-2 -right-2 bg-stone-800 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
+                        <div className="absolute -top-2 -right-2 bg-coffee text-light-yellow text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
                           {item.quantity}
                         </div>
                       </div>
-                      <span className="text-sm font-medium text-gray-800">
+                      <span className="text-sm font-medium text-heading">
                         {isCustom ? "Customized Candle" : productData?.name}
                       </span>
                     </div>
@@ -569,67 +569,107 @@ const Checkout = () => {
               })}
             </div>
 
-            {/* Coupon Code Section — Subtle toggle to prevent cart abandonment */}
-            <div className="border-t border-gray-200 pt-4 mb-6">
-              {!appliedCoupon ? (
+            {/* ===== COUPON SECTION — Mamaearth/Swiggy Style ===== */}
+            <div className="border-t border-muted/20 pt-5 mb-6">
+              {appliedCoupon ? (
+                /* ── Applied Success Badge ── */
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <CheckCircle2 size={16} className="text-green-600" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-green-800 tracking-wider">{appliedCoupon.code}</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Applied</span>
+                      </div>
+                      <p className="text-xs text-green-600 mt-0.5">You're saving {formatCurrency(discountAmount)} on this order</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { removeCoupon(); setCouponCode(""); }}
+                    className="p-1.5 text-green-600 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
                 <>
-                  {!showCouponInput ? (
-                    <button
-                      type="button"
-                      onClick={() => setShowCouponInput(true)}
-                      className="text-sm text-stone-500 hover:text-stone-700 underline underline-offset-2 transition-colors cursor-pointer flex items-center gap-1.5"
-                    >
-                      <Tag size={14} />
-                      Have a promo code?
-                    </button>
-                  ) : (
-                    <div className="flex gap-2 animate-in fade-in">
+                  {/* ── Section 1: Available Offers ── */}
+                  {!isLoadingCoupons && availableCoupons.length > 0 && (
+                    <div className="mb-5">
+                      <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <Tag size={12} />
+                        Available Offers
+                      </h4>
+                      <div className="space-y-2.5">
+                        {availableCoupons.map((coupon) => (
+                          <div
+                            key={coupon._id}
+                            className="flex items-center justify-between border border-muted/20 rounded-lg px-4 py-3 hover:border-coffee hover:bg-coffee/5 transition-all group"
+                          >
+                            <div className="flex items-start gap-3 min-w-0">
+                              <div className="w-9 h-9 rounded-lg bg-muted/10 flex items-center justify-center shrink-0 mt-0.5">
+                                <Percent size={16} className="text-paragraph" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="text-xs font-bold tracking-widest text-heading bg-muted/10 px-2 py-0.5 rounded border border-dashed border-muted">
+                                    {coupon.code}
+                                  </span>
+                                </div>
+                                <p className="text-sm font-medium text-heading leading-snug">{coupon.title}</p>
+                                {coupon.description && (
+                                  <p className="text-xs text-muted mt-0.5 leading-snug">{coupon.description}</p>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => applyCoupon(coupon.code)}
+                              disabled={isApplying}
+                              className="shrink-0 ml-3 text-xs font-bold text-paragraph hover:text-heading uppercase tracking-wider px-3 py-1.5 border border-muted rounded-md hover:bg-muted/10 transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Section 2: Always-Visible Manual Input ── */}
+                  <div>
+                    <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                      <Tag size={12} />
+                      {availableCoupons.length > 0 ? 'Or enter a code' : 'Have a promo code?'}
+                    </h4>
+                    <div className="flex gap-2">
                       <input
                         type="text"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        placeholder="Enter code"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-stone-400 uppercase tracking-wider font-medium placeholder:normal-case placeholder:tracking-normal placeholder:font-normal"
+                        placeholder="Enter coupon code"
+                        className="flex-1 px-3 py-2.5 border border-muted rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-coffee focus:border-coffee uppercase tracking-wider font-medium placeholder:normal-case placeholder:tracking-normal placeholder:font-normal transition-all"
                       />
                       <button
                         type="button"
                         disabled={!couponCode.trim() || isApplying}
                         onClick={() => applyCoupon(couponCode.trim())}
-                        className="px-4 py-2 bg-stone-800 text-white text-sm rounded-md hover:bg-stone-700 disabled:bg-stone-300 transition-colors cursor-pointer"
+                        className="px-5 py-2.5 bg-coffee text-light-yellow text-sm font-medium rounded-md hover:bg-coffee-light disabled:bg-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
                       >
                         {isApplying ? "Applying..." : "Apply"}
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => { setShowCouponInput(false); setCouponCode(""); }}
-                        className="p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                      >
-                        <X size={16} />
-                      </button>
                     </div>
-                  )}
-                </>
-              ) : (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-md px-3 py-2">
-                  <div className="flex items-center gap-2">
-                    <Tag size={14} className="text-green-600" />
-                    <span className="text-sm font-medium text-green-800">{appliedCoupon.code}</span>
-                    <span className="text-xs text-green-600">applied</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => { removeCoupon(); setCouponCode(""); setShowCouponInput(false); }}
-                    className="p-1 text-green-600 hover:text-red-500 transition-colors cursor-pointer"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
+                </>
               )}
             </div>
 
-            <div className="space-y-3 mb-6 pt-6 border-t border-gray-200">
+            <div className="space-y-3 mb-6 pt-6 border-t border-muted/20">
               {/* 👉 3. Mapped direct billing values here */}
-              <div className="flex justify-between text-sm text-gray-600">
+              <div className="flex justify-between text-sm text-paragraph">
                 <span>Subtotal</span>
                 <span>{formatCurrency(billing?.itemsPrice || 0)}</span>
               </div>
@@ -642,7 +682,7 @@ const Checkout = () => {
                   <span>-{formatCurrency(discountAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-sm text-gray-600">
+              <div className="flex justify-between text-sm text-paragraph">
                 <span>Shipping</span>
                 <span>
                   {billing?.shippingPrice === 0
@@ -650,7 +690,7 @@ const Checkout = () => {
                     : formatCurrency(billing?.shippingPrice || 0)}
                 </span>
               </div>
-              <div className="flex justify-between items-baseline pt-4 text-lg font-bold border-t border-gray-100">
+              <div className="flex justify-between items-baseline pt-4 text-lg font-bold border-t border-muted/20">
                 <span>Total</span>
                 <div className="text-right flex items-baseline gap-2">
                   {formatCurrency(
