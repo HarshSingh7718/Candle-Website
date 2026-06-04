@@ -1,5 +1,6 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import { CandleCustomization } from "../models/optionModel.js";
+import { Settings } from "../models/settingsModel.js";
 export const getOptionsByStep = async (req, res) => {
   const {
     step
@@ -22,11 +23,15 @@ export const getOptionsByStep = async (req, res) => {
     throw new CustomError("Step not found", 404);
   }
   const options = stepData.options.filter(item => item.isActive !== false);
+
+  const settings = await Settings.findOne({ key: "global" });
+  const basePrice = settings?.baseCustomisationCharges;
+
   res.status(200).json({
     success: true,
     step,
     type,
-    basePrice: customization.basePrice,
+    basePrice,
     // 👉 ADDED HERE
     options
   });

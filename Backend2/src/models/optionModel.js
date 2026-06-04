@@ -41,10 +41,6 @@ const stepSchema = new mongoose.Schema({
 });
 
 const candleCustomizationSchema = new mongoose.Schema({
-    basePrice: {
-        type: Number,
-        required: true
-    },
     steps: [stepSchema]
 }, { timestamps: true });
 

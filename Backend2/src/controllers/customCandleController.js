@@ -1,6 +1,7 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { CustomizedCandle } from "../models/customModel.js";
+import { Settings } from "../models/settingsModel.js";
 export const createCustomCandle = async (req, res) => {
   const {
     vesselId,
@@ -21,6 +22,9 @@ export const createCustomCandle = async (req, res) => {
   if (!customization) {
     throw new CustomError("Customization data not found", 400);
   }
+
+  const settings = await Settings.findOne({ key: "global" });
+  const basePrice = settings?.baseCustomisationCharges ?? 100;
 
   // =========================
   //  HELPERS
@@ -67,7 +71,7 @@ export const createCustomCandle = async (req, res) => {
   // =========================
   //  TOTAL PRICE
   // =========================
-  const totalPrice = (customization.basePrice + customizationPrice) * quantity;
+  const totalPrice = (basePrice + customizationPrice) * quantity;
 
   // =========================
   //  CREATE CUSTOM CANDLE
@@ -80,7 +84,7 @@ export const createCustomCandle = async (req, res) => {
     message,
     // Saved directly from req.body
     quantity,
-    basePrice: customization.basePrice,
+    basePrice,
     customizationPrice,
     totalPrice,
     // 📸 SNAPSHOT 

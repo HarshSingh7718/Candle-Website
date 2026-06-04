@@ -1,19 +1,16 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import { CandleCustomization } from "../models/optionModel.js";
+import { Settings } from "../models/settingsModel.js";
 import cloudinary, { uploadImage } from "../services/cloudinaryService.js"; // 👉 Import generic uploader
 
 export const initCustomization = async (req, res) => {
-  const { basePrice, steps } = req.body;
-  if (!basePrice) {
-    throw new CustomError("Base price is required", 400);
-  }
+  const { steps } = req.body;
 
   // 1. Wipe any existing configuration so we start completely fresh
   await CandleCustomization.deleteMany({});
 
-  // 2. Create the master document with your base price and full steps array
+  // 2. Create the master document with full steps array
   const masterCustomization = await CandleCustomization.create({
-    basePrice,
     steps: steps || []
   });
 
@@ -158,6 +155,9 @@ export const getAllStepOptions = async (req, res) => {
     throw new CustomError("Customization not found", 404);
   }
 
+  const settings = await Settings.findOne({ key: "global" });
+  const basePrice = settings?.baseCustomisationCharges ?? 100;
+
   // Sort steps by stepNumber (important for UI)
   const steps = [...customization.steps]
     .sort((a, b) => a.stepNumber - b.stepNumber)
@@ -170,7 +170,7 @@ export const getAllStepOptions = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    basePrice: customization.basePrice,
+    basePrice,
     totalSteps: steps.length,
     steps
   });
