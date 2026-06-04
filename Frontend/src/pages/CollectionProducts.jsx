@@ -1,46 +1,92 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { useParams } from "react-router-dom";
-import { Search, ChevronDown, Filter } from "lucide-react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { Search, ChevronDown, Filter, Loader2 } from "lucide-react";
 import SEO from '../components/SEO';
 
 import ProductCard from "../components/ui/Cards/ProductCard";
 import PageBanner from "../components/ui/PageBanner";
 import Loader from "../components/ui/Loader";
 import { useProductsByCategory } from "../hooks/useProducts";
+import { useDebounce } from "../hooks/useDebounce";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CollectionProducts = () => {
   const { categoryName } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const querySearch = searchParams.get("search") || "";
+  const queryPrice = searchParams.get("maxPrice") || null;
+  const querySort = searchParams.get("sort") || "latest";
+
   const sidebarRef = useRef();
   const mainRef = useRef();
 
-  // 1. UI State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("latest");
-  const [priceRange, setPriceRange] = useState(null);
+  // Local UI State
+  const [searchInput, setSearchInput] = useState(querySearch);
+  const [sortInput, setSortInput] = useState(querySort);
+  const [priceInput, setPriceInput] = useState(queryPrice || 5000);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPage = 8;
 
-  // 3. Fetch specific products using category slug from URL
-  const { data: responseData, isLoading } =
+  const debouncedPrice = useDebounce(priceInput, 500);
+
+  // Fetch specific products using category slug from URL
+  const { data: responseData, isLoading, isFetching } =
     useProductsByCategory(categoryName, {
       page: currentPage,
-      search: searchTerm,
-      sort: sortOption,
-      maxPrice: priceRange
+      search: querySearch,
+      sort: querySort,
+      maxPrice: queryPrice
     });
 
   const categoryProducts = responseData?.products || [];
   const totalPages = responseData?.totalPages || 0;
   const currentProducts = categoryProducts; // Backend handles slicing now!
 
-  // Reset page when filters change
+  // Reset page when URL filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, sortOption, priceRange]);
+  }, [querySearch, querySort, queryPrice]);
+
+  // Sync Search Input local state if URL changes externally
+  useEffect(() => {
+    setSearchInput(querySearch);
+  }, [querySearch]);
+
+  const handleSearchCommit = () => {
+    const newParams = new URLSearchParams(searchParams);
+    if (searchInput) newParams.set("search", searchInput);
+    else newParams.delete("search");
+    setSearchParams(newParams);
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") handleSearchCommit();
+  };
+
+  // Sync Debounced Price to URL (Auto Trigger)
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+    if (debouncedPrice && debouncedPrice < 5000) {
+      newParams.set("maxPrice", debouncedPrice);
+    } else {
+      newParams.delete("maxPrice");
+    }
+    setSearchParams(newParams);
+  }, [debouncedPrice, searchParams, setSearchParams]);
+
+  // Sync Sort to URL (Auto Trigger)
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+    if (sortInput && sortInput !== "latest") {
+      newParams.set("sort", sortInput);
+    } else {
+      newParams.delete("sort");
+    }
+    setSearchParams(newParams);
+  }, [sortInput, searchParams, setSearchParams]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -114,7 +160,7 @@ const CollectionProducts = () => {
     return () => ctx.revert();
   }, [currentProducts, isLoading]);
 
-  if (isLoading || !categoryName) return <Loader />;
+  if (!categoryName) return <Loader />;
 
   const collectionDisplayName =
     categoryProducts[0]?.category?.name || categoryName.replace(/-/g, " ");
@@ -145,26 +191,27 @@ const CollectionProducts = () => {
                 <div className="relative sidebar-content">
                   <input
                     type="text"
+                    value={searchInput}
                     placeholder="Search in collection..."
                     className="w-full border border-stone-200 p-2 pl-10 rounded-md outline-none focus:border-primary transition-colors"
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setCurrentPage(1);
-                    }}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
                   />
-                  <Search
-                    className="absolute left-3 top-2.5 text-stone-400"
-                    size={18}
-                  />
+                  <button 
+                    onClick={handleSearchCommit} 
+                    className="absolute left-3 top-2.5 text-stone-400 cursor-pointer hover:text-primary transition-colors"
+                  >
+                    <Search size={18} />
+                  </button>
                 </div>
               </div>
 
               <div className="bg-bg-surface hidden md:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
                 <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
                   Price Filter
-                  {priceRange !== null && (
+                  {queryPrice !== null && (
                     <button
-                      onClick={() => setPriceRange(null)}
+                      onClick={() => setPriceInput(5000)}
                       className="text-[10px] bg-red-100 text-danger px-2 py-1 rounded cursor-pointer hover:bg-red-200 transition-colors"
                     >
                       Reset
@@ -177,23 +224,19 @@ const CollectionProducts = () => {
                     type="range"
                     min="0"
                     max="5000"
-                    // 👉 Default to 5000 if null so the slider doesn't look empty
-                    value={priceRange || 5000}
-                    onChange={(e) => {
-                      setPriceRange(e.target.value);
-                      setCurrentPage(1);
-                    }}
+                    value={priceInput}
+                    onChange={(e) => setPriceInput(Number(e.target.value))}
                     className="w-full accent-primary cursor-pointer"
                   />
                   <div className="flex justify-between text-sm mt-2 font-medium text-stone-600">
                     <span>₹0</span>
-                    {/* 👉 Only show price text if a filter is actually applied */}
-                    <span>{priceRange ? `Max: ₹${priceRange}` : "No Max"}</span>
+                    <span>{priceInput < 5000 ? `Max: ₹${priceInput}` : "No Max"}</span>
                   </div>
                   <div className="relative group mt-6">
                     <select
                       className="w-full appearance-none bg-bg-surface border border-stone-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-1 ring-primary/20"
-                      onChange={(e) => setSortOption(e.target.value)}
+                      value={sortInput}
+                      onChange={(e) => setSortInput(e.target.value)}
                     >
                       <option value="latest">Sort by latest</option>
                       <option value="popularity">Sort by Popularity</option>
@@ -220,12 +263,23 @@ const CollectionProducts = () => {
                 </p>
               </div>
 
-              {currentProducts.length > 0 ? (
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <Loader2 className="animate-spin text-primary" size={48} />
+                </div>
+              ) : currentProducts.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid">
-                    {currentProducts.map((item) => (
-                      <ProductCard key={item._id} product={item} />
-                    ))}
+                  <div className="relative">
+                    {isFetching && (
+                      <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10 bg-bg-surface p-2 rounded-full shadow-lg">
+                        <Loader2 className="animate-spin text-primary" size={24} />
+                      </div>
+                    )}
+                    <div className={`grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid transition-opacity duration-300 ${isFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+                      {currentProducts.map((item) => (
+                        <ProductCard key={item._id} product={item} />
+                      ))}
+                    </div>
                   </div>
 
                   {totalPages > 1 && (

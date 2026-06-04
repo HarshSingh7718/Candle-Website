@@ -76,7 +76,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`w-16 h-20 border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
+                  className={`w-16 aspect-[4/5] border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
                     activeImageIndex === idx
                       ? "border-coffee"
                       : "border-transparent opacity-70 hover:opacity-100"
@@ -147,7 +147,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                 />
               </button>
 
-              <div className="w-full aspect-square overflow-hidden">
+              <div className="w-full aspect-[4/5] overflow-hidden">
                 <img
                   src={imageUrls[activeImageIndex]}
                   alt="Product Main"
@@ -163,7 +163,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`w-16 h-20 border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
+                    className={`w-16 aspect-[4/5] border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
                       activeImageIndex === idx
                         ? "border-coffee"
                         : "border-transparent opacity-70 hover:opacity-100"
@@ -370,7 +370,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                     e.stopPropagation();
                     setActiveImageIndex(idx);
                   }}
-                  className={`w-16 h-20 sm:w-20 sm:h-24 border-2 overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
+                  className={`w-16 sm:w-20 aspect-[4/5] border-2 overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
                     activeImageIndex === idx
                       ? "border-text-on-brand scale-105"
                       : "border-transparent opacity-50 hover:opacity-100"

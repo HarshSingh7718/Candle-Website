@@ -7,8 +7,8 @@ const StoreSettings = () => {
     const updateSettingsMutation = useUpdateSettings();
 
     const [formData, setFormData] = useState({
-        deliveryCharges: 50,
-        freeDeliveryThreshold: 500,
+        deliveryCharges: 99,
+        freeDeliveryThreshold: 999,
         baseCustomisationCharges: 100,
     });
 

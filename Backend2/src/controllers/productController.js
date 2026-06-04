@@ -80,19 +80,16 @@ export const getAllCandles = async (req, res) => {
 
   if (maxPrice) {
     const priceLimit = Number(maxPrice);
-    query.$or = [
-      { discountPrice: { $gt: 0, $lte: priceLimit } },
-      { discountPrice: 0, price: { $lte: priceLimit } }
-    ];
+    query.effectivePrice = { $lte: priceLimit };
   }
 
   let sortOption = { createdAt: -1 };
   if (sort === "popularity") {
     sortOption = { ratings: -1 };
   } else if (sort === "low-to-high") {
-    sortOption = { price: 1 };
+    sortOption = { effectivePrice: 1 };
   } else if (sort === "high-to-low") {
-    sortOption = { price: -1 };
+    sortOption = { effectivePrice: -1 };
   }
 
   const pageNum = Number(page);

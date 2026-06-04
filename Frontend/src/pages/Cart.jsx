@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import PageBanner from "../components/ui/PageBanner";
-import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Icon } from "@iconify/react";
 import { useCart } from "../hooks/useCart";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import MainBtn from "../components/ui/Buttons/MainBtn";
 import SEO from "../components/SEO";
 
 gsap.registerPlugin(ScrollTrigger);
 
 function Cart() {
+  const [selectedCustomCandle, setSelectedCustomCandle] = useState(null);
+
   // 👉 1. Destructure the new billing object from useCart
   const { cart, billing, removeFromCart, updateQuantity, isLoading } = useCart();
 
@@ -168,7 +171,7 @@ function Cart() {
                       : productData?.discountPrice || productData?.price || 0;
 
                     const displayImage = isCustom
-                      ? "/placeholder.jpg" // Fallback for custom candles
+                      ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
                       : productData?.images?.[0]?.url || "/placeholder.jpg";
 
                     const stockStatus = isCustom
@@ -184,17 +187,40 @@ function Cart() {
                             className="cursor-pointer hover:text-red-500 transition-colors"
                             onClick={() => removeFromCart(item._id)}
                           >
-                            <Icon icon="mdi:close" width="18" />
+                            <Trash2 size={20} />
                           </button>
                         </td>
 
-                        <td className="flex items-center gap-4 py-6">
-                          <img
-                            src={displayImage}
-                            className="w-20 h-20 object-cover"
-                            alt={displayName}
-                          />
-                          <p className="font-semibold">{displayName}</p>
+                        <td className="py-6">
+                          {isCustom ? (
+                            <button
+                              onClick={() => setSelectedCustomCandle(productData)}
+                              className="flex items-center gap-4 text-left hover:opacity-80 transition-opacity cursor-pointer w-full"
+                            >
+                              <div className="w-16 sm:w-20 aspect-[4/5] overflow-hidden shrink-0">
+                                <img
+                                  src={displayImage}
+                                  className="w-full h-full object-cover"
+                                  alt={displayName}
+                                />
+                              </div>
+                              <p className="font-semibold text-heading group-hover:text-coffee transition-colors">{displayName}</p>
+                            </button>
+                          ) : (
+                            <Link
+                              to={`/collections/candles/product/${productData?.slug || productData?._id}`}
+                              className="flex items-center gap-4 hover:opacity-80 transition-opacity w-full group"
+                            >
+                              <div className="w-16 sm:w-20 aspect-[4/5] overflow-hidden shrink-0">
+                                <img
+                                  src={displayImage}
+                                  className="w-full h-full object-cover"
+                                  alt={displayName}
+                                />
+                              </div>
+                              <p className="font-semibold group-hover:text-coffee transition-colors">{displayName}</p>
+                            </Link>
+                          )}
                         </td>
 
                         <td className="text-center">₹{displayPrice}</td>
@@ -256,7 +282,7 @@ function Cart() {
                   : productData?.discountPrice || productData?.price || 0;
 
                 const displayImage = isCustom
-                  ? "/placeholder.jpg"
+                  ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
                   : productData?.images?.[0]?.url || "/placeholder.jpg";
 
                 const stockStatus = isCustom
@@ -271,12 +297,6 @@ function Cart() {
                     className="border border-muted/20 bg-light-yellow shadow-sm p-4 rounded-lg cart-item"
                   >
                     <div className="flex justify-between items-center">
-                      <button
-                        className="cursor-pointer text-muted hover:text-red-500"
-                        onClick={() => removeFromCart(item._id)}
-                      >
-                        <Icon icon="mdi:close" width="20" />
-                      </button>
                       <span
                         className={`text-sm font-medium ${isCustom
                             ? "text-blue-600"
@@ -287,16 +307,47 @@ function Cart() {
                       >
                         {stockStatus}
                       </span>
+                      <button
+                        className="cursor-pointer text-muted hover:text-red-500"
+                        onClick={() => removeFromCart(item._id)}
+                      >
+                        <Trash2 size={20} />
+                      </button>
                     </div>
-                    <div className="flex items-center gap-4 mt-4">
-                      <img
-                        src={displayImage}
-                        className="w-20 h-20 object-cover rounded-sm border border-muted/20"
-                        alt={displayName}
-                      />
-                      <p className="font-semibold text-heading">
-                        {displayName}
-                      </p>
+                    <div className="mt-4">
+                      {isCustom ? (
+                        <button
+                          onClick={() => setSelectedCustomCandle(productData)}
+                          className="flex items-center gap-4 text-left hover:opacity-80 transition-opacity w-full cursor-pointer"
+                        >
+                          <div className="w-20 aspect-[4/5] overflow-hidden rounded-sm border border-muted/20 shrink-0">
+                            <img
+                              src={displayImage}
+                              className="w-full h-full object-cover"
+                              alt={displayName}
+                            />
+                          </div>
+                          <p className="font-semibold text-heading group-hover:text-coffee transition-colors">
+                            {displayName}
+                          </p>
+                        </button>
+                      ) : (
+                        <Link
+                          to={`/collections/candles/product/${productData?.slug || productData?._id}`}
+                          className="flex items-center gap-4 hover:opacity-80 transition-opacity w-full group"
+                        >
+                          <div className="w-20 aspect-[4/5] overflow-hidden rounded-sm border border-muted/20 shrink-0">
+                            <img
+                              src={displayImage}
+                              className="w-full h-full object-cover"
+                              alt={displayName}
+                            />
+                          </div>
+                          <p className="font-semibold text-heading group-hover:text-coffee transition-colors">
+                            {displayName}
+                          </p>
+                        </Link>
+                      )}
                     </div>
                     <div className="flex justify-between items-center mt-6">
                       <span className="text-muted text-sm">Price:</span>
@@ -380,6 +431,60 @@ function Cart() {
           </>
         )}
       </div>
+
+      {/* Custom Candle Details Modal */}
+      {selectedCustomCandle && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setSelectedCustomCandle(null)}
+        >
+          <div 
+            className="bg-bg-surface w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setSelectedCustomCandle(null)}
+              className="absolute top-4 right-4 text-text-muted hover:text-danger transition-colors cursor-pointer"
+            >
+              <Icon icon="mdi:close" width="24" />
+            </button>
+            <h3 className="text-xl font-bold text-heading mb-6 border-b border-muted/20 pb-4">
+              Custom Candle Details
+            </h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-2 text-sm">
+                <span className="font-semibold text-text-muted">Vessel:</span>
+                <span className="col-span-2 text-heading font-medium">
+                  {selectedCustomCandle.snapshot?.vesselName || "N/A"}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-sm">
+                <span className="font-semibold text-text-muted">Scent:</span>
+                <span className="col-span-2 text-heading font-medium">
+                  {selectedCustomCandle.snapshot?.scentName || "N/A"}
+                </span>
+              </div>
+              {selectedCustomCandle.snapshot?.addOnNames?.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 text-sm">
+                  <span className="font-semibold text-text-muted">Add-ons:</span>
+                  <span className="col-span-2 text-heading font-medium">
+                    {selectedCustomCandle.snapshot.addOnNames.join(", ")}
+                  </span>
+                </div>
+              )}
+              {selectedCustomCandle.message && (
+                <div className="mt-4 pt-4 border-t border-muted/20 text-sm">
+                  <span className="block font-semibold text-text-muted mb-2">Special Instructions:</span>
+                  <p className="bg-bg-canvas p-3 rounded-lg text-heading italic">
+                    "{selectedCustomCandle.message}"
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }

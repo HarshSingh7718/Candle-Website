@@ -2,6 +2,7 @@ import { CustomError } from "../middleware/errorHandler.js";
 import { User } from "../models/userModel.js";
 import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
+import { Settings } from "../models/settingsModel.js";
 
 //  ADD TO CART (COMMON API)
 export const addToCart = async (req, res) => {
@@ -161,7 +162,12 @@ export const getCartBilling = async (req, res) => {
       itemsPrice += item.customCandle.totalPrice * item.quantity;
     }
   });
-  const shippingPrice = itemsPrice > 999 ? 0 : 99;
+  
+  const settings = await Settings.findOne({ key: "global" });
+  const deliveryCharges = settings?.deliveryCharges ?? 99;
+  const freeDeliveryThreshold = settings?.freeDeliveryThreshold ?? 999;
+
+  const shippingPrice = itemsPrice >= freeDeliveryThreshold ? 0 : deliveryCharges;
   const totalPrice = Math.round(itemsPrice + shippingPrice);
   res.status(200).json({
     success: true,

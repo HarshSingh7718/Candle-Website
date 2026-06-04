@@ -14,44 +14,51 @@
 }
 
 @theme {
-  --color-light-yellow: #fce8e8;
-  --color-coffee: #a67067;
-  --color-coffee-light: #ba847b;
-
-  /* Brand Primary */
-  --color-primary: #5e3232;
-  --color-heading: #221f1f;
-  --color-paragraph: #595554;
-  --color-muted: #9e9a99;
-  --color-footer: #f5dfdf;
-
+  /* 1. The Core Coffee Scale (Dusty Rose) */
   --color-coffee-50: #f8f3f2;
   --color-coffee-100: #f0e5e4;
   --color-coffee-200: #dfcac7;
   --color-coffee-300: #c8a8a3;
   --color-coffee-400: #b0847d;
   --color-coffee-500: #a67067;
-  /* Your exact client hex */
   --color-coffee-600: #8b5952;
   --color-coffee-700: #734943;
   --color-coffee-800: #5f3e3a;
   --color-coffee-900: #503734;
   --color-coffee-950: #291a18;
-  /* Semantic Tokens for Phase 5 */
-  --color-brand-primary: #4a312c;
-  --color-brand-secondary: #c48a3a;
-  --color-bg-canvas: #faf7f2;
-  --color-bg-surface: #ffffff;
-  --color-bg-surface-hover: #f5f0ea;
-  --color-bg-muted: #e8dfd3;
-  --color-text-base: #221f1f;
-  --color-text-muted: #625b57;
-  --color-text-disabled: #a79f99;
+
+  /* 2. Semantic Brand Colors (Mapped to your Bordeaux & Rose) */
+  --color-brand-primary: #5e3232;    /* Deep Bordeaux */
+  --color-brand-secondary: #a67067;  /* Dusty Rose */
+  
+  /* 3. Semantic Surfaces (Backgrounds) */
+  --color-bg-canvas: #fce8e8;        /* Soft Blush (Replaces light-yellow) */
+  --color-bg-surface: #ffffff;       /* Pure White Cards */
+  --color-bg-surface-hover: #f5dfdf; /* Slightly darker blush for hovers */
+  --color-bg-muted: #e5d5d5;         /* Soft borders on canvas */
+
+  /* 4. Semantic Typography */
+  --color-text-base: #221f1f;        /* Soft Charcoal */
+  --color-text-muted: #595554;       /* Medium Warm Gray */
+  --color-text-disabled: #9e9a99;    /* Neutral gray */
   --color-text-on-brand: #ffffff;
-  --color-success: #5b8c5a;
-  --color-warning: #d97706;
-  --color-danger: #c2410c;
-  --color-info: #7c5a43;
+
+  /* 5. Feedback / System Alerts */
+  --color-success: #16a34a;
+  --color-warning: #ea580c;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+
+  /* ---------------------------------------------------- */
+  /* LEGACY ALIASES (Kept so your older files don't break) */
+  --color-light-yellow: #fce8e8;
+  --color-coffee: #a67067;
+  --color-coffee-light: #ba847b;
+  --color-primary: #5e3232;
+  --color-heading: #221f1f;
+  --color-paragraph: #595554;
+  --color-muted: #9e9a99;
+  --color-footer: #f5dfdf;
 }
 
 body {

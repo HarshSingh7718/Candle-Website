@@ -20,7 +20,7 @@ const ProductCard = memo(({ product }) => {
 
   return (
     <div className="product-item relative product-card group">
-      <div className="product-image relative rounded-md aspect-square overflow-hidden">
+      <div className="product-image relative rounded-md aspect-[4/5] overflow-hidden">
         {hasDiscount && (
           <div className="absolute top-2 left-2 z-20 bg-coffee text-light-yellow text-[11px] font-bold px-2 py-1 rounded shadow-sm">
             {discountLabel}
@@ -52,7 +52,7 @@ const ProductCard = memo(({ product }) => {
               toggleWishlist();
             }}
             disabled={isUpdating}
-            className="bg-light-yellow p-2 rounded-full  shadow hover:bg-muted/10 transition-colors cursor-pointer"
+            className="bg-light-yellow p-2 rounded-full  shadow hover:bg-brand-secondary hover:text-white hover:scale-105 transition-colors cursor-pointer"
           >
             {liked ? (
               <Icon icon="mdi:heart" className="text-danger" width="24" />
@@ -67,7 +67,7 @@ const ProductCard = memo(({ product }) => {
               e.stopPropagation();
               addToCart(product); // Defaults to qty 1 in our hook
             }}
-            className="bg-light-yellow p-2 rounded-full shadow hover:bg-muted/10 transition-colors cursor-pointer"
+            className="bg-light-yellow p-2 rounded-full shadow hover:bg-brand-secondary hover:text-white hover:scale-105 transition-colors cursor-pointer"
           >
             <ShoppingCart size={24} />
           </button>

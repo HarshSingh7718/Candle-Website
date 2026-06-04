@@ -8,6 +8,7 @@ import { CandleCustomization } from "../models/optionModel.js";
 import { sendSMS } from "../services/otp_services.js";
 import { config } from "../config/index.js";
 import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
+import { Settings } from "../models/settingsModel.js";
 const razorpay = new Razorpay({
   key_id: config.razor.k_id,
   key_secret: config.razor.k_secret
@@ -105,7 +106,12 @@ export const createOrder = async (req, res) => {
   if (isNaN(itemsPrice)) {
     throw new CustomError("Failed to calculate total price (invalid item price).", 400);
   }
-  const shippingPrice = itemsPrice > 999 ? 0 : 99;
+  
+  const settings = await Settings.findOne({ key: "global" });
+  const deliveryCharges = settings?.deliveryCharges ?? 99;
+  const freeDeliveryThreshold = settings?.freeDeliveryThreshold ?? 999;
+  
+  const shippingPrice = itemsPrice >= freeDeliveryThreshold ? 0 : deliveryCharges;
 
   // =========================
   //  COUPON VALIDATION
@@ -271,4 +277,4 @@ export const createOrder = async (req, res) => {
     message: "Order created successfully",
     order
   });
-};
+};

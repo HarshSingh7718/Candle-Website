@@ -86,6 +86,7 @@ export const createCustomCandle = async (req, res) => {
     // 📸 SNAPSHOT 
     snapshot: {
       vesselName: vessel.name,
+      vesselImage: vessel.image,
       scentName: scent.name,
       addOnNames
     }

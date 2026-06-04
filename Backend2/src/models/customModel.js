@@ -30,8 +30,9 @@ const customizedCandleSchema = new mongoose.Schema({
     basePrice: Number,
     customizationPrice: Number,
     totalPrice: Number,
-    snapshot: { // Added the snapshot definition here for completeness
+    snapshot: {
         vesselName: String,
+        vesselImage: String,
         scentName: String,
         addOnNames: [String]
     }
