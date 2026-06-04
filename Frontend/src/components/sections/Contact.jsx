@@ -188,7 +188,7 @@ export default function Contact() {
               className="flex items-center space-x-5 group cursor-pointer"
             >
               {/* 👉 ICON CIRCLE: White background looks great on the blush theme */}
-              <div className="icon-circle w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 text-coffee-500 shadow-sm transition-colors">
+              <div className="icon-circle w-12 h-12 rounded-full bg-bg-surface flex items-center justify-center flex-shrink-0 text-coffee-500 shadow-sm transition-colors">
                 <MapPin size={20} />
               </div>
               <span className="text-paragraph text-lg">
@@ -202,7 +202,7 @@ export default function Contact() {
               onMouseLeave={(e) => handleIconHover(e, false)}
               className="flex items-center space-x-5 group cursor-pointer"
             >
-              <div className="icon-circle w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 text-coffee-500 shadow-sm transition-colors">
+              <div className="icon-circle w-12 h-12 rounded-full bg-bg-surface flex items-center justify-center flex-shrink-0 text-coffee-500 shadow-sm transition-colors">
                 <Phone size={20} />
               </div>
               <span className="text-paragraph text-lg">+91 98765 43210</span>
@@ -214,7 +214,7 @@ export default function Contact() {
               onMouseLeave={(e) => handleIconHover(e, false)}
               className="flex items-center space-x-5 group cursor-pointer"
             >
-              <div className="icon-circle w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 text-coffee-500 shadow-sm transition-colors">
+              <div className="icon-circle w-12 h-12 rounded-full bg-bg-surface flex items-center justify-center flex-shrink-0 text-coffee-500 shadow-sm transition-colors">
                 <Mail size={20} />
               </div>
               <span className="text-paragraph text-lg">
@@ -226,7 +226,7 @@ export default function Contact() {
 
         {/* Right Column: Form */}
         {/* 👉 FORM CARD: Pure white background to pop off the light-yellow main bg */}
-        <div className="form-column bg-white p-8 md:p-12 rounded-sm border border-muted/20 shadow-sm">
+        <div className="form-column bg-bg-surface p-8 md:p-12 rounded-sm border border-muted/20 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-6">
               {[
@@ -330,7 +330,7 @@ export default function Contact() {
             <div
               key={index}
               // 👉 FAQ CARDS: Kept white for contrast against blush background
-              className="faq-item border-b border-muted/30 overflow-hidden bg-white rounded-sm shadow-sm px-6"
+              className="faq-item border-b border-muted/30 overflow-hidden bg-bg-surface rounded-sm shadow-sm px-6"
             >
               <button
                 onClick={() => setActiveFaq(activeFaq === index ? null : index)}
@@ -367,7 +367,7 @@ export default function Contact() {
 
       {/* Gifting Section */}
       {/* 👉 GIFTING SEC: Set to pure white to alternate with the light-yellow main bg */}
-      <div className="gifting-section bg-white py-24 md:py-32 relative overflow-hidden">
+      <div className="gifting-section bg-bg-surface py-24 md:py-32 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="gifting-content max-w-5xl">
             <h2 className="text-3xl md:text-5xl font-serif italic text-heading mb-10 leading-tight">

@@ -48,7 +48,7 @@ const MyAccount = () => {
     const baseClass =
       "flex items-center gap-3 transition-colors block pl-3 py-2 cursor-pointer border-l-2 text-left w-full ";
     return isActive
-      ? baseClass + "font-medium text-black border-black"
+      ? baseClass + "font-medium text-text-base border-text-base"
       : baseClass + "text-paragraph hover:text-black border-transparent";
   };
 
@@ -66,7 +66,7 @@ const MyAccount = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Sidebar Navigation */}
           <div className="col-span-1 account-card">
-            <div className="bg-gray-50 p-6 border border-gray-200 sticky top-24 rounded-sm">
+            <div className="bg-bg-surface-hover p-6 border border-bg-muted sticky top-24 rounded-sm">
               <h3 className="text-xl font-semibold mb-2 text-heading truncate">
                 Hello, {user?.firstName}!
               </h3>
@@ -94,14 +94,14 @@ const MyAccount = () => {
                   </NavLink>
                 </li>
 
-                <li className="pt-4 mt-4 border-t border-gray-200">
+                <li className="pt-4 mt-4 border-t border-bg-muted">
                   <button
                     onClick={() =>
                       logoutMutation.mutate(null, {
                         onSuccess: () => navigate("/"),
                       })
                     }
-                    className="flex items-center gap-3 text-red-500 hover:text-red-700 transition-colors block pl-3 py-2 cursor-pointer w-full text-left"
+                    className="flex items-center gap-3 text-danger hover:text-red-700 transition-colors block pl-3 py-2 cursor-pointer w-full text-left"
                   >
                     <LogOut size={18} /> Logout
                   </button>

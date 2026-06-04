@@ -169,7 +169,7 @@ const Candles = () => {
                   {priceRange !== null && (
                     <button
                       onClick={() => setPriceRange(null)}
-                      className="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded cursor-pointer hover:bg-red-200"
+                      className="text-[10px] bg-red-100 text-danger px-2 py-1 rounded cursor-pointer hover:bg-red-200"
                     >
                       Reset
                     </button>

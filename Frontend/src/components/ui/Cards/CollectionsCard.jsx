@@ -1,13 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function CollectionsCard({ image, title, description }) {
-  // ✅ Create a URL-friendly slug: "Golden Glow" -> "golden-glow"
-  const slug = title
-    .toLowerCase()
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(/[^\w-]+/g, ""); // Remove all non-word chars
-
+function CollectionsCard({ image, title, description, slug}) {
   return (
     <Link
       to={`/collections/${slug}`}
@@ -26,7 +20,7 @@ function CollectionsCard({ image, title, description }) {
       <div className="text-light-yellow relative z-10 px-5 text-center transform translate-y-12 group-hover:translate-y-0 transition-all duration-500">
         <h5 className="mb-3 text-2xl font-semibold">{title}</h5>
         <p className="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200 leading-wider">
-          {description}
+          {description.slice(0, 100) + '...'}
         </p>
       </div>
     </Link>

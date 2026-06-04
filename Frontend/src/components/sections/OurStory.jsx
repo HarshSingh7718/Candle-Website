@@ -119,7 +119,7 @@ const OurStory = () => {
       <Steps />
       {/* <!-- Our Mission --> */}
       <section className="py-8 md:py-24 max-w-7xl mx-auto px-6 lg:px-10">
-        <div className="rounded-3xl bg-background-dark text-black overflow-hidden relative">
+        <div className="rounded-3xl bg-background-dark text-text-base overflow-hidden relative">
           <div className="grid  lg:grid-cols-2">
             <div className="p-12 lg:p-20 flex flex-col justify-center">
               <h3 className="text-2xl md:text-4xl font-black mb-5 md:mb-8">
@@ -212,7 +212,7 @@ const OurStory = () => {
                   }}
                 />
                 <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <p className="text-white font-serif tracking-widest uppercase text-sm">
+                  <p className="text-text-on-brand font-serif tracking-widest uppercase text-sm">
                     {img.alt}
                   </p>
                 </div>

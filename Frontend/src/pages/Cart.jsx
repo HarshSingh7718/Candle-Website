@@ -225,8 +225,8 @@ function Cart() {
                           className={`text-center ${isCustom
                               ? "text-blue-600"
                               : productData?.stock > 0
-                                ? "text-green-600"
-                                : "text-red-600"
+                                ? "text-success"
+                                : "text-danger"
                             }`}
                         >
                           {stockStatus}
@@ -281,8 +281,8 @@ function Cart() {
                         className={`text-sm font-medium ${isCustom
                             ? "text-blue-600"
                             : productData?.stock > 0
-                              ? "text-green-600"
-                              : "text-red-600"
+                              ? "text-success"
+                              : "text-danger"
                           }`}
                       >
                         {stockStatus}
@@ -352,7 +352,7 @@ function Cart() {
                   <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">
                     Shipping
                   </div>
-                  <div className={`p-6 text-right font-semibold ${billing?.shippingPrice === 0 ? "text-green-600" : ""}`}>
+                  <div className={`p-6 text-right font-semibold ${billing?.shippingPrice === 0 ? "text-success" : ""}`}>
                     {billing?.shippingPrice === 0 ? "Free" : `₹${billing?.shippingPrice || 0}.00`}
                   </div>
                 </div>

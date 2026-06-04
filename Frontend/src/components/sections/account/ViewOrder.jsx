@@ -129,7 +129,7 @@ const ViewOrder = () => {
 
     return (
         <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pb-12 relative">
-            <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
+            <header className="bg-bg-surface border-b border-stone-200 sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-4 h-16 flex items-center">
                     <div className="flex items-center space-x-4">
                         <button onClick={() => navigate(-1)} className="p-2 hover:bg-stone-100 rounded-full transition-colors cursor-pointer">
@@ -142,7 +142,7 @@ const ViewOrder = () => {
 
             <main className="max-w-5xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
-                    <section className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                    <section className="bg-bg-surface rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
                         <div className="p-6">
                             <div className="flex items-center justify-between mb-8">
                                 <div>
@@ -151,7 +151,7 @@ const ViewOrder = () => {
                                 </div>
                                 <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full border ${order.orderStatus === 'delivered' ? 'bg-green-50 text-green-700 border-green-100' :
                                     order.orderStatus === 'cancelled' ? 'bg-red-50 text-red-700 border-red-100' :
-                                        'bg-amber-50 text-amber-700 border-amber-100'
+                                        'bg-warning/10 text-amber-700 border-amber-100'
                                     }`}>
                                     {order.orderStatus}
                                 </span>
@@ -164,7 +164,7 @@ const ViewOrder = () => {
                                 <div className="flex flex-col sm:flex-row justify-between relative z-10 space-y-8 sm:space-y-0">
                                     {statusSteps.map((step, idx) => (
                                         <div key={idx} className="flex sm:flex-col items-start sm:items-center text-left sm:text-center group">
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-white shadow-sm transition-colors ${step.completed ? 'bg-green-600 text-white' : 'bg-stone-200 text-stone-500'
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-text-on-brand shadow-sm transition-colors ${step.completed ? 'bg-green-600 text-text-on-brand' : 'bg-stone-200 text-stone-500'
                                                 }`}>
                                                 {step.completed ? <CheckCircle size={16} /> : <div className="w-2 h-2 bg-current rounded-full" />}
                                             </div>
@@ -198,7 +198,7 @@ const ViewOrder = () => {
                     </section>
 
                     {/* Items Card */}
-                    <section className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                    <section className="bg-bg-surface rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
                         <div className="p-6 border-b border-stone-100">
                             <h3 className="font-semibold text-lg flex items-center">
                                 <Package className="mr-2 text-stone-400" size={20} />
@@ -304,7 +304,7 @@ const ViewOrder = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <section className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 space-y-6">
+                    <section className="bg-bg-surface rounded-2xl shadow-sm border border-stone-100 p-6 space-y-6">
                         <div>
                             <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 flex items-center">
                                 <MapPin size={14} className="mr-1.5" />
@@ -326,7 +326,7 @@ const ViewOrder = () => {
                             </h4>
                             <div className="flex items-center text-sm text-stone-600">
                                 <div className="w-8 h-5 bg-stone-100 rounded mr-3 flex items-center justify-center">
-                                    <div className={`w-4 h-4 rounded-full opacity-30 ${order.paymentStatus === 'paid' ? 'bg-green-600' : 'bg-red-600'}`}></div>
+                                    <div className={`w-4 h-4 rounded-full opacity-30 ${order.paymentStatus === 'paid' ? 'bg-green-600' : 'bg-danger'}`}></div>
                                 </div>
                                 <div>
                                     <p className="capitalize">{order.paymentMethod} <span className="text-xs text-stone-400 ml-1">({order.paymentStatus})</span></p>
@@ -347,7 +347,7 @@ const ViewOrder = () => {
                         </div>
                     </section>
 
-                    <section className="bg-stone-900 text-white rounded-2xl shadow-lg p-6">
+                    <section className="bg-stone-900 text-text-on-brand rounded-2xl shadow-lg p-6">
                         <h3 className="font-semibold text-lg mb-6">Order Summary</h3>
                         <div className="space-y-4 text-sm">
                             <div className="flex justify-between text-stone-400">
@@ -370,7 +370,7 @@ const ViewOrder = () => {
                             </div>
                         </div>
 
-                        <button className="w-full mt-8 py-3 bg-white text-stone-900 rounded-xl font-bold text-sm hover:bg-stone-100 transition-colors shadow-sm cursor-pointer">
+                        <button className="w-full mt-8 py-3 bg-bg-surface text-stone-900 rounded-xl font-bold text-sm hover:bg-stone-100 transition-colors shadow-sm cursor-pointer">
                             Need Help with Order?
                         </button>
                     </section>
@@ -380,7 +380,7 @@ const ViewOrder = () => {
             {/* 👉 4. FIXED POPUP: createPortal appends this directly to document.body, escaping the parent div! */}
             {reviewModal.isOpen && createPortal(
                 <div className="fixed inset-0 z-[100000] w-screen h-screen flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+                    <div className="bg-bg-surface rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
 
                         <div className="flex justify-between items-center mb-6 border-b border-stone-100 pb-3">
                             <div>
@@ -445,7 +445,7 @@ const ViewOrder = () => {
                             <button
                                 onClick={handleSubmitReview}
                                 disabled={isSubmittingReview}
-                                className="flex-1 py-3 px-4 bg-stone-900 text-white font-semibold rounded-xl hover:bg-stone-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                                className="flex-1 py-3 px-4 bg-stone-900 text-text-on-brand font-semibold rounded-xl hover:bg-stone-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                             >
                                 {isSubmittingReview ? (
                                     <><Loader2 size={16} className="animate-spin" /> Saving...</>

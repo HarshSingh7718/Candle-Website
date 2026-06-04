@@ -68,9 +68,9 @@ const CompleteGoogleProfile = () => {
         title="Complete Profile - Naisha Creations"
         description="Complete your profile to start shopping."
       />
-      <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
+      <div className="flex w-full h-screen bg-bg-surface-hover overflow-hidden">
         {/* Left Side (Fixed/Static) */}
-        <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
+        <div className="hidden lg:block relative w-[35%] h-full bg-text-base overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000"
             alt="Candle"
@@ -78,7 +78,7 @@ const CompleteGoogleProfile = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
-          <div className="absolute inset-x-14 bottom-20 text-white z-10 text-left">
+          <div className="absolute inset-x-14 bottom-20 text-text-on-brand z-10 text-left">
             <Link
               to="/"
               className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
@@ -90,7 +90,7 @@ const CompleteGoogleProfile = () => {
                 Naisha Creations
               </span>
             </Link>
-            <h1 className="text-[2.5rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif text-white">
+            <h1 className="text-[2.5rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif text-text-on-brand">
               Illuminate Your
               <br />
               Space with Soul.
@@ -108,7 +108,7 @@ const CompleteGoogleProfile = () => {
                   <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
                     Almost there!
                   </h2>
-                  <p className="text-gray-500 text-[14px]">
+                  <p className="text-text-muted text-[14px]">
                     Please provide your mobile number so we can send you delivery
                     updates for your orders.
                   </p>
@@ -116,7 +116,7 @@ const CompleteGoogleProfile = () => {
 
                 <form className="space-y-4" onSubmit={handleSendOtp}>
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-[13px] font-medium text-gray-600">
+                    <label className="block text-[13px] font-medium text-text-muted">
                       Mobile Number
                     </label>
                     <input
@@ -127,14 +127,14 @@ const CompleteGoogleProfile = () => {
                       type="tel"
                       placeholder="9876543210"
                       maxLength="10"
-                      className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
+                      className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
                     />
                   </div>
 
                   <button
                     disabled={sendOtpMutation.isPending}
                     type="submit"
-                    className="w-full py-3 mt-4 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] cursor-pointer disabled:bg-gray-400"
+                    className="w-full py-3 mt-4 bg-coffee-600 hover:bg-coffee-700 text-text-on-brand font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] cursor-pointer disabled:bg-gray-400"
                   >
                     {sendOtpMutation.isPending
                       ? "Sending OTP..."
@@ -149,9 +149,9 @@ const CompleteGoogleProfile = () => {
                   <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
                     Verify Mobile
                   </h2>
-                  <p className="text-gray-500 text-[15px]">
+                  <p className="text-text-muted text-[15px]">
                     Enter the 6-digit code sent to <br />
-                    <span className="font-semibold text-gray-700">
+                    <span className="font-semibold text-text-base">
                       +91 {phoneNumber}
                     </span>
                   </p>
@@ -161,7 +161,7 @@ const CompleteGoogleProfile = () => {
                   <div className="flex justify-center gap-2 md:gap-4">
                     {otp.map((data, index) => (
                       <input
-                        className="w-12 h-12 md:w-16 md:h-16 bg-white border border-gray-200 rounded-[16px] text-center text-2xl font-bold text-gray-800 focus:border-coffee-600 focus:ring-1 focus:ring-coffee-600 outline-none transition-all shadow-sm"
+                        className="w-12 h-12 md:w-16 md:h-16 bg-bg-surface border border-bg-muted rounded-[16px] text-center text-2xl font-bold text-text-base focus:border-coffee-600 focus:ring-1 focus:ring-coffee-600 outline-none transition-all shadow-sm"
                         type="text"
                         maxLength="1"
                         key={index}
@@ -181,7 +181,7 @@ const CompleteGoogleProfile = () => {
                     ))}
                   </div>
 
-                  <div className="text-center text-[13px] text-gray-500">
+                  <div className="text-center text-[13px] text-text-muted">
                     Didn't receive the code?{" "}
                     <button
                       type="button"
@@ -195,7 +195,7 @@ const CompleteGoogleProfile = () => {
                   <button
                     disabled={verifyPhoneMutation.isPending}
                     type="submit"
-                    className="w-full py-3 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400"
+                    className="w-full py-3 bg-coffee-600 hover:bg-coffee-700 text-text-on-brand font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400"
                   >
                     {verifyPhoneMutation.isPending
                       ? "Verifying..."
@@ -206,7 +206,7 @@ const CompleteGoogleProfile = () => {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="text-[13px] text-gray-400 hover:text-gray-600 underline"
+                      className="text-[13px] text-text-disabled hover:text-gray-600 underline"
                     >
                       Change mobile number
                     </button>

@@ -83,14 +83,14 @@ const Wishlist = () => {
         <>
             <div ref={wishlistRef} className="container mx-auto py-[8%] px-4">
                 {wishlist.length === 0 ? (
-                    <p className="text-center text-lg bg-gray-50 shadow-md py-5 wishlist-empty">
+                    <p className="text-center text-lg bg-bg-surface-hover shadow-md py-5 wishlist-empty">
                         No products in wishlist
                     </p>
                 ) : (
                     <>
                             <div className="hidden lg:block overflow-x-auto hide-scrollbar">
                             <table className="w-full">
-                                <thead className="bg-primary text-white wishlist-head">
+                                <thead className="bg-primary text-text-on-brand wishlist-head">
                                     <tr>
                                         <th className="p-4 wishlist-th"></th>
                                         <th className="p-4 text-left font-medium wishlist-th">Product</th>
@@ -101,8 +101,8 @@ const Wishlist = () => {
                                 </thead>
                                 <tbody>
                                     {wishlist.map((item) => (
-                                        <tr key={item._id} className="border-b border-gray-200 wishlist-item">
-                                            <td className="text-center border-r border-gray-200">
+                                        <tr key={item._id} className="border-b border-bg-muted wishlist-item">
+                                            <td className="text-center border-r border-bg-muted">
                                                 <input
                                                     type="checkbox"
                                                     checked={selected.includes(item._id)}
@@ -110,7 +110,7 @@ const Wishlist = () => {
                                                     className='cursor-pointer'
                                                 />
                                             </td>
-                                            <td className="flex items-center px-10 gap-4 py-6 border-r border-gray-200">
+                                            <td className="flex items-center px-10 gap-4 py-6 border-r border-bg-muted">
                                                 <button onClick={() => removeItem(item._id)} className='cursor-pointer'>
                                                     <X size={20} />
                                                 </button>
@@ -120,7 +120,7 @@ const Wishlist = () => {
                                             <td className="text-center border-r">
                                                 ₹{item.discountPrice > 0 ? item.discountPrice : item.price}
                                             </td>
-                                            <td className="text-green-600 text-center border-r border-gray-200">
+                                            <td className="text-success text-center border-r border-bg-muted">
                                                 {item.stock > 0 ? "In Stock" : "Out of Stock"}
                                             </td>
                                             <td className="text-right">
@@ -140,7 +140,7 @@ const Wishlist = () => {
                         {/* Mobile View */}
                         <div className="lg:hidden space-y-6">
                             {wishlist.map((item) => (
-                                <div key={item._id} className="border border-gray-200 p-4 rounded-lg wishlist-item">
+                                <div key={item._id} className="border border-bg-muted p-4 rounded-lg wishlist-item">
                                     <div className="flex justify-between">
                                         <input
                                             type="checkbox"
@@ -161,7 +161,7 @@ const Wishlist = () => {
                                     </div>
                                     <div className="flex justify-between mt-2">
                                         <span>Status</span>
-                                        <span className="text-green-600">{item.stock > 0 ? "In Stock" : "Out of Stock"}</span>
+                                        <span className="text-success">{item.stock > 0 ? "In Stock" : "Out of Stock"}</span>
                                     </div>
                                     <div className="mt-4">
                                         <MainBtn

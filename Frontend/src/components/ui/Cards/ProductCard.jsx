@@ -55,7 +55,7 @@ const ProductCard = memo(({ product }) => {
             className="bg-light-yellow p-2 rounded-full  shadow hover:bg-muted/10 transition-colors cursor-pointer"
           >
             {liked ? (
-              <Icon icon="mdi:heart" className="text-red-500" width="24" />
+              <Icon icon="mdi:heart" className="text-danger" width="24" />
             ) : (
               <Icon icon="mdi:heart-outline" width="24" />
             )}

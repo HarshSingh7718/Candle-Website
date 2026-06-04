@@ -9,7 +9,7 @@ export default function TermsOfServicePage() {
         description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils." 
       />
         <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl rounded-2xl bg-white p-8 sm:p-12 border-stone-100">
+            <div className="mx-auto max-w-3xl rounded-2xl bg-bg-surface p-8 sm:p-12 border-stone-100">
 
                 {/* Header */}
                 <div className="mb-10 border-b border-stone-200 pb-8 text-center">

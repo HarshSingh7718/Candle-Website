@@ -144,11 +144,11 @@ const CategoryProducts = () => {
                             </div>
 
                             {/* Product Info */}
-                            <div className="flex-1">
-                                <h3 className={`font-heading text-headline-sm ${isSelected ? 'text-primary' : 'text-on-surface'}`}>
+                            <div className="flex-1 min-w-0">
+                                <h3 className={`font-heading text-headline-sm truncate ${isSelected ? 'text-primary' : 'text-on-surface'}`}>
                                     {product.name}
                                 </h3>
-                                <p className="font-label-sm text-secondary">
+                                <p className="font-label-sm text-secondary truncate">
                                     Slug: {product.slug}
                                 </p>
                             </div>

@@ -59,9 +59,9 @@ const ResetPassword = () => {
         title="Reset Password - Naisha Creations"
         description="Set a new password for your account."
       />
-      <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
+      <div className="flex w-full h-screen bg-bg-surface-hover overflow-hidden">
         {/* Left Side (Image & Brand) */}
-        <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
+        <div className="hidden lg:block relative w-[35%] h-full bg-text-base overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000"
             alt="Candle"
@@ -69,7 +69,7 @@ const ResetPassword = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
-          <div className="absolute inset-x-14 bottom-20 text-white z-10 text-left">
+          <div className="absolute inset-x-14 bottom-20 text-text-on-brand z-10 text-left">
             <Link
               to="/"
               className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
@@ -81,7 +81,7 @@ const ResetPassword = () => {
                 Naisha Creations
               </span>
             </Link>
-            <h1 className="text-[2rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif text-white">
+            <h1 className="text-[2rem] font-bold leading-[1.1] mb-6 tracking-tight font-serif text-text-on-brand">
               Illuminate Your
               <br />
               Space with Soul.
@@ -100,7 +100,7 @@ const ResetPassword = () => {
               <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
                 Create New Password
               </h2>
-              <p className="text-gray-500 text-[15px]">
+              <p className="text-text-muted text-[15px]">
                 Your new password must be different from previously used
                 passwords.
               </p>
@@ -110,7 +110,7 @@ const ResetPassword = () => {
             <form className="space-y-6" onSubmit={handleSubmit}>
               {/* New Password */}
               <div className="space-y-1.5 text-left">
-                <label className="block text-[13px] font-medium text-gray-600">
+                <label className="block text-[13px] font-medium text-text-muted">
                   New Password
                 </label>
                 <div className="relative flex items-center">
@@ -120,12 +120,12 @@ const ResetPassword = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    className="w-full py-2.5 px-4 pr-10 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
+                    className="w-full py-2.5 px-4 pr-10 bg-bg-surface border border-bg-muted rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                    className="absolute right-4 text-text-disabled hover:text-gray-600 transition-colors cursor-pointer"
                   >
                     {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -134,7 +134,7 @@ const ResetPassword = () => {
 
               {/* Confirm Password */}
               <div className="space-y-1.5 text-left">
-                <label className="block text-[13px] font-medium text-gray-600">
+                <label className="block text-[13px] font-medium text-text-muted">
                   Confirm Password
                 </label>
                 <div className="relative flex items-center">
@@ -144,12 +144,12 @@ const ResetPassword = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="w-full py-2.5 px-4 pr-10 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
+                    className="w-full py-2.5 px-4 pr-10 bg-bg-surface border border-bg-muted rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                    className="absolute right-4 text-text-disabled hover:text-gray-600 transition-colors cursor-pointer"
                   >
                     {showConfirmPassword ? (
                       <EyeOff size={18} />
@@ -164,14 +164,14 @@ const ResetPassword = () => {
               <button
                 type="submit"
                 disabled={isResetting}
-                className="w-full py-3 mt-6 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none"
+                className="w-full py-3 mt-6 bg-coffee-600 hover:bg-coffee-700 text-text-on-brand font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none"
               >
                 {isResetting ? "Resetting Password..." : "Reset Password"}
               </button>
             </form>
 
             {/* Back to Login */}
-            <div className="text-center mt-8 text-[14px] text-gray-500">
+            <div className="text-center mt-8 text-[14px] text-text-muted">
               Back to{" "}
               <Link
                 to="/signin"
@@ -182,7 +182,7 @@ const ResetPassword = () => {
             </div>
 
             {/* Footer Links */}
-            <div className="flex justify-center gap-6 mt-16 text-[12px] text-gray-400">
+            <div className="flex justify-center gap-6 mt-16 text-[12px] text-text-disabled">
               <Link to="#" className="hover:text-gray-600 transition-colors">
                 Privacy Policy
               </Link>

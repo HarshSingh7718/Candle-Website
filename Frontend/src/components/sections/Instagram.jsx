@@ -78,7 +78,7 @@ const InstagramItem = ({ photoUrl, postUrl }) => {
       {/* Dark overlay with centered logo */}
       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
         <InstagramIcon
-          className="text-white w-12 h-12 md:w-14 md:h-14 transform scale-90 group-hover:scale-100 transition-transform duration-300"
+          className="text-text-on-brand w-12 h-12 md:w-14 md:h-14 transform scale-90 group-hover:scale-100 transition-transform duration-300"
           strokeWidth={1.5}
         />
       </div>

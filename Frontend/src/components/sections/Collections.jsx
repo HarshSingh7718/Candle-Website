@@ -51,11 +51,10 @@ const Collections = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-14 md:gap-x-8 md:gap-y-12">
               {collections.map((item) => (
                 <CollectionsCard
-                  key={item._id}
-                  id={item._id}
                   image={item.image?.url || fallbackImage}
                   title={item.name}
                   description={item.description || "Handcrafted with premium wax and curated fragrance oils for a cleaner, longer-lasting burn."}
+                  slug={item.slug}
                 />
               ))}
             </div>

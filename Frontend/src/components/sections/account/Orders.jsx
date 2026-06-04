@@ -65,7 +65,7 @@ const Orders = () => {
     if (isLoading) {
         return (
             <div className="h-[50vh] flex items-center justify-center">
-                <Loader2 className="animate-spin text-gray-400" size={48} />
+                <Loader2 className="animate-spin text-text-disabled" size={48} />
             </div>
         );
     }
@@ -74,7 +74,7 @@ const Orders = () => {
         <div ref={ordersRef} className="container mx-auto py-[8%] px-4 orders-section">
 
             {orders.length === 0 ? (
-                <div className="text-center py-10 bg-gray-50 border border-gray-200 order-item">
+                <div className="text-center py-10 bg-bg-surface-hover border border-bg-muted order-item">
                     <p className="text-lg text-paragraph mb-6">You haven't placed any orders yet.</p>
                     <Link to="/collections">
                         <MainBtn type="button" text="Start Shopping" className="bg-primary! text-white! rounded-sm! shadow-none!" />
@@ -88,7 +88,7 @@ const Orders = () => {
                             <div
                                 key={idx}
                                 onClick={() => navigate(`/account/orders/${order.rawId}`)}
-                                className="order-item opacity-0 bg-white border border-gray-200 rounded-lg p-5 cursor-pointer hover:border-primary/30 hover:shadow-md transition-all"
+                                className="order-item opacity-0 bg-bg-surface border border-bg-muted rounded-lg p-5 cursor-pointer hover:border-primary/30 hover:shadow-md transition-all"
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
@@ -141,14 +141,14 @@ const Orders = () => {
                             <div
                                 key={idx}
                                 onClick={() => navigate(`/account/orders/${order.rawId}`)}
-                                className="border border-gray-200 p-4 rounded-sm order-item opacity-0 bg-white cursor-pointer active:scale-[0.99] hover:border-gray-300 transition-all shadow-sm hover:shadow-md"
+                                className="border border-bg-muted p-4 rounded-sm order-item opacity-0 bg-bg-surface cursor-pointer active:scale-[0.99] hover:border-gray-300 transition-all shadow-sm hover:shadow-md"
                             >
-                                <div className="flex justify-between items-center mb-3 pb-3 border-b border-gray-100">
+                                <div className="flex justify-between items-center mb-3 pb-3 border-b border-bg-muted">
                                     <span className="font-semibold text-heading">{order.id}</span>
                                     <span className={`px-3 py-1 text-xs rounded-sm ${order.status.toLowerCase() === 'delivered'
                                         ? 'bg-green-50 text-green-700 border border-green-200'
                                         : order.status.toLowerCase() === 'cancelled'
-                                            ? 'bg-red-50 text-red-700 border border-red-200'
+                                            ? 'bg-red-50 text-red-700 border border-danger/30'
                                             : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
                                         }`}>
                                         {order.status}

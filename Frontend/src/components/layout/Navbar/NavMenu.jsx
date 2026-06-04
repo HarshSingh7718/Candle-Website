@@ -5,7 +5,7 @@ const NavMenu = ({ name, path }) => {
   return (
     <NavLink
       to={path}
-      className="text-sm md:text-[16px] font-medium text-white nav-link"
+      className="text-sm md:text-[16px] font-medium text-text-on-brand nav-link"
     >
       {name}
     </NavLink>

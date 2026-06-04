@@ -27,7 +27,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import { Toaster } from 'react-hot-toast';
 import OrderDetails from './pages/OrderDetails';
-import Profile from './pages/Profile';
+import Setting from './pages/Setting';
 import Coupons from './pages/Coupons';
 import AddCoupon from './pages/AddCoupon';
 import EditCoupon from './pages/EditCoupon';
@@ -76,7 +76,7 @@ function App() {
                       <Route path="/coupons" element={<Coupons />} />
                       <Route path="/coupons/add" element={<AddCoupon />} />
                       <Route path="/coupons/edit/:id" element={<EditCoupon />} />
-                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/setting" element={<Setting />} />
                     </Route>
                   </Route>
                   <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -50,13 +50,13 @@ const GlobalSearch = ({ isOpen, onClose }) => {
         onClick={onClose}
       />
       <div className={`fixed top-0 left-0 w-full z-[100] flex flex-col pt-0 transition-opacity duration-300`}>
-        <div className="w-full bg-white border-b border-gray-200">
+        <div className="w-full bg-bg-surface border-b border-bg-muted">
           <div className="container mx-auto px-4 h-19 md:h-22 flex items-center justify-between">
             <div className="flex items-center flex-1">
-              <Search className={`${isLoading ? 'animate-pulse' : ''} text-gray-500 mr-4`} size={24} />
+              <Search className={`${isLoading ? 'animate-pulse' : ''} text-text-muted mr-4`} size={24} />
               <input
                 type="text"
-                className="w-full text-lg md:text-xl font-medium outline-none bg-transparent placeholder-[#333] text-black tracking-[0.2em] uppercase"
+                className="w-full text-lg md:text-xl font-medium outline-none bg-transparent placeholder-[#333] text-text-base tracking-[0.2em] uppercase"
                 placeholder="SEARCH..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -68,7 +68,7 @@ const GlobalSearch = ({ isOpen, onClose }) => {
                 setSearchTerm('');
                 onClose();
               }}
-              className="p-2 ml-4 text-gray-400 hover:text-black transition-colors cursor-pointer"
+              className="p-2 ml-4 text-text-disabled hover:text-black transition-colors cursor-pointer"
             >
               <X size={32} strokeWidth={1} />
             </button>
@@ -81,13 +81,13 @@ const GlobalSearch = ({ isOpen, onClose }) => {
               {results.length > 0 ? (
                 <>
                   <div className="flex justify-between items-end mb-8">
-                    <p className="text-sm tracking-[0.2em] text-gray-500 uppercase font-medium m-0">
+                    <p className="text-sm tracking-[0.2em] text-text-muted uppercase font-medium m-0">
                       Top {results.length} Result{results.length !== 1 ? 's' : ''}
                     </p>
                     <Link
                       to={`/collections/candles?search=${searchTerm}`}
                       onClick={onClose}
-                      className="text-sm tracking-[0.1em] text-black font-semibold uppercase hover:text-primary transition-colors border-b border-black hover:border-primary"
+                      className="text-sm tracking-[0.1em] text-text-base font-semibold uppercase hover:text-primary transition-colors border-b border-text-base hover:border-primary"
                     >
                       View All
                     </Link>
@@ -101,7 +101,7 @@ const GlobalSearch = ({ isOpen, onClose }) => {
                   </div>
                 </>
               ) : !isLoading && debouncedTerm.length >= 2 && (
-                <div className="flex flex-col items-center justify-center mt-32 text-gray-400">
+                <div className="flex flex-col items-center justify-center mt-32 text-text-disabled">
                   <Frown size={56} strokeWidth={1} className="mb-6 opacity-30" />
                   <p className="text-xl tracking-widest text-[#333] uppercase font-light">No products match your search</p>
                 </div>

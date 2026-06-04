@@ -8,7 +8,7 @@ const FooterLink = ({ href, children }) => (
     >
       <span>{children}</span>
       {/* Animated Underline */}
-      <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-white transition-all duration-500 group-hover:w-full"></span>
+      <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-bg-surface transition-all duration-500 group-hover:w-full"></span>
     </a>
   </li>
 );

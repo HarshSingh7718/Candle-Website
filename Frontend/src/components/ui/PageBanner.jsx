@@ -51,11 +51,11 @@ function PageBanner({ title, currentPage, productName }) {
       style={{ backgroundImage: `url(${sectionBanner})` }}
     >
       <div className="container px-4 z-10 ">
-        <h3 className="text-2xl md:text-4xl text-white mb-3">
+        <h3 className="text-2xl md:text-4xl text-text-on-brand mb-3">
           {productName ? productName : title}
         </h3>
 
-        <ul className="flex items-center text-white space-x-2">
+        <ul className="flex items-center text-text-on-brand space-x-2">
           <li>
             <Link to="/" className="hover:text-white transition-colors">
               Home
@@ -63,14 +63,14 @@ function PageBanner({ title, currentPage, productName }) {
           </li>
           <ChevronRight size={18} strokeWidth={1.5} />
           <li>
-            <span className={!productName ? "text-white font-medium" : ""}>
+            <span className={!productName ? "text-text-on-brand font-medium" : ""}>
               {currentPage}
             </span>
           </li>
           {productName && (
             <>
               <ChevronRight size={18} strokeWidth={1.5} />
-              <li className="text-white font-medium truncate max-w-[200px] md:max-w-none">
+              <li className="text-text-on-brand font-medium truncate max-w-[200px] md:max-w-none">
                 {productName}
               </li>
             </>

@@ -132,9 +132,9 @@ const Inventory = () => {
                             <span className="material-symbols-outlined text-outline">image</span>
                           )}
                         </div>
-                        <div>
-                          <div className="font-semibold text-on-surface">{product.name}</div>
-                          <div className="text-sm text-on-surface-variant">{product.category?.name || "Uncategorized"}</div>
+                        <div className='min-w-0'>
+                          <div className="truncate font-semibold text-on-surface">{product.name}</div>
+                          <div className=" truncate text-sm text-on-surface-variant">{product.category[0]?.name || "Uncategorized"}</div>
                         </div>
                       </div>
                     </td>

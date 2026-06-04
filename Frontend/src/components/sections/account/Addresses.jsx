@@ -18,7 +18,7 @@ const Addresses = () => {
 
   const { addAddress, updateAddress, deleteAddress, isAdding, isUpdating } =
     useAddress();
-  const { lookupPincode, isLookingUp, pincodeError } = usePincodeLookup(); // 👉 Initialize Hook
+  const { lookupPincode, isLookingUp, pincodeError, isManualEntryEnabled } = usePincodeLookup(); // 👉 Initialize Hook
 
   // State to toggle between the list view and the form view
   const [showForm, setShowForm] = useState(false);
@@ -165,8 +165,8 @@ const Addresses = () => {
   // ==========================================
   if (showForm) {
     return (
-      <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
+      <div className="bg-bg-surface p-8 border border-bg-muted shadow-sm rounded-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex justify-between items-center mb-6 border-b border-bg-muted pb-3">
           <h4 className="text-xl font-semibold text-heading">
             {editingId ? "Edit Address" : "Add New Address"}
           </h4>
@@ -181,7 +181,7 @@ const Addresses = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 First Name
               </label>
               <input
@@ -190,11 +190,11 @@ const Addresses = () => {
                 value={formData.firstName}
                 onChange={handleChange}
                 type="text"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 Last Name
               </label>
               <input
@@ -203,13 +203,13 @@ const Addresses = () => {
                 value={formData.lastName}
                 onChange={handleChange}
                 type="text"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
 
             {/* 👉 REPLACED SINGLE ADDRESS WITH THREE SPECIFIC FIELDS */}
             <div className="space-y-1.5 md:col-span-2">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 Flat / House No.
               </label>
               <input
@@ -219,12 +219,12 @@ const Addresses = () => {
                 onChange={handleChange}
                 type="text"
                 placeholder="Flat, House no., Building, Company, Apartment"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
 
             <div className="space-y-1.5 md:col-span-2">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 Area / Street
               </label>
               <input
@@ -234,12 +234,12 @@ const Addresses = () => {
                 onChange={handleChange}
                 type="text"
                 placeholder="Area, Street, Sector, Village"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
 
             <div className="space-y-1.5 md:col-span-2">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 Landmark (Optional)
               </label>
               <input
@@ -248,13 +248,13 @@ const Addresses = () => {
                 onChange={handleChange}
                 type="text"
                 placeholder="E.g. Near Apollo Hospital"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
 
             {/* 👉 PINCODE FIELD WITH SPINNER */}
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 Pincode / ZIP
               </label>
               <div className="relative">
@@ -266,21 +266,29 @@ const Addresses = () => {
                   type="text"
                   maxLength={6}
                   minLength={6}
-                  className={`w-full py-2.5 px-4 bg-white border rounded-sm focus:outline-none text-[14px] ${pincodeError ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-gray-400"}`}
+                  className={`w-full py-2.5 px-4 bg-bg-surface border rounded-sm focus:outline-none text-[14px] ${pincodeError ? "border-danger/50 focus:border-red-400" : "border-bg-muted focus:border-gray-400"}`}
                 />
                 {isLookingUp && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                    <Loader2 className="w-4 h-4 animate-spin text-text-disabled" />
                   </div>
                 )}
               </div>
-              {pincodeError && (
-                <p className="text-red-500 text-[11px] mt-1">{pincodeError}</p>
+              {pincodeError && !isManualEntryEnabled && (
+                <p className="text-danger text-[11px] mt-1">{pincodeError}</p>
+              )}
+              {isManualEntryEnabled && (
+                <div className="flex items-start gap-2 text-warning bg-warning/10 p-2 rounded-sm border border-warning/50 mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  <p className="text-[12px]">
+                    {pincodeError || "Pincode lookup failed. Please enter your City and State manually."}
+                  </p>
+                </div>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 City
               </label>
               <input
@@ -289,11 +297,11 @@ const Addresses = () => {
                 value={formData.city}
                 onChange={handleChange}
                 type="text"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 State
               </label>
               <input
@@ -302,11 +310,11 @@ const Addresses = () => {
                 value={formData.state}
                 onChange={handleChange}
                 type="text"
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-600">
+              <label className="block text-[13px] font-medium text-text-muted">
                 Mobile Number
               </label>
               <input
@@ -317,7 +325,7 @@ const Addresses = () => {
                 type="tel"
                 maxLength={10}
                 minLength={10}
-                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
+                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-sm focus:outline-none focus:border-gray-400 text-[14px]"
               />
             </div>
           </div>
@@ -331,22 +339,22 @@ const Addresses = () => {
               checked={isOnlyAddress ? true : formData.isDefault}
               onChange={handleChange}
               disabled={isOnlyAddress}
-              className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black accent-black disabled:opacity-50"
+              className="w-4 h-4 text-text-base border-bg-muted rounded focus:ring-text-base accent-text-base disabled:opacity-50"
             />
             <label
               htmlFor="isDefault"
-              className={`text-[14px] text-gray-600 ${isOnlyAddress ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
+              className={`text-[14px] text-text-muted ${isOnlyAddress ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
             >
               Set as default shipping address{" "}
               {isOnlyAddress && "(Required for first address)"}
             </label>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-bg-muted">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 py-3 bg-coffee hover:bg-gray-900 text-white font-bold rounded-sm text-[14px] transition-all disabled:bg-gray-400 cursor-pointer"
+              className="px-8 py-3 bg-coffee hover:bg-gray-900 text-text-on-brand font-bold rounded-sm text-[14px] transition-all disabled:bg-gray-400 cursor-pointer"
             >
               {isSubmitting
                 ? "Saving..."
@@ -364,8 +372,8 @@ const Addresses = () => {
   // RENDER: LIST VIEW
   // ==========================================
   return (
-    <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm animate-in fade-in duration-500">
-      <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
+    <div className="bg-bg-surface p-8 border border-bg-muted shadow-sm rounded-sm animate-in fade-in duration-500">
+      <div className="flex justify-between items-center mb-6 border-b border-bg-muted pb-3">
         <h4 className="text-xl font-semibold text-heading">Saved Addresses</h4>
         <button
           onClick={() => handleOpenForm()}
@@ -393,16 +401,16 @@ const Addresses = () => {
           {addresses.map((addr) => (
             <div
               key={addr._id}
-              className={`relative p-6 border rounded-sm transition-all ${addr.isDefault ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-300"}`}
+              className={`relative p-6 border rounded-sm transition-all ${addr.isDefault ? "border-text-base bg-bg-surface-hover" : "border-bg-muted hover:border-gray-300"}`}
             >
               {addr.isDefault && (
-                <span className="absolute -top-3 left-4 bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm flex items-center gap-1">
+                <span className="absolute -top-3 left-4 bg-primary text-text-on-brand text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm flex items-center gap-1">
                   <CheckCircle2 size={12} /> Default
                 </span>
               )}
 
-              <address className="not-italic text-[14px] text-gray-600 space-y-1 mb-4 mt-2">
-                <p className="font-semibold text-black text-[15px] mb-2">
+              <address className="not-italic text-[14px] text-text-muted space-y-1 mb-4 mt-2">
+                <p className="font-semibold text-text-base text-[15px] mb-2">
                   {addr.firstName} {addr.lastName}
                 </p>
                 <p>{addr.address}</p>
@@ -412,16 +420,16 @@ const Addresses = () => {
                 <p className="pt-2">Mobile: +91 {addr.phone}</p>
               </address>
 
-              <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-4 pt-4 border-t border-bg-muted">
                 <button
                   onClick={() => handleOpenForm(addr)}
-                  className="flex items-center gap-1 text-[13px] font-medium text-gray-500 hover:text-black transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-[13px] font-medium text-text-muted hover:text-black transition-colors cursor-pointer"
                 >
                   <Edit2 size={14} /> Edit
                 </button>
                 <button
                   onClick={() => handleDelete(addr._id)}
-                  className="flex items-center gap-1 text-[13px] font-medium text-red-500 hover:text-red-700 transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-[13px] font-medium text-danger hover:text-red-700 transition-colors cursor-pointer"
                 >
                   <Trash2 size={14} /> Delete
                 </button>

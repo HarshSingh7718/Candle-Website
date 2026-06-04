@@ -18,7 +18,7 @@ const Navbar = ({ toggleSidebar }) => {
             <img
               alt="Administrator profile"
               className="w-full h-full object-cover cursor-pointer"
-              src="https://ekamonline.com/cdn/shop/files/vanilla_candle_copy.jpg?v=1772674641&width=800"
+              src="/favicon/favicon.svg"
             />
           </a>
         </div>

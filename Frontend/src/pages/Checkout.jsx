@@ -38,7 +38,7 @@ const Checkout = () => {
     useCheckout();
 
   const { addAddress, isAdding } = useAddress();
-  const { lookupPincode, isLookingUp, pincodeError } = usePincodeLookup();
+  const { lookupPincode, isLookingUp, pincodeError, isManualEntryEnabled } = usePincodeLookup();
 
   // --- State ---
   const savedAddresses = user?.addresses || [];
@@ -408,7 +408,7 @@ const Checkout = () => {
                         value={shippingAddress.pinCode}
                         onChange={handleShippingChange}
                         className={`w-full p-3.5 border rounded-md ${
-                          pincodeError ? "border-red-300" : "border-muted"
+                          pincodeError ? "border-danger/50" : "border-muted"
                         }`}
                       />
                       {isLookingUp && (
@@ -422,18 +422,36 @@ const Checkout = () => {
                       name="city"
                       placeholder="City"
                       value={shippingAddress.city}
-                      readOnly
-                      className="w-full p-3.5 border border-muted/20 bg-muted/10 rounded-md"
+                      onChange={isManualEntryEnabled ? handleShippingChange : undefined}
+                      readOnly={!isManualEntryEnabled}
+                      className={`w-full p-3.5 border rounded-md ${
+                        isManualEntryEnabled 
+                          ? "border-muted focus:outline-none focus:ring-1 focus:ring-coffee" 
+                          : "border-muted/20 bg-muted/10"
+                      }`}
                     />
                     <input
                       type="text"
                       name="state"
                       placeholder="State"
                       value={shippingAddress.state}
-                      readOnly
-                      className="w-full p-3.5 border border-muted/20 bg-muted/10 rounded-md"
+                      onChange={isManualEntryEnabled ? handleShippingChange : undefined}
+                      readOnly={!isManualEntryEnabled}
+                      className={`w-full p-3.5 border rounded-md ${
+                        isManualEntryEnabled 
+                          ? "border-muted focus:outline-none focus:ring-1 focus:ring-coffee" 
+                          : "border-muted/20 bg-muted/10"
+                      }`}
                     />
                   </div>
+                  {isManualEntryEnabled && (
+                    <div className="flex items-start gap-2 text-warning bg-warning/10 p-3 rounded-md border border-warning/50 mt-2">
+                      <HelpCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">
+                        {pincodeError || "Pincode lookup failed. Please enter your City and State manually."}
+                      </p>
+                    </div>
+                  )}
                   <input
                     type="text"
                     name="phone"
@@ -576,20 +594,20 @@ const Checkout = () => {
                 <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <CheckCircle2 size={16} className="text-green-600" />
+                      <CheckCircle2 size={16} className="text-success" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-green-800 tracking-wider">{appliedCoupon.code}</span>
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Applied</span>
                       </div>
-                      <p className="text-xs text-green-600 mt-0.5">You're saving {formatCurrency(discountAmount)} on this order</p>
+                      <p className="text-xs text-success mt-0.5">You're saving {formatCurrency(discountAmount)} on this order</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => { removeCoupon(); setCouponCode(""); }}
-                    className="p-1.5 text-green-600 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+                    className="p-1.5 text-success hover:text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
                   >
                     <X size={16} />
                   </button>
@@ -674,7 +692,7 @@ const Checkout = () => {
                 <span>{formatCurrency(billing?.itemsPrice || 0)}</span>
               </div>
               {appliedCoupon && discountAmount > 0 && (
-                <div className="flex justify-between text-sm text-green-600">
+                <div className="flex justify-between text-sm text-success">
                   <span className="flex items-center gap-1">
                     <Tag size={12} />
                     Discount ({appliedCoupon.code})

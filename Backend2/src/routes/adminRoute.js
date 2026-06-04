@@ -12,6 +12,7 @@ import { initCustomization, createOption, updateOption, deleteOption, getAllStep
 import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
 import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
 import { createCoupon, getAllCoupons, getSingleCoupon, updateCoupon, toggleCouponStatus, deleteCoupon } from "../controllers/couponController.js";
+import { getSettings, updateSettings } from "../controllers/settingsController.js";
 
 const router = express.Router();
 
@@ -380,6 +381,24 @@ router.delete(
     isAuthenticated,
     isAdmin,
     deleteCoupon
+);
+
+// ==========================
+//  SETTINGS ROUTES
+// ==========================
+
+router.get(
+    "/settings",
+    isAuthenticated,
+    isAdmin,
+    getSettings
+);
+
+router.put(
+    "/settings",
+    isAuthenticated,
+    isAdmin,
+    updateSettings
 );
 
 export default router;

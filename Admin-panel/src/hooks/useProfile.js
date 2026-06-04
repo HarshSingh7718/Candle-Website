@@ -44,3 +44,46 @@ export const useChangeAdminPassword = () => {
         }
     });
 };
+
+/**
+ * useRequestPhoneOtp — Admin: Sends OTP to a new phone number.
+ */
+export const useRequestPhoneOtp = () => {
+    return useMutation({
+        mutationFn: async (newPhoneNumber) => {
+            const { data } = await api.post('/user/profile/request-phone-otp', { newPhoneNumber });
+            return data;
+        },
+        onSuccess: (data) => {
+            toast.success(data.message || "OTP sent to your new phone number!");
+        },
+        onError: (err) => {
+            toast.error(err.response?.data?.message || "Failed to send OTP.");
+        }
+    });
+};
+
+/**
+ * useVerifyPhoneUpdate — Admin: Verifies OTP and updates the phone number.
+ */
+export const useVerifyPhoneUpdate = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ newPhoneNumber, otp }) => {
+            const { data } = await api.put('/user/profile/phone', { newPhoneNumber, otp });
+            return data;
+        },
+        onSuccess: (data) => {
+            if (data.user) {
+                queryClient.setQueryData(['adminProfile'], data.user);
+            } else {
+                queryClient.invalidateQueries({ queryKey: ['adminProfile'] });
+            }
+            toast.success(data.message || "Phone number updated successfully!");
+        },
+        onError: (err) => {
+            toast.error(err.response?.data?.message || "Verification failed.");
+        }
+    });
+};

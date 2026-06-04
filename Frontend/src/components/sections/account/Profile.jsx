@@ -48,8 +48,8 @@ const Profile = () => {
         <div className="space-y-8 animate-in fade-in duration-500">
 
             {/* Account Details Card */}
-            <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
-                <h4 className="text-xl font-semibold mb-6 border-b border-gray-200 pb-3 text-heading">Account Details</h4>
+            <div className="bg-bg-surface p-8 border border-bg-muted shadow-sm rounded-sm">
+                <h4 className="text-xl font-semibold mb-6 border-b border-bg-muted pb-3 text-heading">Account Details</h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -65,7 +65,7 @@ const Profile = () => {
                         <div className="flex items-center gap-2">
                             <p className="font-medium text-heading">{user?.phoneNumber ? `+91 ${user.phoneNumber}` : 'Not provided'}</p>
                             {user?.phoneNumber && !user?.isPhoneVerified && (
-                                <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">Unverified</span>
+                                <span className="text-[10px] bg-red-100 text-danger px-2 py-0.5 rounded-full font-bold">Unverified</span>
                             )}
                         </div>
                     </div>
@@ -82,12 +82,12 @@ const Profile = () => {
             </div>
 
             {/* 👉 NEW: Change Password Card */}
-            <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
-                <h4 className="text-xl font-semibold mb-6 border-b border-gray-200 pb-3 text-heading">Security</h4>
+            <div className="bg-bg-surface p-8 border border-bg-muted shadow-sm rounded-sm">
+                <h4 className="text-xl font-semibold mb-6 border-b border-bg-muted pb-3 text-heading">Security</h4>
 
                 <form onSubmit={handlePasswordSubmit} className="max-w-md space-y-5 animate-in fade-in slide-in-from-top-2">
                     <div className="space-y-1.5">
-                        <label className="block text-[13px] font-medium text-gray-600">Current Password</label>
+                        <label className="block text-[13px] font-medium text-text-muted">Current Password</label>
                         <input
                             required
                             name="oldPassword"
@@ -95,11 +95,11 @@ const Profile = () => {
                             onChange={handlePasswordChange}
                             type="password"
                             placeholder="••••••••"
-                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
+                            className="w-full py-2.5 px-4 bg-bg-surface-hover border border-bg-muted rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="block text-[13px] font-medium text-gray-600">New Password</label>
+                        <label className="block text-[13px] font-medium text-text-muted">New Password</label>
                         <input
                             required
                             name="newPassword"
@@ -107,7 +107,7 @@ const Profile = () => {
                             onChange={handlePasswordChange}
                             type="password"
                             placeholder="••••••••"
-                            className="w-full py-2.5 px-4 bg-[#f9fafb] border border-gray-200 rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
+                            className="w-full py-2.5 px-4 bg-bg-surface-hover border border-bg-muted rounded-[16px] focus:outline-none focus:border-coffee-600 focus:bg-white focus:ring-1 focus:ring-coffee-600 transition-all text-[14px]"
                         />
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -123,7 +123,7 @@ const Profile = () => {
                                 setIsChangingPassword(false);
                                 setPasswordData({ oldPassword: '', newPassword: '' });
                             }}
-                            className="w-full sm:w-auto px-6 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-sm transition-colors cursor-pointer"
+                            className="w-full sm:w-auto px-6 py-2.5 text-[14px] font-semibold text-text-muted hover:text-gray-900 bg-bg-surface border border-bg-muted hover:bg-gray-50 rounded-sm transition-colors cursor-pointer"
                         >
                             Cancel
                         </button> */}
@@ -132,8 +132,8 @@ const Profile = () => {
             </div>
 
             {/* Address Card */}
-            <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
-                <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
+            <div className="bg-bg-surface p-8 border border-bg-muted shadow-sm rounded-sm">
+                <div className="flex justify-between items-center mb-6 border-b border-bg-muted pb-3">
                     <h4 className="text-xl font-semibold text-heading">Default Address</h4>
                 </div>
 

@@ -38,7 +38,7 @@ const NotFound = () => {
 
                     <Link
                         to="/"
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-stone-900 text-white hover:bg-stone-800 rounded-full transition-colors font-medium shadow-sm cursor-pointer"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-stone-900 text-text-on-brand hover:bg-stone-800 rounded-full transition-colors font-medium shadow-sm cursor-pointer"
                     >
                         <Home size={18} />
                         Back to Home

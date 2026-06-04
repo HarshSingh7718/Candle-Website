@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 import Navbar from "./components/layout/Navbar/Navbar";
 import { useRef, useEffect, lazy, Suspense } from "react";
@@ -43,7 +44,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 // Simple loading indicator for Suspense fallback
 const PageLoader = () => (
-  <div className="min-h-screen bg-black flex items-center justify-center">
+  <div className="min-h-screen bg-text-base flex items-center justify-center">
     <div className="w-12 h-12 border-4 border-coffee border-t-transparent rounded-full animate-spin"></div>
   </div>
 );
@@ -88,8 +89,6 @@ function App() {
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
                   <Route
                     path="/collections/candles/product/:slug"
                     element={<ShopDetails />}
@@ -111,17 +110,23 @@ function App() {
                   <Route path="/signin" element={<SignIn />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/verify-otp" element={<VerifyOTP />} />
-                  <Route
-                    path="/complete-google-profile"
-                    element={<CompleteGoogleProfile />}
-                  />
 
-                  <Route path="/account" element={<MyAccount />}>
-                    <Route index element={<Profile />} />
-                    <Route path="orders" element={<Orders />} />
-                    <Route path="wishlist" element={<Wishlist />} />
-                    <Route path="addresses" element={<Addresses />} />
-                    <Route path="orders/:orderId" element={<ViewOrder />} />
+
+                  {/* === PROTECTED ROUTES === */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route
+                      path="/complete-google-profile"
+                      element={<CompleteGoogleProfile />}
+                    />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/account" element={<MyAccount />}>
+                      <Route index element={<Profile />} />
+                      <Route path="orders" element={<Orders />} />
+                      <Route path="wishlist" element={<Wishlist />} />
+                      <Route path="addresses" element={<Addresses />} />
+                      <Route path="orders/:orderId" element={<ViewOrder />} />
+                    </Route>
                   </Route>
                   {/* 404 page */}
                   <Route path="*" element={<NotFound />} />

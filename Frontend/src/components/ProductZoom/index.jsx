@@ -107,7 +107,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   size={20}
                   className={`transition-all ${
                     isWishlisted
-                      ? "fill-red-500 text-red-500"
+                      ? "fill-red-500 text-danger"
                       : "text-muted hover:text-red-500"
                   }`}
                 />
@@ -141,7 +141,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   size={20}
                   className={`transition-all ${
                     isWishlisted
-                      ? "fill-red-500 text-red-500"
+                      ? "fill-red-500 text-danger"
                       : "text-muted hover:text-red-500"
                   }`}
                 />
@@ -338,7 +338,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
         >
           {/* Close Button */}
           <button 
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white hover:text-gray-300 p-2 cursor-pointer z-[60] transition-colors"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-text-on-brand hover:text-gray-300 p-2 cursor-pointer z-[60] transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               setIsLightboxOpen(false);
@@ -372,7 +372,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
                   }}
                   className={`w-16 h-20 sm:w-20 sm:h-24 border-2 overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
                     activeImageIndex === idx
-                      ? "border-white scale-105"
+                      ? "border-text-on-brand scale-105"
                       : "border-transparent opacity-50 hover:opacity-100"
                   }`}
                 >

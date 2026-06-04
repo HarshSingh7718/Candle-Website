@@ -37,6 +37,21 @@
   --color-coffee-800: #5f3e3a;
   --color-coffee-900: #503734;
   --color-coffee-950: #291a18;
+  /* Semantic Tokens for Phase 5 */
+  --color-brand-primary: #4a312c;
+  --color-brand-secondary: #c48a3a;
+  --color-bg-canvas: #faf7f2;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-hover: #f5f0ea;
+  --color-bg-muted: #e8dfd3;
+  --color-text-base: #221f1f;
+  --color-text-muted: #625b57;
+  --color-text-disabled: #a79f99;
+  --color-text-on-brand: #ffffff;
+  --color-success: #5b8c5a;
+  --color-warning: #d97706;
+  --color-danger: #c2410c;
+  --color-info: #7c5a43;
 }
 
 body {

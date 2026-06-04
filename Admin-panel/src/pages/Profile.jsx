@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useAdminProfile, useUpdateAdminProfile, useChangeAdminPassword } from '../hooks/useProfile';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { useAdminProfile, useUpdateAdminProfile, useChangeAdminPassword, useRequestPhoneOtp, useVerifyPhoneUpdate } from '../hooks/useProfile';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
     const { data: user, isLoading } = useAdminProfile();
     const updateProfile = useUpdateAdminProfile();
     const changePassword = useChangeAdminPassword();
+    const requestOtpMutation = useRequestPhoneOtp();
+    const verifyPhoneMutation = useVerifyPhoneUpdate();
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -18,6 +21,12 @@ const Profile = () => {
         oldPassword: '',
         newPassword: '',
     });
+
+    // OTP modal state
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
+    const [pendingPhoneNumber, setPendingPhoneNumber] = useState('');
+    const inputRefs = useRef([]);
 
     useEffect(() => {
         if (user) {
@@ -38,9 +47,44 @@ const Profile = () => {
         setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
     };
 
-    const handleProfileSubmit = (e) => {
+    /**
+     * handleProfileSubmit — If phone changed, trigger OTP flow.
+     * Otherwise, save name/email normally (phoneNumber stripped by backend).
+     */
+    const handleProfileSubmit = async (e) => {
         e.preventDefault();
-        updateProfile.mutate(formData);
+
+        const phoneChanged = formData.phoneNumber !== (user?.phoneNumber || '');
+        const nameOrEmailChanged = formData.firstName !== (user?.firstName || '') || 
+                                   formData.lastName !== (user?.lastName || '') || 
+                                   formData.email !== (user?.email || '');
+
+        if (phoneChanged) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+            if (!phoneRegex.test(formData.phoneNumber)) {
+                return toast.error("Enter a valid 10-digit phone number");
+            }
+
+            setPendingPhoneNumber(formData.phoneNumber);
+            try {
+                await requestOtpMutation.mutateAsync(formData.phoneNumber);
+                setOtpDigits(['', '', '', '', '', '']);
+                setShowOtpModal(true);
+                setTimeout(() => inputRefs.current[0]?.focus(), 100);
+            } catch {
+                // Error toast handled by hook
+            }
+
+            if (nameOrEmailChanged) {
+                const { phoneNumber, ...nonPhoneData } = formData;
+                updateProfile.mutate(nonPhoneData);
+            }
+        } else {
+            if (nameOrEmailChanged) {
+                const { phoneNumber, ...nonPhoneData } = formData;
+                updateProfile.mutate(nonPhoneData);
+            }
+        }
     };
 
     const handlePasswordSubmit = (e) => {
@@ -56,6 +100,61 @@ const Profile = () => {
         });
     };
 
+    // ==========================================
+    // OTP INPUT HANDLERS
+    // ==========================================
+    const handleOtpChange = (index, value) => {
+        if (!/^\d*$/.test(value)) return;
+        const newDigits = [...otpDigits];
+        newDigits[index] = value.slice(-1);
+        setOtpDigits(newDigits);
+        if (value && index < 5) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handleOtpKeyDown = (index, e) => {
+        if (e.key === 'Backspace' && !otpDigits[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+    };
+
+    const handleOtpPaste = (e) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        const newDigits = [...otpDigits];
+        for (let i = 0; i < pasted.length; i++) {
+            newDigits[i] = pasted[i];
+        }
+        setOtpDigits(newDigits);
+        inputRefs.current[Math.min(pasted.length, 5)]?.focus();
+    };
+
+    const handleOtpSubmit = async () => {
+        const otp = otpDigits.join('');
+        if (otp.length !== 6) {
+            return toast.error("Please enter the complete 6-digit OTP");
+        }
+        try {
+            await verifyPhoneMutation.mutateAsync({ newPhoneNumber: pendingPhoneNumber, otp });
+            setShowOtpModal(false);
+            setOtpDigits(['', '', '', '', '', '']);
+            setPendingPhoneNumber('');
+        } catch {
+            // Error toast handled by hook
+        }
+    };
+
+    const handleResendOtp = async () => {
+        try {
+            await requestOtpMutation.mutateAsync(pendingPhoneNumber);
+            setOtpDigits(['', '', '', '', '', '']);
+            setTimeout(() => inputRefs.current[0]?.focus(), 100);
+        } catch {
+            // Error toast handled by hook
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-screen">
@@ -65,108 +164,171 @@ const Profile = () => {
     }
 
     return (
-        <main className="p-gutter md:p-margin-page max-w-container-max mx-auto w-full space-y-8">
-            <div>
-                <h2 className="font-heading text-headline-xl text-on-background mb-2">Admin Profile</h2>
-                <p className="font-body-md text-body-md text-on-surface-variant">
-                    Manage your personal information and security settings.
-                </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Profile Info Form */}
-                <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6">
-                    <h3 className="text-lg font-bold mb-6 text-on-surface">Personal Information</h3>
-                    <form onSubmit={handleProfileSubmit} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+        <>
+            <div className="w-full space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Profile Info Form */}
+                    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6">
+                        <h3 className="text-lg font-bold mb-6 text-on-surface">Personal Information</h3>
+                        <form onSubmit={handleProfileSubmit} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-on-surface-variant mb-1">First Name</label>
+                                    <input
+                                        type="text"
+                                        name="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleFormChange}
+                                        className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-on-surface-variant mb-1">Last Name</label>
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleFormChange}
+                                        className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    />
+                                </div>
+                            </div>
                             <div>
-                                <label className="block text-sm font-medium text-on-surface-variant mb-1">First Name</label>
+                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Email Address</label>
                                 <input
-                                    type="text"
-                                    name="firstName"
-                                    value={formData.firstName}
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
                                     onChange={handleFormChange}
                                     className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Last Name</label>
+                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Phone Number</label>
                                 <input
                                     type="text"
-                                    name="lastName"
-                                    value={formData.lastName}
+                                    name="phoneNumber"
+                                    value={formData.phoneNumber}
                                     onChange={handleFormChange}
+                                    maxLength={10}
                                     className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
                                 />
+                                {formData.phoneNumber !== (user?.phoneNumber || '') && formData.phoneNumber.length > 0 && (
+                                    <p className="text-xs text-orange-600 mt-1">
+                                        ⚠ Changing your number will require OTP verification
+                                    </p>
+                                )}
                             </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-on-surface-variant mb-1">Email Address</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleFormChange}
-                                className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-on-surface-variant mb-1">Phone Number</label>
-                            <input
-                                type="text"
-                                name="phoneNumber"
-                                value={formData.phoneNumber}
-                                onChange={handleFormChange}
-                                className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={updateProfile.isPending}
-                            className="mt-4 bg-[#8d4b00] text-white px-6 py-2 rounded-md hover:bg-[#b15f00] transition-colors disabled:opacity-50"
-                        >
-                            {updateProfile.isPending ? "Saving..." : "Save Profile"}
-                        </button>
-                    </form>
-                </div>
+                            <button
+                                type="submit"
+                                disabled={updateProfile.isPending || requestOtpMutation.isPending}
+                                className="mt-4 bg-[#8d4b00] text-white px-6 py-2 rounded-md hover:bg-[#b15f00] transition-colors disabled:opacity-50"
+                            >
+                                {updateProfile.isPending || requestOtpMutation.isPending ? "Saving..." : "Save Profile"}
+                            </button>
+                        </form>
+                    </div>
 
-                {/* Change Password Form */}
-                <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6 h-fit">
-                    <h3 className="text-lg font-bold mb-6 text-on-surface">Change Password</h3>
-                    <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-on-surface-variant mb-1">Current Password</label>
-                            <input
-                                type="password"
-                                name="oldPassword"
-                                value={passwordData.oldPassword}
-                                onChange={handlePasswordChange}
-                                className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-on-surface-variant mb-1">New Password</label>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                value={passwordData.newPassword}
-                                onChange={handlePasswordChange}
-                                className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={changePassword.isPending}
-                            className="mt-4 bg-black text-white px-6 py-2 rounded-md hover:bg-black/80 transition-colors disabled:opacity-50"
-                        >
-                            {changePassword.isPending ? "Updating..." : "Update Password"}
-                        </button>
-                    </form>
+                    {/* Change Password Form */}
+                    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6 h-fit">
+                        <h3 className="text-lg font-bold mb-6 text-on-surface">Change Password</h3>
+                        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Current Password</label>
+                                <input
+                                    type="password"
+                                    name="oldPassword"
+                                    value={passwordData.oldPassword}
+                                    onChange={handlePasswordChange}
+                                    className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-on-surface-variant mb-1">New Password</label>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={passwordData.newPassword}
+                                    onChange={handlePasswordChange}
+                                    className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={changePassword.isPending}
+                                className="mt-4 bg-black text-white px-6 py-2 rounded-md hover:bg-black/80 transition-colors disabled:opacity-50"
+                            >
+                                {changePassword.isPending ? "Updating..." : "Update Password"}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </main>
+
+            {/* ==========================================
+                OTP VERIFICATION MODAL (Admin)
+            ========================================== */}
+            {showOtpModal && createPortal(
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl p-8 w-full max-w-md shadow-2xl">
+                        <div className="text-center mb-8">
+                            <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span className="material-symbols-outlined text-primary text-[28px]">smartphone</span>
+                            </div>
+                            <h3 className="text-xl font-bold text-on-surface">Verify New Number</h3>
+                            <p className="text-sm text-on-surface-variant mt-2">
+                                Enter the 6-digit code sent to <span className="font-semibold text-on-surface">+91 {pendingPhoneNumber}</span>
+                            </p>
+                        </div>
+
+                        <div className="flex justify-center gap-3 mb-8" onPaste={handleOtpPaste}>
+                            {otpDigits.map((digit, index) => (
+                                <input
+                                    key={index}
+                                    ref={(el) => (inputRefs.current[index] = el)}
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={1}
+                                    value={digit}
+                                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                                    className="w-12 h-14 text-center text-xl font-bold border-2 border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all bg-surface"
+                                />
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={handleOtpSubmit}
+                            disabled={verifyPhoneMutation.isPending || otpDigits.join('').length !== 6}
+                            className="w-full py-3 bg-[#8d4b00] hover:bg-[#b15f00] text-white font-bold rounded-lg transition-all disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
+                        >
+                            {verifyPhoneMutation.isPending ? "Verifying..." : "Verify & Update Number"}
+                        </button>
+
+                        <div className="flex items-center justify-between mt-6">
+                            <button
+                                type="button"
+                                onClick={handleResendOtp}
+                                disabled={requestOtpMutation.isPending}
+                                className="text-sm text-primary hover:text-primary-container font-medium cursor-pointer disabled:text-gray-400"
+                            >
+                                {requestOtpMutation.isPending ? "Sending..." : "Resend OTP"}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setShowOtpModal(false); setOtpDigits(['', '', '', '', '', '']); }}
+                                className="text-sm text-on-surface-variant hover:text-on-surface font-medium cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+        </>
     );
 };
 

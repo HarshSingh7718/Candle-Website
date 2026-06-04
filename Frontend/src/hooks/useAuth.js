@@ -271,3 +271,49 @@ export const useChangePassword = () => {
     }
   });
 };
+
+/**
+ * useRequestPhoneOtp — Sends OTP to a new phone number for verification.
+ * Triggered when user changes their phone number in EditProfile.
+ */
+export const useRequestPhoneOtp = () => {
+  return useMutation({
+    mutationFn: async (newPhoneNumber) => {
+      const { data } = await API.post('/user/profile/request-phone-otp', { newPhoneNumber });
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "OTP sent to your new phone number!");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to send OTP. Please try again.");
+    }
+  });
+};
+
+/**
+ * useVerifyPhoneUpdate — Verifies the OTP and updates the phone number.
+ * Called after the user enters the 6-digit code in the OTP modal.
+ */
+export const useVerifyPhoneUpdate = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ newPhoneNumber, otp }) => {
+      const { data } = await API.put('/user/profile/phone', { newPhoneNumber, otp });
+      return data;
+    },
+    onSuccess: (data) => {
+      // Update user cache with the new phone number immediately
+      if (data.user) {
+        queryClient.setQueryData(['user'], data.user);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+      }
+      toast.success(data.message || "Phone number updated successfully!");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Verification failed. Please try again.");
+    }
+  });
+};

@@ -138,7 +138,7 @@ const CollectionProducts = () => {
               ref={sidebarRef}
               className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1"
             >
-              <div className="bg-white p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
+              <div className="bg-bg-surface p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
                 <h3 className="text-xl font-medium mb-4 sidebar-title">
                   Search
                 </h3>
@@ -159,13 +159,13 @@ const CollectionProducts = () => {
                 </div>
               </div>
 
-              <div className="bg-white hidden md:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
+              <div className="bg-bg-surface hidden md:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
                 <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
                   Price Filter
                   {priceRange !== null && (
                     <button
                       onClick={() => setPriceRange(null)}
-                      className="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded cursor-pointer hover:bg-red-200 transition-colors"
+                      className="text-[10px] bg-red-100 text-danger px-2 py-1 rounded cursor-pointer hover:bg-red-200 transition-colors"
                     >
                       Reset
                     </button>
@@ -192,7 +192,7 @@ const CollectionProducts = () => {
                   </div>
                   <div className="relative group mt-6">
                     <select
-                      className="w-full appearance-none bg-white border border-stone-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-1 ring-primary/20"
+                      className="w-full appearance-none bg-bg-surface border border-stone-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-1 ring-primary/20"
                       onChange={(e) => setSortOption(e.target.value)}
                     >
                       <option value="latest">Sort by latest</option>
@@ -236,8 +236,8 @@ const CollectionProducts = () => {
                           onClick={() => handlePageChange(index + 1)}
                           className={`w-10 h-10 border rounded-sm transition-all cursor-pointer font-medium ${
                             currentPage === index + 1
-                              ? "bg-primary text-white border-primary"
-                              : "bg-white text-stone-600 border-stone-200 hover:border-primary hover:text-primary"
+                              ? "bg-primary text-text-on-brand border-primary"
+                              : "bg-bg-surface text-stone-600 border-stone-200 hover:border-primary hover:text-primary"
                           }`}
                         >
                           {index + 1}
@@ -247,7 +247,7 @@ const CollectionProducts = () => {
                   )}
                 </>
               ) : (
-                <div className="text-center py-20 bg-white rounded-lg border border-dashed border-stone-200 empty-state">
+                <div className="text-center py-20 bg-bg-surface rounded-lg border border-dashed border-stone-200 empty-state">
                   <Filter className="mx-auto text-stone-300 mb-4" size={48} />
                   <h3 className="text-xl font-medium text-stone-500 font-serif">
                     No candles match these filters.
