@@ -39,9 +39,9 @@ export const createShiprocketOrder = async (order) => {
         const token = await getShiprocketToken();
 
         // Safely extract user info
-        const firstName = order.user?.firstName || "Customer";
-        const lastName = order.user?.lastName || "";
-        const phone = order.user?.phoneNumber || order.shippingAddress?.phone || "9999999999";
+        const firstName = order.shippingAddress?.firstName || "Customer";
+        const lastName = order.shippingAddress?.lastName || "";
+        const phone = order.shippingAddress?.phone || "9999999999";
         const email = order.user?.email || "customer@example.com";
 
         // Map packaging to dimensions
@@ -50,7 +50,7 @@ export const createShiprocketOrder = async (order) => {
         const payload = {
             order_id: order._id.toString(),
             order_date: new Date(order.createdAt).toISOString().split("T")[0],
-            pickup_location: "Primary",
+            pickup_location: "Home",
 
             // Billing / Shipping customer
             billing_customer_name: firstName,
@@ -99,11 +99,11 @@ export const createShiprocketOrder = async (order) => {
         );
 
         const data = response.data;
-        console.log("✅ Shiprocket Order Created:", {
-            order_id: data.order_id,
-            shipment_id: data.shipment_id,
-            status: data.status
-        });
+        // console.log("✅ Shiprocket Order Created:", {
+        //     order_id: data.order_id,
+        //     shipment_id: data.shipment_id,
+        //     status: data.status
+        // });
 
         return {
             order_id: data.order_id,

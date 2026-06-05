@@ -54,15 +54,15 @@ const Checkout = () => {
   const { applyCoupon, removeCoupon, appliedCoupon, discountAmount, isApplying, availableCoupons, isLoadingCoupons } = useCoupon();
 
   const [shippingAddress, setShippingAddress] = useState({
-    firstName: "",
-    lastName: "",
+    firstName: user?.firstName,
+    lastName: user?.lastName,
     flat: "",
     area: "",
     landmark: "",
     city: "",
     state: "",
     pinCode: "",
-    phone: "",
+    phone: user?.phoneNumber,
   });
 
   // --- Effects ---
@@ -193,6 +193,8 @@ const Checkout = () => {
       return toast.error("Please verify your shipping address.");
 
     const orderPayload = {
+      firstName: selected.firstName,
+      lastName: selected.lastName,
       address: selected.address,
       city: selected.city,
       state: selected.state,

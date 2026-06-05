@@ -16,6 +16,8 @@ const razorpay = new Razorpay({
 export const createOrder = async (req, res) => {
   const user = await User.findById(req.user._id).populate("cart.product").populate("cart.customCandle");
   const {
+    firstName,
+    lastName,
     address,
     city,
     state,
@@ -144,6 +146,8 @@ export const createOrder = async (req, res) => {
     user: user._id,
     orderItems,
     shippingAddress: {
+      firstName,
+      lastName,
       address,
       city,
       state,

@@ -370,10 +370,10 @@ const OrderDetails = () => {
                                 <h3 className="font-serif text-lg text-gray-900">Shipping Address</h3>
                             </div>
                             <div className="space-y-1 text-sm text-gray-600 leading-relaxed">
-                                <p className="font-bold text-gray-900 mb-1">{(order.user?.firstName + ' ' + order.user?.lastName) || 'Guest User'}</p>
+                                <p className="font-bold text-gray-900 mb-1">{(order.shippingAddress?.firstName + ' ' + order.shippingAddress?.lastName) || 'Guest User'}</p>
                                 <p>{order.shippingAddress?.address /* Adjusted based on schema */}</p>
                                 <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.pincode}</p>
-                                <p className="pt-2 text-gray-900">📞 {order.user?.phoneNumber}</p>
+                                <p className="pt-2 text-gray-900">📞 {order.shippingAddress?.phone}</p>
                             </div>
                         </div>
 
