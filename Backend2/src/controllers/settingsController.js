@@ -11,7 +11,7 @@ export const getSettings = async (req, res) => {
   const settings = await Settings.findOneAndUpdate(
     { key: "global" },
     { $setOnInsert: { key: "global" } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 
   res.status(200).json({
@@ -58,7 +58,7 @@ export const updateSettings = async (req, res) => {
   const settings = await Settings.findOneAndUpdate(
     { key: "global" },
     { $set: updateFields },
-    { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true, runValidators: true }
   );
 
   res.status(200).json({

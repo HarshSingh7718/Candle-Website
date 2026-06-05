@@ -10,11 +10,11 @@ const NAV_LINKS = [
   { to: "/inventory", icon: "inventory_2", label: "Inventory" },
   { to: "/categories", icon: "category", label: "Categories" },
   { to: "/reviews", icon: "star", label: "Reviews" },
-  { to: "/setting", icon: "tune", label: "Settings" },
   { to: "/orders", icon: "shopping_bag", label: "Orders" },
   { to: "/contacts", icon: "contact_support", label: "Contacts" },
   { to: "/coupons", icon: "confirmation_number", label: "Coupons" },
   { to: "/options", icon: "settings", label: "Options" },
+  { to: "/setting", icon: "tune", label: "Settings" },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {

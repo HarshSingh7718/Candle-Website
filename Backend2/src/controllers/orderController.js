@@ -6,6 +6,7 @@ import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { sendSMS } from "../services/otp_services.js";
+import { checkServiceability } from "../services/shipRocketService.js";
 import { config } from "../config/index.js";
 import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
 import { Settings } from "../models/settingsModel.js";
@@ -138,6 +139,16 @@ export const createOrder = async (req, res) => {
 
   // Final total: items - discount + shipping (never below ₹0)
   const totalAmount = Math.max(0, Math.round(itemsPrice - discountAmount + shippingPrice));
+
+  // =========================
+  //  COD SERVICEABILITY CHECK
+  // =========================
+  if (paymentMethod === "cod") {
+    const { codAvailable } = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 1 });
+    if (!codAvailable) {
+      throw new CustomError("Cash on Delivery is not available for this pincode. Please select a Prepaid payment method.", 400);
+    }
+  }
 
   // =========================
   //  CREATE ORDER

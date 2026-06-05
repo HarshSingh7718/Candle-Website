@@ -1,5 +1,6 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import { User } from "../models/userModel.js";
+import { checkServiceability } from "../services/shipRocketService.js";
 export const addShippingAddress = async (req, res) => {
   const {
     firstName,
@@ -19,6 +20,12 @@ export const addShippingAddress = async (req, res) => {
   const user = await User.findById(req.user._id);
   if (!user) {
     throw new CustomError("User not found", 404);
+  }
+
+  // Shiprocket Serviceability Check
+  const { deliverable } = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 0 });
+  if (!deliverable) {
+    throw new CustomError("Sorry, we currently do not deliver to this pincode.", 400);
   }
 
   // If new address is default → remove old default
@@ -66,6 +73,15 @@ export const updateAddress = async (req, res) => {
   const addressIndex = user.addresses.findIndex(addr => addr._id.toString() === addressId);
   if (addressIndex === -1) {
     throw new CustomError("Address not found", 404);
+  }
+
+  // Shiprocket Serviceability Check (only if pincode changed)
+  const currentPincode = user.addresses[addressIndex].pincode;
+  if (pincode && pincode !== currentPincode) {
+    const { deliverable } = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 0 });
+    if (!deliverable) {
+      throw new CustomError("Sorry, we currently do not deliver to this pincode.", 400);
+    }
   }
 
   // If they are setting THIS address to default, remove default from others

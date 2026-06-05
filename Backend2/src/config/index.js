@@ -47,6 +47,7 @@ export const config = {
     shiprocket: {
         user_email: process.env.SHIPROCKET_EMAIL,
         user_password: process.env.SHIPROCKET_PASSWORD,
-        webhookToken: process.env.SHIPROCKET_WEBHOOK_TOKEN
+        webhookToken: process.env.SHIPROCKET_WEBHOOK_TOKEN,
+        pickup_pincode: process.env.SHIPROCKET_PICKUP_PINCODE
     }
 };

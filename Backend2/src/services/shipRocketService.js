@@ -2,9 +2,22 @@ import axios from "axios";
 import { config } from "../config/index.js";
 
 // =========================
-//  GET TOKEN
+//  TOKEN CACHE (In-Memory)
+// =========================
+// Shiprocket tokens last ~10 days. We cache for 9 days to be safe.
+const TOKEN_TTL_MS = 9 * 24 * 60 * 60 * 1000; // 9 days in milliseconds
+let cachedToken = null;
+let tokenExpiresAt = 0;
+
+// =========================
+//  GET TOKEN (Cached)
 // =========================
 export const getShiprocketToken = async () => {
+    // Return cached token if still valid
+    if (cachedToken && Date.now() < tokenExpiresAt) {
+        return cachedToken;
+    }
+
     try {
         const res = await axios.post(
             "https://apiv2.shiprocket.in/v1/external/auth/login",
@@ -13,10 +26,56 @@ export const getShiprocketToken = async () => {
                 password: config.shiprocket.user_password
             }
         );
-        return res.data.token;
+        cachedToken = res.data.token;
+        tokenExpiresAt = Date.now() + TOKEN_TTL_MS;
+        return cachedToken;
     } catch (error) {
         console.error("Failed to get Shiprocket Token:", error.response?.data || error.message);
         throw new Error("Shiprocket Authentication Failed");
+    }
+};
+
+// =========================
+//  CHECK SERVICEABILITY
+// =========================
+/**
+ * Checks if a pincode is deliverable and whether COD is available.
+ * @param {Object} params
+ * @param {string} params.delivery_postcode - The customer's delivery pincode
+ * @param {number} [params.weight=0.5]      - Package weight in kg
+ * @param {number} [params.cod=0]           - 1 for COD check, 0 for Prepaid
+ * @returns {Promise<{ deliverable: boolean, codAvailable: boolean }>}
+ */
+export const checkServiceability = async ({ delivery_postcode, weight = 0.5, cod = 0 }) => {
+    try {
+        const token = await getShiprocketToken();
+
+        const res = await axios.get(
+            "https://apiv2.shiprocket.in/v1/external/courier/serviceability/",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                params: {
+                    pickup_postcode: config.shiprocket.pickup_pincode,
+                    delivery_postcode,
+                    weight,
+                    cod
+                }
+            }
+        );
+
+        const couriers = res.data?.data?.available_courier_companies || [];
+        const deliverable = couriers.length > 0;
+        const codAvailable = cod === 1 ? couriers.some(c => c.cod === 1) : false;
+
+        return { deliverable, codAvailable };
+    } catch (error) {
+        console.error("Shiprocket Serviceability Check Failed:", error.response?.data || error.message);
+        // On API failure, allow the operation to proceed (fail-open)
+        // so a temporary Shiprocket outage doesn't block all orders
+        return { deliverable: true, codAvailable: true };
     }
 };
 
@@ -99,11 +158,6 @@ export const createShiprocketOrder = async (order) => {
         );
 
         const data = response.data;
-        // console.log("✅ Shiprocket Order Created:", {
-        //     order_id: data.order_id,
-        //     shipment_id: data.shipment_id,
-        //     status: data.status
-        // });
 
         return {
             order_id: data.order_id,
