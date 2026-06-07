@@ -1,5 +1,5 @@
 import express from "express";
-import { adminLogin } from "../controllers/authController.js";
+import { adminLogin, adminLogout } from "../controllers/authController.js";
 import { createProduct, updateProduct, deleteProduct, getSingleProductAdmin, getAllProductsAdmin } from "../controllers/adminProductController.js";
 import { updateReviewStatus, toggleOptionStatus, toggleBannerStatus, toggleProductStatus, toggleCategoryStatus } from "../controllers/adminToggleController.js";
 import { isAuthenticated, isAdmin } from "../middleware/authmiddleware.js";
@@ -13,11 +13,22 @@ import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanne
 import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus, getAvailableCouriersForOrder, shipOrder } from "../controllers/adminOrderController.js";
 import { createCoupon, getAllCoupons, getSingleCoupon, updateCoupon, toggleCouponStatus, deleteCoupon } from "../controllers/couponController.js";
 import { getSettings, updateSettings } from "../controllers/settingsController.js";
+import { getAllUsers, getUserById, blockUser } from "../controllers/adminUserController.js";
+import { getSummaryReport, getOrdersReport, getProductsReport, getCustomersReport, exportReport } from "../controllers/adminReportController.js";
+import rateLimit from "express-rate-limit";
+
+const blockLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10,
+    message: { success: false, message: "Too many block requests. Please try again later." }
+});
 
 const router = express.Router();
 
 //Admin Login
 router.post("/login", adminLogin);
+//Admin Logout
+router.post("/logout", isAuthenticated, isAdmin, adminLogout);
 
 // ==========================
 //  PRODUCT ROUTES
@@ -414,6 +425,71 @@ router.put(
     isAuthenticated,
     isAdmin,
     updateSettings
+);
+
+// ==========================
+//  USERS ROUTES
+// ==========================
+
+router.get(
+    "/users",
+    isAuthenticated,
+    isAdmin,
+    getAllUsers
+);
+
+router.get(
+    "/users/:id",
+    isAuthenticated,
+    isAdmin,
+    getUserById
+);
+
+router.put(
+    "/users/:id/block",
+    isAuthenticated,
+    isAdmin,
+    blockLimiter,
+    blockUser
+);
+
+// ==========================
+//  REPORTS ROUTES
+// ==========================
+
+router.get(
+    "/reports/summary",
+    isAuthenticated,
+    isAdmin,
+    getSummaryReport
+);
+
+router.get(
+    "/reports/orders",
+    isAuthenticated,
+    isAdmin,
+    getOrdersReport
+);
+
+router.get(
+    "/reports/products",
+    isAuthenticated,
+    isAdmin,
+    getProductsReport
+);
+
+router.get(
+    "/reports/customers",
+    isAuthenticated,
+    isAdmin,
+    getCustomersReport
+);
+
+router.post(
+    "/reports/export",
+    isAuthenticated,
+    isAdmin,
+    exportReport
 );
 
 export default router;

@@ -41,81 +41,81 @@ const StoreSettings = () => {
     if (isLoading) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[300px]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6 max-w-2xl">
-            <h3 className="text-lg font-bold mb-2 text-on-surface">Pricing & Delivery Configuration</h3>
-            <p className="text-sm text-on-surface-variant mb-6">
+        <div className="bg-bg-surface rounded-xl shadow-sm border border-bg-muted p-6 max-w-2xl">
+            <h3 className="text-lg font-bold mb-2 text-text-base">Pricing & Delivery Configuration</h3>
+            <p className="text-sm text-text-muted mb-6">
                 Update store-wide pricing rules. Changes will reflect immediately for all users.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Delivery Charges */}
-                <div className="bg-surface-container-low rounded-lg p-4 border border-outline-variant/30">
+                <div className="bg-bg-canvas rounded-lg p-4 border border-bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm font-bold text-on-surface">Base Delivery Charge</label>
-                        <span className="material-symbols-outlined text-primary">local_shipping</span>
+                        <label className="block text-sm font-bold text-text-base">Base Delivery Charge</label>
+                        <span className="material-symbols-outlined text-brand-primary">local_shipping</span>
                     </div>
-                    <p className="text-xs text-on-surface-variant mb-3">
+                    <p className="text-xs text-text-muted mb-3">
                         The flat shipping fee applied to orders below the free delivery threshold.
                     </p>
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">₹</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-medium">₹</span>
                         <input
                             type="number"
                             name="deliveryCharges"
                             value={formData.deliveryCharges}
                             onChange={handleChange}
                             min="0"
-                            className="w-full pl-8 pr-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary font-medium"
+                            className="w-full pl-8 pr-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary font-medium"
                         />
                     </div>
                 </div>
 
                 {/* Free Delivery Threshold */}
-                <div className="bg-surface-container-low rounded-lg p-4 border border-outline-variant/30">
+                <div className="bg-bg-canvas rounded-lg p-4 border border-bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm font-bold text-on-surface">Free Delivery Threshold</label>
-                        <span className="material-symbols-outlined text-primary">shopping_bag</span>
+                        <label className="block text-sm font-bold text-text-base">Free Delivery Threshold</label>
+                        <span className="material-symbols-outlined text-brand-primary">shopping_bag</span>
                     </div>
-                    <p className="text-xs text-on-surface-variant mb-3">
+                    <p className="text-xs text-text-muted mb-3">
                         Orders with a subtotal greater than or equal to this amount will receive free shipping.
                     </p>
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">₹</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-medium">₹</span>
                         <input
                             type="number"
                             name="freeDeliveryThreshold"
                             value={formData.freeDeliveryThreshold}
                             onChange={handleChange}
                             min="0"
-                            className="w-full pl-8 pr-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary font-medium"
+                            className="w-full pl-8 pr-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary font-medium"
                         />
                     </div>
                 </div>
 
                 {/* Base Customisation Charge */}
-                <div className="bg-surface-container-low rounded-lg p-4 border border-outline-variant/30">
+                <div className="bg-bg-canvas rounded-lg p-4 border border-bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm font-bold text-on-surface">Base Customisation Fee</label>
-                        <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                        <label className="block text-sm font-bold text-text-base">Base Customisation Fee</label>
+                        <span className="material-symbols-outlined text-brand-primary">auto_awesome</span>
                     </div>
-                    <p className="text-xs text-on-surface-variant mb-3">
+                    <p className="text-xs text-text-muted mb-3">
                         The standard add-on cost applied when a customer selects a custom candle variant.
                     </p>
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">₹</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-medium">₹</span>
                         <input
                             type="number"
                             name="baseCustomisationCharges"
                             value={formData.baseCustomisationCharges}
                             onChange={handleChange}
                             min="0"
-                            className="w-full pl-8 pr-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary font-medium"
+                            className="w-full pl-8 pr-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary font-medium"
                         />
                     </div>
                 </div>

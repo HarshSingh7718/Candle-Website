@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
 export const useGetReviews = (page = 1, limit = 10, rating, status) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['reviews', page, limit, rating, status],
         queryFn: async () => {
             let url = `/admin/reviews?page=${page}&limit=${limit}`;

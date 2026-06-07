@@ -102,7 +102,7 @@ const EditCoupon = () => {
   if (isFetching) {
     return (
       <div className="flex-1 flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
       </div>
     );
   }
@@ -111,68 +111,68 @@ const EditCoupon = () => {
     <main className="flex-1 p-6 md:p-margin-page max-w-container-max mx-auto w-full opacity-0" ref={mainRef}>
       {/* Header */}
       <div className="flex items-center gap-4 mb-stack-lg">
-        <button onClick={() => navigate('/coupons')} className="p-2 hover:bg-surface-container rounded-lg transition-colors cursor-pointer">
-          <span className="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+        <button onClick={() => navigate('/coupons')} className="p-2 hover:bg-bg-muted rounded-lg transition-colors cursor-pointer">
+          <span className="material-symbols-outlined text-text-muted">arrow_back</span>
         </button>
         <div>
-          <h2 className="font-heading text-headline-lg text-on-surface mb-1">Edit Coupon</h2>
-          <p className="font-body-md text-body-md text-on-surface-variant">
+          <h2 className="font-heading text-headline-lg text-text-base mb-1">Edit Coupon</h2>
+          <p className="font-body-md text-body-md text-text-muted">
             Modify coupon <span className="font-heading font-bold tracking-wider">{coupon?.code}</span>
           </p>
         </div>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-surface-variant rounded-xl p-6 md:p-8 shadow-sm max-w-3xl">
+      <form onSubmit={handleSubmit} className="bg-bg-surface border border-bg-muted rounded-xl p-6 md:p-8 shadow-sm max-w-3xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Code */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Coupon Code *</label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Coupon Code *</label>
             <input
               type="text"
               name="code"
               value={form.code}
               onChange={handleChange}
               placeholder="e.g. SUMMER20"
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all uppercase placeholder:normal-case font-heading tracking-widest"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all uppercase placeholder:normal-case font-heading tracking-widest"
             />
           </div>
 
           {/* Title */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Title * <span className="text-xs text-on-surface-variant font-normal">(shown to customers)</span></label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Title * <span className="text-xs text-text-muted font-normal">(shown to customers)</span></label>
             <input
               type="text"
               name="title"
               value={form.title}
               onChange={handleChange}
               placeholder='e.g. "Flat 20% Off"'
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
             />
           </div>
 
           {/* Description */}
           <div className="md:col-span-2">
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Description <span className="text-xs text-on-surface-variant font-normal">(shown to customers)</span></label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Description <span className="text-xs text-text-muted font-normal">(shown to customers)</span></label>
             <input
               type="text"
               name="description"
               value={form.description}
               onChange={handleChange}
               placeholder='e.g. "On orders above ₹999"'
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
             />
           </div>
 
           {/* Discount Type */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Discount Type *</label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Discount Type *</label>
             <select
               name="discountType"
               value={form.discountType}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all cursor-pointer"
             >
               <option value="percentage">Percentage (%)</option>
               <option value="fixed">Fixed Amount (₹)</option>
@@ -181,7 +181,7 @@ const EditCoupon = () => {
 
           {/* Discount Value */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">
+            <label className="block font-label-md text-label-md text-text-base mb-2">
               Discount Value * {form.discountType === 'percentage' ? '(%)' : '(₹)'}
             </label>
             <input
@@ -192,14 +192,14 @@ const EditCoupon = () => {
               placeholder={form.discountType === 'percentage' ? 'e.g. 20' : 'e.g. 200'}
               min="0"
               max={form.discountType === 'percentage' ? '100' : undefined}
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
             />
           </div>
 
           {/* Max Discount Amount (only for percentage) */}
           {form.discountType === 'percentage' && (
             <div>
-              <label className="block font-label-md text-label-md text-on-surface mb-2">Max Discount Cap (₹)</label>
+              <label className="block font-label-md text-label-md text-text-base mb-2">Max Discount Cap (₹)</label>
               <input
                 type="number"
                 name="maxDiscountAmount"
@@ -207,15 +207,15 @@ const EditCoupon = () => {
                 onChange={handleChange}
                 placeholder="e.g. 500"
                 min="0"
-                className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
               />
-              <p className="text-xs text-on-surface-variant mt-1.5">Limits the max ₹ discount even if percentage yields more.</p>
+              <p className="text-xs text-text-muted mt-1.5">Limits the max ₹ discount even if percentage yields more.</p>
             </div>
           )}
 
           {/* Min Order Value */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Min Order Value (₹)</label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Min Order Value (₹)</label>
             <input
               type="number"
               name="minOrderValue"
@@ -223,38 +223,38 @@ const EditCoupon = () => {
               onChange={handleChange}
               placeholder="e.g. 999"
               min="0"
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
             />
           </div>
 
           {/* Start Date */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Start Date *</label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Start Date *</label>
             <input
               type="datetime-local"
               name="startDate"
               value={form.startDate}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all cursor-pointer"
             />
           </div>
 
           {/* End Date */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">End Date *</label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">End Date *</label>
             <input
               type="datetime-local"
               name="endDate"
               value={form.endDate}
               onChange={handleChange}
               min={form.startDate}
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all cursor-pointer"
             />
           </div>
 
           {/* Usage Limit Per User */}
           <div>
-            <label className="block font-label-md text-label-md text-on-surface mb-2">Usage Limit Per User</label>
+            <label className="block font-label-md text-label-md text-text-base mb-2">Usage Limit Per User</label>
             <input
               type="number"
               name="usageLimitPerUser"
@@ -262,9 +262,9 @@ const EditCoupon = () => {
               onChange={handleChange}
               placeholder="Default: 1"
               min="1"
-              className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
             />
-            <p className="text-xs text-on-surface-variant mt-1.5">How many times each customer can use this coupon.</p>
+            <p className="text-xs text-text-muted mt-1.5">How many times each customer can use this coupon.</p>
           </div>
 
           {/* Active Toggle */}
@@ -278,10 +278,10 @@ const EditCoupon = () => {
                   onChange={handleChange}
                   className="sr-only"
                 />
-                <div className={`block w-10 h-6 rounded-full transition-colors ${form.isActive ? 'bg-primary' : 'bg-surface-variant border border-outline-variant'}`}></div>
-                <div className={`dot absolute left-1 top-1 w-4 h-4 rounded-full transition-transform ${form.isActive ? 'bg-surface-container-lowest translate-x-4' : 'bg-on-surface-variant'}`}></div>
+                <div className={`block w-10 h-6 rounded-full transition-colors ${form.isActive ? 'bg-brand-primary' : 'bg-bg-muted border border-bg-muted'}`}></div>
+                <div className={`dot absolute left-1 top-1 w-4 h-4 rounded-full transition-transform ${form.isActive ? 'bg-bg-surface translate-x-4' : 'bg-text-muted'}`}></div>
               </div>
-              <span className="font-label-md text-label-md text-on-surface">
+              <span className="font-label-md text-label-md text-text-base">
                 {form.isActive ? 'Active' : 'Inactive'}
               </span>
             </label>
@@ -289,18 +289,18 @@ const EditCoupon = () => {
         </div>
 
         {/* Submit */}
-        <div className="flex gap-4 mt-8 pt-6 border-t border-surface-variant">
+        <div className="flex gap-4 mt-8 pt-6 border-t border-bg-muted">
           <button
             type="submit"
             disabled={isPending}
-            className="bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-3 px-8 rounded-lg shadow-sm transition-all border-b-2 border-primary-container hover:border-surface-tint cursor-pointer disabled:opacity-50"
+            className="bg-brand-primary hover:bg-coffee-800 text-text-on-brand font-label-md text-label-md py-3 px-8 rounded-lg shadow-sm transition-all border-b-2 border-coffee-800 hover:border-brand-secondary cursor-pointer disabled:opacity-50"
           >
             {isPending ? 'Saving...' : 'Save Changes'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/coupons')}
-            className="py-3 px-8 border border-outline-variant text-on-surface-variant font-label-md text-label-md rounded-lg hover:bg-surface-container transition-all cursor-pointer"
+            className="py-3 px-8 border border-bg-muted text-text-muted font-label-md text-label-md rounded-lg hover:bg-bg-muted transition-all cursor-pointer"
           >
             Cancel
           </button>

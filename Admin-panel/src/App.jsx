@@ -31,7 +31,8 @@ import Setting from './pages/Setting';
 import Coupons from './pages/Coupons';
 import AddCoupon from './pages/AddCoupon';
 import EditCoupon from './pages/EditCoupon';
-
+import Users from './pages/Users';
+import Reports from './pages/Reports';
 
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 
@@ -76,6 +77,8 @@ function App() {
                       <Route path="/coupons" element={<Coupons />} />
                       <Route path="/coupons/add" element={<AddCoupon />} />
                       <Route path="/coupons/edit/:id" element={<EditCoupon />} />
+                      <Route path="/users" element={<Users />} />
+                      <Route path="/reports" element={<Reports />} />
                       <Route path="/setting" element={<Setting />} />
                     </Route>
                   </Route>

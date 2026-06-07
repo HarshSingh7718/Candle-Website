@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingBag, TextAlignJustify, User, Search, LogOut } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -26,6 +26,7 @@ const Navbar = () => {
   const [scroll, setScroll] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const hoverTimeoutRef = useRef(null);
 
   const { data: user } = useUser();
   const { cart } = useCart();
@@ -91,11 +92,21 @@ const Navbar = () => {
                 )}
               </Link>
 
-              <div className="relative">
+              <div 
+                className="relative"
+                onMouseEnter={() => {
+                  if (user) {
+                    clearTimeout(hoverTimeoutRef.current);
+                    setShowUserDropdown(true);
+                  }
+                }}
+                onMouseLeave={() => {
+                  hoverTimeoutRef.current = setTimeout(() => setShowUserDropdown(false), 200);
+                }}
+              >
                 {user ? (
                   <button 
                     onClick={() => setShowUserDropdown(!showUserDropdown)} 
-                    onBlur={() => setTimeout(() => setShowUserDropdown(false), 200)}
                     className='user cursor-pointer flex items-center'
                   >
                     <User size={24} className='text-light-yellow cursor-pointer' />

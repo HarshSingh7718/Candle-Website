@@ -1,10 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
 
 export const useGetOrderDetails = (id) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['order', id],
         queryFn: async () => {
             const { data } = await api.get(`/admin/orders/${id}`);
@@ -16,6 +17,7 @@ export const useGetOrderDetails = (id) => {
 
 export const useGetOrders = (page = 1, limit = 10, status = 'All') => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['orders', page, limit, status],
         queryFn: async () => {
             let url = `/admin/orders?page=${page}&limit=${limit}`;
@@ -53,6 +55,7 @@ export const useUpdateOrderStatus = () => {
 };
 export const useGetAvailableCouriers = (id, enabled = true) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['order-couriers', id],
         queryFn: async () => {
             const { data } = await api.get(`/admin/orders/${id}/couriers`);

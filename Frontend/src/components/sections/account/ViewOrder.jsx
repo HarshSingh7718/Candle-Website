@@ -15,21 +15,22 @@ const formatOrderData = (data) => {
 
     const formatDate = (dateString) => {
         if (!dateString) return "Pending";
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        return new Date(dateString).toLocaleString('en-GB', {
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
     };
 
     const displayStatus = order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1).replace(/_/g, ' ');
 
-    const statuses = ['confirmed', 'processing', 'shipped', 'delivered'];
+    const statuses = ['confirmed', 'processing', 'packaged', 'shipped', 'delivered'];
     const currentStatusIndex = statuses.indexOf(order.orderStatus.toLowerCase());
 
     const statusSteps = [
         { name: "Order Placed", date: formatDate(order.createdAt), completed: true },
         { name: "Processing", date: currentStatusIndex >= 1 ? formatDate(order.updatedAt) : "Pending", completed: currentStatusIndex >= 1 },
-        { name: "Shipped", date: order.shippedAt ? formatDate(order.shippedAt) : "Pending", completed: currentStatusIndex >= 2 },
-        { name: "Delivered", date: currentStatusIndex === 3 ? formatDate(order.updatedAt) : "Expected soon", completed: currentStatusIndex === 3 },
+        { name: "Packaged", date: currentStatusIndex >= 2 ? formatDate(order.updatedAt) : "Pending", completed: currentStatusIndex >= 2 },
+        { name: "Shipped", date: order.shippedAt ? formatDate(order.shippedAt) : "Pending", completed: currentStatusIndex >= 3 },
+        { name: "Delivered", date: currentStatusIndex === 4 ? formatDate(order.updatedAt) : "Expected soon", completed: currentStatusIndex === 4 },
     ];
 
     return {
@@ -157,11 +158,11 @@ const ViewOrder = () => {
                                 </span>
                             </div>
 
-                            <div className="relative">
+                            <div className="relative overflow-x-auto hide-scrollbar">
                                 <div className="absolute left-[15px] top-0 h-full w-0.5 bg-stone-100 sm:hidden"></div>
                                 <div className="hidden sm:block absolute top-[15px] left-0 w-full h-0.5 bg-stone-100"></div>
 
-                                <div className="flex flex-col sm:flex-row justify-between relative z-10 space-y-8 sm:space-y-0">
+                                <div className="flex flex-col sm:flex-row justify-between relative z-10 space-y-8 sm:space-y-0 sm:min-w-max sm:gap-2">
                                     {statusSteps.map((step, idx) => (
                                         <div key={idx} className="flex sm:flex-col items-start sm:items-center text-left sm:text-center group">
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-text-on-brand shadow-sm transition-colors ${step.completed ? 'bg-green-600 text-text-on-brand' : 'bg-stone-200 text-stone-500'

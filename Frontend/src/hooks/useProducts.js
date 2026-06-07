@@ -12,6 +12,7 @@ export const useProducts = (params = {}) => {
       if (params.search) searchParams.append("search", params.search);
       if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
       if (params.sort) searchParams.append("sort", params.sort);
+      if (params.filter) searchParams.append("filter", params.filter);
       searchParams.append("limit", "8");
 
       const { data } = await API.get(`/candles?${searchParams.toString()}`);

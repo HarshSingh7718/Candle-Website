@@ -66,13 +66,22 @@ export const getAllCandles = async (req, res) => {
     limit = 10,
     maxPrice,
     search,
-    sort
+    sort,
+    filter
   } = req.query;
 
   const query = {
-    type: "simpleCandle",
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   };
+
+  if (filter === "bestSeller") {
+    query.isBestSeller = true;
+  } else if (filter === "trending") {
+    query.isTrending = true;
+  } else if (filter === "latest") {
+    query.isLatest = true;
+  }
 
   if (search) {
     query.name = { $regex: search, $options: "i" };

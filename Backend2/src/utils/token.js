@@ -3,7 +3,14 @@ import { config } from "../config/index.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-// Generate JWT
+const cookieOptions = {
+    path: "/",
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 24 * 60 * 60 * 1000,
+};
+
 export const generateToken = (user) => {
     return jwt.sign(
         { id: user._id },
@@ -11,20 +18,21 @@ export const generateToken = (user) => {
         { expiresIn: "1d" }
     );
 };
+
+// User cookie
 export const setTokenCookie = (res, token) => {
-    res.cookie("token", token, {
-        path: "/", // Ensure it's available for the whole site
-        httpOnly: true,
-        secure: isProduction,  // MUST be false for http://localhost
-        sameSite: isProduction ? "none" : "lax", // Use 'lax' for local dev. 'none' requires 'secure: true'
-        maxAge: 24 * 60 * 60 * 1000,
-    });
-};
-export const clearTokenCookie = (res) => {
-    res.clearCookie("token", {
-        httpOnly: true,
-        secure: isProduction,  // MUST be false for http://localhost
-        sameSite: isProduction ? "none" : "lax", // Use 'lax' for local dev. 'none' requires 'secure: true'
-    });
+    res.cookie("userToken", token, cookieOptions);
 };
 
+export const clearTokenCookie = (res) => {
+    res.clearCookie("userToken", cookieOptions);
+};
+
+// Admin cookie
+export const setAdminTokenCookie = (res, token) => {
+    res.cookie("adminToken", token, cookieOptions);
+};
+
+export const clearAdminTokenCookie = (res) => {
+    res.clearCookie("adminToken", cookieOptions);
+};

@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ProductCard from "../ui/Cards/ProductCard";
@@ -71,11 +73,21 @@ const ProductSection = ({ section, products }) => {
 
       <div
         ref={gridRef}
-        className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10"
+        className="flex overflow-x-auto hide-scrollbar gap-4 sm:gap-6 pb-8 px-4 -mx-4 snap-x"
       >
         {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
+          <div key={product._id} className="w-[40vw] md:w-[28.5vw] lg:w-[22.2vw] shrink-0 snap-start">
+            <ProductCard product={product} />
+          </div>
         ))}
+      </div>
+
+      <div className="flex justify-center mt-2 w-full">
+        <MainBtn
+          path={`/collections/candles?filter=${section.key}`}
+          text={`SHOP MORE ${section.title.toUpperCase()}`}
+          className="!bg-brand-primary !text-text-on-brand hover:!bg-brand-secondary"
+        />
       </div>
     </div>
   );
@@ -102,14 +114,6 @@ const Shop = () => {
             products={homeData?.[section.key] || []}
           />
         ))}
-
-        <div className="flex justify-center mt-12 w-full">
-          <MainBtn
-            path="/collections/candles"
-            text={"EXPLORE ALL CANDLES"}
-            className="!bg-coffee !text-light-yellow"
-          />
-        </div>
       </div>
     </section>
   );

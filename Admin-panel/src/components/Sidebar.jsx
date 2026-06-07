@@ -14,6 +14,8 @@ const NAV_LINKS = [
   { to: "/contacts", icon: "contact_support", label: "Contacts" },
   { to: "/coupons", icon: "confirmation_number", label: "Coupons" },
   { to: "/options", icon: "settings", label: "Options" },
+  { to: "/users", icon: "group", label: "Users" },
+  { to: "/reports", icon: "bar_chart", label: "Reports" },
   { to: "/setting", icon: "tune", label: "Settings" },
 ];
 
@@ -62,10 +64,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Sidebar Container */}
       <nav
         ref={sidebarRef}
-        className={`bg-primary dark:bg-black text-light-yellow dark:text-orange-500 font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-stone-200 dark:border-stone-800 shadow-[4px_0_24px_-12px_rgba(217,119,6,0.15)] flex-col py-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        className={`bg-brand-primary text-text-on-brand font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-coffee-800 flex-col pb-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
-        <div className="px-6 mb-8 mt-2 flex items-center gap-4">
-          <div className="w-7 md:w-10  h-7 md:h-10 rounded-full bg-surface-container overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
+        <div className="px-6 py-5 mb-8 flex items-center gap-4 bg-coffee-950 border-b border-coffee-800">
+          <div className="w-7 md:w-10  h-7 md:h-10 rounded-full bg-bg-muted overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
             <a href="/setting">
               <img
                 alt="Administrator profile"
@@ -76,14 +78,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </div>
           <div>
             <a href="/setting">
-              <h1 className="font-heading text-sm md:text-lg font-bold dark:text-stone-100 leading-tight">
+              <h1 className="font-heading text-sm md:text-lg font-bold text-text-on-brand leading-tight">
                 Naisha Admin
               </h1>
             </a>
           </div>
           {/* Close Button strictly visible only on mobile/tablet */}
           <button
-            className="lg:hidden ml-auto text-light-yellow/75 hover:text-stone-400 dark:hover:text-stone-400 p-1 transition-colors cursor-pointer hover:scale-120 transition-all duration-200"
+            className="lg:hidden ml-auto text-coffee-200 hover:text-text-on-brand p-1 transition-colors cursor-pointer hover:scale-120 duration-200"
             onClick={() => setIsOpen(false)}
           >
             <span className="material-symbols-outlined text-[24px]">close</span>
@@ -105,8 +107,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-6 py-3 mx-2 rounded-r-full border-l-4 transition-all duration-200 active:scale-95 transform ${
                   isActive
-                    ? "text-orange-800 dark:text-orange-400 font-bold bg-stone-100 dark:bg-stone-900 border-coffee shadow-sm"
-                    : "text-light-yellow/75 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 border-transparent"
+                    ? "text-text-on-brand font-bold bg-coffee-800 border-brand-secondary shadow-sm"
+                    : "text-coffee-200 hover:text-text-on-brand hover:bg-coffee-800 border-transparent"
                 }`
               }
             >
@@ -126,12 +128,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </div>
 
         {/* Footer Area (Sign Out) */}
-        <div className="mt-auto space-y-1 pt-6 pb-4 border-t border-stone-200 dark:border-stone-800 mx-4">
+        <div className="mt-auto space-y-1 pt-6 pb-4 border-t border-coffee-800 mx-4">
           <button
             ref={addToRefs}
             onClick={handleLogout}
             disabled={isPending}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-light-yellow/75 dark:text-stone-400 hover:text-error dark:hover:text-error-container hover:bg-error/10 dark:hover:bg-error/20 rounded-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-coffee-200 hover:text-danger hover:bg-bg-surface-hover/10 rounded-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
           >
             {isPending ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>

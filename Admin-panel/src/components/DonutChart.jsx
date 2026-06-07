@@ -3,13 +3,13 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 // 👉 1. The Strict Color Dictionary
 // Add or adjust any statuses your backend throws here
 const STATUS_COLORS = {
-  delivered: '#10b981',  // Emerald Green
-  out_for_delivery: '#22c55e', // Green
-  shipped: '#3b82f6',    // Blue
-  confirmed: '#8b5cf6',  // Violet
-  processing: '#f59e0b', // Amber
-  cancelled: '#000000',  // Black
-  returned: '#ef4444',   // Red
+  delivered: '#16a34a',  // Success
+  out_for_delivery: '#16a34a', // Success
+  shipped: '#2563eb',    // Info
+  confirmed: '#5e3232',  // Brand Primary
+  processing: '#ea580c', // Warning
+  cancelled: '#9e9a99',  // Disabled
+  returned: '#dc2626',   // Danger
 };
 
 const STATUS_SORT_ORDER = {
@@ -29,18 +29,18 @@ const CustomTooltip = ({ active, payload }) => {
     const dotColor = payload[0].payload.fill;
 
     return (
-      <div className="bg-white px-4 py-3 rounded-lg shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-gray-100 outline-none z-50 relative">
+      <div className="bg-bg-surface px-4 py-3 rounded-lg shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-bg-muted outline-none z-50 relative">
         <div className="flex items-center gap-2 mb-1">
           <div
             className="w-2.5 h-2.5 rounded-full shadow-sm"
             style={{ backgroundColor: dotColor }}
           ></div>
-          <span className="font-label-md font-medium text-gray-900 capitalize">
+          <span className="font-label-md font-medium text-text-base capitalize">
             {payload[0].name}
           </span>
         </div>
-        <p className="font-body-md text-gray-500 text-sm ml-4.5">
-          Orders: <span className="font-bold text-gray-900">{payload[0].value}</span>
+        <p className="font-body-md text-text-muted text-sm ml-4.5">
+          Orders: <span className="font-bold text-text-base">{payload[0].value}</span>
         </p>
       </div>
     );
@@ -65,9 +65,9 @@ const DonutChart = ({ data }) => {
   const total = formattedData.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="chart-container bg-surface rounded-xl p-6 border border-surface-container shadow-sm shadow-stone-200/50 flex flex-col">
+    <div className="chart-container bg-bg-surface rounded-xl p-6 border border-bg-muted shadow-sm shadow-stone-200/50 flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-heading text-headline-md text-on-background">Order Status</h3>
+        <h3 className="font-heading text-headline-md text-text-base">Order Status</h3>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center gap-8 relative">
@@ -92,8 +92,8 @@ const DonutChart = ({ data }) => {
           </ResponsiveContainer>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="block font-heading text-headline-lg text-on-background">{total}</span>
-            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Total</span>
+            <span className="block font-heading text-headline-lg text-text-base">{total}</span>
+            <span className="font-label-sm text-label-sm text-text-muted uppercase">Total</span>
           </div>
         </div>
 
@@ -103,9 +103,9 @@ const DonutChart = ({ data }) => {
             <div key={item.name} className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }}></div>
-                <span className="font-body-md text-body-md text-on-surface">{item.name}</span>
+                <span className="font-body-md text-body-md text-text-base">{item.name}</span>
               </div>
-              <span className="font-label-md text-label-md text-on-background">{item.value}</span>
+              <span className="font-label-md text-label-md text-text-base">{item.value}</span>
             </div>
           ))}
         </div>

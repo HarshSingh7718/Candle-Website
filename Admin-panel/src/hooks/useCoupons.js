@@ -1,10 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
 // Fetch all coupons
 export const useGetCoupons = () => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['coupons'],
         queryFn: async () => {
             const { data } = await api.get('/admin/coupons');
@@ -16,6 +17,7 @@ export const useGetCoupons = () => {
 // Fetch a single coupon for the Edit page
 export const useGetCoupon = (id) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['coupon', id],
         queryFn: async () => {
             const { data } = await api.get(`/admin/coupons/${id}`);

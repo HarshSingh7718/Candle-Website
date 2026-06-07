@@ -204,7 +204,7 @@ const ShopDetails = () => {
                             {review.user}
                           </h4>
                           <p className="text-[10px] text-muted mt-1">
-                            {new Date(review.createdAt).toLocaleDateString()}
+                            {new Date(review.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                           </p>
                         </div>
                         <div className="flex">

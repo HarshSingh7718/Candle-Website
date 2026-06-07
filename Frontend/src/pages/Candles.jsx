@@ -1,27 +1,31 @@
 import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { Search, ChevronDown, Filter } from "lucide-react";
 
 import ProductCard from "../components/ui/Cards/ProductCard";
 import SEO from "../components/SEO";
 import PageBanner from "../components/ui/PageBanner";
+import MobileFilterModal from "../components/ui/MobileFilterModal";
+import CustomDropdown from "../components/ui/CustomDropdown";
 import { useProducts } from "../hooks/useProducts";
 import { useDebounce } from "../hooks/useDebounce";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Candles = () => {
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const querySearch = searchParams.get("search") || "";
   const queryPrice = searchParams.get("maxPrice") || null;
   const querySort = searchParams.get("sort") || "latest";
+  const queryFilter = searchParams.get("filter") || null;
 
-  // Local state for UI inputs
-  const [searchInput, setSearchInput] = useState(querySearch);
+  // Local state for UI inputs (Desktop sidebar)
   const [priceInput, setPriceInput] = useState(queryPrice || 3000);
   const [sortInput, setSortInput] = useState(querySort);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const debouncedPrice = useDebounce(priceInput, 500);
 
@@ -32,8 +36,9 @@ const Candles = () => {
   const { data: responseData, isLoading, isFetching } = useProducts({
     page: currentPage,
     search: querySearch,
-    maxPrice: queryPrice,
-    sort: querySort
+    maxPrice: debouncedPrice,
+    sort: sortInput,
+    filter: queryFilter
   });
 
   const products = responseData?.candles || [];
@@ -44,23 +49,6 @@ const Candles = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [querySearch, queryPrice, querySort]);
-
-  // Sync Search Input local state if URL changes externally
-  useEffect(() => {
-    setSearchInput(querySearch);
-  }, [querySearch]);
-
-  // Handle Search Commit (Manual Trigger)
-  const handleSearchCommit = () => {
-    const newParams = new URLSearchParams(searchParams);
-    if (searchInput) newParams.set("search", searchInput);
-    else newParams.delete("search");
-    setSearchParams(newParams);
-  };
-
-  const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter") handleSearchCommit();
-  };
 
   // Sync Debounced Price to URL (Auto Trigger)
   useEffect(() => {
@@ -91,6 +79,28 @@ const Candles = () => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 400, behavior: "smooth" });
   };
+
+  // Handle Mobile Modal Apply
+  const handleMobileApply = ({ sort, maxPrice }) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (sort && sort !== "latest") newParams.set("sort", sort);
+    else newParams.delete("sort");
+    
+    if (maxPrice && maxPrice < 3000) newParams.set("maxPrice", maxPrice);
+    else newParams.delete("maxPrice");
+    
+    setSearchParams(newParams);
+    // Also sync desktop local state just in case it's resized
+    setSortInput(sort || "latest");
+    setPriceInput(maxPrice || 3000);
+  };
+
+  const sortOptions = [
+    { value: 'latest', label: 'Sort by latest' },
+    { value: 'popularity', label: 'Sort by Popularity' },
+    { value: 'low-to-high', label: 'Sort by Low to High' },
+    { value: 'high-to-low', label: 'Sort by High to Low' },
+  ];
 
   const sidebarRef = useRef();
   const mainRef = useRef();
@@ -176,37 +186,8 @@ const Candles = () => {
               ref={sidebarRef}
               className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1"
             >
-              {/* Search */}
-              <div className="bg-bg-surface p-6 rounded-sm shadow-sm sidebar-box">
-                <h3 className="text-xl font-medium mb-4 sidebar-title text-text-base">
-                  Search
-                </h3>
-                <div className="relative sidebar-content flex gap-2">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      value={searchInput}
-                      placeholder="Search Products..."
-                      className="w-full border border-bg-muted p-2 pl-10 rounded-md outline-none focus:border-brand-primary bg-bg-surface-hover text-text-base"
-                      onChange={(e) => setSearchInput(e.target.value)}
-                      onKeyDown={handleSearchKeyDown}
-                    />
-                    <Search
-                      className="absolute left-3 top-2.5 text-text-muted"
-                      size={18}
-                    />
-                  </div>
-                  <button 
-                    onClick={handleSearchCommit}
-                    className="bg-brand-primary text-text-on-brand p-2 rounded-md hover:bg-brand-secondary transition-colors cursor-pointer"
-                  >
-                    <Search size={20} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Price filter */}
-              <div className="bg-bg-surface p-6 rounded-sm shadow-sm hidden md:block sidebar-box">
+              {/* Price filter (Desktop only) */}
+              <div className="bg-bg-surface p-6 rounded-sm shadow-sm hidden lg:block sidebar-box">
                 <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center text-text-base">
                   Filter By Price
                   {queryPrice !== null && (
@@ -233,18 +214,12 @@ const Candles = () => {
                     <span>{priceInput < 3000 ? `Max: ₹${priceInput}` : "No Max"}</span>
                   </div>
 
-                  <div className="relative group mt-6">
-                    <select
-                      className="w-full appearance-none bg-bg-surface-hover border border-bg-muted px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-2 ring-brand-primary/20 text-text-base"
-                      onChange={(e) => setSortInput(e.target.value)}
+                  <div className="mt-6">
+                    <CustomDropdown 
+                      options={sortOptions}
                       value={sortInput}
-                    >
-                      <option value="latest">Sort by latest</option>
-                      <option value="popularity">Sort by Popularity</option>
-                      <option value="low-to-high">Sort by Low to High</option>
-                      <option value="high-to-low">Sort by High to Low</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none w-4 h-4" />
+                      onChange={setSortInput}
+                    />
                   </div>
                 </div>
               </div>
@@ -252,25 +227,21 @@ const Candles = () => {
 
             {/* Main Content */}
             <main ref={mainRef} className="w-full lg:w-3/4 order-1 lg:order-2">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
+              <div className="flex justify-between items-center mb-8 gap-4 top-bar">
                 <p className="text-text-muted italic">
                   Showing {products.length > 0 ? indexOfFirstProduct + 1 : 0}-
                   {indexOfLastProduct} of{" "}
                   {responseData?.total || 0} results
                 </p>
-                <div className="relative group block md:hidden">
-                  <select
-                    className="appearance-none bg-bg-surface-hover border border-bg-muted px-6 py-2 pr-10 rounded shadow-sm outline-none cursor-pointer focus:ring-2 ring-brand-primary/20 text-text-base"
-                    onChange={(e) => setSortInput(e.target.value)}
-                    value={sortInput}
-                  >
-                    <option value="latest">Sort by latest</option>
-                    <option value="popularity">Sort by Popularity</option>
-                    <option value="low-to-high">Sort by Low to High</option>
-                    <option value="high-to-low">Sort by High to Low</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-3 text-text-muted pointer-events-none" />
-                </div>
+                
+                {/* Mobile Filter Button */}
+                <button 
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="lg:hidden flex items-center gap-2 bg-bg-surface border border-bg-muted px-4 py-2 rounded-md shadow-sm text-text-base font-medium hover:bg-bg-surface-hover transition-colors"
+                >
+                  <Filter size={18} />
+                  Filters
+                </button>
               </div>
 
               {isLoading ? (
@@ -324,6 +295,14 @@ const Candles = () => {
           </div>
         </div>
       </div>
+
+      <MobileFilterModal 
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        initialSort={querySort}
+        initialPrice={queryPrice ? Number(queryPrice) : 3000}
+        onApply={handleMobileApply}
+      />
     </>
   );
 };

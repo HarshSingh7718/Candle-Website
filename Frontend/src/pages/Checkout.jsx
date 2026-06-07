@@ -31,7 +31,7 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   // --- Data Fetching ---
-  const { data: user } = useUser();
+  const { data: user, isLoading: isUserLoading } = useUser();
   // 👉 1. Destructured the billing object from useCart
   const { cart, billing, isLoading: isCartLoading } = useCart();
   const { createOrder, initRazorpay, verifyPayment, isPlacingOrder } =
@@ -43,9 +43,7 @@ const Checkout = () => {
   // --- State ---
   const savedAddresses = user?.addresses || [];
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const [showNewAddressForm, setShowNewAddressForm] = useState(
-    savedAddresses.length === 0,
-  );
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
@@ -67,6 +65,9 @@ const Checkout = () => {
 
   // --- Effects ---
   useEffect(() => {
+    if (isUserLoading) return;
+    if (!user) return;
+
     if (savedAddresses.length > 0 && !selectedAddressId) {
       const defaultAddr =
         savedAddresses.find((a) => a.isDefault) || savedAddresses[0];
@@ -75,7 +76,7 @@ const Checkout = () => {
     } else if (savedAddresses.length === 0) {
       setShowNewAddressForm(true);
     }
-  }, [savedAddresses, selectedAddressId]);
+  }, [savedAddresses, selectedAddressId, isUserLoading]);
 
   // 👉 2. Removed the manual subtotal, shippingCost, and totalAmount calculations!
 

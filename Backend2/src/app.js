@@ -69,7 +69,6 @@ app.use("/api/auth", rateLimit({
 }))
 
 
-app.use('/', seoRoute);
 
 // ==========================
 //  ADMIN ROUTES
@@ -120,6 +119,8 @@ app.use("/api", wishlistRoutes);
 
 // COUPON ROUTES
 app.use("/api/coupons", couponRoutes);
+
+app.use('/', seoRoute);
 
 // Error Handling Middleware (MUST BE LAST)
 app.use(errorHandler);

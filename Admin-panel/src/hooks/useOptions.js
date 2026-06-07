@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
@@ -30,6 +30,7 @@ export const useInitCustomization = () => {
 // Get the master customization document
 export const useGetCustomization = () => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['customization'],
         queryFn: async () => {
             const { data } = await api.get('/admin/customization');

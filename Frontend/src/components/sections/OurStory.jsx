@@ -176,9 +176,6 @@ const OurStory = () => {
               </p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 mt-6">
                 <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                  📦 Plastic-Free Packaging
-                </span>
-                <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                   🐰 Vegan &amp; Cruelty-Free
                 </span>
                 <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">

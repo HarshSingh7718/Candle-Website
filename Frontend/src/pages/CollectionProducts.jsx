@@ -8,6 +8,8 @@ import SEO from '../components/SEO';
 import ProductCard from "../components/ui/Cards/ProductCard";
 import PageBanner from "../components/ui/PageBanner";
 import Loader from "../components/ui/Loader";
+import MobileFilterModal from "../components/ui/MobileFilterModal";
+import CustomDropdown from "../components/ui/CustomDropdown";
 import { useProductsByCategory } from "../hooks/useProducts";
 import { useDebounce } from "../hooks/useDebounce";
 
@@ -23,10 +25,10 @@ const CollectionProducts = () => {
   const sidebarRef = useRef();
   const mainRef = useRef();
 
-  // Local UI State
-  const [searchInput, setSearchInput] = useState(querySearch);
+  // Local UI State (Desktop sidebar)
   const [sortInput, setSortInput] = useState(querySort);
-  const [priceInput, setPriceInput] = useState(queryPrice || 5000);
+  const [priceInput, setPriceInput] = useState(queryPrice || 3000);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPage = 8;
 
@@ -50,26 +52,10 @@ const CollectionProducts = () => {
     setCurrentPage(1);
   }, [querySearch, querySort, queryPrice]);
 
-  // Sync Search Input local state if URL changes externally
-  useEffect(() => {
-    setSearchInput(querySearch);
-  }, [querySearch]);
-
-  const handleSearchCommit = () => {
-    const newParams = new URLSearchParams(searchParams);
-    if (searchInput) newParams.set("search", searchInput);
-    else newParams.delete("search");
-    setSearchParams(newParams);
-  };
-
-  const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter") handleSearchCommit();
-  };
-
   // Sync Debounced Price to URL (Auto Trigger)
   useEffect(() => {
     const newParams = new URLSearchParams(searchParams);
-    if (debouncedPrice && debouncedPrice < 5000) {
+    if (debouncedPrice && debouncedPrice < 3000) {
       newParams.set("maxPrice", debouncedPrice);
     } else {
       newParams.delete("maxPrice");
@@ -92,6 +78,27 @@ const CollectionProducts = () => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 400, behavior: "smooth" });
   };
+
+  // Handle Mobile Modal Apply
+  const handleMobileApply = ({ sort, maxPrice }) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (sort && sort !== "latest") newParams.set("sort", sort);
+    else newParams.delete("sort");
+    
+    if (maxPrice && maxPrice < 3000) newParams.set("maxPrice", maxPrice);
+    else newParams.delete("maxPrice");
+    
+    setSearchParams(newParams);
+    setSortInput(sort || "latest");
+    setPriceInput(maxPrice || 3000);
+  };
+
+  const sortOptions = [
+    { value: 'latest', label: 'Sort by latest' },
+    { value: 'popularity', label: 'Sort by Popularity' },
+    { value: 'low-to-high', label: 'Sort by Low to High' },
+    { value: 'high-to-low', label: 'Sort by High to Low' },
+  ];
 
   // 5. GSAP Animations
   useEffect(() => {
@@ -184,34 +191,12 @@ const CollectionProducts = () => {
               ref={sidebarRef}
               className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1"
             >
-              <div className="bg-bg-surface p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
-                <h3 className="text-xl font-medium mb-4 sidebar-title">
-                  Search
-                </h3>
-                <div className="relative sidebar-content">
-                  <input
-                    type="text"
-                    value={searchInput}
-                    placeholder="Search in collection..."
-                    className="w-full border border-stone-200 p-2 pl-10 rounded-md outline-none focus:border-primary transition-colors"
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={handleSearchKeyDown}
-                  />
-                  <button 
-                    onClick={handleSearchCommit} 
-                    className="absolute left-3 top-2.5 text-stone-400 cursor-pointer hover:text-primary transition-colors"
-                  >
-                    <Search size={18} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-bg-surface hidden md:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
+              <div className="bg-bg-surface hidden lg:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
                 <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
                   Price Filter
                   {queryPrice !== null && (
                     <button
-                      onClick={() => setPriceInput(5000)}
+                      onClick={() => setPriceInput(3000)}
                       className="text-[10px] bg-red-100 text-danger px-2 py-1 rounded cursor-pointer hover:bg-red-200 transition-colors"
                     >
                       Reset
@@ -223,27 +208,21 @@ const CollectionProducts = () => {
                   <input
                     type="range"
                     min="0"
-                    max="5000"
+                    max="3000"
                     value={priceInput}
                     onChange={(e) => setPriceInput(Number(e.target.value))}
                     className="w-full accent-primary cursor-pointer"
                   />
                   <div className="flex justify-between text-sm mt-2 font-medium text-stone-600">
                     <span>₹0</span>
-                    <span>{priceInput < 5000 ? `Max: ₹${priceInput}` : "No Max"}</span>
+                    <span>{priceInput < 3000 ? `Max: ₹${priceInput}` : "No Max"}</span>
                   </div>
-                  <div className="relative group mt-6">
-                    <select
-                      className="w-full appearance-none bg-bg-surface border border-stone-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-1 ring-primary/20"
+                  <div className="mt-6">
+                    <CustomDropdown 
+                      options={sortOptions}
                       value={sortInput}
-                      onChange={(e) => setSortInput(e.target.value)}
-                    >
-                      <option value="latest">Sort by latest</option>
-                      <option value="popularity">Sort by Popularity</option>
-                      <option value="low-to-high">Sort by Low to High</option>
-                      <option value="high-to-low">Sort by High to Low</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none w-4 h-4" />
+                      onChange={setSortInput}
+                    />
                   </div>
                 </div>
               </div>
@@ -251,7 +230,7 @@ const CollectionProducts = () => {
 
             {/* Main Content Grid */}
             <main ref={mainRef} className="w-full lg:w-3/4 order-1 lg:order-2">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
+              <div className="flex justify-between items-center mb-8 gap-4 top-bar">
                 <p className="text-stone-500 italic">
                   Showing{" "}
                   {categoryProducts.length > 0
@@ -261,6 +240,15 @@ const CollectionProducts = () => {
                   {((currentPage - 1) * productPerPage) + categoryProducts.length}{" "}
                   of {responseData?.totalProducts || 0} results
                 </p>
+                
+                {/* Mobile Filter Button */}
+                <button 
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="lg:hidden flex items-center gap-2 bg-bg-surface border border-stone-200 px-4 py-2 rounded-md shadow-sm text-stone-700 font-medium hover:bg-stone-50 transition-colors"
+                >
+                  <Filter size={18} />
+                  Filters
+                </button>
               </div>
 
               {isLoading ? (
@@ -312,6 +300,14 @@ const CollectionProducts = () => {
           </div>
         </div>
       </div>
+
+      <MobileFilterModal 
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        initialSort={querySort}
+        initialPrice={queryPrice ? Number(queryPrice) : 3000}
+        onApply={handleMobileApply}
+      />
     </>
   );
 };

@@ -1,9 +1,10 @@
 
 import { api } from '../api';
 import toast from 'react-hot-toast';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 export const useGetCategories = () => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['categories'],
         queryFn: async () => {
             // Make sure this route exists on your backend!
@@ -15,6 +16,7 @@ export const useGetCategories = () => {
 
 export const useGetCategory = (id) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['category', id],
         queryFn: async () => {
             const { data } = await api.get(`/admin/category/${id}`);
@@ -87,6 +89,7 @@ export const useToggleCategoryStatus = () => {
 
 export const useGetCategoryProducts = (categoryId) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['categoryProducts', categoryId],
         queryFn: async () => {
             const { data } = await api.get(`/admin/category/${categoryId}/products`);

@@ -79,6 +79,12 @@ import { config } from "../config/index.js";
 // Helper to format phone for MSG91: Removes '+' and ensures '91' prefix
 const formatPhoneForMsg91 = (phoneNumber) => {
     const cleaned = phoneNumber.replace(/\D/g, ''); // Strip all non-numeric characters
+    
+    // If it's a standard 10-digit number, prepend 91 regardless of what it starts with
+    if (cleaned.length === 10) {
+        return `91${cleaned}`;
+    }
+    
     return cleaned.startsWith("91") ? cleaned : `91${cleaned}`;
 };
 

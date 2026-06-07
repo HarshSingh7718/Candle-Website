@@ -15,8 +15,8 @@ const formatOrderData = (dbOrders) => {
     return dbOrders.map(order => ({
         id: order.orderId,
         rawId: order._id,
-        date: new Date(order.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric', month: 'short', day: 'numeric'
+        date: new Date(order.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit', month: '2-digit', year: 'numeric'
         }),
         status: order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1).replace(/_/g, ' '),
         total: `₹${(order.totalAmount || 0).toFixed(2)}`,

@@ -3,11 +3,12 @@ import { User } from "../models/userModel.js";
 import 'dotenv/config'
 import { config } from "../config/index.js";
 import { sendOtp } from "../services/otp_services.js";
+import { clearTokenCookie, clearAdminTokenCookie } from "../utils/token.js";
 
 export const isAuthenticated = async (req, res, next) => {
     try {
         // 1. Get the raw token from either location
-        const tokenFromCookie = req.cookies?.token;
+        const tokenFromCookie = req.cookies?.userToken || req.cookies?.adminToken || req.cookies?.token;
         const tokenFromHeader = req.headers.authorization?.startsWith("Bearer ") 
             ? req.headers.authorization.split(" ")[1] 
             : null;
@@ -27,6 +28,12 @@ export const isAuthenticated = async (req, res, next) => {
         const user = await User.findById(decoded.id);
         if (!user) {
             return res.status(401).json({ success: false, message: "User not found" });
+        }
+
+        if (user.isActive === false) {
+            clearTokenCookie(res);
+            clearAdminTokenCookie(res);
+            return res.status(403).json({ success: false, message: "Access revoked by admin" });
         }
 
         req.id = user._id;

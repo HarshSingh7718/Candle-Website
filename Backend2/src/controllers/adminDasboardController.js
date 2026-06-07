@@ -23,15 +23,23 @@ export const getAdminDashboard = async (req, res) => {
   }]);
   const totalRevenue = revenueData[0]?.totalRevenue || 0;
 
-  //  Monthly Revenue (for charts)
-  const monthlyRevenue = await Order.aggregate([{
+  //  Daily Revenue for the Selected Month (for charts)
+  const currentDate = new Date();
+  const year = req.query.year ? parseInt(req.query.year) : currentDate.getFullYear();
+  const month = req.query.month ? parseInt(req.query.month) - 1 : currentDate.getMonth();
+
+  const startOfMonth = new Date(year, month, 1);
+  const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
+
+  const dailyRevenue = await Order.aggregate([{
     $match: {
-      paymentStatus: "paid"
+      paymentStatus: "paid",
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth }
     }
   }, {
     $group: {
       _id: {
-        $month: "$createdAt"
+        $dayOfMonth: "$createdAt"
       },
       revenue: {
         $sum: "$totalAmount"
@@ -89,7 +97,7 @@ export const getAdminDashboard = async (req, res) => {
       totalProducts,
       totalOrders,
       totalRevenue,
-      monthlyRevenue,
+      monthlyRevenue: dailyRevenue, // Keep the key as monthlyRevenue for frontend compatibility, but it contains daily data
       orderStats,
       recentOrders,
       topProducts,

@@ -8,12 +8,12 @@ const Coupons = () => {
   const mainRef = useRef(null);
   const rowsRef = useRef([]);
 
-  const { data: coupons = [], isLoading } = useGetCoupons();
+  const { data: coupons = [], isLoading, isFetching } = useGetCoupons();
   const { mutate: deleteCoupon } = useDeleteCoupon();
   const { mutate: toggleStatus } = useToggleCoupon();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || (coupons.length === 0 && isLoading)) return;
     gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
@@ -36,18 +36,12 @@ const Coupons = () => {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
-    return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    return new Date(dateStr).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const isExpired = (endDate) => new Date(endDate) < new Date();
 
-  if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+
 
   return (
     <main className="flex-1 p-6 md:p-margin-page max-w-container-max mx-auto w-full opacity-0" ref={mainRef}>
@@ -55,14 +49,14 @@ const Coupons = () => {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-stack-lg">
         <div>
-          <h2 className="font-heading text-headline-lg text-on-surface mb-2">Coupon Management</h2>
-          <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          <h2 className="font-heading text-headline-lg text-text-base mb-2">Coupon Management</h2>
+          <p className="font-body-md text-body-md text-text-muted max-w-2xl">
             Create, manage, and track promotional discount codes. Per-user usage limits ensure fair distribution.
           </p>
         </div>
         <button
           onClick={() => navigate('/coupons/add')}
-          className="shrink-0 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg shadow-sm shadow-orange-900/20 transition-all flex items-center justify-center gap-2 border-b-2 border-primary-container hover:border-surface-tint cursor-pointer"
+          className="shrink-0 bg-brand-primary hover:bg-coffee-800 text-text-on-brand font-label-md text-label-md py-3 px-6 rounded-lg shadow-sm shadow-orange-900/20 transition-all flex items-center justify-center gap-2 border-b-2 border-coffee-800 hover:border-brand-secondary cursor-pointer"
         >
           <span className="material-symbols-outlined text-lg">add</span>
           Add Coupon
@@ -70,33 +64,50 @@ const Coupons = () => {
       </div>
 
       {/* Coupons Table */}
-      <div className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden shadow-sm">
+      <div className={`bg-bg-surface border border-bg-muted rounded-xl overflow-hidden shadow-sm transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px]">
             <thead>
-              <tr className="border-b border-surface-variant bg-surface-container-low">
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Code</th>
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Title</th>
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Discount</th>
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Validity</th>
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Per User</th>
-                <th className="text-left px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Status</th>
-                <th className="text-right px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Actions</th>
+              <tr className="border-b border-bg-muted bg-bg-canvas">
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Code</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Title</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Discount</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Validity</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Per User</th>
+                <th className="text-left px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Status</th>
+                <th className="text-right px-6 py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {coupons.map((coupon) => {
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <tr key={`skeleton-${idx}`} className="border-b border-bg-muted/50 animate-pulse">
+                    <td className="px-6 py-4"><div className="h-6 bg-bg-muted rounded w-24"></div></td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="h-4 bg-bg-muted rounded w-32"></div>
+                        <div className="h-3 bg-bg-muted rounded w-48"></div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-20"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-32"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-16"></div></td>
+                    <td className="px-6 py-4"><div className="h-6 bg-bg-muted rounded-full w-20"></div></td>
+                    <td className="px-6 py-4 text-right"><div className="h-6 bg-bg-muted rounded w-16 ml-auto"></div></td>
+                  </tr>
+                ))
+              ) : coupons.map((coupon) => {
                 const expired = isExpired(coupon.endDate);
 
                 return (
                   <tr
                     key={coupon._id}
                     ref={addToRowsRef}
-                    className="border-b border-surface-variant/50 last:border-0 hover:bg-surface-container-low/50 transition-colors"
+                    className="border-b border-bg-muted/50 last:border-0 hover:bg-bg-canvas/50 transition-colors"
                   >
                     {/* Code */}
                     <td className="px-6 py-4">
-                      <span className="font-heading text-headline-md text-on-surface tracking-wider bg-surface-container px-3 py-1 rounded-md border border-surface-variant inline-block">
+                      <span className="font-heading text-headline-md text-text-base tracking-wider bg-bg-muted px-3 py-1 rounded-md border border-bg-muted inline-block">
                         {coupon.code}
                       </span>
                     </td>
@@ -104,9 +115,9 @@ const Coupons = () => {
                     {/* Title */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-label-md text-on-surface">{coupon.title || '—'}</span>
+                        <span className="font-label-md text-text-base">{coupon.title || '—'}</span>
                         {coupon.description && (
-                          <span className="text-xs text-on-surface-variant line-clamp-1">{coupon.description}</span>
+                          <span className="text-xs text-text-muted line-clamp-1">{coupon.description}</span>
                         )}
                       </div>
                     </td>
@@ -114,18 +125,18 @@ const Coupons = () => {
                     {/* Discount */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-label-md text-on-surface">
+                        <span className="font-label-md text-text-base">
                           {coupon.discountType === 'percentage'
                             ? `${coupon.discountValue}% OFF`
                             : `₹${coupon.discountValue} OFF`}
                         </span>
                         {coupon.discountType === 'percentage' && coupon.maxDiscountAmount && (
-                          <span className="text-xs text-on-surface-variant">
+                          <span className="text-xs text-text-muted">
                             Max ₹{coupon.maxDiscountAmount}
                           </span>
                         )}
                         {coupon.minOrderValue > 0 && (
-                          <span className="text-xs text-on-surface-variant">
+                          <span className="text-xs text-text-muted">
                             Min order ₹{coupon.minOrderValue}
                           </span>
                         )}
@@ -135,18 +146,18 @@ const Coupons = () => {
                     {/* Validity */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-sm text-on-surface">
+                        <span className="text-sm text-text-base">
                           {formatDate(coupon.startDate)} – {formatDate(coupon.endDate)}
                         </span>
                         {expired && (
-                          <span className="text-xs text-error font-label-sm">Expired</span>
+                          <span className="text-xs text-danger font-label-sm">Expired</span>
                         )}
                       </div>
                     </td>
 
                     {/* Per User Limit */}
                     <td className="px-6 py-4">
-                      <span className="text-sm font-label-md text-on-surface">
+                      <span className="text-sm font-label-md text-text-base">
                         {coupon.usageLimitPerUser}× per user
                       </span>
                     </td>
@@ -161,10 +172,10 @@ const Coupons = () => {
                             checked={coupon.isActive}
                             onChange={() => toggleStatus(coupon._id)}
                           />
-                          <div className={`block w-10 h-6 rounded-full transition-colors ${coupon.isActive ? 'bg-primary' : 'bg-surface-variant border border-outline-variant'}`}></div>
-                          <div className={`dot absolute left-1 top-1 w-4 h-4 rounded-full transition-transform ${coupon.isActive ? 'bg-surface-container-lowest translate-x-4' : 'bg-on-surface-variant'}`}></div>
+                          <div className={`block w-10 h-6 rounded-full transition-colors ${coupon.isActive ? 'bg-brand-primary' : 'bg-bg-muted border border-bg-muted'}`}></div>
+                          <div className={`dot absolute left-1 top-1 w-4 h-4 rounded-full transition-transform ${coupon.isActive ? 'bg-bg-surface translate-x-4' : 'bg-text-muted'}`}></div>
                         </div>
-                        <span className="font-label-md text-label-md text-on-surface-variant">
+                        <span className="font-label-md text-label-md text-text-muted">
                           {coupon.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </label>
@@ -175,13 +186,13 @@ const Coupons = () => {
                       <div className="flex gap-2 justify-end">
                         <button
                           onClick={() => navigate(`/coupons/edit/${coupon._id}`)}
-                          className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-text-muted hover:text-brand-primary hover:bg-bg-muted rounded-lg transition-colors cursor-pointer"
                         >
                           <span className="material-symbols-outlined">edit</span>
                         </button>
                         <button
                           onClick={() => deleteCoupon(coupon._id)}
-                          className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/50 rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-text-muted hover:text-danger hover:bg-danger/10/50 rounded-lg transition-colors cursor-pointer"
                         >
                           <span className="material-symbols-outlined">delete</span>
                         </button>
@@ -196,7 +207,7 @@ const Coupons = () => {
       </div>
 
       {coupons.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-on-surface-variant font-body-lg">
+        <div className="text-center py-12 text-text-muted font-body-lg">
           No coupons available. Create one to get started.
         </div>
       )}

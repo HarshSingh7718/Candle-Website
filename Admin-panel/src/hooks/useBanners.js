@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
@@ -26,6 +26,7 @@ export const useCreateBanner = () => {
 // Fetch a single banner for the Edit page
 export const useGetBanner = (id) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['banner', id],
         queryFn: async () => {
             const { data } = await api.get(`/admin/banner/${id}`);
@@ -38,6 +39,7 @@ export const useGetBanner = (id) => {
 // Fetch all banners
 export const useGetBanners = () => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['banners'],
         queryFn: async () => {
             // Adjust the route prefix ('/admin' or '/api/admin') based on your Express setup

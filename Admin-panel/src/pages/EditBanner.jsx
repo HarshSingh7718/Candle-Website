@@ -92,7 +92,7 @@ const EditBanner = () => {
   if (isFetching) {
     return (
       <div className="flex-1 flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
       </div>
     );
   }
@@ -102,76 +102,76 @@ const EditBanner = () => {
       <div className="mb-stack-lg">
         <button
           onClick={() => navigate('/banners')}
-          className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md mb-4 cursor-pointer"
+          className="flex items-center gap-2 text-text-muted hover:text-brand-primary transition-colors font-label-md text-label-md mb-4 cursor-pointer"
         >
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back to Banners
         </button>
-        <h2 className="font-heading text-headline-lg text-on-surface mb-2">Edit Banner</h2>
-        <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        <h2 className="font-heading text-headline-lg text-text-base mb-2">Edit Banner</h2>
+        <p className="font-body-md text-body-md text-text-muted max-w-2xl">
           Update the visual or messaging for this banner. Ensure your imagery reflects the tactile warmth and premium quality of our handcrafted candles.
         </p>
       </div>
 
       <div ref={containerRef} className="flex flex-col lg:flex-row gap-8 opacity-0">
         {/* Sidebar - Artisanal Visuals */}
-        <div className="w-full lg:w-[320px] bg-surface-container-low rounded-2xl p-8 border border-surface-container self-start">
-          <h2 className="text-[24px] font-heading font-bold text-primary mb-4">Artisanal Visuals</h2>
-          <p className="text-on-surface-variant leading-relaxed mb-8 font-body-md">
+        <div className="w-full lg:w-[320px] bg-bg-canvas rounded-2xl p-8 border border-bg-muted self-start">
+          <h2 className="text-[24px] font-heading font-bold text-brand-primary mb-4">Artisanal Visuals</h2>
+          <p className="text-text-muted leading-relaxed mb-8 font-body-md">
             Banners are the heartbeat of Lumière. Maintain clear space for the text overlay.
           </p>
 
           <ul className="space-y-6">
             <li className="flex gap-3 items-start">
-              <span className="material-symbols-outlined text-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
-              <span className="text-on-surface font-label-md leading-tight">Use high-resolution photography with natural lighting.</span>
+              <span className="material-symbols-outlined text-brand-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
+              <span className="text-text-base font-label-md leading-tight">Use high-resolution photography with natural lighting.</span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="material-symbols-outlined text-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
-              <span className="text-on-surface font-label-md leading-tight">Maintain clear space for the text overlay.</span>
+              <span className="material-symbols-outlined text-brand-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
+              <span className="text-text-base font-label-md leading-tight">Maintain clear space for the text overlay.</span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="material-symbols-outlined text-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
-              <span className="text-on-surface font-label-md leading-tight">Subtitles should offer a gentle call to action.</span>
+              <span className="material-symbols-outlined text-brand-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
+              <span className="text-text-base font-label-md leading-tight">Subtitles should offer a gentle call to action.</span>
             </li>
           </ul>
         </div>
 
         {/* Main Form Area */}
-        <div className="flex-1 bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-surface-container shadow-sm shadow-orange-900/5">
+        <div className="flex-1 bg-bg-surface rounded-2xl p-6 sm:p-10 border border-bg-muted shadow-sm shadow-orange-900/5">
           <form onSubmit={handleSubmit} className="space-y-10">
 
             {/* Banner Image Uploads */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Desktop Banner Image */}
               <div className="space-y-3">
-                <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
+                <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">
                   Desktop Banner (16:9) *
                 </label>
                 <div
                   onClick={handleDesktopUploadClick}
-                  className={`relative w-full aspect-[16/9] rounded-xl border-2 border-dashed ${desktopPreview ? 'border-primary' : 'border-outline-variant'} bg-surface-container-low flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container hover:border-primary transition-all group overflow-hidden ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
+                  className={`relative w-full aspect-[16/9] rounded-xl border-2 border-dashed ${desktopPreview ? 'border-brand-primary' : 'border-bg-muted'} bg-bg-canvas flex flex-col items-center justify-center cursor-pointer hover:bg-bg-muted hover:border-brand-primary transition-all group overflow-hidden ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
                   style={{ backgroundImage: desktopPreview ? `url(${desktopPreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
                 >
                   {!desktopPreview && (
                     <div className="flex flex-col items-center text-center p-6">
-                      <div className="w-16 h-16 bg-surface-container-lowest rounded-full flex items-center justify-center mb-5 text-primary shadow-sm">
+                      <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-5 text-brand-primary shadow-sm">
                         <div className="relative">
                           <span className="material-symbols-outlined text-[28px]">image</span>
-                          <div className="absolute -top-1 -right-1 bg-surface-container-lowest rounded-full p-0.5 border border-surface-container">
+                          <div className="absolute -top-1 -right-1 bg-bg-surface rounded-full p-0.5 border border-bg-muted">
                             <span className="material-symbols-outlined text-[14px]">add</span>
                           </div>
                         </div>
                       </div>
-                      <h3 className="text-xl font-heading font-bold text-on-surface mb-1">Upload Desktop</h3>
-                      <span className="px-4 py-1.5 bg-surface-variant rounded-full text-[11px] font-bold text-on-surface-variant">
+                      <h3 className="text-xl font-heading font-bold text-text-base mb-1">Upload Desktop</h3>
+                      <span className="px-4 py-1.5 bg-bg-muted rounded-full text-[11px] font-bold text-text-muted">
                         1920 x 1080px (Recommended)
                       </span>
                     </div>
                   )}
                   {desktopPreview && !isUpdating && (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="bg-surface-container-lowest text-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
+                      <span className="bg-bg-surface text-brand-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
                         <span className="material-symbols-outlined text-[18px]">edit</span>
                         Change Desktop
                       </span>
@@ -190,33 +190,33 @@ const EditBanner = () => {
 
               {/* Mobile Banner Image */}
               <div className="space-y-3">
-                <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
+                <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">
                   Mobile Banner (4:3 or 9:16) *
                 </label>
                 <div
                   onClick={handleMobileUploadClick}
-                  className={`relative w-full aspect-[4/5] sm:aspect-[4/5] rounded-xl border-2 border-dashed ${mobilePreview ? 'border-primary' : 'border-outline-variant'} bg-surface-container-low flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container hover:border-primary transition-all group overflow-hidden ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
+                  className={`relative w-full aspect-[4/5] sm:aspect-[4/5] rounded-xl border-2 border-dashed ${mobilePreview ? 'border-brand-primary' : 'border-bg-muted'} bg-bg-canvas flex flex-col items-center justify-center cursor-pointer hover:bg-bg-muted hover:border-brand-primary transition-all group overflow-hidden ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
                   style={{ backgroundImage: mobilePreview ? `url(${mobilePreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
                 >
                   {!mobilePreview && (
                     <div className="flex flex-col items-center text-center p-6">
-                      <div className="w-16 h-16 bg-surface-container-lowest rounded-full flex items-center justify-center mb-5 text-primary shadow-sm">
+                      <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-5 text-brand-primary shadow-sm">
                         <div className="relative">
                           <span className="material-symbols-outlined text-[28px]">image</span>
-                          <div className="absolute -top-1 -right-1 bg-surface-container-lowest rounded-full p-0.5 border border-surface-container">
+                          <div className="absolute -top-1 -right-1 bg-bg-surface rounded-full p-0.5 border border-bg-muted">
                             <span className="material-symbols-outlined text-[14px]">add</span>
                           </div>
                         </div>
                       </div>
-                      <h3 className="text-xl font-heading font-bold text-on-surface mb-1">Upload Mobile</h3>
-                      <span className="px-4 py-1.5 bg-surface-variant rounded-full text-[11px] font-bold text-on-surface-variant">
+                      <h3 className="text-xl font-heading font-bold text-text-base mb-1">Upload Mobile</h3>
+                      <span className="px-4 py-1.5 bg-bg-muted rounded-full text-[11px] font-bold text-text-muted">
                         1080 x 1350px (Recommended)
                       </span>
                     </div>
                   )}
                   {mobilePreview && !isUpdating && (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="bg-surface-container-lowest text-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
+                      <span className="bg-bg-surface text-brand-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
                         <span className="material-symbols-outlined text-[18px]">edit</span>
                         Change Mobile
                       </span>
@@ -236,7 +236,7 @@ const EditBanner = () => {
 
             {/* Title Field */}
             <div className="space-y-3">
-              <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
+              <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">
                 Title *
               </label>
               <input
@@ -245,13 +245,13 @@ const EditBanner = () => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Artisanal Autumn Glow"
                 disabled={isUpdating}
-                className="w-full px-6 py-4 rounded-xl border border-surface-variant bg-surface-container-lowest text-on-surface font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-on-surface-variant/50 transition-all shadow-sm disabled:opacity-50"
+                className="w-full px-6 py-4 rounded-xl border border-bg-muted bg-bg-surface text-text-base font-body-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary placeholder:text-text-muted/50 transition-all shadow-sm disabled:opacity-50"
               />
             </div>
 
             {/* Sub Title Field */}
             <div className="space-y-3">
-              <label className="block text-[11px] font-bold text-on-surface-variant tracking-widest uppercase">
+              <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">
                 Sub Title
               </label>
               <input
@@ -260,27 +260,27 @@ const EditBanner = () => {
                 onChange={(e) => setSubtitle(e.target.value)}
                 placeholder="e.g. Discover our limited edition seasonal scents"
                 disabled={isUpdating}
-                className="w-full px-6 py-4 rounded-xl border border-surface-variant bg-surface-container-lowest text-on-surface font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-on-surface-variant/50 transition-all shadow-sm disabled:opacity-50"
+                className="w-full px-6 py-4 rounded-xl border border-bg-muted bg-bg-surface text-text-base font-body-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary placeholder:text-text-muted/50 transition-all shadow-sm disabled:opacity-50"
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="pt-6 flex flex-col-reverse sm:flex-row items-center justify-end gap-4 border-t border-surface-container border-dashed">
+            <div className="pt-6 flex flex-col-reverse sm:flex-row items-center justify-end gap-4 border-t border-bg-muted border-dashed">
               <button
                 type="button"
                 onClick={() => navigate('/banners')}
                 disabled={isUpdating}
-                className="w-full sm:w-auto px-8 py-3.5 border border-surface-variant text-on-surface-variant font-label-md rounded-xl hover:bg-surface-container hover:text-on-surface transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3.5 border border-bg-muted text-text-muted font-label-md rounded-xl hover:bg-bg-muted hover:text-text-base transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!title || !desktopPreview || !mobilePreview || isUpdating}
-                className="w-full sm:w-auto px-8 py-3.5 bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm shadow-orange-900/20 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3.5 bg-brand-primary text-text-on-brand font-label-md rounded-xl flex items-center justify-center gap-2 hover:bg-coffee-800 transition-all shadow-sm shadow-orange-900/20 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               >
                 {isUpdating ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-on-primary"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div>
                 ) : (
                   <span className="material-symbols-outlined text-[20px]">save</span>
                 )}
