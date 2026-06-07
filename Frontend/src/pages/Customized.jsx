@@ -40,7 +40,7 @@ export default function Customized() {
 
   // Safely extract data
   const options = stepData?.options || [];
-  
+
   // Get basePrice from current step data, or fallback to cached data from other steps (e.g. on step 4)
   const getBasePrice = () => {
     if (stepData?.basePrice !== undefined) return stepData.basePrice;
@@ -350,8 +350,8 @@ export default function Customized() {
                             >
                               <div className="aspect-[16/10] w-full rounded-lg mb-4 overflow-hidden bg-slate-100">
                                 <img
-                                  src={addon.image?.url}
-                                  alt={addon.name}
+                                  src={addOn.image?.url}
+                                  alt={addOn.name}
                                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                               </div>
@@ -362,7 +362,7 @@ export default function Customized() {
                                     : "text-slate-600"
                                     }`}
                                 >
-                                  {addon.name}
+                                  {addOn.name}
                                 </span>
                                 <span
                                   className={`text-[10px] sm:text-xs font-bold ${isSelected
@@ -370,7 +370,7 @@ export default function Customized() {
                                     : "text-slate-500"
                                     }`}
                                 >
-                                  +₹{Number(addon.price).toFixed(2)}
+                                  +₹{Number(addOn.price).toFixed(2)}
                                 </span>
                               </div>
                               {isSelected && (

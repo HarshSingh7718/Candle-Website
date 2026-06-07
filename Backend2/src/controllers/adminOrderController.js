@@ -122,3 +122,186 @@ export const updateOrderStatus = async (req, res) => {
     shiprocket: shiprocketData
   });
 };
+
+
+
+export const getAvailableCouriersForOrder = async (req, res) => {
+
+  const searchValue = req.params.id;
+
+  const order = await Order.findOne(
+
+    mongoose.Types.ObjectId.isValid(searchValue)
+
+      ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
+
+      : { orderId: searchValue }
+
+  );
+
+
+
+  if (!order) {
+
+    throw new CustomError("Order not found", 404);
+
+  }
+
+
+
+  if (order.orderStatus !== "packaged") {
+
+    throw new CustomError("Couriers can only be fetched for packaged orders", 400);
+
+  }
+
+
+
+  if (!order.shiprocketOrderId) {
+
+    throw new CustomError("Shiprocket order not found. Please mark the order as packaged again.", 400);
+
+  }
+
+
+
+  // Import locally to avoid circular dependencies if any
+
+  const { getAvailableCouriers } = await import("../services/shipRocketService.js");
+
+  
+
+  const couriers = await getAvailableCouriers(order.shiprocketOrderId);
+
+
+
+  res.status(200).json({
+
+    success: true,
+
+    couriers
+
+  });
+
+};
+
+
+
+export const shipOrder = async (req, res) => {
+
+  const searchValue = req.params.id;
+
+  const { courierId, pickupDate } = req.body;
+
+
+
+  if (!courierId) {
+
+    throw new CustomError("Courier ID is required", 400);
+
+  }
+
+
+
+  const order = await Order.findOne(
+
+    mongoose.Types.ObjectId.isValid(searchValue)
+
+      ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
+
+      : { orderId: searchValue }
+
+  );
+
+
+
+  if (!order) {
+
+    throw new CustomError("Order not found", 404);
+
+  }
+
+
+
+  if (order.orderStatus !== "packaged") {
+
+    throw new CustomError("Only packaged orders can be shipped", 400);
+
+  }
+
+
+
+  if (!order.shiprocketShipmentId) {
+
+    throw new CustomError("Shipment ID not found. Order may not be fully packaged.", 400);
+
+  }
+
+
+
+  const { assignAWB, schedulePickup, generateLabel, generateInvoice } = await import("../services/shipRocketService.js");
+
+
+
+  // 1. Assign AWB
+
+  const awbRes = await assignAWB(order.shiprocketShipmentId, courierId);
+
+  
+
+  // Update order with AWB info
+
+  if (awbRes && awbRes.response && awbRes.response.data) {
+
+    const awbData = awbRes.response.data;
+
+    order.awbCode = awbData.awb_code;
+
+    order.courierName = awbData.courier_name;
+
+  }
+
+
+
+  // 2. Schedule Pickup
+
+  await schedulePickup(order.shiprocketShipmentId, pickupDate);
+
+
+
+  // 3. Generate Label
+
+  const labelUrl = await generateLabel(order.shiprocketShipmentId);
+
+  if (labelUrl) order.labelUrl = labelUrl;
+
+
+
+  // 4. Generate Invoice
+
+  const invoiceUrl = await generateInvoice(order.shiprocketOrderId);
+
+  if (invoiceUrl) order.invoiceUrl = invoiceUrl;
+
+
+
+  // We do NOT update orderStatus here. The webhook will handle it.
+
+  
+
+  await order.save();
+
+
+
+  res.status(200).json({
+
+    success: true,
+
+    message: "Shipping initiated successfully",
+
+    order
+
+  });
+
+};
+

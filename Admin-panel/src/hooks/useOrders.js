@@ -51,3 +51,33 @@ export const useUpdateOrderStatus = () => {
         onError: (error) => toast.error(error.response?.data?.message || "Failed to update order status")
     });
 };
+export const useGetAvailableCouriers = (id, enabled = true) => {
+    return useQuery({
+        queryKey: ['order-couriers', id],
+        queryFn: async () => {
+            const { data } = await api.get(`/admin/orders/${id}/couriers`);
+            return data.couriers;
+        },
+        enabled: !!id && enabled,
+    });
+};
+
+export const useShipOrder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ id, courierId, pickupDate }) => {
+            const { data } = await api.post(`/admin/orders/${id}/ship`, {
+                courierId,
+                pickupDate
+            });
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['orders']);
+            queryClient.invalidateQueries(['order']);
+            toast.success("Shipping initiated successfully!");
+        },
+        onError: (error) => toast.error(error.response?.data?.message || "Failed to initiate shipping")
+    });
+};

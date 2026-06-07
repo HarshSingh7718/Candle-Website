@@ -191,7 +191,7 @@ const OurStory = () => {
                 alt="Cozy atmosphere"
                 className="w-full  h-full object-cover"
                 data-alt="Person relaxing in a cozy room with lit candles"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxt09YxjJvkaK2fbWpmx3PDvePVdQYRSjoqdWXb5JiB86env6v5jqQUL64mMTM3FdDFvtLDYXX39KKmlchQaY2IL-VaiKqxZENMKkNB0czsTQuGWmDnUX2W9b91D4uwjf4JsqSJnM96eDUObrXazlmYaNvzKgfLYAtmsQQwE-N-zBrCKpG9s7rB6vXQVEUUG14l1wrnbin8975VamTgnbNzsxU9LLm8b2eHnUsWNcGmKQeFvMO2sc6hK9QrTlCpsoa5Z54wGoTr9e8"
+                src="https://res.cloudinary.com/dk1qzyep1/image/upload/v1780795119/mission_ejne6r.webp"
               />
             </div>
           </div>

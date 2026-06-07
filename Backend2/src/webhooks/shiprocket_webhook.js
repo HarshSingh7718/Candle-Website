@@ -62,7 +62,7 @@ export const shiprocketWebhookHandler = async (req, res) => {
         }
 
         // 4. Find order — Shiprocket sends back the order_id we gave it (our MongoDB _id)
-        let order = await Order.findById(shiprocketOrderId).populate("user", "firstName phoneNumber");
+        let order = await Order.findOne({ orderId: shiprocketOrderId }).populate("user", "firstName phoneNumber");
 
         // Fallback: search by shiprocketOrderId field (numeric ID from Shiprocket)
         if (!order) {

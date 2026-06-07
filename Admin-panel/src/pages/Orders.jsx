@@ -47,10 +47,6 @@ const Orders = () => {
     }
   }, [orders]);
 
-  const handleStatusChange = (orderId, newStatus) => {
-    updateStatus({ id: orderId, status: newStatus });
-  };
-
   const filteredOrders = orders.filter(order => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
@@ -167,17 +163,9 @@ const Orders = () => {
                     </td>
                     <td className="py-4 px-6 font-label-md text-label-md">₹{total}</td>
                     <td className="py-4 px-6 text-right">
-                      <select
-                        disabled={isUpdating}
-                        value={order.orderStatus}
-                        onClick={(e) => e.stopPropagation()} // 👉 4. Stop click from triggering row navigation
-                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        className="px-3 py-2 bg-surface-container border border-outline-variant text-on-surface rounded font-label-sm text-label-sm hover:bg-surface-container-high transition-colors cursor-pointer outline-none capitalize disabled:opacity-50"
-                      >
-                        {ORDER_STATUSES.filter(s => s !== 'All').map(s => (
-                          <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
-                        ))}
-                      </select>
+                      <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">
+                        chevron_right
+                      </span>
                     </td>
                   </tr>
                 );

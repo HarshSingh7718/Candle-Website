@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Package, Truck, CreditCard, ChevronDown, ArrowLeft, AlertCircle, CheckCircle2, Settings2, MessageSquare, ExternalLink } from 'lucide-react';
-import { useGetOrderDetails, useUpdateOrderStatus } from '../hooks/useOrders';
+import { Package, Truck, CreditCard, ChevronDown, ArrowLeft, AlertCircle, CheckCircle2, Settings2, MessageSquare, ExternalLink, X, FileText, Download } from 'lucide-react';
+import { useGetOrderDetails, useUpdateOrderStatus, useGetAvailableCouriers, useShipOrder } from '../hooks/useOrders';
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -9,9 +9,11 @@ const OrderDetails = () => {
 
     const { data: order, isLoading } = useGetOrderDetails(id);
     const { mutate: updateOrderStatus, isPending: isUpdating } = useUpdateOrderStatus();
+    const { mutate: shipOrder, isPending: isShipping } = useShipOrder();
 
     const [packaging, setPackaging] = useState("");
     const [weight, setWeight] = useState("");
+    const [showCourierModal, setShowCourierModal] = useState(false);
 
     useEffect(() => {
         if (order) {
@@ -299,13 +301,14 @@ const OrderDetails = () => {
                                                     Order is packed and ready for dispatch.
                                                 </div>
                                                 {/* Only show manual ship button if Shiprocket didn't assign AWB */}
-                                                {!hasShiprocketData && (
+                                                {order.shiprocketOrderId && !order.awbCode && (
                                                     <button
-                                                        onClick={handleMarkShipped}
-                                                        disabled={isUpdating}
-                                                        className="px-6 py-2.5 bg-[#945305] text-white text-sm font-medium rounded-md hover:bg-[#7a4404] transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
+                                                        onClick={() => setShowCourierModal(true)}
+                                                        disabled={isUpdating || isShipping}
+                                                        className="px-6 py-2.5 bg-[#945305] text-white text-sm font-medium rounded-md hover:bg-[#7a4404] transition-colors disabled:opacity-50 cursor-pointer shadow-sm flex items-center gap-2"
                                                     >
-                                                        {isUpdating ? 'Updating...' : 'Dispatch / Mark Shipped'}
+                                                        <Truck size={16} />
+                                                        {isShipping ? 'Initiating...' : 'Select Courier & Ship'}
                                                     </button>
                                                 )}
                                             </div>
@@ -347,9 +350,33 @@ const OrderDetails = () => {
                                                                     href={order.trackingUrl}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="inline-flex items-center gap-1 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors"
+                                                                    className="inline-flex items-center gap-1 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors mt-2"
                                                                 >
                                                                     Track Shipment
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        {order.labelUrl && (
+                                                            <div>
+                                                                <a
+                                                                    href={order.labelUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-1 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors mt-2"
+                                                                >
+                                                                    <Download size={14} /> Download Label
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        {order.invoiceUrl && (
+                                                            <div>
+                                                                <a
+                                                                    href={order.invoiceUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-1 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors mt-2"
+                                                                >
+                                                                    <FileText size={14} /> Download Invoice
                                                                 </a>
                                                             </div>
                                                         )}
@@ -421,6 +448,111 @@ const OrderDetails = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <CourierModal 
+                isOpen={showCourierModal} 
+                onClose={() => setShowCourierModal(false)}
+                orderId={order.orderId || order._id}
+                onShip={(courierId, pickupDate) => {
+                    shipOrder({ id: order.orderId || order._id, courierId, pickupDate });
+                }}
+                useGetAvailableCouriers={useGetAvailableCouriers}
+            />
+        </div>
+    );
+};
+
+const CourierModal = ({ isOpen, onClose, orderId, onShip, useGetAvailableCouriers }) => {
+    const { data: couriers, isLoading } = useGetAvailableCouriers(orderId, isOpen);
+    const [selectedCourier, setSelectedCourier] = useState("");
+    const [pickupDate, setPickupDate] = useState("");
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-orange-50/50">
+                    <h3 className="font-serif text-lg text-gray-900">Select Courier</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+                        <X size={20} />
+                    </button>
+                </div>
+                
+                <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center py-12">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#945305] mb-4"></div>
+                            <p className="text-sm text-gray-500">Searching for available couriers...</p>
+                        </div>
+                    ) : couriers && couriers.length > 0 ? (
+                        <div className="space-y-4">
+                            <div className="mb-6">
+                                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-2 block">Pickup Date</label>
+                                <input 
+                                    type="date" 
+                                    min={new Date().toISOString().split('T')[0]}
+                                    value={pickupDate}
+                                    onChange={(e) => setPickupDate(e.target.value)}
+                                    className="w-full sm:w-auto border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#945305] focus:ring-1 focus:ring-[#945305]"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">Leave empty for earliest available pickup.</p>
+                            </div>
+
+                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-2 block">Available Options</label>
+                            <div className="grid gap-3">
+                                {couriers.map(courier => (
+                                    <div 
+                                        key={courier.courier_company_id}
+                                        onClick={() => setSelectedCourier(courier.courier_company_id)}
+                                        className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                                            selectedCourier === courier.courier_company_id 
+                                            ? 'border-[#945305] bg-orange-50/30 ring-1 ring-[#945305]' 
+                                            : 'border-gray-200 hover:border-orange-200 hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h4 className="font-bold text-sm text-gray-900">{courier.courier_name}</h4>
+                                                <p className="text-xs text-gray-500 mt-0.5">Rating: {courier.rating} ★</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-bold text-[#945305]">₹{courier.rate}</div>
+                                                <div className="text-[10px] text-gray-500 mt-0.5 whitespace-nowrap">ETA: {courier.etd}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <AlertCircle size={32} className="mx-auto text-red-400 mb-3" />
+                            <p className="text-gray-900 font-medium">No couriers available</p>
+                            <p className="text-sm text-gray-500 mt-1">We couldn't find any serviceable couriers for this route.</p>
+                        </div>
+                    )}
+                </div>
+
+                <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+                    <button 
+                        onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        disabled={!selectedCourier}
+                        onClick={() => {
+                            onShip(selectedCourier, pickupDate);
+                            onClose();
+                        }}
+                        className="px-6 py-2 bg-[#945305] text-white text-sm font-medium rounded-lg hover:bg-[#7a4404] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm"
+                    >
+                        Confirm & Ship
+                    </button>
                 </div>
             </div>
         </div>
