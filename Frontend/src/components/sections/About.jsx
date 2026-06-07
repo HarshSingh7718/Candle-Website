@@ -1,7 +1,6 @@
-const aboutMainImg = "/images/Index/About/about-main-image.jpg";
-const aboutImg1 = "/images/Index/About/about-image01.jpg";
-const aboutImg2 = "/images/Index/About/about-image02.jpg";
-const aboutImg3 = "/images/Index/About/about-image03.jpg";
+const aboutMainImg = "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780791832/homepage-about-main_oz3udy.webp";
+const aboutImg1 = "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780792394/homepage-about-sub2_icugaz.webp";
+const aboutImg2 = "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780792645/homepage-about-sub1_sor9mr.webp";
 
 import MainBtn from "../ui/Buttons/MainBtn";
 import { useEffect, useRef } from "react";
@@ -91,7 +90,7 @@ function About() {
           </p>
           <div
             className="grid grid-cols-1 sm:grid-cols-2 gap-10 xl:gap-8
-lg:grid-cols-3 mx-auto mb-1 md:mb-18"
+lg:grid-cols-2 mx-auto mb-1 md:mb-18"
           >
             <div className="image ">
               <img
@@ -106,14 +105,6 @@ lg:grid-cols-3 mx-auto mb-1 md:mb-18"
                 src={aboutImg2}
                 alt="Premium ingredients"
                 className="section-image w-full aspect-[3/4] md:h-auto object-cover rounded-sm"
-                loading="lazy"
-              />
-            </div>
-            <div className="image ">
-              <img
-                src={aboutImg3}
-                alt="Final product"
-                className="section-image w-full h-auto object-cover rounded-sm hidden md:block"
                 loading="lazy"
               />
             </div>

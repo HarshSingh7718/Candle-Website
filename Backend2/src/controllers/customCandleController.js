@@ -56,7 +56,7 @@ export const createCustomCandle = async (req, res) => {
   // =========================
   //  ADD-ONS
   // =========================
-  const addOnStep = findStep("addon");
+  const addOnStep = findStep("addOn");
   const uniqueAddOns = [...new Set(addOnIds)];
   let validAddOns = [];
   let addOnNames = [];
@@ -90,7 +90,7 @@ export const createCustomCandle = async (req, res) => {
     // 📸 SNAPSHOT 
     snapshot: {
       vesselName: vessel.name,
-      vesselImage: vessel.image,
+      vesselImage: vessel.image.url,
       scentName: scent.name,
       addOnNames
     }

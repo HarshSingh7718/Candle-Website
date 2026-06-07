@@ -40,7 +40,17 @@ export default function Customized() {
 
   // Safely extract data
   const options = stepData?.options || [];
-  const basePrice = stepData?.basePrice || 0;
+  
+  // Get basePrice from current step data, or fallback to cached data from other steps (e.g. on step 4)
+  const getBasePrice = () => {
+    if (stepData?.basePrice !== undefined) return stepData.basePrice;
+    for (let i = 1; i <= 3; i++) {
+      const cached = queryClient.getQueryData(["customizationOptions", i]);
+      if (cached?.basePrice !== undefined) return cached.basePrice;
+    }
+    return 0;
+  };
+  const basePrice = getBasePrice();
 
   // 👉 2. Background Prefetching (Anticipatory Design)
   useEffect(() => {
@@ -84,13 +94,13 @@ export default function Customized() {
 
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-  const toggleAddOn = (addon) => {
+  const toggleAddOn = (addOn) => {
     setSelectedAddOns((prev) => {
-      const exists = prev.find((item) => item._id === addon._id);
+      const exists = prev.find((item) => item._id === addOn._id);
       if (exists) {
-        return prev.filter((item) => item._id !== addon._id);
+        return prev.filter((item) => item._id !== addOn._id);
       } else {
-        return [...prev, addon];
+        return [...prev, addOn];
       }
     });
   };
@@ -133,9 +143,9 @@ export default function Customized() {
 
   return (
     <div className="min-h-screen bg-light-yellow text-slate-900 font-sans">
-      <SEO 
-        title="Custom Candle Builder | Naisha Creations" 
-        description="Design your own custom candle. Choose your vessel, scent, add-ons, and add a personal message for the perfect gift." 
+      <SEO
+        title="Custom Candle Builder | Naisha Creations"
+        description="Design your own custom candle. Choose your vessel, scent, add-ons, and add a personal message for the perfect gift."
       />
       <PageBanner title="Customized" currentPage="Customized" />
       <main className="max-w-7xl mx-auto px-4 md:px-8 pt-12 pb-24">
@@ -165,23 +175,20 @@ export default function Customized() {
                     onClick={() =>
                       s.n < step || canGoNext() ? setStep(s.n) : null
                     }
-                    className={`flex items-center gap-1.5 sm:gap-3 transition-all duration-300 ${
-                      step >= s.n ? "opacity-100 cursor-pointer" : "opacity-40"
-                    }`}
+                    className={`flex items-center gap-1.5 sm:gap-3 transition-all duration-300 ${step >= s.n ? "opacity-100 cursor-pointer" : "opacity-40"
+                      }`}
                   >
                     <span
-                      className={`size-6 sm:size-8 shrink-0 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-sm transition-all duration-300 ${
-                        step >= s.n
-                          ? "bg-coffee-600 text-text-on-brand shadow-lg shadow-coffee-600/20"
-                          : "bg-slate-200 text-slate-600"
-                      }`}
+                      className={`size-6 sm:size-8 shrink-0 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-sm transition-all duration-300 ${step >= s.n
+                        ? "bg-coffee-600 text-text-on-brand shadow-lg shadow-coffee-600/20"
+                        : "bg-slate-200 text-slate-600"
+                        }`}
                     >
                       {s.n}
                     </span>
                     <span
-                      className={`font-bold leading-tight text-sm md:text-base  ${
-                        step === s.n ? "text-slate-900" : "text-slate-600"
-                      }`}
+                      className={`font-bold leading-tight text-sm md:text-base  ${step === s.n ? "text-slate-900" : "text-slate-600"
+                        }`}
                     >
                       {s.label}
                     </span>
@@ -220,11 +227,10 @@ export default function Customized() {
                           <div
                             key={vessel._id}
                             onClick={() => setSelectedVessel(vessel)}
-                            className={`group relative bg-bg-surface p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
-                              selectedVessel?._id === vessel._id
-                                ? "border-coffee-600 ring-4 ring-coffee-600/10 shadow-xl shadow-coffee-600/5"
-                                : "border-text-on-brand hover:border-coffee-200 hover:ring-4 hover:ring-coffee-100/50 shadow-sm"
-                            }`}
+                            className={`group relative bg-bg-surface p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${selectedVessel?._id === vessel._id
+                              ? "border-coffee-600 ring-4 ring-coffee-600/10 shadow-xl shadow-coffee-600/5"
+                              : "border-text-on-brand hover:border-coffee-200 hover:ring-4 hover:ring-coffee-100/50 shadow-sm"
+                              }`}
                           >
                             <div className="aspect-square rounded-xl bg-slate-100 mb-4 overflow-hidden">
                               <img
@@ -240,21 +246,19 @@ export default function Customized() {
                                 </h4>
                               </div>
                               <span
-                                className={`font-bold text-sm sm:text-base transition-colors ${
-                                  selectedVessel?._id === vessel._id
-                                    ? "text-coffee-600"
-                                    : "text-slate-500"
-                                }`}
+                                className={`font-bold text-sm sm:text-base transition-colors ${selectedVessel?._id === vessel._id
+                                  ? "text-coffee-600"
+                                  : "text-slate-500"
+                                  }`}
                               >
                                 +₹{Number(vessel.price).toFixed(2)}
                               </span>
                             </div>
                             <div
-                              className={`absolute top-6 right-6 bg-coffee-600 text-text-on-brand rounded-full p-1 shadow-lg ring-2 ring-white transition-all duration-300 ${
-                                selectedVessel?._id === vessel._id
-                                  ? "opacity-100 scale-100"
-                                  : "opacity-0 scale-50"
-                              }`}
+                              className={`absolute top-6 right-6 bg-coffee-600 text-text-on-brand rounded-full p-1 shadow-lg ring-2 ring-white transition-all duration-300 ${selectedVessel?._id === vessel._id
+                                ? "opacity-100 scale-100"
+                                : "opacity-0 scale-50"
+                                }`}
                             >
                               <Check className="size-4" />
                             </div>
@@ -282,11 +286,10 @@ export default function Customized() {
                             <button
                               key={scent._id}
                               onClick={() => setSelectedScent(scent)}
-                              className={`flex flex-col p-4 rounded-xl border-2 transition-all text-left group overflow-hidden ${
-                                isSelected
-                                  ? "border-coffee-600 bg-coffee-50 ring-4 ring-coffee-600/5"
-                                  : "border-text-on-brand shadow-sm hover:border-coffee-200"
-                              }`}
+                              className={`flex flex-col p-4 rounded-xl border-2 transition-all text-left group overflow-hidden ${isSelected
+                                ? "border-coffee-600 bg-coffee-50 ring-4 ring-coffee-600/5"
+                                : "border-text-on-brand shadow-sm hover:border-coffee-200"
+                                }`}
                             >
                               <div className="aspect-[16/10] w-full rounded-lg mb-4 overflow-hidden bg-slate-100">
                                 <img
@@ -297,20 +300,18 @@ export default function Customized() {
                               </div>
                               <div className="flex items-center justify-between w-full">
                                 <span
-                                  className={`font-bold text-sm sm:text-base ${
-                                    isSelected
-                                      ? "text-slate-900"
-                                      : "text-slate-600"
-                                  }`}
+                                  className={`font-bold text-sm sm:text-base ${isSelected
+                                    ? "text-slate-900"
+                                    : "text-slate-600"
+                                    }`}
                                 >
                                   {scent.name}
                                 </span>
                                 <span
-                                  className={`text-xs font-bold ${
-                                    isSelected
-                                      ? "text-coffee-600"
-                                      : "text-slate-500"
-                                  }`}
+                                  className={`text-xs font-bold ${isSelected
+                                    ? "text-coffee-600"
+                                    : "text-slate-500"
+                                    }`}
                                 >
                                   +₹{Number(scent.price).toFixed(2)}
                                 </span>
@@ -334,19 +335,18 @@ export default function Customized() {
                         </h3>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {options.map((addon) => {
+                        {options.map((addOn) => {
                           const isSelected = selectedAddOns.some(
-                            (t) => t._id === addon._id
+                            (t) => t._id === addOn._id
                           );
                           return (
                             <button
-                              key={addon._id}
-                              onClick={() => toggleAddOn(addon)}
-                              className={`flex flex-col p-4 rounded-xl border-2 transition-all text-left group overflow-hidden relative ${
-                                isSelected
-                                  ? "border-coffee-600 bg-coffee-50 ring-4 ring-coffee-600/5"
-                                  : "border-text-on-brand shadow-sm hover:border-coffee-200"
-                              }`}
+                              key={addOn._id}
+                              onClick={() => toggleAddOn(addOn)}
+                              className={`flex flex-col p-4 rounded-xl border-2 transition-all text-left group overflow-hidden relative ${isSelected
+                                ? "border-coffee-600 bg-coffee-50 ring-4 ring-coffee-600/5"
+                                : "border-text-on-brand shadow-sm hover:border-coffee-200"
+                                }`}
                             >
                               <div className="aspect-[16/10] w-full rounded-lg mb-4 overflow-hidden bg-slate-100">
                                 <img
@@ -357,20 +357,18 @@ export default function Customized() {
                               </div>
                               <div className="flex justify-between items-center w-full">
                                 <span
-                                  className={`block font-bold ${
-                                    isSelected
-                                      ? "text-slate-900"
-                                      : "text-slate-600"
-                                  }`}
+                                  className={`block font-bold ${isSelected
+                                    ? "text-slate-900"
+                                    : "text-slate-600"
+                                    }`}
                                 >
                                   {addon.name}
                                 </span>
                                 <span
-                                  className={`text-[10px] sm:text-xs font-bold ${
-                                    isSelected
-                                      ? "text-coffee-600"
-                                      : "text-slate-500"
-                                  }`}
+                                  className={`text-[10px] sm:text-xs font-bold ${isSelected
+                                    ? "text-coffee-600"
+                                    : "text-slate-500"
+                                    }`}
                                 >
                                   +₹{Number(addon.price).toFixed(2)}
                                 </span>
@@ -543,12 +541,12 @@ export default function Customized() {
               </div>
 
               {/* Trust Badges */}
-              <div className="flex justify-around items-center bg-slate-100/50 py-4 sm:py-6 rounded-2xl border border-slate-200/50">
+              <div className="flex justify-around items-center bg-coffee/10 py-4 sm:py-6 rounded-2xl border border-coffee/20">
                 <div className="flex flex-col items-center gap-2">
                   <div className="bg-bg-surface p-2 rounded-full shadow-sm">
                     <Leaf className="text-coffee-600 size-4" />
                   </div>
-                  <span className="text-[10px] font-black uppercase text-slate-500">
+                  <span className="text-[10px] font-black uppercase text-coffee">
                     100% Soy
                   </span>
                 </div>
@@ -556,7 +554,7 @@ export default function Customized() {
                   <div className="bg-bg-surface p-2 rounded-full shadow-sm">
                     <Truck className="text-coffee-600 size-4" />
                   </div>
-                  <span className="text-[10px] font-black uppercase text-slate-500">
+                  <span className="text-[10px] font-black uppercase text-coffee">
                     Fast Ship
                   </span>
                 </div>
@@ -564,7 +562,7 @@ export default function Customized() {
                   <div className="bg-bg-surface p-2 rounded-full shadow-sm">
                     <ShieldCheck className="text-coffee-600 size-4" />
                   </div>
-                  <span className="text-[10px] font-black uppercase text-slate-500">
+                  <span className="text-[10px] font-black uppercase text-coffee">
                     Quality
                   </span>
                 </div>

@@ -62,7 +62,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Sidebar Container */}
       <nav
         ref={sidebarRef}
-        className={`bg-stone-50 dark:bg-black text-orange-700 dark:text-orange-500 font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-stone-200 dark:border-stone-800 shadow-[4px_0_24px_-12px_rgba(217,119,6,0.15)] flex-col py-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        className={`bg-primary dark:bg-black text-light-yellow dark:text-orange-500 font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-stone-200 dark:border-stone-800 shadow-[4px_0_24px_-12px_rgba(217,119,6,0.15)] flex-col py-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
         <div className="px-6 mb-8 mt-2 flex items-center gap-4">
           <div className="w-7 md:w-10  h-7 md:h-10 rounded-full bg-surface-container overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
@@ -76,14 +76,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </div>
           <div>
             <a href="/setting">
-              <h1 className="font-heading text-sm md:text-lg font-bold text-stone-800 dark:text-stone-100 leading-tight">
+              <h1 className="font-heading text-sm md:text-lg font-bold dark:text-stone-100 leading-tight">
                 Naisha Admin
               </h1>
             </a>
           </div>
           {/* Close Button strictly visible only on mobile/tablet */}
           <button
-            className="lg:hidden ml-auto text-stone-500 hover:text-stone-800 dark:hover:text-stone-300 p-1 transition-colors cursor-pointer"
+            className="lg:hidden ml-auto text-light-yellow/75 hover:text-stone-400 dark:hover:text-stone-400 p-1 transition-colors cursor-pointer hover:scale-120 transition-all duration-200"
             onClick={() => setIsOpen(false)}
           >
             <span className="material-symbols-outlined text-[24px]">close</span>
@@ -105,8 +105,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-6 py-3 mx-2 rounded-r-full border-l-4 transition-all duration-200 active:scale-95 transform ${
                   isActive
-                    ? "text-orange-800 dark:text-orange-400 font-bold bg-stone-100 dark:bg-stone-900 border-orange-600 shadow-sm"
-                    : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 border-transparent"
+                    ? "text-orange-800 dark:text-orange-400 font-bold bg-stone-100 dark:bg-stone-900 border-coffee shadow-sm"
+                    : "text-light-yellow/75 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 border-transparent"
                 }`
               }
             >
@@ -131,7 +131,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             ref={addToRefs}
             onClick={handleLogout}
             disabled={isPending}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-stone-500 dark:text-stone-400 hover:text-error dark:hover:text-error-container hover:bg-error/10 dark:hover:bg-error/20 rounded-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-light-yellow/75 dark:text-stone-400 hover:text-error dark:hover:text-error-container hover:bg-error/10 dark:hover:bg-error/20 rounded-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
           >
             {isPending ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>

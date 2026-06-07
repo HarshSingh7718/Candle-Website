@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Shiprocket webhook (uses normal JSON parsing, placed after express.json)
-app.post("/api/webhook/shiprocket", shiprocketWebhookHandler);
+app.post("/api/webhook/shipment", shiprocketWebhookHandler);
 
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }

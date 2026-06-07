@@ -37,27 +37,32 @@ export default function Contact() {
     {
       question: "Do you offer customization for bulk orders?",
       answer:
-        "Yes, we offer custom packaging, branding, personalized notes, and logo printing for bulk and corporate gifting orders.",
+        "At Naisha Creations, we offer customization for bulk and corporate orders to make your gifts and events truly special. Whether you're planning a wedding, birthday celebration, baby shower, festive gifting, return favors, or corporate events, we can customize",
     },
     {
       question: "Can I customize the scents for bulk orders?",
       answer:
-        "Absolutely! For weddings, corporate events, or large parties, we offer bespoke scent curation and personalized packaging. Reach out via the form below.",
+        "At Naisha Creations, we offer custom fragrance customization for bulk orders. You can choose from our range of popular scents or select specific fragrances that match your event, brand, or gifting theme.",
     },
     {
       question: "How long does it take to process bulk orders?",
       answer:
-        "Bulk orders usually take 5–10 business days depending on customization and order volume.",
-    },
-    {
-      question: "Can you create customized fragrance hampers?",
-      answer:
-        "Absolutely! We can curate customized perfume gift hampers based on your budget, theme, or event requirements.",
+        "Bulk orders may take 10–20 business days depending on the quantity and design requirements. We recommend placing your order in advance to ensure timely delivery.",
     },
     {
       question: "How can I place a bulk or wholesale order?",
       answer:
-        "You can fill out our bulk inquiry form or contact our team directly via email or WhatsApp for quick assistance.",
+        "To place a bulk or wholesale order, simply contact us with your requirements, quantity, customization details, and delivery timeline. Our team will assist you with product selection, pricing, and order confirmation to ensure a smooth experience.",
+    },
+    {
+      question: "Do you ship across India?",
+      answer:
+        "Yes, we ship our products across India. Delivery timelines may vary based on your location.",
+    },
+    {
+      question: "What if my order arrives damaged?",
+      answer:
+        "If your order arrives damaged, please contact us within 24 hours of delivery with photos and videos of the product and packaging, and we will assist you with a resolution.",
     },
   ];
 
@@ -330,7 +335,7 @@ export default function Contact() {
             <div
               key={index}
               // 👉 FAQ CARDS: Kept white for contrast against blush background
-              className="faq-item border-b border-muted/30 overflow-hidden bg-bg-surface rounded-sm shadow-sm px-6"
+              className="faq-item border-b border-muted/30 overflow-hidden bg-bg-surface rounded-xl shadow-sm px-6"
             >
               <button
                 onClick={() => setActiveFaq(activeFaq === index ? null : index)}
@@ -371,16 +376,22 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="gifting-content max-w-5xl">
             <h2 className="text-3xl md:text-5xl font-serif italic text-heading mb-10 leading-tight">
-              Gifting Made Easy
+              Gifting Made Easy 🎁✨
             </h2>
             <p className="text-paragraph text-md md:text-xl leading-relaxed max-w-4xl">
-              Candles work as a fabulous gift option. Marking an occasion or
-              just celebrating someone, you can't go wrong with a hand-picked
-              set of candles! Leave a lasting impression with our luxurious
-              scented candles and gift sets that are tastefully packaged.
-              Contact us for bulk or customized orders for weddings,
-              housewarmings and everything in between.
+              Looking for the perfect gift? Naisha Creations makes gifting effortless with beautifully handcrafted candles that are thoughtful, elegant, and memorable. Whether it's a birthday, wedding, anniversary, festive celebration, or corporate event, our candles are designed to make every occasion extra special. 💝🕯️
             </p>
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-8">
+              <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                ✨ Personalized
+              </span>
+              <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                🕯️ Handmade
+              </span>
+              <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                💝 Perfect for Every Occasion
+              </span>
+            </div>
           </div>
           <div className="flex justify-center mt-20">
             <div ref={heartRef}>

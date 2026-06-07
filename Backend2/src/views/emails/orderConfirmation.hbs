@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #fdfbf9;
+            margin: 0;
+            padding: 20px;
+            color: #333333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .header {
+            background-color: #1a1a1a;
+            padding: 35px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+            line-height: 1.6;
+        }
+        .greeting {
+            font-size: 22px;
+            color: #1a1a1a;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .intro-text {
+            color: #666666;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        .order-box {
+            background-color: #fdfbf9;
+            border: 1px solid #f0ebe1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .order-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999999;
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        .order-id {
+            font-size: 20px;
+            color: #1a1a1a;
+            margin: 0;
+            font-weight: bold;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .items-table th {
+            text-align: left;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eeeeee;
+            color: #999999;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .items-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .item-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0 0 5px 0;
+        }
+        .item-meta {
+            font-size: 13px;
+            color: #666666;
+            margin: 0;
+        }
+        .price-col {
+            text-align: right;
+            font-weight: 500;
+        }
+        .summary-box {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #666666;
+            font-size: 14px;
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0 0 0;
+            margin-top: 10px;
+            border-top: 2px solid #1a1a1a;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        .shipping-box {
+            background-color: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .shipping-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .shipping-address {
+            color: #666666;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 40px 0 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background-color: #D19D94;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+            line-height: 1.6;
+        }
+        .social-links {
+            margin-bottom: 15px;
+        }
+        .social-links a {
+            color: #1a1a1a;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Naisha Creations</h1>
+        </div>
+        <div class="content">
+            <h2 class="greeting">Thank you for your order, {{firstName}}! 🕯️</h2>
+            <p class="intro-text">We've received your order and are getting it ready to be shipped. We will send you another email when it's on its way.</p>
+            
+            <div class="order-box">
+                <p class="order-title">Order Number</p>
+                <p class="order-id">#{{orderId}}</p>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th class="price-col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td>
+                            <p class="item-name">{{this.name}}</p>
+                            <p class="item-meta">{{this.type}}</p>
+                        </td>
+                        <td style="text-align: center; color: #666666;">{{this.quantity}}</td>
+                        <td class="price-col">₹{{this.price}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{subtotal}}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>₹{{shippingPrice}}</span>
+                </div>
+                {{#if discount}}
+                <div class="summary-row" style="color: #4CAF50;">
+                    <span>Discount</span>
+                    <span>-₹{{discount}}</span>
+                </div>
+                {{/if}}
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span style="color: #D19D94;">₹{{total}}</span>
+                </div>
+            </div>
+            
+            <div class="shipping-box">
+                <h3 class="shipping-title">Shipping Address</h3>
+                <p class="shipping-address">
+                    <strong>{{shippingAddress.firstName}} {{shippingAddress.lastName}}</strong><br>
+                    {{shippingAddress.address}}<br>
+                    {{shippingAddress.city}}, {{shippingAddress.state}} {{shippingAddress.pincode}}<br>
+                    Phone: {{shippingAddress.phone}}
+                </p>
+            </div>
+            
+            <div class="btn-container">
+                <a href="{{trackingUrl}}" class="btn">View Order Status</a>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="social-links">
+                <a href="https://instagram.com/naishacreations_withlove">Instagram</a> | <a href="https://naishacreations.com">Website</a>
+            </div>
+            &copy; {{year}} Naisha Creations. All rights reserved.<br>
+            If you have any questions, reply to this email or contact us at <a href="mailto:support@naishacreations.com">support@naishacreations.com</a>
+        </div>
+    </div>
+</body>
+</html>

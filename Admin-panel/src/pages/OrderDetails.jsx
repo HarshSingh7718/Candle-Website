@@ -69,7 +69,7 @@ const OrderDetails = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-4xl font-serif text-gray-900">Order #{order._id.slice(-6).toUpperCase()}</h1>
+                                <h1 className="text-4xl font-serif text-gray-900">Order #{order.orderId}</h1>
                                 {hasCustomItems && (
                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#fcead7] text-[#c27823] text-xs font-bold uppercase tracking-wider">
                                         <Settings2 size={14} /> Custom
@@ -171,9 +171,9 @@ const OrderDetails = () => {
                                                                 <div className="flex flex-col sm:col-span-2 border-t border-orange-100/50 pt-3 mt-1">
                                                                     <span className="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Add-Ons & Toppings</span>
                                                                     <div className="flex flex-wrap gap-2">
-                                                                        {snap.addOnNames.map((addon, idx) => (
+                                                                        {snap.addOnNames.map((addOn, idx) => (
                                                                             <span key={idx} className="bg-white border border-orange-200 text-gray-700 text-xs px-2.5 py-1 rounded-full shadow-sm">
-                                                                                {addon}
+                                                                                {addOn}
                                                                             </span>
                                                                         ))}
                                                                     </div>
@@ -315,10 +315,13 @@ const OrderDetails = () => {
                                         {hasShiprocketData && (isPackaged || isShipped || isDelivered) && (
                                             <div className="mt-6 pt-6 border-t border-gray-50">
                                                 <div className="bg-blue-50 border border-blue-100 rounded-lg p-5">
-                                                    <div className="flex items-center gap-2 mb-4">
-                                                        <Truck size={18} className="text-blue-700" />
-                                                        <h4 className="font-bold text-sm text-blue-900">Shiprocket Shipment</h4>
-                                                    </div>
+                                                    <a href={`https://app.shiprocket.in/seller/orders/details/${order.shiprocketOrderId}`} target="_blank" rel="noopener noreferrer">
+                                                        <div className="flex items-center gap-2 mb-4 cursor-pointer hover:scale-102 transition-all duration-200">
+                                                            <Truck size={18} className="text-blue-700" />
+                                                            <h4 className="font-bold text-sm text-blue-900">Shiprocket Shipment</h4>
+                                                            <ExternalLink size={16} className='text-blue-700'/>
+                                                        </div>
+                                                    </a>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                         {order.awbCode && (
                                                             <div>
@@ -346,7 +349,6 @@ const OrderDetails = () => {
                                                                     rel="noopener noreferrer"
                                                                     className="inline-flex items-center gap-1 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors"
                                                                 >
-                                                                    <ExternalLink size={14} />
                                                                     Track Shipment
                                                                 </a>
                                                             </div>
@@ -393,6 +395,14 @@ const OrderDetails = () => {
                                             </span>
                                         )}
                                     </div>
+                                    {order.paymentId && 
+                                    <a href={`https://dashboard.razorpay.com/app/payments/${order.paymentId}`} target="_blank" rel="noopener noreferrer">
+                                    <button className="mt-4 hover:bg-transparent text-blue-700 hover:text-blue-900 text-sm md:text-md font-semibold flex items-center space-x-1 cursor-pointer hover:scale-102 transition-all duration-200">
+                                        <span>View Payment Details</span>
+                                        <ExternalLink size={14} />
+                                    </button></a>
+                                    }
+                                        
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex justify-between text-sm text-gray-500">

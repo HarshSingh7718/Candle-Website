@@ -1,5 +1,6 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import axios from "axios";
+import mongoose from "mongoose";
 import { Order } from "../models/orderModel.js";
 import { getShiprocketToken } from "../services/shipRocketService.js";
 import { Product } from "../models/productModels.js";
@@ -20,8 +21,13 @@ export const getMyOrders = async (req, res) => {
 //we can track also by using order
 
 export const getSingleOrder = async (req, res) => {
-  // 👉 1. Removed "reviews" from populate and added .lean()
-  const order = await Order.findById(req.params.id).populate("orderItems.product", "name images").populate("user", "name email").lean(); // Converts Mongoose Document to standard JS Object
+  // 👉 1. Backward-compatible lookup: orderId first, then _id
+  const searchValue = req.params.id;
+  const order = await Order.findOne(
+    mongoose.Types.ObjectId.isValid(searchValue)
+      ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
+      : { orderId: searchValue }
+  ).populate("orderItems.product", "name images").populate("user", "name email").lean();
 
   if (!order) {
     throw new CustomError("Order not found", 404);

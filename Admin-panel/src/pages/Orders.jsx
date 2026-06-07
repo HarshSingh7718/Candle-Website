@@ -54,7 +54,7 @@ const Orders = () => {
   const filteredOrders = orders.filter(order => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    const orderIdStr = order._id.toLowerCase();
+    const orderIdStr = (order.orderId || order._id).toLowerCase();
     const userNameStr = (order.user?.firstName + ' ' + order.user?.lastName)?.toLowerCase() || '';
     return orderIdStr.includes(query) || userNameStr.includes(query);
   });
@@ -78,7 +78,7 @@ const Orders = () => {
     }
   };
 
-  const formatId = (id) => id ? `#${id.slice(-6).toUpperCase()}` : '#UNKNOWN';
+  const formatId = (id, orderId) => orderId || (id ? `#${id.slice(-6).toUpperCase()}` : '#UNKNOWN');
 
   if (isLoading) {
     return <div className="flex-1 flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
@@ -144,10 +144,10 @@ const Orders = () => {
                   <tr
                     key={order._id}
                     ref={addToRowsRef}
-                    onClick={() => navigate(`/orders/${order._id}`)} // 👉 3. Added navigation click
+                    onClick={() => navigate(`/orders/${order.orderId || order._id}`)} // 👉 3. Added navigation click
                     className="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" // 👉 Added cursor-pointer
                   >
-                    <td className="py-4 px-6 font-label-md text-label-md">{formatId(order._id)}</td>
+                    <td className="py-4 px-6 font-label-md text-label-md">{formatId(order._id, order.orderId)}</td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold text-xs flex-shrink-0">

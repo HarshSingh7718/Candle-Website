@@ -58,9 +58,9 @@ const OurStory = () => {
 
   return (
     <>
-      <SEO 
-        title="Our Story | Naisha Creations" 
-        description="Learn about the story behind Naisha Creations, our mission, and our handcrafted artisanal candles." 
+      <SEO
+        title="Our Story | Naisha Creations"
+        description="Learn about the story behind Naisha Creations, our mission, and our handcrafted artisanal candles."
       />
       <PageBanner title="our story" currentPage="Our Story" />
       <section
@@ -74,21 +74,21 @@ const OurStory = () => {
               A Story in Every Scent
             </h3>
             <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed">
-              Founded on the principles of mindfulness and craftsmanship, Naisha
-              Creations began with a simple goal: to create candles that tell a
-              story. Every scent is a memory, and every flicker is a moment of
-              peace.
+              Our journey began in 2024 with a simple dream: to create handmade candles that bring warmth, beauty, and happiness into every home. What started as a passion for candle making soon grew into a brand dedicated to designing unique, high-quality candles that turn everyday moments into memorable experiences.
             </p>
             <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed">
-              Our founder started experimenting with botanical oils and soy wax
-              in 2018, seeking a cleaner, more intentional way to fragrance a
-              home. What began as gifts for friends blossomed into a community
-              of scent-lovers who value quality over mass production.
+              At Naisha Creations, every candle is thoughtfully handcrafted with attention to detail. From elegant floral candles and decorative statement pieces to scented jars and personalized gifts, each creation is made with love and care. We believe that a candle is more than just décor—it is a way to create memories, celebrate special occasions, and add a touch of comfort to any space.
+            </p>
+            <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed">
+              Inspired by modern trends, timeless aesthetics, and our customers' love for unique products, we continuously experiment with new designs, fragrances, and concepts to bring you candles that are both beautiful and meaningful.
+            </p>
+            <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed">
+              Today, Naisha Creations is proud to be a growing community of candle lovers who appreciate handmade artistry and thoughtful gifting. As we continue our journey, our mission remains the same: to craft candles that light up homes, hearts, and celebrations.
             </p>
             <div className="pt-6 grid grid-cols-2 gap-8 border-t border-primary/10">
               <div>
                 <div className="text-2xl md:text-3xl font-black text-primary">
-                  2018
+                  2024
                 </div>
                 <div className="text-sm font-bold uppercase tracking-wider opacity-60">
                   Year Founded
@@ -104,13 +104,16 @@ const OurStory = () => {
               </div>
             </div>
           </div>
-          <div className="relative group">
-            <div className="absolute -inset-4 bg-primary/10 rounded-xl -rotate-2 group-hover:rotate-0 transition-transform"></div>
+          <div className="relative group max-w-md mx-auto lg:max-w-none">
+            {/* Layer 1: Solid brand-colored offset card */}
+            <div className="absolute -inset-4 bg-primary/10 rounded-2xl -rotate-2 group-hover:rotate-0 transition-transform duration-500 ease-out"></div>
+            {/* Layer 2: Thin bordered offset card */}
+            <div className="absolute -inset-4 border border-primary/20 rounded-2xl -rotate-2 group-hover:rotate-0 transition-transform duration-500 ease-out"></div>
             <img
               alt="Candle making workspace"
-              className="relative rounded-xl shadow-2xl w-full aspect-square md:h-[500px] object-cover"
+              className="relative rounded-2xl shadow-2xl w-full aspect-[4/6] md:h-auto object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
               data-alt="Artisan workspace with dried flowers and wax"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0hodXPt8eHLvHRbxq1jkEioO_gbw8c4kIb9PulFDlfahrG9HFoAIcXfxZogBe9s0KTE9xI1f6tBtzT4wYJ60MR30-5DR0nCHKSwlSB8MUzA5NJd5w-m9AXPl9mKmADgNF2SpICt62SRUi4n8GnqO9Sm90IgxbUeYHhnpB-4XUQUHEa5o1mNPTJ4pauradB161JfWK39gP5cau9vRJoeharvVBn1ksbop8SMtPBlc9a43ywyDR_yryfuPGatwBPt9gzUAmp-Iuy70_"
+              src="https://res.cloudinary.com/dk1qzyep1/image/upload/v1780772432/naisha-photo-with-candle_nbikzv.webp"
             />
           </div>
         </div>
@@ -126,28 +129,61 @@ const OurStory = () => {
                 Our Mission
               </h3>
               <blockquote className="text-md md:text-2xl font-light italic border-l-4 border-primary pl-8 mb-5 md:mb-8 leading-relaxed">
-                "To illuminate the everyday moments and transform spaces into
-                sanctuaries of peace through sustainable, handcrafted
-                fragrance."
+                "Lighting up homes, celebrations, and special moments—one candle at a time. ✨🕯️"
               </blockquote>
-              <p className="text-sm md:text-lg text-slate-400 leading-relaxed mb-2 md:mb-8">
-                We are committed to environmental stewardship, social
-                responsibility, and the timeless beauty of artisanal craft. For
-                every candle sold, a portion of proceeds goes toward
-                reforestation projects.
+              <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed mb-2 md:mb-8">
+                At Naisha Creations, our mission is to craft beautiful, high-quality handmade candles that bring warmth, joy, and elegance to every space. We are dedicated to combining creativity, premium ingredients, and skilled craftsmanship to create unique candles that inspire moments of relaxation, celebration, and connection.
               </p>
-              <div className="hidden md:flex">
-                <div className="flex flex-wrap gap-4">
-                  <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
-                    Plastic-Free Packaging
-                  </span>
-                  <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
-                    Vegan &amp; Cruelty-Free
-                  </span>
-                  <span className="px-4 py-2 bg-white/10 rounded-full text-sm font-medium">
-                    Phthalate-Free Oils
-                  </span>
-                </div>
+              <div className="mb-2 md:mb-8">
+                <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed mb-4">
+                  We strive to:
+                </p>
+                <ul className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed space-y-3">
+                  <li className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Create innovative and aesthetically pleasing candle designs.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Deliver exceptional quality and customer satisfaction.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Offer unique gifting options for every occasion.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Continuously explore new trends, fragrances, and creative concepts.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Spread happiness through handcrafted products made with passion and care.</span>
+                  </li>
+                </ul>
+              </div>
+              <p className="text-sm md:text-lg text-slate-600 dark:text-slate-800 leading-relaxed mb-2 md:mb-8">
+                Our goal is to make every candle more than just a product—it should be an experience that adds beauty, comfort, and lasting memories to your life.
+              </p>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 mt-6">
+                <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                  📦 Plastic-Free Packaging
+                </span>
+                <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                  🐰 Vegan &amp; Cruelty-Free
+                </span>
+                <span className="inline-flex items-center px-5 py-2.5 bg-coffee/10 text-coffee border border-coffee/20 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                  🌱 Phthalate-Free Oils
+                </span>
               </div>
             </div>
             <div className="min-h-[400px]">
@@ -172,31 +208,23 @@ const OurStory = () => {
               Visual Diary
             </span>
           </div>
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+          <div className="columns-1 md:columns-2 lg:columns-4 gap-6 space-y-6">
             {[
               {
-                src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBrnOVPTAQTDu8a4WhT_cFZcJIECcC9W0OlfSOvDG-hWme0iiAxeAKUl5zPmhA29xuc35Egv1lv0bEgZDWFrHvHLWec3Xd8SUu8LOA4oGcxjcuDMZZWdyRgnn9IzPARiGSPRAsf_TrVa2MUm2BbWlT0N5t2hxOllalkaLHlGknAR-SwqjqS_YbhewYg4M_018Sdcv95QKzMjdWg3axq2lYMcaJ5_h6c_3JNkfdKa7Od10T4g48YuGi6MxH48zGg0EnJeSVXAlr57cxF",
+                src: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780775509/fragnance-oil-addition_wmzwbr.webp",
+                alt: "Fragnance Oils",
+              },
+              {
+                src: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780772432/wax-pouring_pqqwle.webp",
                 alt: "Wax Poured",
               },
               {
-                src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBqRTd--_RZ4z8exzM4aOUSostFXW2AEmQruQRWamGzAIA9tf5x3zEFYlJw4GfALe_0LArIR6rMRH2cwKK4jDpNoqEJxDW1cpBerB9FHb1gP_id9YfGUH_SG3mfX4UinSbXuCFNaoQHvsWCQejvytF9a65xgAVmK9DR3c6Al1F7zaVZVYMmmh5e3FsPrBfMvkBcAHv1wBMio1AImVpyqm5zooTJGAKAPwdEQ_ZzStbuIZ88-MKu262PcClW8XiPDM6QDWlRPhuKy_cN",
-                alt: "Oils",
+                src: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780772431/wick-setting_uzs3qf.webp",
+                alt: "Wick Setting",
               },
               {
-                src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDqEx6Aln3qEUIeVDjtP1wP-kV-3ttqNdCpArx6MmMTZReWdKXvrQsmaOQM2bIci7j4Jzca7t93Gp267-myB5JpxgmMbGz0x1UgRjlB8JicNFXtTHg3wn-cCeev5b9840HGnFLYekaXo6szUakZA549hIzb0roNc6x0jrw5he3SWduRwvWR8eGQvMiwdjDfYZsXqGMMWR1kIhZBjCQx8rOL99pALbC7bthO5TzOcCLmTq8KjlaE9dg1E_FCDs4_bVehkfneabMmVeZT",
-                alt: "Wick Detail",
-              },
-              {
-                src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBrnOVPTAQTDu8a4WhT_cFZcJIECcC9W0OlfSOvDG-hWme0iiAxeAKUl5zPmhA29xuc35Egv1lv0bEgZDWFrHvHLWec3Xd8SUu8LOA4oGcxjcuDMZZWdyRgnn9IzPARiGSPRAsf_TrVa2MUm2BbWlT0N5t2hxOllalkaLHlGknAR-SwqjqS_YbhewYg4M_018Sdcv95QKzMjdWg3axq2lYMcaJ5_h6c_3JNkfdKa7Od10T4g48YuGi6MxH48zGg0EnJeSVXAlr57cxF",
-                alt: "Botanicals",
-              },
-              {
-                src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAlV27YyezoXFBWvXsIgLt56wYw8AB-IznlJDHWOeH1VSyFXXxRi_SGjHbm_AE3eRQPO6dLcYj0jGfEkJ42_oraT8Hc356_CGwSqfGFxbIkXv6zpgRAcEQpNBIf9mfKP26RkQC2AgnU73gw5liUPkpez5qt71WVhyfdShxErItXYVpvV8yd2M_QpY_sHAf6_ZH5Qw3x-yzOeRwlSEw9aqpGlNkMEPOGQWE3ixD-hHica2tJxh5YUVplliwMBRCidIy39RDvKcR-XjCy",
-                alt: "Lifestyle",
-              },
-              {
-                src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDuHMsFuS4ISH-11iii-y_HxqQuqI5ZONCq4a-nwopxlZguZWph4sZVT83RswvgTIOv3OtM6Qk3_eqt9CcWm-GvA9VxRx1JWnrUiB8wEIaNzU9ubVRtNjrT_wFc992x6YI26EjZYroaD8qFAvSujvgakxQ5gygXnQjDMfIn0_0Os1Wl1ajyoIzPqBPkiYLwVoseBfQ2OEpnXodzouSnc_jbHrNSSozZN_lVrrbD_ulFb0osl8v1OoiVxulwo9xKa2QCESi7Z1Kh_iRS",
-                alt: "Recycled Packaging",
+                src: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780772432/topping-addition_l00qgp.webp",
+                alt: "Topping Addition",
               },
             ].map((img, idx) => (
               <div
@@ -206,7 +234,7 @@ const OurStory = () => {
                 <img
                   src={img.src}
                   alt={img.alt}
-                  className="w-full grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105"
+                  className="w-full aspect-[4/5] object-cover object-center group-hover:grayscale-0 transition-all duration-700 hover:scale-105"
                   onError={(e) => {
                     e.target.src = `https://images.unsplash.com/photo-1596435707700-6264292b861d?auto=format&fit=crop&q=80&w=600`;
                   }}

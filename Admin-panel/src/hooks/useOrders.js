@@ -46,7 +46,7 @@ export const useUpdateOrderStatus = () => {
             // 👉 Invalidate both the master list AND the single order detail views
             queryClient.invalidateQueries(['orders']);
             queryClient.invalidateQueries(['order']);
-            toast.success("Order status updated & SMS sent!");
+            toast.success("Order status updated!");
         },
         onError: (error) => toast.error(error.response?.data?.message || "Failed to update order status")
     });

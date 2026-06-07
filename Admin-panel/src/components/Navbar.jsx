@@ -1,6 +1,6 @@
 const Navbar = ({ toggleSidebar }) => {
   return (
-    <header className="bg-surface-container-lowest border-b border-surface-container shadow-sm flex justify-between items-center w-full px-4 sm:px-8 h-16 sticky top-0 z-30">
+    <header className="bg-light-yellow border-b border-surface-container shadow-sm flex justify-between items-center w-full px-4 sm:px-8 h-16 sticky top-0 z-30">
       <div className="flex items-center gap-3">
         <button 
           onClick={toggleSidebar}
@@ -8,13 +8,15 @@ const Navbar = ({ toggleSidebar }) => {
         >
           <span className="material-symbols-outlined text-[28px]">menu</span>
         </button>
+        <a href="/dashboard">
         <div className="font-heading italic font-semibold text-on-background text-headline-md hidden sm:block">
           Naisha Creations
         </div>
+        </a>
       </div>
       <div className="flex items-center gap-4">
         <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-container border border-surface-variant">
-          <a href="/profile">
+          <a href="/setting">
             <img
               alt="Administrator profile"
               className="w-full h-full object-cover cursor-pointer"

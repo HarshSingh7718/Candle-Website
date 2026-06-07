@@ -68,13 +68,11 @@ const Navbar = () => {
       <div className={`w-full z-50 fixed top-0 left-0 transition-all duration-300 ${is404 ? "bg-primary text-light-yellow" : "bg-primary shadow-lg" }`}>
         <div className="container mx-auto flex justify-between items-center h-19 md:h-22 px-4">
           
-          <NavLink to="/">
-            <Logo />
-          </NavLink>
+          <Logo />
 
-          <div className="centered-row justify-start gap-12">
+          <div className="centered-row justify-start gap-5 xl:gap-12">
             {/* Desktop Navigation - All items now use NavMenu */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-5 xl:gap-8">
                 {navLinks.map((item, index) => (
                     <NavMenu key={index} name={item.name} path={item.path} />
                 ))}

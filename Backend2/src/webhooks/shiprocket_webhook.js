@@ -1,6 +1,5 @@
 import { Order } from "../models/orderModel.js";
 import { config } from "../config/index.js";
-import { sendSMS } from "../services/otp_services.js";
 
 // =========================
 //  SHIPROCKET STATUS MAP
@@ -91,7 +90,10 @@ export const shiprocketWebhookHandler = async (req, res) => {
         order.statusHistory.push({ status: mappedStatus, date: new Date() });
 
         // Update tracking info
-        if (awb) order.awbCode = awb;
+        if (awb) {
+            order.awbCode = awb;
+            order.trackingUrl = `https://shiprocket.co/tracking/${awb}`;
+        }
         if (courierName) order.courierName = courierName;
 
         // Auto-set date fields
@@ -102,21 +104,9 @@ export const shiprocketWebhookHandler = async (req, res) => {
 
         await order.save();
 
-        console.log(`✅ Order ${order._id} updated to "${mappedStatus}" via Shiprocket webhook`);
+        console.log(`✅ Order ${order.orderId} updated to "${mappedStatus}" via Shiprocket webhook`);
 
-        // 7. Send SMS to customer on key transitions
-        if (order.user?.phoneNumber) {
-            const shortOrderId = order._id.toString().slice(-6).toUpperCase();
-            const shouldSMS = ["shipped", "out_for_delivery", "delivered"].includes(mappedStatus);
 
-            if (shouldSMS) {
-                await sendSMS(order.user.phoneNumber, config.msg91.orderStatusTemplateId, {
-                    NAME: order.user.firstName || "Customer",
-                    ORDER_ID: shortOrderId,
-                    STATUS: mappedStatus.replace(/_/g, " ").toUpperCase()
-                }).catch(err => console.error("Shiprocket webhook SMS failed:", err.message));
-            }
-        }
 
         return res.status(200).json({ success: true, message: "Order updated" });
 

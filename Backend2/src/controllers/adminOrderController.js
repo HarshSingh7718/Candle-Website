@@ -1,11 +1,16 @@
 import { CustomError } from "../middleware/errorHandler.js";
 import { Order } from "../models/orderModel.js";
-import { sendSMS } from "../services/otp_services.js";
 import { config } from "../config/index.js";
 import { createShiprocketOrder } from "../services/shipRocketService.js";
+import mongoose from "mongoose";
 
 export const getSingleOrderAdmin = async (req, res) => {
-  const order = await Order.findById(req.params.id).populate("user", "firstName lastName phoneNumber");
+  const searchValue = req.params.id;
+  const order = await Order.findOne(
+    mongoose.Types.ObjectId.isValid(searchValue)
+      ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
+      : { orderId: searchValue }
+  ).populate("user", "firstName lastName phoneNumber");
 
   if (!order) {
     throw new CustomError("Order not found", 404);
@@ -50,7 +55,12 @@ export const updateOrderStatus = async (req, res) => {
     packaging,
     weight
   } = req.body;
-  const order = await Order.findById(req.params.id).populate("user", "firstName lastName email phoneNumber");
+  const searchValue = req.params.id;
+  const order = await Order.findOne(
+    mongoose.Types.ObjectId.isValid(searchValue)
+      ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
+      : { orderId: searchValue }
+  ).populate("user", "firstName lastName email phoneNumber");
   if (!order) {
     throw new CustomError("Order not found", 404);
   }
@@ -103,17 +113,7 @@ export const updateOrderStatus = async (req, res) => {
     }
   }
 
-  // =========================
-  //  SEND SMS NOTIFICATION
-  // =========================
-  if (status && order.user && order.user.phoneNumber) {
-    const shortOrderId = order._id.toString().slice(-6).toUpperCase();
-    await sendSMS(order.user.phoneNumber, config.msg91.orderStatusTemplateId, {
-      NAME: order.user.firstName || "Customer",
-      ORDER_ID: shortOrderId,
-      STATUS: status.toUpperCase()
-    }).catch(err => console.error("SMS send failed:", err.message));
-  }
+
 
   res.status(200).json({
     success: true,

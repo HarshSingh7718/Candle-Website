@@ -43,6 +43,40 @@ export const sendWelcomeEmail = async (email, firstName) => {
         await transporter.sendMail(mailOptions);
     } catch (error) {
         console.error("Email Error:", error);
-        // We don't throw error here so registration doesn't fail if email fails
+    }
+};
+
+export const sendOrderConfirmationEmail = async (email, orderData) => {
+    try {
+        // Build items list
+        const items = orderData.orderItems.map(item => ({
+            name: item.product?.name || "Custom Candle",
+            quantity: item.quantity,
+            price: item.price?.toFixed(2) || "0.00",
+            type: item.type === "custom" ? "Bespoke Creation" : "Classic Candle"
+        }));
+
+        const mailOptions = {
+            from: `"Naisha Creations" <${process.env.SMTP_FROM_EMAIL}>`,
+            to: email,
+            subject: `Order Confirmed: #${orderData.orderId} - Naisha Creations`,
+            template: 'orderConfirmation', // matches orderConfirmation.hbs
+            context: {
+                firstName: orderData.user?.firstName || "Customer",
+                orderId: orderData.orderId,
+                items: items,
+                subtotal: (orderData.itemsPrice || 0).toFixed(2),
+                shippingPrice: orderData.shippingPrice === 0 ? "Free" : (orderData.shippingPrice || 0).toFixed(2),
+                discount: orderData.discount > 0 ? orderData.discount.toFixed(2) : null,
+                total: (orderData.totalAmount || 0).toFixed(2),
+                shippingAddress: orderData.shippingAddress,
+                trackingUrl: `${config.url.frontend}/account/orders/${orderData.orderId}`,
+                year: new Date().getFullYear(),
+            }
+        };
+
+        await transporter.sendMail(mailOptions);
+    } catch (error) {
+        console.error("Order Confirmation Email Error:", error);
     }
 };

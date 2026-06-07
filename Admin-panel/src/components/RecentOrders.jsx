@@ -25,7 +25,7 @@ const RecentOrders = ({ orders = [] }) => {
           <tbody className="font-body-md text-body-md text-on-background">
             {orders.map((order) => (
               <tr key={order._id} className="border-b border-surface-container/50 last:border-0 hover:bg-surface-container-lowest transition-colors">
-                <td className="py-4 pr-4 font-medium text-on-surface-variant">#{order._id.slice(-6).toUpperCase()}</td>
+                <td className="py-4 pr-4 font-medium text-on-surface-variant">#{order.orderId}</td>
                 <td className="py-4 px-4">{order.user?.firstName || "Guest"}</td>
                 <td className="py-4 pl-4 text-right">
                   <span className={`inline-block px-3 py-1 rounded-full font-label-sm text-label-sm capitalize ${getStatusStyles(order.orderStatus)}`}>

@@ -83,9 +83,9 @@ export const checkServiceability = async ({ delivery_postcode, weight = 0.5, cod
 //  PACKAGING DIMENSION MAP
 // =========================
 const PACKAGING_DIMENSIONS = {
-    small:  { length: 15, breadth: 15, height: 10 },
-    medium: { length: 20, breadth: 20, height: 15 },
-    large:  { length: 25, breadth: 25, height: 20 }
+    small:  { length: 12.7, breadth: 12.7, height: 12.7 },
+    medium: { length: 15.24, breadth: 15.24, height: 15.24 },
+    large:  { length: 28, breadth: 15.24, height: 12.7 }
 };
 
 // =========================
@@ -127,8 +127,8 @@ export const createShiprocketOrder = async (order) => {
             // Items
             order_items: order.orderItems.map(item => ({
                 name: item.name,
-                sku: item.product
-                    ? item.product.toString()
+                sku: item.slug
+                    ? item.slug
                     : (item.customCandle ? item.customCandle.toString() : "CUSTOM"),
                 units: item.quantity,
                 selling_price: item.price,

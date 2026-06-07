@@ -6,11 +6,11 @@ const Customized = () => {
     <section id="customized" className="py-10 md:py-20 bg-light-yellow">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-12">
-          <div className="lg:w-1/2">
+          <div className="lg:w-1/2 max-w-md mx-auto lg:max-w-none w-full">
             <img
-              src="/images/Index/Hero/main-slider-02.jpg"
+              src="https://res.cloudinary.com/dk1qzyep1/image/upload/v1780790178/homepage-custom-order_vsq3kj.webp"
               alt="Customized Candles"
-              className="rounded-lg shadow-xl w-full h-[350px] md:h-[500px]  object-cover"
+              className="rounded-lg shadow-xl w-full aspect-[1/1] md:h-auto object-cover"
               loading="lazy"
             />
           </div>

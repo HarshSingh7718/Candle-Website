@@ -258,7 +258,7 @@ const Profile = () => {
                             <button
                                 type="submit"
                                 disabled={changePassword.isPending}
-                                className="mt-4 bg-black text-white px-6 py-2 rounded-md hover:bg-black/80 transition-colors disabled:opacity-50"
+                                className="mt-4 bg-[#8d4b00] text-white px-6 py-2 rounded-md hover:bg-[#b15f00] transition-colors disabled:opacity-50"
                             >
                                 {changePassword.isPending ? "Updating..." : "Update Password"}
                             </button>

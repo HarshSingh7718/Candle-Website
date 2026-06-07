@@ -1,15 +1,120 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Naisha Creations</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .header { background-color: #1a1a1a; padding: 30px 20px; text-align: center; }
-        .header h1 { color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; }
-        .content { padding: 40px 30px; color: #4a4a4a; line-height: 1.6; }
-        .content h2 { color: #1a1a1a; font-size: 22px; margin-top: 0; }
-        .btn { display: inline-block; padding: 14px 28px; background-color: #D19D94; color: #ffffff !important; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 20px; }
-        .footer { background-color: #f1f1f1; padding: 20px; text-align: center; font-size: 12px; color: #888888; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #fdfbf9;
+            margin: 0;
+            padding: 20px;
+            color: #333333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .header {
+            background-color: #1a1a1a;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .hero-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f0ebe1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+            line-height: 1.7;
+        }
+        .greeting {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .intro-text {
+            color: #666666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            text-align: center;
+        }
+        .feature {
+            width: 30%;
+        }
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .feature-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-container {
+            margin: 40px 0 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 16px 36px;
+            background-color: #D19D94;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(209, 157, 148, 0.2);
+        }
+        .btn:hover {
+            background-color: #c08b82;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+            line-height: 1.6;
+        }
+        .social-links {
+            margin-bottom: 15px;
+        }
+        .social-links a {
+            color: #1a1a1a;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -17,21 +122,45 @@
         <div class="header">
             <h1>Naisha Creations</h1>
         </div>
+        <div class="hero-image">
+            🕯️✨🌿
+        </div>
         <div class="content">
-            <!-- Handlebars uses double curly braces for dynamic data -->
-            <h2>Welcome to the family, {{firstName}}! ✨</h2>
-            <p>We are absolutely thrilled to have you here. At Naisha Creations, we craft premium, hand-poured candles designed to bring warmth, peace, and beautiful scents into your space.</p>
-            <p>Your account has been successfully created. You can now track your orders, save your favorite addresses, and even customize your own bespoke candles.</p>
+            <h2 class="greeting">Welcome to the family, {{firstName}}!</h2>
             
-            <div style="text-align: center;">
-                <a href="{{frontendUrl}}/collections" class="btn">Shop Our Collection</a>
+            <p class="intro-text">
+                We are absolutely thrilled to have you here. At Naisha Creations, we craft premium, hand-poured candles designed to bring warmth, peace, and beautiful scents into your sacred spaces.
+            </p>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">✨</div>
+                    <div class="feature-title">Hand-Poured</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌿</div>
+                    <div class="feature-title">Premium Wax</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-title">Customizable</div>
+                </div>
             </div>
             
-            <p style="margin-top: 30px;">Warmly,<br>The Naisha Creations Team</p>
+            <p class="intro-text">
+                Your account is set up and ready to go. You can now track your orders, save your favorite addresses, and start customizing your own bespoke candles.
+            </p>
+            
+            <div class="btn-container">
+                <a href="{{frontendUrl}}/collections" class="btn">Shop Our Collection</a>
+            </div>
         </div>
         <div class="footer">
+            <div class="social-links">
+                <a href="https://instagram.com/naishacreations_withlove">Instagram</a> | <a href="{{frontendUrl}}">Website</a>
+            </div>
             &copy; {{year}} Naisha Creations. All rights reserved.<br>
-            If you have any questions, simply reply to this email.
+            If you have any questions, reply to this email or contact us at <a href="mailto:support@naishacreations.com">support@naishacreations.com</a>
         </div>
     </div>
 </body>

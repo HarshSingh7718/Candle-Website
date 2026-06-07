@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+  --color-light-yellow: #fce8e8;
+  --color-coffee: #a67067;
+  --color-coffee-light: #ba847b;
+  --color-primary: #5e3232;
   --color-surface-container-low: #f5f3ef;
   --color-on-primary: #ffffff;
   --color-inverse-on-surface: #f2f0ed;
@@ -11,7 +15,6 @@
   --color-on-error: #ffffff;
   --color-primary-container: #b15f00;
   --color-on-tertiary: #ffffff;
-  --color-primary: #8d4b00;
   --color-surface-container-lowest: #ffffff;
   --color-primary-fixed: #ffdcc3;
   --color-background: #fbf9f5;

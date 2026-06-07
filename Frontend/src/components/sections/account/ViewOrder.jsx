@@ -135,7 +135,7 @@ const ViewOrder = () => {
                         <button onClick={() => navigate(-1)} className="p-2 hover:bg-stone-100 rounded-full transition-colors cursor-pointer">
                             <ChevronLeft size={20} />
                         </button>
-                        <h1 className="text-xl font-medium">Order #ORD-{order._id.slice(-6).toUpperCase()}</h1>
+                        <h1 className="text-xl font-medium">Order #{order.orderId}</h1>
                     </div>
                 </div>
             </header>
@@ -189,10 +189,11 @@ const ViewOrder = () => {
                                         <span className="font-medium text-stone-900">{order.awbCode}</span>
                                     </div>
                                 </div>
-                                <button className="text-sm font-semibold text-stone-900 flex items-center space-x-1 hover:underline cursor-pointer">
-                                    <span>Track Shipment</span>
-                                    <ExternalLink size={14} />
-                                </button>
+                                <a href={`${order.trackingUrl}`} target="_blank" rel="noopener noreferrer">
+                                    <button className="text-sm font-semibold text-stone-900 flex items-center space-x-1 hover:underline cursor-pointer">
+                                        <span>Track Shipment</span>
+                                        <ExternalLink size={14} />
+                                    </button></a>
                             </div>
                         )}
                     </section>
@@ -347,7 +348,7 @@ const ViewOrder = () => {
                         </div>
                     </section>
 
-                    <section className="bg-stone-900 text-text-on-brand rounded-2xl shadow-lg p-6">
+                    <section className="bg-primary text-text-on-brand rounded-2xl shadow-lg p-6">
                         <h3 className="font-semibold text-lg mb-6">Order Summary</h3>
                         <div className="space-y-4 text-sm">
                             <div className="flex justify-between text-stone-400">
