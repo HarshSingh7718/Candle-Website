@@ -137,6 +137,8 @@ export const createShiprocketOrder = async (order) => {
 
             // Payment
             payment_method: order.paymentMethod === "cod" ? "COD" : "Prepaid",
+            shipping_charges: order.shippingPrice,
+            total_discount: order.discountAmount,
             sub_total: order.totalAmount,
 
             // Dimensions from packaging selection
@@ -144,7 +146,6 @@ export const createShiprocketOrder = async (order) => {
             breadth: dims.breadth,
             height: dims.height,
             weight: order.weight || 0.5,
-            is_dangerous: false
         };
 
         const response = await axios.post(

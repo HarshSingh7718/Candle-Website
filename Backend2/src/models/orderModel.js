@@ -161,11 +161,10 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Auto-generate orderId from MongoDB _id before validation
-orderSchema.pre('validate', function (next) {
+orderSchema.pre('validate', function () {
     if (!this.orderId) {
         this.orderId = `NC${this._id.toString().slice(-8)}`;
     }
-    next();
 });
 
 export const Order = mongoose.model("Order", orderSchema);

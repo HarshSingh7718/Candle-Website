@@ -37,6 +37,7 @@ export const sendWelcomeEmail = async (email, firstName) => {
                 firstName: firstName,
                 frontendUrl: config.url.frontend,
                 year: new Date().getFullYear(),
+                logoUrl: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780831689/Naisha_brand_ryldmf.jpg",
             }
         };
 
@@ -72,6 +73,7 @@ export const sendOrderConfirmationEmail = async (email, orderData) => {
                 shippingAddress: orderData.shippingAddress,
                 trackingUrl: `${config.url.frontend}/account/orders/${orderData.orderId}`,
                 year: new Date().getFullYear(),
+                logoUrl: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780831689/Naisha_brand_ryldmf.jpg",
             }
         };
 

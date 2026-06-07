@@ -1,253 +1,597 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #fdfbf9;
-            margin: 0;
-            padding: 20px;
-            color: #333333;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .header {
-            background-color: #5e3232;
-            padding: 35px 20px;
-            text-align: center;
-        }
-        .content {
-            padding: 40px 30px;
-            line-height: 1.6;
-        }
-        .greeting {
-            font-size: 22px;
-            color: #1a1a1a;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .intro-text {
-            color: #666666;
-            margin-bottom: 30px;
-            font-size: 15px;
-        }
-        .order-box {
-            background-color: #fdfbf9;
-            border: 1px solid #f0ebe1;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .order-title {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #999999;
-            margin: 0 0 5px 0;
-            font-weight: 600;
-        }
-        .order-id {
-            font-size: 20px;
-            color: #1a1a1a;
-            margin: 0;
-            font-weight: bold;
-        }
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        .items-table th {
-            text-align: left;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eeeeee;
-            color: #999999;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-        .items-table td {
-            padding: 15px 0;
-            border-bottom: 1px solid #eeeeee;
-        }
-        .item-name {
-            font-weight: 600;
-            color: #1a1a1a;
-            margin: 0 0 5px 0;
-        }
-        .item-meta {
-            font-size: 13px;
-            color: #666666;
-            margin: 0;
-        }
-        .price-col {
-            text-align: right;
-            font-weight: 500;
-        }
-        .summary-box {
-            width: 100%;
-            margin-bottom: 30px;
-        }
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            color: #666666;
-            font-size: 14px;
-        }
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0 0 0;
-            margin-top: 10px;
-            border-top: 2px solid #1a1a1a;
-            font-size: 18px;
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-        .shipping-box {
-            background-color: #fafafa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .shipping-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin: 0 0 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .shipping-address {
-            color: #666666;
-            font-size: 14px;
-            margin: 0;
-            line-height: 1.5;
-        }
-        .btn-container {
-            text-align: center;
-            margin: 40px 0 20px 0;
-        }
-        .btn {
-            display: inline-block;
-            padding: 14px 32px;
-            background-color: #D19D94;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 15px;
-            letter-spacing: 1px;
-            transition: background-color 0.3s;
-        }
-        .footer {
-            background-color: #f5f5f5;
-            padding: 30px 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #888888;
-            line-height: 1.6;
-        }
-        .social-links {
-            margin-bottom: 15px;
-        }
-        .social-links a {
-            color: #1a1a1a;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: 600;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Order Confirmed — Naisha Creations</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f7f3ee;
+      color: #2c2118;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .email-wrapper {
+      width: 100%;
+      background-color: #f7f3ee;
+      padding: 40px 16px;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fffdf9;
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 2px 40px rgba(94, 50, 30, 0.08);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background-color: #3d1f1f;
+      padding: 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-ornament-top {
+      display: block;
+      width: 100%;
+      line-height: 0;
+    }
+
+    .header-inner {
+      padding: 44px 30px 40px;
+      position: relative;
+    }
+
+    .header-logo-area img {
+      max-width: 220px;
+      height: auto;
+      display: block;
+      margin: 0 auto 28px;
+    }
+
+    .header-logo-placeholder {
+      display: block;
+      margin: 0 auto 28px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: #e8d5c0;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .header-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .header-divider-line {
+      display: inline-block;
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c9a882);
+    }
+
+    .header-divider-line.right {
+      background: linear-gradient(90deg, #c9a882, transparent);
+    }
+
+    .header-divider-icon {
+      color: #c9a882;
+      font-size: 16px;
+    }
+
+    .header-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 38px;
+      font-weight: 500;
+      font-style: italic;
+      color: #f5ede3;
+      line-height: 1.2;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .header-subtitle {
+      font-family: 'Jost', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #c9a882;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      padding: 48px 44px;
+    }
+
+    @media (max-width: 480px) {
+      .content { padding: 36px 24px; }
+    }
+
+    .greeting {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 26px;
+      font-weight: 500;
+      color: #2c2118;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .intro-text {
+      font-size: 14px;
+      font-weight: 300;
+      color: #7a6555;
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    /* ── ORDER ID BOX ── */
+    .order-id-box {
+      border: 1px solid #e8ddd2;
+      border-radius: 2px;
+      padding: 20px 24px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fdf8f3;
+    }
+
+    .order-id-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #b8a090;
+      margin-bottom: 4px;
+    }
+
+    .order-id-value {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #3d1f1f;
+      letter-spacing: 1px;
+    }
+
+    .order-status-badge {
+      background-color: #f0ebe2;
+      border: 1px solid #d4c4b0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #7a5c3a;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #b8a090;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0e8de;
+    }
+
+    /* ── ITEMS TABLE ── */
+    .items-section {
+      margin-bottom: 32px;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .items-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #b8a090;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ede5da;
+    }
+
+    .items-table th.align-center { text-align: center; }
+    .items-table th.align-right  { text-align: right; }
+
+    .items-table td {
+      padding: 18px 0;
+      border-bottom: 1px solid #f5ede4;
+      vertical-align: top;
+    }
+
+    .item-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c2118;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      font-size: 12px;
+      font-weight: 300;
+      color: #9e8878;
+      letter-spacing: 0.5px;
+    }
+
+    .item-qty {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 400;
+      color: #7a6555;
+    }
+
+    .item-price {
+      text-align: right;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2c2118;
+      white-space: nowrap;
+    }
+
+    /* ── SUMMARY ── */
+    .summary-section {
+      margin-bottom: 36px;
+    }
+
+    .summary-table {
+      width: 100%;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 13px;
+      font-weight: 300;
+      color: #7a6555;
+    }
+
+    .summary-discount {
+      color: #7a9e78;
+      font-weight: 500;
+    }
+
+    .summary-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0 0;
+      margin-top: 8px;
+      border-top: 1.5px solid #2c2118;
+    }
+
+    .summary-total-label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #2c2118;
+      letter-spacing: 1px;
+    }
+
+    .summary-total-value {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: #8b4a3a;
+      letter-spacing: 1px;
+    }
+
+    /* ── SHIPPING BOX ── */
+    .shipping-section {
+      margin-bottom: 36px;
+    }
+
+    .shipping-box {
+      background-color: #fdf8f3;
+      border: 1px solid #ede5da;
+      border-radius: 2px;
+      padding: 22px 24px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .shipping-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .shipping-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: #2c2118;
+      margin-bottom: 6px;
+    }
+
+    .shipping-address-text {
+      font-size: 13px;
+      font-weight: 300;
+      color: #7a6555;
+      line-height: 1.8;
+    }
+
+    /* ── NOTICE BOX ── */
+    .notice-box {
+      background: linear-gradient(135deg, #fdf3ec, #fdf8f3);
+      border-left: 3px solid #c9a882;
+      border-radius: 0 2px 2px 0;
+      padding: 18px 20px;
+      margin-bottom: 40px;
+    }
+
+    .notice-text {
+      font-size: 12px;
+      font-weight: 300;
+      color: #7a6555;
+      line-height: 1.8;
+    }
+
+    .notice-text strong {
+      font-weight: 600;
+      color: #5a3a28;
+    }
+
+    /* ── CTA BUTTON ── */
+    .btn-container {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 15px 40px;
+      background-color: #3d1f1f;
+      color: #f5ede3 !important;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border-radius: 1px;
+    }
+
+    /* ── FOOTER ── */
+    .footer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e0d2c2, transparent);
+      margin: 0 44px;
+    }
+
+    .footer {
+      padding: 36px 44px;
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      font-weight: 500;
+      font-style: italic;
+      color: #3d1f1f;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .footer-tagline {
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #b8a090;
+      margin-bottom: 24px;
+    }
+
+    .social-links {
+      margin-bottom: 20px;
+    }
+
+    .social-links a {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #5a3a28;
+      text-decoration: none;
+      margin: 0 14px;
+    }
+
+    .footer-legal {
+      font-size: 11px;
+      font-weight: 300;
+      color: #b8a090;
+      line-height: 1.8;
+    }
+
+    .footer-legal a {
+      color: #9e7a60;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="" alt="Naisha Creations" style="display: block; margin: 0 auto; max-width: 100%; height: auto; border: 0;" width="400" height="60" />
+  <div class="email-wrapper">
+    <div class="email-container">
+
+      <!-- ── HEADER ── -->
+      <div class="header">
+        <div class="header-inner">
+
+          <!-- Replace img src with your actual logo URL -->
+          <div class="header-logo-area">
+            <img src="{{logoUrl}}" alt="Naisha Creations" width="220" />
+          </div>
+
+          <div class="header-divider">
+            <span class="header-divider-line"></span>
+            <span class="header-divider-icon">✦</span>
+            <span class="header-divider-line right"></span>
+          </div>
+
+          <h1 class="header-title">Order Confirmed</h1>
+          <p class="header-subtitle">Handcrafted with love &nbsp;·&nbsp; Packed with care</p>
         </div>
-        <div class="content">
-            <h2 class="greeting">Thank you for your order, {{firstName}}! 🕯️</h2>
-            <p class="intro-text">We've received your order and are getting it ready to be shipped. We will send you another email when it's on its way.</p>
-            
-            <div class="order-box">
-                <p class="order-title">Order Number</p>
-                <p class="order-id">#{{orderId}}</p>
-            </div>
-            
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th style="text-align: center;">Qty</th>
-                        <th class="price-col">Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each items}}
-                    <tr>
-                        <td>
-                            <p class="item-name">{{this.name}}</p>
-                            <p class="item-meta">{{this.type}}</p>
-                        </td>
-                        <td style="text-align: center; color: #666666;">{{this.quantity}}</td>
-                        <td class="price-col">₹{{this.price}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-            
-            <div class="summary-box">
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span>₹{{subtotal}}</span>
-                </div>
-                <div class="summary-row">
-                    <span>Shipping</span>
-                    <span>₹{{shippingPrice}}</span>
-                </div>
-                {{#if discount}}
-                <div class="summary-row" style="color: #4CAF50;">
-                    <span>Discount</span>
-                    <span>-₹{{discount}}</span>
-                </div>
-                {{/if}}
-                <div class="summary-total">
-                    <span>Total</span>
-                    <span style="color: #D19D94;">₹{{total}}</span>
-                </div>
-            </div>
-            
-            <div class="shipping-box">
-                <h3 class="shipping-title">Shipping Address</h3>
-                <p class="shipping-address">
-                    <strong>{{shippingAddress.firstName}} {{shippingAddress.lastName}}</strong><br>
-                    {{shippingAddress.address}}<br>
-                    {{shippingAddress.city}}, {{shippingAddress.state}} {{shippingAddress.pincode}}<br>
-                    Phone: {{shippingAddress.phone}}
-                </p>
-            </div>
-            
-            <div class="btn-container">
-                <a href="{{trackingUrl}}" class="btn">View Order Status</a>
-            </div>
+      </div>
+
+      <!-- ── BODY ── -->
+      <div class="content">
+
+        <h2 class="greeting">Thank you, {{firstName}}! 🕯️</h2>
+        <p class="intro-text">
+          Your order has been received and our artisans are already getting to work. Each piece is made with intention — 
+          we'll send you a shipping confirmation with tracking details once your order is on its way.
+        </p>
+
+        <!-- Order ID -->
+        <div class="order-id-box">
+          <div>
+            <p class="order-id-label">Order Number</p>
+            <p class="order-id-value">#{{orderId}}</p>
+          </div>
+          <span class="order-status-badge">Confirmed</span>
         </div>
-        <div class="footer">
-            <div class="social-links">
-                <a href="https://instagram.com/naishacreations_withlove">Instagram</a> | <a href="https://naishacreations.com">Website</a>
-            </div>
-            &copy; {{year}} Naisha Creations. All rights reserved.<br>
-            If you have any questions, reply to this email or contact us at <a href="mailto:support@naishacreations.com">support@naishacreations.com</a>
+
+        <!-- Items -->
+        <div class="items-section">
+          <p class="section-label">Your Items</p>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th class="align-center">Qty</th>
+                <th class="align-right">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each items}}
+              <tr>
+                <td>
+                  <p class="item-name">{{this.name}}</p>
+                  <p class="item-meta">{{this.type}}</p>
+                </td>
+                <td class="item-qty">{{this.quantity}}</td>
+                <td class="item-price">₹{{this.price}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
         </div>
+
+        <!-- Summary -->
+        <div class="summary-section">
+          <div class="summary-table">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span>₹{{subtotal}}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span>₹{{shippingPrice}}</span>
+            </div>
+            {{#if discount}}
+            <div class="summary-row summary-discount">
+              <span>Discount Applied</span>
+              <span>− ₹{{discount}}</span>
+            </div>
+            {{/if}}
+            <div class="summary-total-row">
+              <span class="summary-total-label">Total</span>
+              <span class="summary-total-value">₹{{total}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="shipping-section">
+          <p class="section-label">Delivering To</p>
+          <div class="shipping-box">
+            <span class="shipping-icon">📦</span>
+            <div>
+              <p class="shipping-name">{{shippingAddress.firstName}} {{shippingAddress.lastName}}</p>
+              <p class="shipping-address-text">
+                {{shippingAddress.address}}<br />
+                {{shippingAddress.city}}, {{shippingAddress.state}} — {{shippingAddress.pincode}}<br />
+                📞 {{shippingAddress.phone}}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Policy Notice -->
+        <div class="notice-box">
+          <p class="notice-text">
+            <strong>Please note:</strong> Orders are processed within <strong>2–5 business days</strong>. 
+            Customised or bulk orders may take additional time. Once dispatched via Shiprocket, 
+            transit delays or damages are subject to the courier's policy. 
+            For wrong item concerns, contact us within <strong>24 hours of delivery</strong> with unboxing photos and video.
+          </p>
+        </div>
+
+        <!-- CTA -->
+        <div class="btn-container">
+          <a href="{{trackingUrl}}" class="btn">Track Your Order</a>
+        </div>
+
+      </div>
+
+      <!-- ── FOOTER DIVIDER ── -->
+      <div class="footer-divider"></div>
+
+      <!-- ── FOOTER ── -->
+      <div class="footer">
+        <p class="footer-brand">Naisha Creations</p>
+        <p class="footer-tagline">Handcrafted · Thoughtful · Made with love</p>
+
+        <div class="social-links">
+          <a href="https://instagram.com/naishacreations_withlove">Instagram</a>
+          <a href="https://naishacreations.com">Website</a>
+        </div>
+
+        <p class="footer-legal">
+          © {{year}} Naisha Creations. All rights reserved.<br />
+          Questions? Reply to this email or write to us at
+          <a href="mailto:support@naishacreations.com">support@naishacreations.com</a>
+        </p>
+      </div>
+
     </div>
+  </div>
 </body>
 </html>
