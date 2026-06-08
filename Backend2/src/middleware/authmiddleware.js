@@ -6,10 +6,10 @@ import { sendOtp } from "../services/otp_services.js";
 import { clearTokenCookie, clearAdminTokenCookie } from "../utils/token.js";
 import { checkOtpRateLimit } from "../utils/otpRateLimiter.js";
 
-// Used on all frontend/user routes — only reads userToken
+// Used on all frontend/user routes — reads userToken or adminToken
 export const isAuthenticated = async (req, res, next) => {
     try {
-        const token = req.cookies?.userToken || req.headers.authorization?.split(" ")[1];
+        const token = req.cookies?.userToken || req.cookies?.adminToken || req.headers.authorization?.split(" ")[1];
 
         if (!token) {
             return res.status(401).json({

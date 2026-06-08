@@ -36,71 +36,29 @@
       max-width: 600px;
       margin: 0 auto;
       background-color: #fffdf9;
-      border-radius: 2px;
-      overflow: hidden;
-      box-shadow: 0 2px 40px rgba(94, 50, 30, 0.08);
     }
 
     /* ── HEADER ── */
     .header {
-      background-color: #3d1f1f;
-      padding: 0;
+      background-color: #5e3232;
       text-align: center;
-      position: relative;
-      overflow: hidden;
     }
 
-    .header-ornament-top {
-      display: block;
-      width: 100%;
-      line-height: 0;
-    }
-
-    .header-inner {
-      padding: 44px 30px 40px;
-      position: relative;
+    .header-logo-area {
+      padding: 28px 0 0 0;
+      text-align: center;
     }
 
     .header-logo-area img {
-      max-width: 220px;
+      display: block;
+      width: 100%;
+      max-width: 600px;
       height: auto;
-      display: block;
-      margin: 0 auto 28px;
+      margin: 0 auto;
     }
 
-    .header-logo-placeholder {
-      display: block;
-      margin: 0 auto 28px;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 28px;
-      font-weight: 600;
-      color: #e8d5c0;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-    }
-
-    .header-divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    .header-divider-line {
-      display: inline-block;
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #c9a882);
-    }
-
-    .header-divider-line.right {
-      background: linear-gradient(90deg, #c9a882, transparent);
-    }
-
-    .header-divider-icon {
-      color: #c9a882;
-      font-size: 16px;
+    .header-inner {
+      padding: 28px 30px 40px;
     }
 
     .header-title {
@@ -116,7 +74,7 @@
 
     .header-subtitle {
       font-family: 'Jost', sans-serif;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       letter-spacing: 3px;
       text-transform: uppercase;
@@ -125,86 +83,41 @@
 
     /* ── CONTENT ── */
     .content {
-      padding: 48px 44px;
-    }
-
-    @media (max-width: 480px) {
-      .content { padding: 36px 24px; }
+      padding: 52px 48px;
     }
 
     .greeting {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 26px;
+      font-size: 30px;
       font-weight: 500;
       color: #2c2118;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       line-height: 1.3;
     }
 
     .intro-text {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 300;
       color: #7a6555;
-      line-height: 1.8;
-      margin-bottom: 36px;
-    }
-
-    /* ── ORDER ID BOX ── */
-    .order-id-box {
-      border: 1px solid #e8ddd2;
-      border-radius: 2px;
-      padding: 20px 24px;
+      line-height: 1.9;
       margin-bottom: 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #fdf8f3;
-    }
-
-    .order-id-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: #b8a090;
-      margin-bottom: 4px;
-    }
-
-    .order-id-value {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: #3d1f1f;
-      letter-spacing: 1px;
-    }
-
-    .order-status-badge {
-      background-color: #f0ebe2;
-      border: 1px solid #d4c4b0;
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #7a5c3a;
     }
 
     /* ── SECTION LABEL ── */
     .section-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: #b8a090;
       margin-bottom: 18px;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       border-bottom: 1px solid #f0e8de;
     }
 
     /* ── ITEMS TABLE ── */
     .items-section {
-      margin-bottom: 32px;
+      margin-bottom: 36px;
     }
 
     .items-table {
@@ -214,12 +127,12 @@
 
     .items-table th {
       text-align: left;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: #b8a090;
-      padding-bottom: 12px;
+      padding-bottom: 14px;
       border-bottom: 1px solid #ede5da;
     }
 
@@ -227,21 +140,21 @@
     .items-table th.align-right  { text-align: right; }
 
     .items-table td {
-      padding: 18px 0;
+      padding: 20px 0;
       border-bottom: 1px solid #f5ede4;
       vertical-align: top;
     }
 
     .item-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       color: #2c2118;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .item-meta {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 300;
       color: #9e8878;
       letter-spacing: 0.5px;
@@ -249,14 +162,14 @@
 
     .item-qty {
       text-align: center;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 400;
       color: #7a6555;
     }
 
     .item-price {
       text-align: right;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
       color: #2c2118;
       white-space: nowrap;
@@ -264,40 +177,12 @@
 
     /* ── SUMMARY ── */
     .summary-section {
-      margin-bottom: 36px;
-    }
-
-    .summary-table {
-      width: 100%;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      font-size: 13px;
-      font-weight: 300;
-      color: #7a6555;
-    }
-
-    .summary-discount {
-      color: #7a9e78;
-      font-weight: 500;
-    }
-
-    .summary-total-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 0 0;
-      margin-top: 8px;
-      border-top: 1.5px solid #2c2118;
+      margin-bottom: 40px;
     }
 
     .summary-total-label {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 600;
       color: #2c2118;
       letter-spacing: 1px;
@@ -311,56 +196,19 @@
       letter-spacing: 1px;
     }
 
-    /* ── SHIPPING BOX ── */
-    .shipping-section {
-      margin-bottom: 36px;
-    }
-
-    .shipping-box {
-      background-color: #fdf8f3;
-      border: 1px solid #ede5da;
-      border-radius: 2px;
-      padding: 22px 24px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
-
-    .shipping-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .shipping-name {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 17px;
-      font-weight: 600;
-      color: #2c2118;
-      margin-bottom: 6px;
-    }
-
-    .shipping-address-text {
-      font-size: 13px;
-      font-weight: 300;
-      color: #7a6555;
-      line-height: 1.8;
-    }
-
     /* ── NOTICE BOX ── */
     .notice-box {
-      background: linear-gradient(135deg, #fdf3ec, #fdf8f3);
+      background-color: #fdf3ec;
       border-left: 3px solid #c9a882;
-      border-radius: 0 2px 2px 0;
-      padding: 18px 20px;
-      margin-bottom: 40px;
+      padding: 20px 22px;
+      margin-bottom: 44px;
     }
 
     .notice-text {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 300;
       color: #7a6555;
-      line-height: 1.8;
+      line-height: 1.9;
     }
 
     .notice-text strong {
@@ -369,44 +217,32 @@
     }
 
     /* ── CTA BUTTON ── */
-    .btn-container {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
     .btn {
       display: inline-block;
-      padding: 15px 40px;
+      padding: 16px 44px;
       background-color: #3d1f1f;
       color: #f5ede3 !important;
       text-decoration: none;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 3px;
       text-transform: uppercase;
-      border-radius: 1px;
     }
 
     /* ── FOOTER ── */
-    .footer-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #e0d2c2, transparent);
-      margin: 0 44px;
-    }
-
     .footer {
-      padding: 36px 44px;
+      padding: 40px 48px;
       text-align: center;
     }
 
     .footer-brand {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 500;
       font-style: italic;
       color: #3d1f1f;
       letter-spacing: 2px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .footer-tagline {
@@ -418,180 +254,228 @@
       margin-bottom: 24px;
     }
 
-    .social-links {
-      margin-bottom: 20px;
-    }
-
-    .social-links a {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #5a3a28;
-      text-decoration: none;
-      margin: 0 14px;
-    }
-
     .footer-legal {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 300;
       color: #b8a090;
-      line-height: 1.8;
+      line-height: 1.9;
     }
 
     .footer-legal a {
       color: #9e7a60;
       text-decoration: none;
     }
+
+    .social-icon-link {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      line-height: 34px;
+      text-align: center;
+      border: 1px solid #d4c4b0;
+      border-radius: 50%;
+      color: #7a5c3a;
+      text-decoration: none;
+      font-size: 16px;
+      margin: 0 8px;
+    }
   </style>
 </head>
 <body>
   <div class="email-wrapper">
-    <div class="email-container">
+    <!-- Outer wrapper table for centering -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td align="center">
+          <!-- Email container -->
+          <table class="email-container" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#fffdf9;">
 
-      <!-- ── HEADER ── -->
-      <div class="header">
-        <div class="header-inner">
+            <!-- ── HEADER ── -->
+            <tr>
+              <td style="background-color:#5e3232;padding-top:28px;" align="center">
+                <!-- Logo: full width, no side padding -->
+                <img src="{{logoUrl}}" alt="Naisha Creations" width="600" style="display:block;width:100%;max-width:600px;height:auto;" />
+              </td>
+            </tr>
+            <tr>
+              <td style="background-color:#5e3232;padding:24px 30px 40px;" align="center">
+                <!-- Divider using table, no flex -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
+                  <tr>
+                    <td width="80" style="padding-right:12px;">
+                      <!-- gradient line via a 1px tall td with background -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                        <td height="1" style="background:linear-gradient(90deg,transparent,#c9a882);font-size:1px;line-height:1px;">&nbsp;</td>
+                      </tr></table>
+                    </td>
+                    <td width="20" align="center" style="color:#c9a882;font-size:16px;white-space:nowrap;">✦</td>
+                    <td width="80" style="padding-left:12px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                        <td height="1" style="background:linear-gradient(90deg,#c9a882,transparent);font-size:1px;line-height:1px;">&nbsp;</td>
+                      </tr></table>
+                    </td>
+                  </tr>
+                </table>
+                <h1 class="header-title" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:42px;font-weight:500;font-style:italic;color:#f5ede3;line-height:1.2;letter-spacing:1px;margin-bottom:10px;">Order Confirmed</h1>
+                <p class="header-subtitle" style="font-family:'Jost',sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c9a882;">Handcrafted with love &nbsp;&middot;&nbsp; Packed with care</p>
+              </td>
+            </tr>
 
-          <!-- Replace img src with your actual logo URL -->
-          <div class="header-logo-area">
-            <img src="{{logoUrl}}" alt="Naisha Creations" width="220" />
-          </div>
+            <!-- ── BODY ── -->
+            <tr>
+              <td class="content" style="padding:52px 48px;">
 
-          <div class="header-divider">
-            <span class="header-divider-line"></span>
-            <span class="header-divider-icon">✦</span>
-            <span class="header-divider-line right"></span>
-          </div>
+                <h2 class="greeting" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:500;color:#2c2118;margin-bottom:16px;line-height:1.3;">Thank you, {{firstName}}! &#x1F56F;&#xFE0F;</h2>
+                <p class="intro-text" style="font-size:15px;font-weight:300;color:#7a6555;line-height:1.9;margin-bottom:40px;">
+                  Your order has been received and our artisans are already getting to work. Each piece is made with intention &mdash;
+                  we&rsquo;ll send you a shipping confirmation with tracking details once your order is on its way.
+                </p>
 
-          <h1 class="header-title">Order Confirmed</h1>
-          <p class="header-subtitle">Handcrafted with love &nbsp;·&nbsp; Packed with care</p>
-        </div>
-      </div>
+                <!-- Order ID — table layout -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e8ddd2;background-color:#fdf8f3;margin-bottom:44px;">
+                  <tr>
+                    <td style="padding:22px 26px;">
+                      <p style="font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#b8a090;margin-bottom:5px;">Order Number</p>
+                      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:600;color:#3d1f1f;letter-spacing:1px;">#{{orderId}}</p>
+                    </td>
+                    <td align="right" style="padding:22px 26px;">
+                      <span style="background-color:#f0ebe2;border:1px solid #d4c4b0;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#7a5c3a;">Confirmed</span>
+                    </td>
+                  </tr>
+                </table>
 
-      <!-- ── BODY ── -->
-      <div class="content">
+                <!-- Items -->
+                <div class="items-section">
+                  <p class="section-label">Your Items</p>
+                  <table class="items-table" width="100%" cellpadding="0" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#b8a090;padding-bottom:14px;border-bottom:1px solid #ede5da;">Item</th>
+                        <th style="text-align:center;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#b8a090;padding-bottom:14px;border-bottom:1px solid #ede5da;">Qty</th>
+                        <th style="text-align:right;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#b8a090;padding-bottom:14px;border-bottom:1px solid #ede5da;">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{#each items}}
+                      <tr>
+                        <td style="padding:20px 0;border-bottom:1px solid #f5ede4;vertical-align:top;">
+                          <p class="item-name">{{this.name}}</p>
+                          <p class="item-meta">{{this.type}}</p>
+                        </td>
+                        <td class="item-qty" style="padding:20px 0;border-bottom:1px solid #f5ede4;vertical-align:top;text-align:center;font-size:15px;font-weight:400;color:#7a6555;">{{this.quantity}}</td>
+                        <td class="item-price" style="padding:20px 0;border-bottom:1px solid #f5ede4;vertical-align:top;text-align:right;font-size:15px;font-weight:500;color:#2c2118;white-space:nowrap;">&#8377;{{this.price}}</td>
+                      </tr>
+                      {{/each}}
+                    </tbody>
+                  </table>
+                </div>
 
-        <h2 class="greeting">Thank you, {{firstName}}! 🕯️</h2>
-        <p class="intro-text">
-          Your order has been received and our artisans are already getting to work. Each piece is made with intention — 
-          we'll send you a shipping confirmation with tracking details once your order is on its way.
-        </p>
+                <!-- Summary -->
+                <div class="summary-section">
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="padding:9px 0;font-size:14px;font-weight:300;color:#7a6555;">Subtotal</td>
+                      <td align="right" style="padding:9px 0;font-size:14px;font-weight:300;color:#7a6555;">&#8377;{{subtotal}}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:9px 0;font-size:14px;font-weight:300;color:#7a6555;">Shipping</td>
+                      <td align="right" style="padding:9px 0;font-size:14px;font-weight:300;color:#7a6555;">&#8377;{{shippingPrice}}</td>
+                    </tr>
+                    {{#if discount}}
+                    <tr>
+                      <td style="padding:9px 0;font-size:14px;font-weight:500;color:#7a9e78;">Discount Applied</td>
+                      <td align="right" style="padding:9px 0;font-size:14px;font-weight:500;color:#7a9e78;">&minus; &#8377;{{discount}}</td>
+                    </tr>
+                    {{/if}}
+                    <tr>
+                      <td colspan="2" style="padding:0;"><hr style="border:none;border-top:1.5px solid #2c2118;margin:8px 0 0;" /></td>
+                    </tr>
+                    <tr>
+                      <td style="padding-top:16px;">
+                        <span class="summary-total-label" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:600;color:#2c2118;letter-spacing:1px;">Total</span>
+                      </td>
+                      <td align="right" style="padding-top:16px;">
+                        <span class="summary-total-value" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;color:#8b4a3a;letter-spacing:1px;">&#8377;{{total}}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
 
-        <!-- Order ID -->
-        <div class="order-id-box">
-          <div>
-            <p class="order-id-label">Order Number</p>
-            <p class="order-id-value">#{{orderId}}</p>
-          </div>
-          <span class="order-status-badge">Confirmed</span>
-        </div>
+                <!-- Shipping Address — table layout -->
+                <p class="section-label" style="margin-bottom:18px;">Delivering To</p>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fdf8f3;border:1px solid #ede5da;margin-bottom:40px;">
+                  <tr>
+                    <td style="padding:24px 26px;vertical-align:top;width:36px;font-size:22px;">&#128230;</td>
+                    <td style="padding:24px 26px 24px 0;vertical-align:top;">
+                      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:600;color:#2c2118;margin-bottom:7px;">{{shippingAddress.firstName}} {{shippingAddress.lastName}}</p>
+                      <p style="font-size:14px;font-weight:300;color:#7a6555;line-height:1.9;">
+                        {{shippingAddress.address}}<br />
+                        {{shippingAddress.city}}, {{shippingAddress.state}} &mdash; {{shippingAddress.pincode}}<br />
+                        &#128222; {{shippingAddress.phone}}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
 
-        <!-- Items -->
-        <div class="items-section">
-          <p class="section-label">Your Items</p>
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th class="align-center">Qty</th>
-                <th class="align-right">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each items}}
-              <tr>
-                <td>
-                  <p class="item-name">{{this.name}}</p>
-                  <p class="item-meta">{{this.type}}</p>
-                </td>
-                <td class="item-qty">{{this.quantity}}</td>
-                <td class="item-price">₹{{this.price}}</td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        </div>
+                <!-- Policy Notice -->
+                <div class="notice-box" style="background-color:#fdf3ec;border-left:3px solid #c9a882;padding:20px 22px;margin-bottom:44px;">
+                  <p class="notice-text" style="font-size:13px;font-weight:300;color:#7a6555;line-height:1.9;">
+                    <strong style="font-weight:600;color:#5a3a28;">Please note:</strong> Orders are processed within <strong style="font-weight:600;color:#5a3a28;">2&ndash;5 business days</strong>.
+                    Customised or bulk orders may take additional time. Once dispatched via Shiprocket,
+                    transit delays or damages are subject to the courier&rsquo;s policy.
+                    For wrong item concerns, contact us within <strong style="font-weight:600;color:#5a3a28;">24 hours of delivery</strong> with unboxing photos and video.
+                  </p>
+                </div>
 
-        <!-- Summary -->
-        <div class="summary-section">
-          <div class="summary-table">
-            <div class="summary-row">
-              <span>Subtotal</span>
-              <span>₹{{subtotal}}</span>
-            </div>
-            <div class="summary-row">
-              <span>Shipping</span>
-              <span>₹{{shippingPrice}}</span>
-            </div>
-            {{#if discount}}
-            <div class="summary-row summary-discount">
-              <span>Discount Applied</span>
-              <span>− ₹{{discount}}</span>
-            </div>
-            {{/if}}
-            <div class="summary-total-row">
-              <span class="summary-total-label">Total</span>
-              <span class="summary-total-value">₹{{total}}</span>
-            </div>
-          </div>
-        </div>
+                <!-- CTA -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+                  <tr>
+                    <td align="center">
+                      <a href="{{trackingUrl}}" class="btn" style="display:inline-block;padding:16px 44px;background-color:#3d1f1f;color:#f5ede3;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;">Track Your Order</a>
+                    </td>
+                  </tr>
+                </table>
 
-        <!-- Shipping Address -->
-        <div class="shipping-section">
-          <p class="section-label">Delivering To</p>
-          <div class="shipping-box">
-            <span class="shipping-icon">📦</span>
-            <div>
-              <p class="shipping-name">{{shippingAddress.firstName}} {{shippingAddress.lastName}}</p>
-              <p class="shipping-address-text">
-                {{shippingAddress.address}}<br />
-                {{shippingAddress.city}}, {{shippingAddress.state}} — {{shippingAddress.pincode}}<br />
-                📞 {{shippingAddress.phone}}
-              </p>
-            </div>
-          </div>
-        </div>
+              </td>
+            </tr>
 
-        <!-- Policy Notice -->
-        <div class="notice-box">
-          <p class="notice-text">
-            <strong>Please note:</strong> Orders are processed within <strong>2–5 business days</strong>. 
-            Customised or bulk orders may take additional time. Once dispatched via Shiprocket, 
-            transit delays or damages are subject to the courier's policy. 
-            For wrong item concerns, contact us within <strong>24 hours of delivery</strong> with unboxing photos and video.
-          </p>
-        </div>
+            <!-- ── FOOTER DIVIDER ── -->
+            <tr>
+              <td style="padding:0 48px;">
+                <hr style="border:none;border-top:1px solid #e0d2c2;" />
+              </td>
+            </tr>
 
-        <!-- CTA -->
-        <div class="btn-container">
-          <a href="{{trackingUrl}}" class="btn">Track Your Order</a>
-        </div>
+            <!-- ── FOOTER ── -->
+            <tr>
+              <td class="footer" style="padding:40px 48px;text-align:center;">
+                <p class="footer-brand" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:500;font-style:italic;color:#3d1f1f;letter-spacing:2px;margin-bottom:14px;">Naisha Creations</p>
+                <p class="footer-tagline" style="font-size:11px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:#b8a090;margin-bottom:24px;">Handcrafted &middot; Thoughtful &middot; Made with love</p>
 
-      </div>
+                <!-- Social links: Unicode emoji icons in bordered circles via table -->
+                <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 24px;">
+                  <tr>
+                    <td style="padding:0 8px;">
+                      <a href="https://instagram.com/naishacreations_withlove" style="display:inline-block;width:38px;height:38px;line-height:36px;text-align:center;border:1px solid #d4c4b0;border-radius:50%;color:#7a5c3a;text-decoration:none;font-size:18px;" title="Instagram">&#128247;</a>
+                    </td>
+                    <td style="padding:0 8px;">
+                      <a href="https://naishacreations.com" style="display:inline-block;width:38px;height:38px;line-height:36px;text-align:center;border:1px solid #d4c4b0;border-radius:50%;color:#7a5c3a;text-decoration:none;font-size:18px;" title="Website">&#127760;</a>
+                    </td>
+                  </tr>
+                </table>
 
-      <!-- ── FOOTER DIVIDER ── -->
-      <div class="footer-divider"></div>
+                <p class="footer-legal" style="font-size:12px;font-weight:300;color:#b8a090;line-height:1.9;">
+                  &copy; {{year}} Naisha Creations. All rights reserved.<br />
+                  Questions? Reply to this email or write to us at
+                  <a href="mailto:support@naishacreations.com" style="color:#9e7a60;text-decoration:none;">support@naishacreations.com</a>
+                </p>
+              </td>
+            </tr>
 
-      <!-- ── FOOTER ── -->
-      <div class="footer">
-        <p class="footer-brand">Naisha Creations</p>
-        <p class="footer-tagline">Handcrafted · Thoughtful · Made with love</p>
-
-        <div class="social-links">
-          <a href="https://instagram.com/naishacreations_withlove">Instagram</a>
-          <a href="https://naishacreations.com">Website</a>
-        </div>
-
-        <p class="footer-legal">
-          © {{year}} Naisha Creations. All rights reserved.<br />
-          Questions? Reply to this email or write to us at
-          <a href="mailto:support@naishacreations.com">support@naishacreations.com</a>
-        </p>
-      </div>
-
-    </div>
+          </table><!-- /email-container -->
+        </td>
+      </tr>
+    </table><!-- /outer wrapper -->
   </div>
 </body>
 </html>

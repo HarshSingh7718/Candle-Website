@@ -32,116 +32,19 @@
       padding: 40px 16px;
     }
 
-    .email-container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fffdf9;
-      border-radius: 2px;
-      overflow: hidden;
-      box-shadow: 0 2px 40px rgba(94, 50, 30, 0.08);
-    }
-
-    /* ── HEADER ── */
-    .header {
-      background-color: #3d1f1f;
-      text-align: center;
-    }
-
-    .header-inner {
-      padding: 44px 30px 40px;
-    }
-
-    .header-logo-area img {
-      max-width: 220px;
-      height: auto;
-      display: block;
-      margin: 0 auto 28px;
-    }
-
-    .header-divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    .header-divider-line {
-      display: inline-block;
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #c9a882);
-    }
-
-    .header-divider-line.right {
-      background: linear-gradient(90deg, #c9a882, transparent);
-    }
-
-    .header-divider-icon {
-      color: #c9a882;
-      font-size: 16px;
-    }
-
-    .header-title {
+    .item-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 38px;
-      font-weight: 500;
-      font-style: italic;
-      color: #f5ede3;
-      line-height: 1.2;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-
-    .header-subtitle {
-      font-family: 'Jost', sans-serif;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #c9a882;
-    }
-
-    /* ── HERO BAND ── */
-    .hero-band {
-      background-color: #f0e8de;
-      padding: 28px 30px;
-      text-align: center;
-      border-bottom: 1px solid #e8ddd2;
-    }
-
-    .hero-icons {
-      font-size: 28px;
-      letter-spacing: 10px;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .hero-band-text {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #9e7a60;
-    }
-
-    /* ── CONTENT ── */
-    .content {
-      padding: 48px 44px;
-      text-align: center;
-    }
-
-    @media (max-width: 480px) {
-      .content { padding: 36px 24px; }
-    }
-
-    .greeting {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 30px;
-      font-weight: 500;
+      font-size: 18px;
+      font-weight: 600;
       color: #2c2118;
-      margin-bottom: 16px;
-      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      font-weight: 300;
+      color: #9e8878;
+      letter-spacing: 0.5px;
     }
 
     .greeting em {
@@ -149,194 +52,11 @@
       color: #8b4a3a;
     }
 
-    .intro-text {
-      font-size: 14px;
-      font-weight: 300;
-      color: #7a6555;
-      line-height: 1.9;
-      margin-bottom: 44px;
-      max-width: 460px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* ── FEATURES ── */
-    .features-section {
-      margin-bottom: 44px;
-    }
-
-    .section-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #b8a090;
-      margin-bottom: 28px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #f0e8de;
-      text-align: left;
-    }
-
-    .features-grid {
-      display: table;
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    .feature-cell {
-      display: table-cell;
-      width: 33.33%;
-      padding: 28px 16px;
-      text-align: center;
-      vertical-align: top;
-      background-color: #fdf8f3;
-      border: 1px solid #ede5da;
-    }
-
-    .feature-cell:first-child {
-      border-right: none;
-    }
-
-    .feature-cell:last-child {
-      border-left: none;
-    }
-
-    .feature-icon {
-      font-size: 26px;
-      display: block;
-      margin-bottom: 12px;
-    }
-
-    .feature-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: #2c2118;
-      margin-bottom: 6px;
-      letter-spacing: 0.5px;
-    }
-
-    .feature-desc {
-      font-size: 11px;
-      font-weight: 300;
-      color: #9e8878;
-      line-height: 1.6;
-      letter-spacing: 0.3px;
-    }
-
-    /* ── ACCOUNT READY BOX ── */
-    .account-box {
-      background: linear-gradient(135deg, #fdf3ec, #fdf8f3);
-      border-left: 3px solid #c9a882;
-      border-radius: 0 2px 2px 0;
-      padding: 20px 22px;
-      margin-bottom: 40px;
-      text-align: left;
-    }
-
-    .account-box-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 16px;
-      font-weight: 600;
-      color: #3d1f1f;
-      margin-bottom: 8px;
-    }
-
-    .account-box-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .account-box-list li {
-      font-size: 13px;
-      font-weight: 300;
-      color: #7a6555;
-      line-height: 1.8;
-      padding-left: 16px;
-      position: relative;
-    }
-
-    .account-box-list li::before {
-      content: '✦';
-      position: absolute;
-      left: 0;
-      font-size: 8px;
-      color: #c9a882;
-      top: 5px;
-    }
-
-    /* ── CTA ── */
-    .btn-container {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 15px 40px;
-      background-color: #3d1f1f;
-      color: #f5ede3 !important;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      border-radius: 1px;
-    }
-
-    /* ── FOOTER ── */
-    .footer-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #e0d2c2, transparent);
-      margin: 0 44px;
-    }
-
-    .footer {
-      padding: 36px 44px;
-      text-align: center;
-    }
-
-    .footer-brand {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 18px;
-      font-weight: 500;
-      font-style: italic;
-      color: #3d1f1f;
-      letter-spacing: 2px;
-      margin-bottom: 16px;
-    }
-
-    .footer-tagline {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #b8a090;
-      margin-bottom: 24px;
-    }
-
-    .social-links {
-      margin-bottom: 20px;
-    }
-
-    .social-links a {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #5a3a28;
-      text-decoration: none;
-      margin: 0 14px;
-    }
-
     .footer-legal {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 300;
       color: #b8a090;
-      line-height: 1.8;
+      line-height: 1.9;
     }
 
     .footer-legal a {
@@ -347,100 +67,148 @@
 </head>
 <body>
   <div class="email-wrapper">
-    <div class="email-container">
+    <!-- Outer wrapper table -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td align="center">
+          <!-- Email container -->
+          <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#fffdf9;">
 
-      <!-- ── HEADER ── -->
-      <div class="header">
-        <div class="header-inner">
-          <div class="header-logo-area">
-            <img src="{{logoUrl}}" alt="Naisha Creations" width="220" />
-          </div>
-          <div class="header-divider">
-            <span class="header-divider-line"></span>
-            <span class="header-divider-icon">✦</span>
-            <span class="header-divider-line right"></span>
-          </div>
-          <h1 class="header-title">Welcome to the Family</h1>
-          <p class="header-subtitle">Where every flame tells a story</p>
-        </div>
-      </div>
+            <!-- ── HEADER ── -->
+            <tr>
+              <td style="background-color:#5e3232;padding-top:28px;" align="center">
+                <img src="{{logoUrl}}" alt="Naisha Creations" width="600" style="display:block;width:100%;max-width:600px;height:auto;" />
+              </td>
+            </tr>
+            <tr>
+              <td style="background-color:#5e3232;padding:24px 30px 40px;" align="center">
+                <!-- Divider: table-based, no flex -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
+                  <tr>
+                    <td width="80" style="padding-right:12px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                        <td height="1" style="background:linear-gradient(90deg,transparent,#c9a882);font-size:1px;line-height:1px;">&nbsp;</td>
+                      </tr></table>
+                    </td>
+                    <td width="20" align="center" style="color:#c9a882;font-size:16px;white-space:nowrap;">✦</td>
+                    <td width="80" style="padding-left:12px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                        <td height="1" style="background:linear-gradient(90deg,#c9a882,transparent);font-size:1px;line-height:1px;">&nbsp;</td>
+                      </tr></table>
+                    </td>
+                  </tr>
+                </table>
+                <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:42px;font-weight:500;font-style:italic;color:#f5ede3;line-height:1.2;letter-spacing:1px;margin-bottom:10px;">Welcome to the Family</h1>
+                <p style="font-family:'Jost',sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#c9a882;">Where every flame tells a story</p>
+              </td>
+            </tr>
 
-      <!-- ── HERO BAND ── -->
-      <div class="hero-band">
-        <span class="hero-icons">🕯️&nbsp;&nbsp;✨&nbsp;&nbsp;🌿</span>
-        <p class="hero-band-text">Hand-poured &nbsp;·&nbsp; Small batch &nbsp;·&nbsp; Made with love</p>
-      </div>
+            <!-- ── HERO BAND ── -->
+            <tr>
+              <td style="background-color:#f0e8de;padding:28px 30px;text-align:center;border-bottom:1px solid #e8ddd2;">
+                <span style="font-size:26px;letter-spacing:10px;display:block;margin-bottom:10px;">&#x1F56F;&#xFE0F;&nbsp;&nbsp;&#x2728;&nbsp;&nbsp;&#x1F33F;</span>
+                <p style="font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#9e7a60;">Hand-poured &nbsp;&middot;&nbsp; Small batch &nbsp;&middot;&nbsp; Made with love</p>
+              </td>
+            </tr>
 
-      <!-- ── BODY ── -->
-      <div class="content">
+            <!-- ── BODY ── -->
+            <tr>
+              <td style="padding:52px 48px;text-align:center;">
 
-        <h2 class="greeting">So glad you're here, <em>{{firstName}}</em>!</h2>
-        <p class="intro-text">
-          At Naisha Creations, every candle is hand-poured with intention — crafted to bring warmth, 
-          quiet, and beautiful fragrance into your everyday spaces. We're so happy to have you with us.
-        </p>
+                <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:500;color:#2c2118;margin-bottom:16px;line-height:1.3;">So glad you&rsquo;re here, <em>{{firstName}}</em>!</h2>
+                <p style="font-size:15px;font-weight:300;color:#7a6555;line-height:1.9;margin-bottom:44px;max-width:460px;margin-left:auto;margin-right:auto;">
+                  At Naisha Creations, every candle is hand-poured with intention &mdash; crafted to bring warmth,
+                  quiet, and beautiful fragrance into your everyday spaces. We&rsquo;re so happy to have you with us.
+                </p>
 
-        <!-- Features -->
-        <div class="features-section">
-          <p class="section-label">What makes us different</p>
-          <div class="features-grid">
-            <div class="feature-cell">
-              <span class="feature-icon">✨</span>
-              <p class="feature-title">Hand-Poured</p>
-              <p class="feature-desc">Each candle crafted individually, never mass-produced</p>
-            </div>
-            <div class="feature-cell">
-              <span class="feature-icon">🌿</span>
-              <p class="feature-title">Premium Wax</p>
-              <p class="feature-desc">Clean-burning, skin-safe ingredients in every batch</p>
-            </div>
-            <div class="feature-cell">
-              <span class="feature-icon">🎨</span>
-              <p class="feature-title">Customisable</p>
-              <p class="feature-desc">Bespoke scents, labels, and gifting options available</p>
-            </div>
-          </div>
-        </div>
+                <!-- Features section label -->
+                <p style="font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#b8a090;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #f0e8de;text-align:left;">What makes us different</p>
 
-        <!-- Account perks -->
-        <div class="account-box">
-          <p class="account-box-title">Your account is all set up</p>
-          <ul class="account-box-list">
-            <li>Track all your orders in one place</li>
-            <li>Save your favourite delivery addresses</li>
-            <li>Request custom and bulk orders with ease</li>
-            <li>Get early access to new collections &amp; offers</li>
-          </ul>
-        </div>
+                <!-- Features grid: 3-column table -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:44px;border-collapse:collapse;">
+                  <tr>
+                    <td width="33%" style="padding:28px 16px;text-align:center;vertical-align:top;background-color:#fdf8f3;border:1px solid #ede5da;border-right:none;">
+                      <span style="font-size:26px;display:block;margin-bottom:12px;">&#x2728;</span>
+                      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;font-weight:600;color:#2c2118;margin-bottom:6px;letter-spacing:0.5px;">Hand-Poured</p>
+                      <p style="font-size:12px;font-weight:300;color:#9e8878;line-height:1.6;letter-spacing:0.3px;">Each candle crafted individually, never mass-produced</p>
+                    </td>
+                    <td width="34%" style="padding:28px 16px;text-align:center;vertical-align:top;background-color:#fdf8f3;border:1px solid #ede5da;">
+                      <span style="font-size:26px;display:block;margin-bottom:12px;">&#x1F33F;</span>
+                      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;font-weight:600;color:#2c2118;margin-bottom:6px;letter-spacing:0.5px;">Premium Wax</p>
+                      <p style="font-size:12px;font-weight:300;color:#9e8878;line-height:1.6;letter-spacing:0.3px;">Clean-burning, skin-safe ingredients in every batch</p>
+                    </td>
+                    <td width="33%" style="padding:28px 16px;text-align:center;vertical-align:top;background-color:#fdf8f3;border:1px solid #ede5da;border-left:none;">
+                      <span style="font-size:26px;display:block;margin-bottom:12px;">&#x1F3A8;</span>
+                      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;font-weight:600;color:#2c2118;margin-bottom:6px;letter-spacing:0.5px;">Customisable</p>
+                      <p style="font-size:12px;font-weight:300;color:#9e8878;line-height:1.6;letter-spacing:0.3px;">Bespoke scents, labels, and gifting options available</p>
+                    </td>
+                  </tr>
+                </table>
 
-        <!-- CTA -->
-        <div class="btn-container">
-          <a href="{{frontendUrl}}/collections" class="btn">Shop Our Collection</a>
-        </div>
+                <!-- Account perks box -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fdf3ec;border-left:3px solid #c9a882;margin-bottom:40px;">
+                  <tr>
+                    <td style="padding:20px 22px;text-align:left;">
+                      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:17px;font-weight:600;color:#3d1f1f;margin-bottom:10px;">Your account is all set up</p>
+                      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr><td style="padding:4px 0 4px 18px;font-size:14px;font-weight:300;color:#7a6555;line-height:1.8;position:relative;">&#10022;&nbsp;&nbsp;Track all your orders in one place</td></tr>
+                        <tr><td style="padding:4px 0 4px 18px;font-size:14px;font-weight:300;color:#7a6555;line-height:1.8;">&#10022;&nbsp;&nbsp;Save your favourite delivery addresses</td></tr>
+                        <tr><td style="padding:4px 0 4px 18px;font-size:14px;font-weight:300;color:#7a6555;line-height:1.8;">&#10022;&nbsp;&nbsp;Request custom and bulk orders with ease</td></tr>
+                        <tr><td style="padding:4px 0 4px 18px;font-size:14px;font-weight:300;color:#7a6555;line-height:1.8;">&#10022;&nbsp;&nbsp;Get early access to new collections &amp; offers</td></tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
 
-      </div>
+                <!-- CTA -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+                  <tr>
+                    <td align="center">
+                      <a href="{{frontendUrl}}/collections" style="display:inline-block;padding:16px 44px;background-color:#3d1f1f;color:#f5ede3;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;">Shop Our Collection</a>
+                    </td>
+                  </tr>
+                </table>
 
-      <!-- ── FOOTER DIVIDER ── -->
-      <div class="footer-divider"></div>
+              </td>
+            </tr>
 
-      <!-- ── FOOTER ── -->
-      <div class="footer">
-        <p class="footer-brand">Naisha Creations</p>
-        <p class="footer-tagline">Handcrafted · Thoughtful · Made with love</p>
+            <!-- ── FOOTER DIVIDER ── -->
+            <tr>
+              <td style="padding:0 48px;">
+                <hr style="border:none;border-top:1px solid #e0d2c2;" />
+              </td>
+            </tr>
 
-        <div class="social-links">
-          <a href="https://instagram.com/naishacreations_withlove">Instagram</a>
-          <a href="{{frontendUrl}}">Website</a>
-        </div>
+            <!-- ── FOOTER ── -->
+            <tr>
+              <td style="padding:40px 48px;text-align:center;">
+                <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:500;font-style:italic;color:#3d1f1f;letter-spacing:2px;margin-bottom:14px;">Naisha Creations</p>
+                <p style="font-size:11px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:#b8a090;margin-bottom:24px;">Handcrafted &middot; Thoughtful &middot; Made with love</p>
 
-        <p class="footer-legal">
-          © {{year}} Naisha Creations. All rights reserved.<br />
-          Questions? Reply to this email or write to us at
-          <a href="mailto:support@naishacreations.com">support@naishacreations.com</a>
-        </p>
-      </div>
+                <!-- Social icons: table-based, Unicode emoji -->
+                <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 24px;">
+                  <tr>
+                    <td style="padding:0 8px;">
+                      <a href="https://instagram.com/naishacreations_withlove" title="Instagram" style="display:inline-block;width:38px;height:38px;line-height:36px;text-align:center;border:1px solid #d4c4b0;border-radius:50%;color:#7a5c3a;text-decoration:none;font-size:18px;">&#128247;</a>
+                    </td>
+                    <td style="padding:0 8px;">
+                      <a href="{{frontendUrl}}" title="Website" style="display:inline-block;width:38px;height:38px;line-height:36px;text-align:center;border:1px solid #d4c4b0;border-radius:50%;color:#7a5c3a;text-decoration:none;font-size:18px;">&#127760;</a>
+                    </td>
+                  </tr>
+                </table>
 
-    </div>
+                <p class="footer-legal">
+                  &copy; {{year}} Naisha Creations. All rights reserved.<br />
+                  Questions? Reply to this email or write to us at
+                  <a href="mailto:support@naishacreations.com" style="color:#9e7a60;text-decoration:none;">support@naishacreations.com</a>
+                </p>
+              </td>
+            </tr>
+
+          </table><!-- /email-container -->
+        </td>
+      </tr>
+    </table><!-- /outer wrapper -->
   </div>
 </body>
 </html>

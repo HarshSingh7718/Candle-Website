@@ -51,7 +51,7 @@ export const sendOrderConfirmationEmail = async (email, orderData) => {
     try {
         // Build items list
         const items = orderData.orderItems.map(item => ({
-            name: item.product?.name || "Custom Candle",
+            name: item.name || "Custom Candle",
             quantity: item.quantity,
             price: item.price?.toFixed(2) || "0.00",
             type: item.type === "custom" ? "Bespoke Creation" : "Classic Candle"
