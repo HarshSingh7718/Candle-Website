@@ -57,7 +57,7 @@ const Wishlist = () => {
                 ease: "power3.out",
                 scrollTrigger: {
                     trigger: q(".wishlist-section"),
-                    start: "top 85%",
+                    start: "top 95%",
                     toggleActions: "play none none reverse",
                 },
             });
@@ -68,8 +68,8 @@ const Wishlist = () => {
                 duration: 0.6,
                 ease: "back.out(1.7)",
                 scrollTrigger: {
-                    trigger: q(".wishlist-empty"),
-                    start: "top 85%",
+                    trigger: q(".wishlist-section"),
+                    start: "top 95%",
                     toggleActions: "play none none reverse",
                 },
             });
@@ -81,14 +81,14 @@ const Wishlist = () => {
 
     return (
         <>
-            <div ref={wishlistRef} className="container mx-auto py-[8%] px-4">
+            <div ref={wishlistRef} className="container mx-auto py-[8%] px-4 wishlist-section">
                 {wishlist.length === 0 ? (
                     <p className="text-center text-lg bg-bg-surface-hover shadow-md py-5 wishlist-empty">
                         No products in wishlist
                     </p>
                 ) : (
                     <>
-                            <div className="hidden lg:block overflow-x-auto hide-scrollbar">
+                        <div className="hidden lg:block overflow-x-auto hide-scrollbar">
                             <table className="w-full">
                                 <thead className="bg-primary text-text-on-brand wishlist-head">
                                     <tr>

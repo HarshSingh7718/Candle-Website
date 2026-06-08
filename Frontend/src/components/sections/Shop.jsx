@@ -38,7 +38,7 @@ const ProductSection = ({ section, products }) => {
         ease: "power3.out",
         scrollTrigger: {
           trigger: headingRef.current,
-          start: "top 90%",
+          start: "top 95%",
         },
       });
 
@@ -50,7 +50,7 @@ const ProductSection = ({ section, products }) => {
         ease: "power3.out",
         scrollTrigger: {
           trigger: gridRef.current,
-          start: "top 85%",
+          start: "top 95%",
           toggleActions: "play none none reset",
         },
       });

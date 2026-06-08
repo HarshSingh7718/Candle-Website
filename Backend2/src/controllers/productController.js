@@ -92,9 +92,9 @@ export const getAllCandles = async (req, res) => {
     query.effectivePrice = { $lte: priceLimit };
   }
 
-  let sortOption = { createdAt: -1 };
+  let sortOption = filter === "bestSeller" ? { totalSold: -1, createdAt: -1 } : { createdAt: -1 };
   if (sort === "popularity") {
-    sortOption = { ratings: -1 };
+    sortOption = { totalSold: -1 };
   } else if (sort === "low-to-high") {
     sortOption = { effectivePrice: 1 };
   } else if (sort === "high-to-low") {

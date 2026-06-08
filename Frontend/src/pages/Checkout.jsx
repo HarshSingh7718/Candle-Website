@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import PageBanner from "../components/ui/PageBanner";
 
 // Custom Hooks
 import { useCart } from "../hooks/useCart";
@@ -273,7 +272,6 @@ const Checkout = () => {
         description="Complete your purchase securely at Naisha Creations. Fast & reliable delivery. Pay with COD or Razorpay."
       />
       <div className="bg-light-yellow text-paragraph font-sans flex flex-col">
-        <PageBanner title="Checkout" currentPage="Checkout" />
 
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row flex-1 h-full w-full">
           {/* LEFT COLUMN: Delivery & Payment */}

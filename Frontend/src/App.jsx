@@ -105,7 +105,7 @@ function App() {
                   <Route path="/customized" element={<Customized />} />
                   <Route path="/collections" element={<Collections />} />
                   <Route
-                    path="/collections/:categoryName"
+                    path="/collections/:slug"
                     element={<CollectionProducts />}
                   />
 
@@ -157,7 +157,7 @@ function App() {
           success: { iconTheme: { primary: '#16a34a', secondary: '#fce8e8' } },
           error: { iconTheme: { primary: '#dc2626', secondary: '#fce8e8' } },
         }}
-        containerStyle={{ bottom: 24 }}
+        containerStyle={{ bottom: 24, zIndex: 999999 }}
       />
     </>
   );

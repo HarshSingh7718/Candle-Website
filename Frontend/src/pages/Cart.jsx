@@ -37,81 +37,29 @@ function Cart() {
     if (!cartRef.current || isLoading) return;
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(cartRef);
-      gsap.from(q(".cart-item"), {
-        y: 50,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: q(".cart-section"),
-          start: "top 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
-
-      gsap.from(q(".cart-empty"), {
-        scale: 0.9,
-        opacity: 0,
-        duration: 0.6,
-        ease: "back.out(1.7)",
-        scrollTrigger: {
-          trigger: q(".cart-empty"),
-          start: "top 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
-
-      gsap.from(q(".cart-actions"), {
-        y: 50,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: q(".cart-actions"),
-          start: "top 90%",
-          toggleActions: "play none none reverse",
-        },
-      });
-
-      gsap.from(q(".cart-btn"), {
-        y: 30,
+      const tl = gsap.timeline();
+      tl.from(q(".cart-th, .cart-empty"), {
+        y: -20,
         opacity: 0,
         duration: 0.5,
-        stagger: 0.2,
-        delay: 0.2,
+        stagger: 0.1,
         ease: "power3.out",
-        scrollTrigger: {
-          trigger: q(".cart-actions"),
-          start: "top 90%",
-          toggleActions: "play none none reverse",
-        },
-      });
-
-      gsap.from(q(".cart-head"), {
-        y: -40,
+      })
+      .from(q(".cart-item"), {
+        x: -20,
         opacity: 0,
         duration: 0.5,
+        stagger: 0.1,
         ease: "power3.out",
-        scrollTrigger: {
-          trigger: q(".cart-head"),
-          start: "top 90%",
-          toggleActions: "play none none reverse",
-        },
-      });
+      }, "-=0.3")
 
-      gsap.from(q(".cart-th"), {
-        x: -30,
+      .from(q(".cart-actions"), {
+        y: 20,
         opacity: 0,
         duration: 0.4,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: q(".cart-head"),
-          start: "top 90%",
-          toggleActions: "play none none reverse",
-        },
-      });
+        ease: "back.out(1.5)",
+      }, "-=0.2");
+
     }, cartRef);
     return () => ctx.revert();
   }, [cart, isLoading]);
@@ -125,18 +73,18 @@ function Cart() {
 
   return (
     <>
-      <SEO 
-        title="Cart | Naisha Creations" 
-        description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils." 
+      <SEO
+        title="Cart | Naisha Creations"
+        description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils."
       />
       <PageBanner title="Cart" currentPage="Cart" />
 
       <div
         ref={cartRef}
-        className="container mx-auto py-[4%] px-4 flex flex-col lg:flex-row gap-8 lg:items-start wishlist-section"
+        className="container mx-auto py-[4%] px-4 flex flex-col lg:flex-row gap-8 lg:items-start cart-section"
       >
         {cart.length === 0 ? (
-          <p className="text-center w-full text-lg bg-light-yellow shadow-md py-5 wishlist-empty">
+          <p className="text-center w-full text-lg bg-light-yellow shadow-md py-5 cart-empty">
             Cart is empty
           </p>
         ) : (
@@ -249,10 +197,10 @@ function Cart() {
 
                         <td
                           className={`text-center ${isCustom
-                              ? "text-blue-600"
-                              : productData?.stock > 0
-                                ? "text-success"
-                                : "text-danger"
+                            ? "text-blue-600"
+                            : productData?.stock > 0
+                              ? "text-success"
+                              : "text-danger"
                             }`}
                         >
                           {stockStatus}
@@ -299,10 +247,10 @@ function Cart() {
                     <div className="flex justify-between items-center">
                       <span
                         className={`text-sm font-medium ${isCustom
-                            ? "text-blue-600"
-                            : productData?.stock > 0
-                              ? "text-success"
-                              : "text-danger"
+                          ? "text-blue-600"
+                          : productData?.stock > 0
+                            ? "text-success"
+                            : "text-danger"
                           }`}
                       >
                         {stockStatus}
@@ -434,15 +382,15 @@ function Cart() {
 
       {/* Custom Candle Details Modal */}
       {selectedCustomCandle && createPortal(
-        <div 
+        <div
           className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setSelectedCustomCandle(null)}
         >
-          <div 
+          <div
             className="bg-bg-surface w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button 
+            <button
               onClick={() => setSelectedCustomCandle(null)}
               className="absolute top-4 right-4 text-text-muted hover:text-danger transition-colors cursor-pointer"
             >

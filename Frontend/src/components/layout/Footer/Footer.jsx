@@ -76,7 +76,7 @@ const Footer = () => {
               <li className="text-light-yellow/60 text-sm">Loading categories...</li>
             ) : topCategories.length > 0 ? (
               topCategories.map((category) => (
-                <FooterLink key={category._id} href={`/collections/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')}`}>
+                <FooterLink key={category._id} href={`/collections/${category.slug}`}>
                   {category.name}
                 </FooterLink>
               ))

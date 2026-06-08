@@ -235,6 +235,7 @@ export const createOrder = async (req, res) => {
         const prod = await Product.findById(item.product);
         if (prod) {
           prod.stock -= item.quantity;
+          prod.totalSold = (prod.totalSold || 0) + item.quantity;
           await prod.save();
         }
       }

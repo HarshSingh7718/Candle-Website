@@ -6,7 +6,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import API from '../../../api';
-import { useOrderDetails } from '../../../hooks/useOrders';
+import { useOrderDetails, useCancelOrder } from '../../../hooks/useOrders';
+import ConfirmModal from '../../ui/ConfirmModal';
 
 const formatOrderData = (data) => {
     if (!data?.order) return null;
@@ -62,8 +63,22 @@ const ViewOrder = () => {
     const [hoverRating, setHoverRating] = useState(0);
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [cancelReason, setCancelReason] = useState("");
+
     const { data, isLoading, isError } = useOrderDetails(orderId);
+    const cancelOrderMutation = useCancelOrder();
     const formattedData = useMemo(() => formatOrderData(data), [data]);
+
+    const handleConfirmCancel = async () => {
+        try {
+            await cancelOrderMutation.mutateAsync({ orderId, reason: cancelReason });
+            toast.success("Order cancelled successfully");
+            setIsCancelModalOpen(false);
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to cancel order");
+        }
+    };
 
     const handleOpenReview = (productId, productName, initialRating) => {
         setReviewModal({
@@ -213,7 +228,7 @@ const ViewOrder = () => {
 
                                 // 👉 Construct the URL for standard products
                                 const productUrl = item.type !== "custom" && item.product?._id
-                                    ? `/collections/candles/product/${item.product._id}`
+                                    ? `/collections/candles/product/${item.product.slug}`
                                     : null;
 
                                 return (
@@ -375,6 +390,38 @@ const ViewOrder = () => {
                         <button className="w-full mt-8 py-3 bg-bg-surface text-stone-900 rounded-xl font-bold text-sm hover:bg-stone-100 transition-colors shadow-sm cursor-pointer">
                             Need Help with Order?
                         </button>
+                        
+                        {order.orderStatus === 'processing' && (
+                            <button
+                                onClick={() => setIsCancelModalOpen(true)}
+                                disabled={cancelOrderMutation.isPending}
+                                className="w-full mt-4 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-colors shadow-sm cursor-pointer border border-red-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                {cancelOrderMutation.isPending ? (
+                                    <><Loader2 size={16} className="animate-spin" /> Cancelling...</>
+                                ) : "Cancel Order"}
+                            </button>
+                        )}
+                        
+                        <ConfirmModal
+                            isOpen={isCancelModalOpen}
+                            onClose={() => setIsCancelModalOpen(false)}
+                            onConfirm={handleConfirmCancel}
+                            title="Cancel Order"
+                            message="Are you sure you want to cancel this order? This action cannot be undone."
+                            confirmText="Yes, Cancel Order"
+                            cancelText="No, Keep It"
+                            isDestructive={true}
+                            isLoading={cancelOrderMutation.isPending}
+                        >
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                placeholder="Reason for cancellation (optional)"
+                                rows="3"
+                                className="w-full border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 resize-none"
+                            />
+                        </ConfirmModal>
                     </section>
                 </div>
             </main>

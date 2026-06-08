@@ -30,7 +30,7 @@ const Candles = () => {
   const debouncedPrice = useDebounce(priceInput, 500);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 8; // Controlled by backend limit
+  const productPerPage = 16; // Controlled by backend limit
 
   // 1. TanStack Query Hook (Pass URL filters to Backend)
   const { data: responseData, isLoading, isFetching } = useProducts({
@@ -85,10 +85,10 @@ const Candles = () => {
     const newParams = new URLSearchParams(searchParams);
     if (sort && sort !== "latest") newParams.set("sort", sort);
     else newParams.delete("sort");
-    
+
     if (maxPrice && maxPrice < 3000) newParams.set("maxPrice", maxPrice);
     else newParams.delete("maxPrice");
-    
+
     setSearchParams(newParams);
     // Also sync desktop local state just in case it's resized
     setSortInput(sort || "latest");
@@ -119,7 +119,7 @@ const Candles = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: box,
-            start: "top 85%",
+            start: "top 95%",
             toggleActions: "play none none reverse",
           },
         });
@@ -131,7 +131,7 @@ const Candles = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: box,
-            start: "top 85%",
+            start: "top 95%",
             toggleActions: "play none none reverse",
           },
         });
@@ -150,8 +150,8 @@ const Candles = () => {
         duration: 0.6,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: q(".top-bar"),
-          start: "top 85%",
+          trigger: mainRef.current,
+          start: "top 95%",
           toggleActions: "play none none reverse",
         },
       });
@@ -162,8 +162,8 @@ const Candles = () => {
         stagger: 0.15,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: q(".product-grid"),
-          start: "top 85%",
+          trigger: mainRef.current,
+          start: "top 95%",
           toggleActions: "play none none reverse",
         },
       });
@@ -173,9 +173,9 @@ const Candles = () => {
 
   return (
     <>
-      <SEO 
-        title="Shop All Candles | Naisha Creations" 
-        description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils." 
+      <SEO
+        title="Shop All Candles | Naisha Creations"
+        description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils."
       />
       <PageBanner title="Candles" currentPage="Candles" />
       <div className="bg-bg-canvas min-h-screen">
@@ -215,7 +215,7 @@ const Candles = () => {
                   </div>
 
                   <div className="mt-6">
-                    <CustomDropdown 
+                    <CustomDropdown
                       options={sortOptions}
                       value={sortInput}
                       onChange={setSortInput}
@@ -233,9 +233,9 @@ const Candles = () => {
                   {indexOfLastProduct} of{" "}
                   {responseData?.total || 0} results
                 </p>
-                
+
                 {/* Mobile Filter Button */}
-                <button 
+                <button
                   onClick={() => setIsMobileFilterOpen(true)}
                   className="lg:hidden flex items-center gap-2 bg-bg-surface border border-bg-muted px-4 py-2 rounded-md shadow-sm text-text-base font-medium hover:bg-bg-surface-hover transition-colors"
                 >
@@ -256,7 +256,7 @@ const Candles = () => {
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary bg-bg-surface p-1 shadow-lg rounded-full"></div>
                     </div>
                   )}
-                  
+
                   {/* Grid with opacity transition */}
                   <div className={`grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid transition-opacity duration-300 ${isFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
                     {currentProducts.map((item) => (
@@ -271,11 +271,10 @@ const Candles = () => {
                         <button
                           key={index + 1}
                           onClick={() => handlePageChange(index + 1)}
-                          className={`w-10 h-10 border rounded-sm transition-all cursor-pointer ${
-                            currentPage === index + 1
+                          className={`w-10 h-10 border rounded-sm transition-all cursor-pointer ${currentPage === index + 1
                               ? "bg-brand-primary text-text-on-brand border-brand-primary"
                               : "bg-bg-surface text-text-muted hover:border-brand-primary hover:text-brand-primary"
-                          }`}
+                            }`}
                         >
                           {index + 1}
                         </button>
@@ -296,7 +295,7 @@ const Candles = () => {
         </div>
       </div>
 
-      <MobileFilterModal 
+      <MobileFilterModal
         isOpen={isMobileFilterOpen}
         onClose={() => setIsMobileFilterOpen(false)}
         initialSort={querySort}

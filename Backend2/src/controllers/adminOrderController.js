@@ -71,6 +71,21 @@ export const updateOrderStatus = async (req, res) => {
 
   // 2. Update the main status
   if (status) {
+    if ((status === "cancelled" || status === "returned") && 
+        order.orderStatus !== "cancelled" && order.orderStatus !== "returned") {
+      const { Product } = await import("../models/productModels.js");
+      await Promise.all(
+        order.orderItems.map(item => {
+          if (item.type === "simpleCandle" || item.type === "simpleRaw") {
+            return Product.findByIdAndUpdate(item.product, {
+              $inc: { totalSold: -item.quantity, stock: item.quantity }
+            });
+          }
+          return Promise.resolve();
+        })
+      );
+    }
+    
     order.orderStatus = status;
 
     // Push to statusHistory

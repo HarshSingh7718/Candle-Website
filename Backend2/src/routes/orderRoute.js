@@ -1,5 +1,5 @@
 import express from "express";
-import { getMyOrders, getSingleOrder, addReviewAfterDelivery } from "../controllers/userOrderController.js";
+import { getMyOrders, getSingleOrder, addReviewAfterDelivery, cancelOrder } from "../controllers/userOrderController.js";
 import { createOrder } from "../controllers/orderController.js";
 import { isAuthenticated, isAdmin } from "../middleware/authmiddleware.js";
 
@@ -23,5 +23,5 @@ router.get("/order/:id", isAuthenticated, getSingleOrder);
 router.post("/review", isAuthenticated, addReviewAfterDelivery);
 
 // (Optional) Cancel order
-// router.put("/order/:id/cancel", isAuthenticated, cancelOrder);
+router.put("/order/:id/cancel", isAuthenticated, cancelOrder);
 export default router;

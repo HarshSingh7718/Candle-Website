@@ -30,7 +30,7 @@ const CollectionProducts = () => {
   const [priceInput, setPriceInput] = useState(queryPrice || 3000);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 8;
+  const productPerPage = 16;
 
   const debouncedPrice = useDebounce(priceInput, 500);
 
@@ -84,10 +84,10 @@ const CollectionProducts = () => {
     const newParams = new URLSearchParams(searchParams);
     if (sort && sort !== "latest") newParams.set("sort", sort);
     else newParams.delete("sort");
-    
+
     if (maxPrice && maxPrice < 3000) newParams.set("maxPrice", maxPrice);
     else newParams.delete("maxPrice");
-    
+
     setSearchParams(newParams);
     setSortInput(sort || "latest");
     setPriceInput(maxPrice || 3000);
@@ -113,7 +113,7 @@ const CollectionProducts = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: box,
-            start: "top 85%",
+            start: "top 95%",
             toggleActions: "play none none reverse",
           },
         });
@@ -125,7 +125,7 @@ const CollectionProducts = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: box,
-            start: "top 85%",
+            start: "top 95%",
             toggleActions: "play none none reverse",
           },
         });
@@ -145,7 +145,7 @@ const CollectionProducts = () => {
         ease: "power3.out",
         scrollTrigger: {
           trigger: q(".top-bar"),
-          start: "top 85%",
+          start: "top 95%",
           toggleActions: "play none none reverse",
         },
       });
@@ -158,7 +158,7 @@ const CollectionProducts = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: q(".product-grid"),
-            start: "top 85%",
+            start: "top 95%",
             toggleActions: "play none none reverse",
           },
         });
@@ -218,7 +218,7 @@ const CollectionProducts = () => {
                     <span>{priceInput < 3000 ? `Max: ₹${priceInput}` : "No Max"}</span>
                   </div>
                   <div className="mt-6">
-                    <CustomDropdown 
+                    <CustomDropdown
                       options={sortOptions}
                       value={sortInput}
                       onChange={setSortInput}
@@ -240,9 +240,9 @@ const CollectionProducts = () => {
                   {((currentPage - 1) * productPerPage) + categoryProducts.length}{" "}
                   of {responseData?.totalProducts || 0} results
                 </p>
-                
+
                 {/* Mobile Filter Button */}
-                <button 
+                <button
                   onClick={() => setIsMobileFilterOpen(true)}
                   className="lg:hidden flex items-center gap-2 bg-bg-surface border border-stone-200 px-4 py-2 rounded-md shadow-sm text-stone-700 font-medium hover:bg-stone-50 transition-colors"
                 >
@@ -276,11 +276,10 @@ const CollectionProducts = () => {
                         <button
                           key={index + 1}
                           onClick={() => handlePageChange(index + 1)}
-                          className={`w-10 h-10 border rounded-sm transition-all cursor-pointer font-medium ${
-                            currentPage === index + 1
-                              ? "bg-primary text-text-on-brand border-primary"
-                              : "bg-bg-surface text-stone-600 border-stone-200 hover:border-primary hover:text-primary"
-                          }`}
+                          className={`w-10 h-10 border rounded-sm transition-all cursor-pointer font-medium ${currentPage === index + 1
+                            ? "bg-primary text-text-on-brand border-primary"
+                            : "bg-bg-surface text-stone-600 border-stone-200 hover:border-primary hover:text-primary"
+                            }`}
                         >
                           {index + 1}
                         </button>
@@ -301,7 +300,7 @@ const CollectionProducts = () => {
         </div>
       </div>
 
-      <MobileFilterModal 
+      <MobileFilterModal
         isOpen={isMobileFilterOpen}
         onClose={() => setIsMobileFilterOpen(false)}
         initialSort={querySort}

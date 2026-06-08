@@ -19,9 +19,9 @@ function About() {
       //   duration: 1,
       //   ease: "power3.out",
       //   scrollTrigger: {
-      //     trigger: ".about-image",
+      //     trigger: ".about",
       //     start: "top 85%",
-      //     toggleActions: "play none none reset",
+      //     toggleActions: "play none none reverse",
       //   }
       // });
       gsap.from(".about-content", {
@@ -31,9 +31,9 @@ function About() {
         delay: 0.2,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: ".about-content",
-          start: "top 85%",
-          toggleActions: "play none none reset",
+          trigger: ".about",
+          start: "top 95%",
+          toggleActions: "play none none reverse",
         },
       });
 
@@ -45,9 +45,9 @@ function About() {
 
         ease: "power3.out",
         scrollTrigger: {
-          trigger: ".image",
-          start: "top 90%",
-          toggleActions: "play none none reset",
+          trigger: ".about",
+          start: "top 95%",
+          toggleActions: "play none none reverse",
         },
       });
     }, aboutRef);

@@ -27,7 +27,7 @@ export const getSingleOrder = async (req, res) => {
     mongoose.Types.ObjectId.isValid(searchValue)
       ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
       : { orderId: searchValue }
-  ).populate("orderItems.product", "name images").populate("user", "name email").lean();
+  ).populate("orderItems.product", "name slug images").populate("user", "name email").lean();
 
   if (!order) {
     throw new CustomError("Order not found", 404);
@@ -98,43 +98,49 @@ export const getSingleOrder = async (req, res) => {
     tracking
   });
 };
-// export const cancelOrder = async (req, res) => {
-//     try {
-//         const { reason } = req.body;
+export const cancelOrder = async (req, res) => {
+    const reason = req.body?.reason;
+    const searchValue = req.params.id;
+    const order = await Order.findOne({ orderId: searchValue });
 
-//         const order = await Order.findById(req.params.id);
+    if (!order) {
+        throw new CustomError("Order not found", 404);
+    }
 
-//         if (!order) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "Order not found"
-//             });
-//         }
+    if (order.user.toString() !== req.user._id.toString()) {
+        throw new CustomError("Unauthorized", 403);
+    }
 
-//         if (order.orderStatus === "delivered") {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: "Cannot cancel delivered order"
-//             });
-//         }
+    if (!["processing"].includes(order.orderStatus)) {
+        throw new CustomError(
+            "Order cannot be cancelled after it has been confirmed", 
+            400
+        );
+    }
 
-//         order.orderStatus = "cancelled";
-//         order.cancelReason = reason;
+    order.orderStatus = "cancelled";
+    order.cancelReason = reason || "Cancelled by user";
+    order.cancelledAt = Date.now();
+    order.statusHistory.push({ status: "cancelled", date: new Date() });
 
-//         await order.save();
+    await Promise.all(
+        order.orderItems.map(item => {
+            if (item.type === "simpleCandle" || item.type === "simpleRaw") {
+                return Product.findByIdAndUpdate(item.product, {
+                    $inc: { totalSold: -item.quantity, stock: item.quantity }
+                });
+            }
+            return Promise.resolve();
+        })
+    );
 
-//         res.status(200).json({
-//             success: true,
-//             message: "Order cancelled"
-//         });
+    await order.save();
 
-//     } catch (error) {
-//         res.status(500).json({
-//             success: false,
-//             message: error.message
-//         });
-//     }
-// };
+    res.status(200).json({
+        success: true,
+        message: "Order cancelled successfully"
+    });
+};
 
 export const addReviewAfterDelivery = async (req, res) => {
   const {

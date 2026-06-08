@@ -173,6 +173,7 @@ export const verifyPayment = async (req, res) => {
                 const prod = await Product.findById(item.product).session(session);
                 if (prod) {
                     prod.stock -= item.quantity;
+                    prod.totalSold = (prod.totalSold || 0) + item.quantity;
                     await prod.save({ session });
                 }
             }

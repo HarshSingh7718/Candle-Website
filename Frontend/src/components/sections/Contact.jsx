@@ -73,7 +73,7 @@ export default function Contact() {
       gsap.from(".info-column > *", {
         scrollTrigger: {
           trigger: ".contact-section",
-          start: "top 80%",
+          start: "top 95%",
         },
         opacity: 0,
         y: 30,
@@ -85,7 +85,7 @@ export default function Contact() {
       gsap.from(".form-column", {
         scrollTrigger: {
           trigger: ".contact-section",
-          start: "top 80%",
+          start: "top 95%",
         },
         opacity: 0,
         x: 30,
@@ -97,7 +97,7 @@ export default function Contact() {
       gsap.from(".faq-item", {
         scrollTrigger: {
           trigger: ".faq-section",
-          start: "top 80%",
+          start: "top 95%",
         },
         opacity: 0,
         y: 20,
@@ -357,8 +357,8 @@ export default function Contact() {
 
               <div
                 className={`overflow-hidden transition-all duration-500 ease-in-out ${activeFaq === index
-                    ? "max-h-[300px] opacity-100 pb-8"
-                    : "max-h-0 opacity-0"
+                  ? "max-h-[300px] opacity-100 pb-8"
+                  : "max-h-0 opacity-0"
                   }`}
               >
                 <p className="text-paragraph text-lg leading-relaxed font-light">

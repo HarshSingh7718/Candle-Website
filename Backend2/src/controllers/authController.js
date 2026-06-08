@@ -7,6 +7,7 @@ import { verifyGoogleToken, findOrCreateGoogleUser } from "../services/googleAut
 import { sendOtp, verifyOtpService } from "../services/otp_services.js";
 import jwt from "jsonwebtoken";
 import { sendWelcomeEmail } from '../utils/sendEmail.js';
+import { checkOtpRateLimit } from "../utils/otpRateLimiter.js";
 
 
 
@@ -144,6 +145,9 @@ export const sendOtpController = async (req, res, next) => {
   if (existingUser) {
     throw new CustomError("User already exists", 400);
   }
+  
+  checkOtpRateLimit(phoneNumber);
+  
   await sendOtp(phoneNumber);
   res.status(200).json({
     success: true,
@@ -475,6 +479,9 @@ export const forgotPassword = async (req, res) => {
   if (!user) {
     throw new CustomError("User not found", 400);
   }
+  
+  checkOtpRateLimit(phoneNumber);
+  
   await sendOtp(phoneNumber);
   user.otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
   await user.save();
@@ -533,6 +540,9 @@ export const resendOtp = async (req, res) => {
   if (!user) {
     throw new CustomError("User not found", 400);
   }
+  
+  checkOtpRateLimit(phoneNumber);
+  
   await sendOtp(phoneNumber);
   user.otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
   await user.save();

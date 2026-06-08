@@ -21,7 +21,7 @@ const OurStory = () => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: container.current,
-          start: "top 80%",
+          start: "top 95%",
           toggleActions: "play none none none",
         },
       });
@@ -51,7 +51,7 @@ const OurStory = () => {
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: "#story",
-      start: "top 80%", // Starts when the top of the section hits 80% of the viewport
+      start: "top 95%", // Starts when the top of the section hits 80% of the viewport
       toggleActions: "play none none none",
     },
   });

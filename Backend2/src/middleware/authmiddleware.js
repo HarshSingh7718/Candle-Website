@@ -4,16 +4,12 @@ import 'dotenv/config'
 import { config } from "../config/index.js";
 import { sendOtp } from "../services/otp_services.js";
 import { clearTokenCookie, clearAdminTokenCookie } from "../utils/token.js";
+import { checkOtpRateLimit } from "../utils/otpRateLimiter.js";
 
+// Used on all frontend/user routes — only reads userToken
 export const isAuthenticated = async (req, res, next) => {
     try {
-        // 1. Get the raw token from either location
-        const tokenFromCookie = req.cookies?.userToken || req.cookies?.adminToken || req.cookies?.token;
-        const tokenFromHeader = req.headers.authorization?.startsWith("Bearer ") 
-            ? req.headers.authorization.split(" ")[1] 
-            : null;
-
-        const token = tokenFromCookie || tokenFromHeader;
+        const token = req.cookies?.userToken || req.headers.authorization?.split(" ")[1];
 
         if (!token) {
             return res.status(401).json({
@@ -22,7 +18,6 @@ export const isAuthenticated = async (req, res, next) => {
             });
         }
 
-        // 2. Verify the raw token (no "Bearer " string here)
         const decoded = jwt.verify(token, config.jwt.secret);
         
         const user = await User.findById(decoded.id);
@@ -32,7 +27,6 @@ export const isAuthenticated = async (req, res, next) => {
 
         if (user.isActive === false) {
             clearTokenCookie(res);
-            clearAdminTokenCookie(res);
             return res.status(403).json({ success: false, message: "Access revoked by admin" });
         }
 
@@ -41,6 +35,38 @@ export const isAuthenticated = async (req, res, next) => {
         next();
     } catch (error) {
         return res.status(401).json({ success: false, message: "Invalid or expired token" });
+    }
+};
+
+// Used on all /api/admin/* routes — only reads adminToken
+export const isAdminAuthenticated = async (req, res, next) => {
+    try {
+        const token = req.cookies?.adminToken || req.headers.authorization?.split(" ")[1];
+
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login as admin to access this resource"
+            });
+        }
+
+        const decoded = jwt.verify(token, config.jwt.secret);
+        
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return res.status(401).json({ success: false, message: "User not found" });
+        }
+
+        if (user.isActive === false) {
+            clearAdminTokenCookie(res);
+            return res.status(403).json({ success: false, message: "Access revoked by admin" });
+        }
+
+        req.id = user._id;
+        req.user = user;
+        next();
+    } catch (error) {
+        return res.status(401).json({ success: false, message: "Invalid or expired admin token" });
     }
 };
  
@@ -66,7 +92,8 @@ export const sendOtpMiddleware = async (req, res, next) => {
             });
         }
 
-        
+        checkOtpRateLimit(phoneNumber);
+
         await sendOtp(phoneNumber);
 
         

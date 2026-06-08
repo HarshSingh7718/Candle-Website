@@ -11,6 +11,7 @@ import {
 import MainBtn from "../../ui/Buttons/MainBtn";
 import { useAddress } from "../../../hooks/useAddress";
 import { usePincodeLookup } from "../../../hooks/usePincodeLookup"; // 👉 Import Pincode Hook
+import ConfirmModal from "../../ui/ConfirmModal";
 
 const Addresses = () => {
   const { user } = useOutletContext();
@@ -23,6 +24,8 @@ const Addresses = () => {
   // State to toggle between the list view and the form view
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState(null);
 
   // Form State - Split address into flat, area, landmark
   const [formData, setFormData] = useState({
@@ -148,10 +151,17 @@ const Addresses = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this address?")) {
+  const handleDelete = (id) => {
+    setAddressToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (addressToDelete) {
       try {
-        await deleteAddress(id);
+        await deleteAddress(addressToDelete);
+        setIsDeleteModalOpen(false);
+        setAddressToDelete(null);
       } catch (error) {
         console.error("Deletion failed", error);
       }
@@ -438,6 +448,17 @@ const Addresses = () => {
           ))}
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Address"
+        message="Are you sure you want to delete this address? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+      />
     </div>
   );
 };
