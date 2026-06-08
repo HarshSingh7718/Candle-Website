@@ -378,7 +378,7 @@ const OrderDetails = () => {
                                                                 </a>
                                                             </div>
                                                         )}
-                                                        {order.labelUrl && (
+                                                        {order.labelUrl && !['shipped', 'out_for_delivery', 'delivered'].includes(order.orderStatus) && (
                                                             <div>
                                                                 <a
                                                                     href={order.labelUrl}
@@ -387,6 +387,18 @@ const OrderDetails = () => {
                                                                     className="inline-flex items-center gap-1 text-sm font-medium text-info hover:text-info transition-colors mt-2"
                                                                 >
                                                                     <Download size={14} /> Download Label
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        {order.manifestUrl && !['shipped', 'out_for_delivery', 'delivered'].includes(order.orderStatus) && (
+                                                            <div>
+                                                                <a
+                                                                    href={order.manifestUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-1 text-sm font-medium text-info hover:text-info transition-colors mt-2"
+                                                                >
+                                                                    <FileText size={14} /> Download Manifest
                                                                 </a>
                                                             </div>
                                                         )}

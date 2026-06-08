@@ -301,3 +301,26 @@ export const generateInvoice = async (orderId) => {
         return null;
     }
 };
+
+// =========================
+//  GENERATE MANIFEST
+// =========================
+export const generateManifest = async (shipmentId) => {
+    try {
+        const token = await getShiprocketToken();
+        const res = await axios.post(
+            "https://apiv2.shiprocket.in/v1/external/manifests/generate",
+            { shipment_id: [shipmentId] },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data?.manifest_url ? res.data.manifest_url : null;
+    } catch (error) {
+        console.error("❌ Failed to generate manifest:", error.response?.data || error.message);
+        return null;
+    }
+};

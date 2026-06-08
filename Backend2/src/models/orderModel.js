@@ -145,6 +145,7 @@ const orderSchema = new mongoose.Schema({
 
     labelUrl: String,    // Shiprocket label PDF URL
     invoiceUrl: String,  // Shiprocket invoice PDF URL
+    manifestUrl: String, // Shiprocket manifest PDF URL
     
 
     //  STATUS HISTORY

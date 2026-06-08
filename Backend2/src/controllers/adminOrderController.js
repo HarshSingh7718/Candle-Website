@@ -254,7 +254,7 @@ export const shipOrder = async (req, res) => {
 
 
 
-  const { assignAWB, schedulePickup, generateLabel, generateInvoice } = await import("../services/shipRocketService.js");
+  const { assignAWB, schedulePickup, generateLabel, generateInvoice, generateManifest } = await import("../services/shipRocketService.js");
 
 
 
@@ -297,6 +297,14 @@ export const shipOrder = async (req, res) => {
   const invoiceUrl = await generateInvoice(order.shiprocketOrderId);
 
   if (invoiceUrl) order.invoiceUrl = invoiceUrl;
+
+
+
+  // 5. Generate Manifest
+
+  const manifestUrl = await generateManifest(order.shiprocketShipmentId);
+
+  if (manifestUrl) order.manifestUrl = manifestUrl;
 
 
 
