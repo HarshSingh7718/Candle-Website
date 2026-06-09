@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Toaster } from "react-hot-toast";
+import { trackPageView } from "./utils/metaPixel";
 import Footer from "./components/layout/Footer/Footer";
 import CompleteGoogleProfile from "./pages/CompleteGoogleProfile";
 import MyAccount from "./pages/MyAccount";
@@ -65,6 +66,10 @@ function App() {
     "/complete-google-profile",
   ];
 
+  useEffect(() => {
+    trackPageView();
+  }, [location.pathname]);
+
   const hasNavbarSpacing = !authPages.includes(location.pathname);
 
   useEffect(() => {
@@ -97,7 +102,7 @@ function App() {
                   />
                   <Route path="/about" element={<OurStory />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />}/>
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                   <Route path="/term-of-service" element={<TermsOfServicePage />} />
                   <Route path="/shipping-policy" element={<ShippingPolicy />} />
                   <Route path="/return-refund-policy" element={<ReturnRefundPolicy />} />
@@ -141,7 +146,7 @@ function App() {
           </div>
         </div>
       </div>
-      <Toaster 
+      <Toaster
         position="bottom-center"
         toastOptions={{
           duration: 3000,

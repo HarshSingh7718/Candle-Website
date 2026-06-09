@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { useCart } from '../../../hooks/useCart';
 import { useWishlist } from '../../../hooks/useWishlist'; // Refactored Hook
 import { Icon } from "@iconify/react";
+import { trackAddToCart } from '../../../utils/metaPixel';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,7 +22,6 @@ const Wishlist = () => {
         );
     };
 
-    // Bulk Add Logic
     const addSelectedToCart = async () => {
         if (selected.length === 0) {
             toast.error("Please select at least one product");
@@ -30,6 +30,7 @@ const Wishlist = () => {
         const selectedProducts = wishlist.filter((item) => selected.includes(item._id));
         for (const product of selectedProducts) {
             await addToCart({ productId: product._id, quantity: 1 });
+            trackAddToCart(product, 1);
         }
         toast.success("Selected items added");
     };
@@ -37,6 +38,7 @@ const Wishlist = () => {
     const addAllToCart = async () => {
         for (const product of wishlist) {
             await addToCart({ productId: product._id, quantity: 1 });
+            trackAddToCart(product, 1);
         }
         toast.success("All items added to cart");
     };
@@ -126,7 +128,10 @@ const Wishlist = () => {
                                             <td className="text-right">
                                                 <MainBtn
                                                     type="button"
-                                                    onClick={() => addToCart(item)}
+                                                    onClick={() => {
+                                                        addToCart(item);
+                                                        trackAddToCart(item, 1);
+                                                    }}
                                                     className="bg-transparent! border! shadow-none! rounded-sm! hover:bg-primary!"
                                                     text={"Add to Cart"}
                                                 />
@@ -166,7 +171,10 @@ const Wishlist = () => {
                                     <div className="mt-4">
                                         <MainBtn
                                             type="button"
-                                            onClick={() => addToCart(item)}
+                                            onClick={() => {
+                                                addToCart(item);
+                                                trackAddToCart(item, 1);
+                                            }}
                                             className='w-full! bg-transparent! border! border-gray-200! shadow-none! rounded-sm!'
                                             text={"Add to Cart"}
                                         />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import { trackViewContent } from '../utils/metaPixel';
 import SEO from "../components/SEO";
 import ProductZoom from "../components/ProductZoom";
 import { useCart } from "../hooks/useCart";
@@ -43,6 +44,12 @@ const ShopDetails = () => {
     setQty(1);
     setShowFullDescription(false);
   }, [slug]);
+
+  useEffect(() => {
+    if (product) {
+        trackViewContent(product);
+    }
+  }, [product]);
 
   /**
    * Scrolls to the Description tab section and opens it.

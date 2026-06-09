@@ -9,6 +9,7 @@ import {
   Minus,
   X
 } from "lucide-react";
+import { trackAddToCart } from "../../utils/metaPixel";
 import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../hooks/useWishlist";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +61,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
   // Buy It Now Logic
   const handleBuyNow = async () => {
     await addToCart(product, qty);
+    await trackAddToCart(product, qty);
     navigate("/checkout");
   };
 
@@ -264,7 +266,10 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
               </div>
 
               <button
-                onClick={() => addToCart(product, qty)}
+                onClick={() => {
+                  addToCart(product, qty)
+                  trackAddToCart(product, qty);
+                }}
                 className="flex-1 h-14 bg-light-yellow border border-coffee hover:bg-coffee hover:text-light-yellow text-heading text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] cursor-pointer"
               >
                 ADD TO CART

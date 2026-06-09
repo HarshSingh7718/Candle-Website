@@ -212,7 +212,7 @@ export const createOrder = async (req, res) => {
   // =========================
   if (paymentMethod === "cod") {
     // Awaiting the promise ensures we catch any SMS failures without crashing the order
-    await sendSMS(user.phoneNumber, config.msg91.orderConfirmTemplateId, {
+    sendSMS(user.phoneNumber, config.msg91.orderConfirmTemplateId, {
       NAME: user.firstName || "Customer",
       ORDER_ID: order.orderId,
       AMOUNT: String(order.totalAmount),
@@ -220,10 +220,10 @@ export const createOrder = async (req, res) => {
     }).catch(err => console.error("Failed to send COD SMS:", err.message));
 
     // Send order confirmation email
-    await sendOrderConfirmationEmail(user.email, {
+    sendOrderConfirmationEmail(user.email, {
       ...order.toObject(),
       user: { firstName: user.firstName }
-    });
+    }).catch(err => console.error("Failed to send COD Email:", err.message));
 
     // =========================
     //  UPDATE STOCK

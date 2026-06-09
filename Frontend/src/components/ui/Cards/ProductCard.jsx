@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
+import { trackAddToCart } from "../../../utils/metaPixel";
 import { useWishlist } from "../../../hooks/useWishlist";
 import { useCart } from "../../../hooks/useCart";
 import { ShoppingCart, Star } from "lucide-react";
@@ -65,7 +66,8 @@ const ProductCard = memo(({ product }) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              addToCart(product); // Defaults to qty 1 in our hook
+              addToCart(product);
+              trackAddToCart(product, 1);
             }}
             className="bg-light-yellow p-2 rounded-full shadow hover:bg-brand-secondary hover:text-white hover:scale-105 transition-colors cursor-pointer"
           >

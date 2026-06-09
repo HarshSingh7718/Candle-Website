@@ -257,7 +257,7 @@ export const verifyPayment = async (req, res) => {
         // =========================
         if (user?.phoneNumber) {
             // 👉 Updated to use the MSG91 Flow API pattern
-            await sendSMS(
+            sendSMS(
                 user.phoneNumber,
                 config.msg91.orderConfirmTemplateId, // Use the same template ID you used in the COD block
                 {
@@ -270,10 +270,10 @@ export const verifyPayment = async (req, res) => {
         }
 
         // Send order confirmation email
-        await sendOrderConfirmationEmail(user.email, {
+        sendOrderConfirmationEmail(user.email, {
             ...order.toObject(),
             user: { firstName: user.firstName }
-        });
+        }).catch(err => console.error("Failed to send Razorpay Email:", err.message));
 
         // =========================
         //  CREATE SHIPMENT

@@ -21,6 +21,7 @@ import {
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import API from "../api";
+import { trackAddToCart } from "../utils/metaPixel";
 
 const STEPS = [
   { n: 1, label: "Vessel" },
@@ -123,6 +124,13 @@ export default function Customized() {
 
       // Add the created custom candle ID to the cart
       await addToCart({ customCandleId: response.candle._id }, 1);
+      
+      trackAddToCart({
+        _id: response.candle._id,
+        name: `Custom Candle: ${selectedVessel.name} + ${selectedScent.name}`,
+        price: totalPrice,
+        discountPrice: totalPrice
+      }, 1);
 
       toast.success("Added your custom creation to cart!");
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ChevronDown,
   Search,
@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+
+import { trackInitiateCheckout, trackPurchase } from "../utils/metaPixel";
 
 // Custom Hooks
 import { useCart } from "../hooks/useCart";
@@ -63,6 +65,15 @@ const Checkout = () => {
   });
 
   // --- Effects ---
+  const hasTrackedCheckout = useRef(false);
+
+  useEffect(() => {
+    if (billing && !isCartLoading && !hasTrackedCheckout.current) {
+      trackInitiateCheckout(billing);
+      hasTrackedCheckout.current = true;
+    }
+  }, [billing, isCartLoading]);
+
   useEffect(() => {
     if (isUserLoading) return;
     if (!user) return;
@@ -209,6 +220,10 @@ const Checkout = () => {
 
       // Branch 1: COD
       if (paymentMethod === "cod") {
+        trackPurchase({
+          totalAmount: Math.max(0, (billing?.totalPrice || 0) - discountAmount),
+          orderItems: cart
+        });
         toast.success("Order placed successfully!");
         navigate("/account/orders");
         return;
@@ -237,6 +252,10 @@ const Checkout = () => {
               razorpay_order_id: res.razorpay_order_id,
               razorpay_payment_id: res.razorpay_payment_id,
               razorpay_signature: res.razorpay_signature,
+            });
+            trackPurchase({
+              totalAmount: Math.max(0, (billing?.totalPrice || 0) - discountAmount),
+              orderItems: cart
             });
             toast.success("Payment successful! Order confirmed.");
             navigate("/account/orders");
