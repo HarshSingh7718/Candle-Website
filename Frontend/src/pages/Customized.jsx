@@ -451,19 +451,29 @@ export default function Customized() {
                     <ChevronRight className="size-5" />
                   </button>
                 ) : (
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={
-                      createMutation.isPending ||
-                      !selectedVessel ||
-                      !selectedScent
-                    }
-                    className="bg-primary text-text-on-brand px-8 py-3 rounded-xl font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  >
-                    {createMutation.isPending
-                      ? "Crafting..."
-                      : "Add to Cart"}
-                  </button>
+                  <>
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={
+                        createMutation.isPending ||
+                        !selectedVessel ||
+                        !selectedScent
+                      }
+                      className="hidden lg:block bg-primary text-text-on-brand px-8 py-3 rounded-xl font-bold disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-slate-800 transition-all"
+                    >
+                      {createMutation.isPending
+                        ? "Crafting..."
+                        : "Add to Cart"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        document.getElementById('order-summary')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="lg:hidden bg-coffee-600 text-text-on-brand px-8 py-3 rounded-xl font-bold hover:bg-coffee-700 shadow-lg shadow-coffee-600/20 transition-all"
+                    >
+                      Review
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -472,7 +482,7 @@ export default function Customized() {
           </div>
 
           {/* Right: Summary Sticky Card */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 scroll-mt-28" id="order-summary">
             <div className="lg:sticky lg:top-12 space-y-8">
               <div className="bg-bg-surface rounded-[2rem] p-6 sm:p-8 shadow-2xl border border-text-on-brand">
                 <div className="space-y-6">
