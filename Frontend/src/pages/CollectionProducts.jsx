@@ -16,7 +16,7 @@ import { useDebounce } from "../hooks/useDebounce";
 gsap.registerPlugin(ScrollTrigger);
 
 const CollectionProducts = () => {
-  const { categoryName } = useParams();
+  const { slug: categoryName } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const querySearch = searchParams.get("search") || "";
   const queryPrice = searchParams.get("maxPrice") || null;

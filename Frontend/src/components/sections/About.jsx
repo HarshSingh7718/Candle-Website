@@ -89,22 +89,21 @@ function About() {
             with organic ingredients to elevate your everyday rituals.
           </p>
           <div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-10 xl:gap-8
-lg:grid-cols-2 mx-auto mb-1 md:mb-18"
+            className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-8 w-[85%] sm:w-[70%] mb-8 md:mb-12"
           >
-            <div className="image ">
+            <div className="image">
               <img
                 src={aboutImg1}
                 alt="Artisanal process"
-                className="section-image w-full md:h-auto object-cover rounded-sm "
+                className="section-image w-full aspect-[4/5] object-cover rounded-lg shadow-md"
                 loading="lazy"
               />
             </div>
-            <div className="image ">
+            <div className="image">
               <img
                 src={aboutImg2}
                 alt="Premium ingredients"
-                className="section-image w-full aspect-[3/4] md:h-auto object-cover rounded-sm"
+                className="section-image w-full aspect-[4/5] object-cover rounded-lg shadow-md"
                 loading="lazy"
               />
             </div>

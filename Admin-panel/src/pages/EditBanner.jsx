@@ -191,7 +191,7 @@ const EditBanner = () => {
               {/* Mobile Banner Image */}
               <div className="space-y-3">
                 <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">
-                  Mobile Banner (4:3 or 9:16) *
+                  Mobile Banner (3:4) *
                 </label>
                 <div
                   onClick={handleMobileUploadClick}
