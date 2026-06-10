@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGetProducts, useDeleteProduct, useToggleProductStatus } from '../hooks/useProducts';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
 const Inventory = () => {
   const navigate = useNavigate();
@@ -20,9 +21,8 @@ const Inventory = () => {
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
-    if (isLoading || !data) return;
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
-  }, [isLoading, data]);
+  }, []);
 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -119,23 +119,7 @@ const Inventory = () => {
                 <tr><td colSpan={5} style={{ height: paddingTop }} /></tr>
               )}
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={`skeleton-${idx}`} className="border-b border-bg-muted animate-pulse">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-md bg-bg-muted flex-shrink-0"></div>
-                        <div className="min-w-0">
-                          <div className="h-4 bg-bg-muted rounded w-32 mb-1"></div>
-                          <div className="h-3 bg-bg-muted rounded w-20"></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-16"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-12"></div></td>
-                    <td className="px-6 py-4"><div className="h-6 bg-bg-muted rounded-full w-20"></div></td>
-                    <td className="px-6 py-4 text-right"><div className="h-6 bg-bg-muted rounded w-16 ml-auto"></div></td>
-                  </tr>
-                ))
+                <TableSkeleton rows={10} cols={5} />
               ) : virtualItems.map((virtualRow) => {
                 const product = filteredProducts[virtualRow.index];
                 return (

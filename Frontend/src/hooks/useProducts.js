@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, keepPreviousData } from "@tanstack/react-query";
 import { createCustomCandle } from '../api';
 import API from "../api"; 
 import toast from 'react-hot-toast';
@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 export const useProducts = (params = {}) => {
   return useQuery({
     queryKey: ["products", params],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (params.page) searchParams.append("page", params.page);
@@ -13,7 +14,7 @@ export const useProducts = (params = {}) => {
       if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
       if (params.sort) searchParams.append("sort", params.sort);
       if (params.filter) searchParams.append("filter", params.filter);
-      searchParams.append("limit", "8");
+      searchParams.append("limit", "12");
 
       const { data } = await API.get(`/candles?${searchParams.toString()}`);
       return data;
@@ -25,13 +26,14 @@ export const useProducts = (params = {}) => {
 export const useProductsByCategory = (categorySlug, params = {}) => {
   return useQuery({
     queryKey: ["products", categorySlug, params],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (params.page) searchParams.append("page", params.page);
       if (params.search) searchParams.append("search", params.search);
       if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
       if (params.sort) searchParams.append("sort", params.sort);
-      searchParams.append("limit", "8");
+      searchParams.append("limit", "12");
 
       const { data } = await API.get(`/products/category/${categorySlug}?${searchParams.toString()}`);
       return data;

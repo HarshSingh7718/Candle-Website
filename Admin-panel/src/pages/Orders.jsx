@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { useNavigate } from 'react-router-dom'; // 👉 1. Import useNavigate
 import { useGetOrders, useUpdateOrderStatus } from '../hooks/useOrders';
+import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
 const ORDER_STATUSES = [
   'All',
@@ -33,19 +34,18 @@ const Orders = () => {
   const totalPages = data?.totalPages || 1;
 
   useEffect(() => {
-    if (isLoading || !data) return;
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
-  }, [isLoading, data]);
+  }, []);
 
   useEffect(() => {
-    if (rowsRef.current.length > 0) {
+    if (rowsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(
         rowsRef.current,
         { opacity: 0, y: 15 },
         { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: "power2.out" }
       );
     }
-  }, [orders]);
+  }, [orders, isLoading]);
 
   const filteredOrders = orders.filter(order => {
     if (!searchQuery) return true;
@@ -130,24 +130,7 @@ const Orders = () => {
             </thead>
             <tbody className="divide-y divide-bg-muted font-body-md text-body-md text-text-base">
               {isLoading ? (
-                Array.from({ length: limit }).map((_, idx) => (
-                  <tr key={`skeleton-${idx}`} className="border-b border-bg-muted animate-pulse">
-                    <td className="py-4 px-6"><div className="h-4 bg-bg-muted rounded w-20"></div></td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-bg-muted"></div>
-                        <div className="flex flex-col gap-1">
-                          <div className="h-4 bg-bg-muted rounded w-24"></div>
-                          <div className="h-3 bg-bg-muted rounded w-20"></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6"><div className="h-4 bg-bg-muted rounded w-24"></div></td>
-                    <td className="py-4 px-6"><div className="h-6 bg-bg-muted rounded-full w-20"></div></td>
-                    <td className="py-4 px-6"><div className="h-4 bg-bg-muted rounded w-16"></div></td>
-                    <td className="py-4 px-6 text-right"><div className="h-6 w-6 bg-bg-muted rounded inline-block"></div></td>
-                  </tr>
-                ))
+                <TableSkeleton rows={limit} cols={6} />
               ) : filteredOrders.map((order) => {
                 const customerName = (order.user?.firstName + ' ' + order.user?.lastName) || "Guest User";
                 const initials = customerName.charAt(0).toUpperCase();

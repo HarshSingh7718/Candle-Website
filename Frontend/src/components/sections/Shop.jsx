@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ProductCard from "../ui/Cards/ProductCard";
 import MainBtn from "../ui/Buttons/MainBtn";
 import { useHomeData } from "../../hooks/useHomeData";
+import ProductCardSkeleton from "../ui/Skeletons/ProductCardSkeleton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -98,9 +99,25 @@ const Shop = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-coffee border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <section className="bg-light-yellow" id="collections">
+        <div className="container py-[8%] mx-auto px-4">
+          {SECTIONS.map((section) => (
+            <div key={section.key} className="mb-20 last:mb-0">
+              <div className="text-center w-full mb-16 animate-pulse">
+                <div className="h-4 bg-coffee/20 rounded w-24 mx-auto mb-4"></div>
+                <div className="h-8 bg-coffee/20 rounded w-48 mx-auto"></div>
+              </div>
+              <div className="flex overflow-hidden gap-4 sm:gap-6 pb-8 px-4 -mx-4">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="w-[40vw] md:w-[28.5vw] lg:w-[22.2vw] shrink-0">
+                    <ProductCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     );
   }
 

@@ -29,11 +29,13 @@ const Dashboard = () => {
   const { data: dashboard, isLoading, isFetching, isError } = useDashboardStats(selectedMonth, selectedYear);
 
   useEffect(() => {
-    if (isLoading || !dashboard || isError) return; // Don't animate until data loads
-
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
-    gsap.fromTo(".stats-card", { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.7)", delay: 0.3 });
-    gsap.fromTo(".table-container, .chart-container, .review-card", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: "power2.out", delay: 0.5 });
+  }, []);
+
+  useEffect(() => {
+    if (isLoading || !dashboard || isError) return;
+    gsap.fromTo(".stats-card", { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.7)", delay: 0.1 });
+    gsap.fromTo(".table-container, .chart-container, .review-card", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: "power2.out", delay: 0.3 });
   }, [isLoading, dashboard, isError]);
 
 
@@ -58,8 +60,51 @@ const Dashboard = () => {
       </div>
 
       {isLoading ? (
-        <div className="py-20 flex justify-center items-center w-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+        <div className="space-y-6">
+          {/* Stats Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={`stat-skeleton-${i}`} className="bg-bg-surface p-6 rounded-xl border border-bg-muted shadow-sm animate-pulse flex items-center justify-between">
+                <div>
+                  <div className="h-4 bg-bg-muted rounded w-24 mb-4"></div>
+                  <div className="h-8 bg-bg-muted rounded w-16"></div>
+                </div>
+                <div className="w-12 h-12 bg-bg-muted rounded-full"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Charts Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-bg-surface p-6 rounded-xl border border-bg-muted shadow-sm animate-pulse flex flex-col h-96">
+              <div className="h-6 bg-bg-muted rounded w-48 mb-6"></div>
+              <div className="flex-1 bg-bg-canvas rounded border border-bg-muted"></div>
+            </div>
+            <div className="bg-bg-surface p-6 rounded-xl border border-bg-muted shadow-sm animate-pulse flex flex-col h-96">
+              <div className="h-6 bg-bg-muted rounded w-32 mb-6"></div>
+              <div className="flex-1 bg-bg-canvas rounded-full border border-bg-muted w-48 h-48 mx-auto mt-4"></div>
+            </div>
+          </div>
+
+          {/* Tables Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-bg-surface p-6 rounded-xl border border-bg-muted shadow-sm animate-pulse h-80 flex flex-col">
+              <div className="h-6 bg-bg-muted rounded w-40 mb-6"></div>
+              <div className="flex-1 space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={`row1-${i}`} className="h-10 bg-bg-canvas rounded border border-bg-muted"></div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-bg-surface p-6 rounded-xl border border-bg-muted shadow-sm animate-pulse h-80 flex flex-col">
+              <div className="h-6 bg-bg-muted rounded w-40 mb-6"></div>
+              <div className="flex-1 space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={`row2-${i}`} className="h-10 bg-bg-canvas rounded border border-bg-muted"></div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       ) : isError ? (
         <div className="p-8 text-danger font-heading">Failed to load dashboard data.</div>

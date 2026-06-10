@@ -4,6 +4,7 @@ import { Search, MoreVertical, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
 import { api } from "../api";
 import UserDetailModal from "../components/UserDetailModal";
+import TableSkeleton from "../components/Skeletons/TableSkeleton";
 
 const Users = () => {
   const [page, setPage] = useState(1);
@@ -89,17 +90,7 @@ const Users = () => {
             </thead>
             <tbody className="divide-y divide-bg-muted text-text-base">
               {isLoading ? (
-                // Skeleton Rows
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-4"><div className="h-10 w-32 bg-bg-muted rounded"></div></td>
-                    <td className="px-6 py-4"><div className="h-6 w-40 bg-bg-muted rounded"></div></td>
-                    <td className="px-6 py-4"><div className="h-6 w-24 bg-bg-muted rounded"></div></td>
-                    <td className="px-6 py-4 text-center"><div className="h-6 w-8 bg-bg-muted rounded mx-auto"></div></td>
-                    <td className="px-6 py-4"><div className="h-6 w-16 bg-bg-muted rounded-full"></div></td>
-                    <td className="px-6 py-4"><div className="h-8 w-16 bg-bg-muted rounded ml-auto"></div></td>
-                  </tr>
-                ))
+                <TableSkeleton rows={20} cols={6} />
               ) : isError ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-8 text-center text-danger">

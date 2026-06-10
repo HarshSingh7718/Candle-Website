@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { useGetContacts, useUpdateContactStatus } from '../hooks/useContacts';
+import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
 const Contacts = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,23 +24,22 @@ const Contacts = () => {
   const totalPages = data?.totalPages || 1;
 
   useEffect(() => {
-    if (isLoading || !data) return;
     gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
     );
-  }, [isLoading, data]);
+  }, []);
 
   useEffect(() => {
-    if (rowsRef.current.length > 0) {
+    if (rowsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(
         rowsRef.current,
         { opacity: 0, y: 15 },
         { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: "power2.out" }
       );
     }
-  }, [queries, searchQuery]);
+  }, [queries, searchQuery, isLoading]);
 
   const toggleStatus = (id, currentStatus) => {
     // Backend accepts exactly "pending" or "resolved"
@@ -107,20 +107,7 @@ const Contacts = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={`skeleton-${idx}`} className="border-b border-bg-muted animate-pulse">
-                    <td className="py-4 px-4">
-                      <div className="flex flex-col gap-1">
-                        <div className="h-4 bg-bg-muted rounded w-24"></div>
-                        <div className="h-3 bg-bg-muted rounded w-32"></div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4"><div className="h-4 bg-bg-muted rounded w-48"></div></td>
-                    <td className="py-4 px-4"><div className="h-4 bg-bg-muted rounded w-24"></div></td>
-                    <td className="py-4 px-4"><div className="h-6 bg-bg-muted rounded-full w-20"></div></td>
-                    <td className="py-4 px-4 text-right"><div className="h-4 bg-bg-muted rounded w-16 ml-auto"></div></td>
-                  </tr>
-                ))
+                <TableSkeleton rows={limit} cols={5} />
               ) : filteredQueries.map((query) => (
                 <tr
                   key={query._id}

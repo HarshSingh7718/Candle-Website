@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGetCoupons, useDeleteCoupon, useToggleCoupon } from '../hooks/useCoupons';
+import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
 const Coupons = () => {
   const navigate = useNavigate();
@@ -13,20 +14,22 @@ const Coupons = () => {
   const { mutate: toggleStatus } = useToggleCoupon();
 
   useEffect(() => {
-    if (isLoading || (coupons.length === 0 && isLoading)) return;
     gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
     );
-    if (rowsRef.current.length > 0) {
+  }, []);
+
+  useEffect(() => {
+    if (rowsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(
         rowsRef.current,
         { opacity: 0, y: 12 },
         { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: "power2.out", delay: 0.15 }
       );
     }
-  }, [coupons.length, isLoading]);
+  }, [coupons, isLoading]);
 
   const addToRowsRef = (el) => {
     if (el && !rowsRef.current.includes(el)) {
@@ -80,22 +83,7 @@ const Coupons = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={`skeleton-${idx}`} className="border-b border-bg-muted/50 animate-pulse">
-                    <td className="px-6 py-4"><div className="h-6 bg-bg-muted rounded w-24"></div></td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col gap-1">
-                        <div className="h-4 bg-bg-muted rounded w-32"></div>
-                        <div className="h-3 bg-bg-muted rounded w-48"></div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-20"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-32"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-bg-muted rounded w-16"></div></td>
-                    <td className="px-6 py-4"><div className="h-6 bg-bg-muted rounded-full w-20"></div></td>
-                    <td className="px-6 py-4 text-right"><div className="h-6 bg-bg-muted rounded w-16 ml-auto"></div></td>
-                  </tr>
-                ))
+                <TableSkeleton rows={5} cols={7} />
               ) : coupons.map((coupon) => {
                 const expired = isExpired(coupon.endDate);
 

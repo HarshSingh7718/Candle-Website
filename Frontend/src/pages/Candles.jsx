@@ -11,6 +11,7 @@ import MobileFilterModal from "../components/ui/MobileFilterModal";
 import CustomDropdown from "../components/ui/CustomDropdown";
 import { useProducts } from "../hooks/useProducts";
 import { useDebounce } from "../hooks/useDebounce";
+import ProductCardSkeleton from "../components/ui/Skeletons/ProductCardSkeleton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,7 +31,7 @@ const Candles = () => {
   const debouncedPrice = useDebounce(priceInput, 500);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 16; // Controlled by backend limit
+  const productPerPage = 12; // Controlled by backend limit
 
   // 1. TanStack Query Hook (Pass URL filters to Backend)
   const { data: responseData, isLoading, isFetching } = useProducts({
@@ -245,8 +246,10 @@ const Candles = () => {
               </div>
 
               {isLoading ? (
-                <div className="flex justify-center items-center py-20">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid">
+                  {Array.from({ length: 8 }).map((_, idx) => (
+                    <ProductCardSkeleton key={idx} />
+                  ))}
                 </div>
               ) : currentProducts.length > 0 ? (
                 <div className="relative">

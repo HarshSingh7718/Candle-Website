@@ -12,6 +12,7 @@ import MobileFilterModal from "../components/ui/MobileFilterModal";
 import CustomDropdown from "../components/ui/CustomDropdown";
 import { useProductsByCategory } from "../hooks/useProducts";
 import { useDebounce } from "../hooks/useDebounce";
+import ProductCardSkeleton from "../components/ui/Skeletons/ProductCardSkeleton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,7 +31,7 @@ const CollectionProducts = () => {
   const [priceInput, setPriceInput] = useState(queryPrice || 3000);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 16;
+  const productPerPage = 12;
 
   const debouncedPrice = useDebounce(priceInput, 500);
 
@@ -252,8 +253,10 @@ const CollectionProducts = () => {
               </div>
 
               {isLoading ? (
-                <div className="flex justify-center items-center py-20">
-                  <Loader2 className="animate-spin text-primary" size={48} />
+                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid">
+                  {Array.from({ length: 8 }).map((_, idx) => (
+                    <ProductCardSkeleton key={idx} />
+                  ))}
                 </div>
               ) : currentProducts.length > 0 ? (
                 <>

@@ -34,23 +34,25 @@ const Reviews = () => {
 
   // Base page entrance animation
   useEffect(() => {
-    if (isLoading || !data) return;
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
-    if (statsRef.current.length > 0) {
+  }, []);
+
+  useEffect(() => {
+    if (statsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(statsRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power2.out", delay: 0.2 });
     }
-  }, [isLoading, data]);
+  }, [isLoading]);
 
   // List stagger animation
   useEffect(() => {
-    if (reviewsRef.current.length > 0) {
+    if (reviewsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(
         reviewsRef.current,
         { opacity: 0, y: 15 },
         { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: "power2.out" }
       );
     }
-  }, [reviews, searchQuery]);
+  }, [reviews, searchQuery, isLoading]);
 
   // 👉 Toggle Logic (Swaps between lowercase 'published' and 'pending')
   const toggleStatus = (productId, reviewId, currentStatus) => {

@@ -15,22 +15,22 @@ const Banners = () => {
   const { mutate: toggleStatus } = useToggleBanner();
 
   useEffect(() => {
-    if (isLoading || (banners.length === 0 && isLoading)) return;
-
     gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
     );
+  }, []);
 
-    if (cardsRef.current.length > 0) {
+  useEffect(() => {
+    if (cardsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(
         cardsRef.current,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power2.out", delay: 0.2 }
       );
     }
-  }, [banners.length, isLoading]);
+  }, [banners, isLoading]);
 
   const addToCardsRef = (el) => {
     if (el && !cardsRef.current.includes(el)) {

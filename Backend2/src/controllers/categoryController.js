@@ -19,7 +19,7 @@ export const getAllCategories = async (req, res) => {
 export const getProductsByCategory = async (req, res) => {
   let {
     page = 1,
-    limit = 10,
+    limit = 12,
     search,
     maxPrice,
     sort

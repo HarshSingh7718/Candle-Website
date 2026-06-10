@@ -44,8 +44,14 @@ const Collections = () => {
 
           {/* Loading State */}
           {isLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="w-10 h-10 border-4 border-[#8c7851] border-t-transparent rounded-full animate-spin"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-14 md:gap-x-8 md:gap-y-12">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <div key={idx} className="animate-pulse">
+                  <div className="aspect-[4/5] bg-stone-200 rounded-md mb-4"></div>
+                  <div className="h-6 bg-stone-200 rounded w-3/4 mx-auto mb-2"></div>
+                  <div className="h-4 bg-stone-200 rounded w-full mx-auto"></div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-14 md:gap-x-8 md:gap-y-12">

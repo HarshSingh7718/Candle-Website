@@ -63,7 +63,7 @@ export const getSingleProduct = async (req, res) => {
 export const getAllCandles = async (req, res) => {
   const {
     page = 1,
-    limit = 10,
+    limit = 12,
     maxPrice,
     search,
     sort,

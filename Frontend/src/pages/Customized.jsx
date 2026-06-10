@@ -214,9 +214,13 @@ export default function Customized() {
               {/* Step Content Switcher */}
               <div className="flex-1 overflow-hidden relative">
                 {isLoading ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                    <Loader2 className="size-8 animate-spin mb-4 text-coffee-600" />
-                    <p>Loading builder...</p>
+                  <div className="p-6 sm:p-8 animate-pulse">
+                    <div className="h-8 bg-slate-200 rounded w-1/3 mb-6"></div>
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-4">
+                      {Array.from({ length: 6 }).map((_, idx) => (
+                        <div key={idx} className="aspect-square bg-slate-200 rounded-xl"></div>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <>
