@@ -470,6 +470,12 @@ const OrderDetails = () => {
                                         <span>Subtotal</span>
                                         <span className="text-text-base font-medium">₹{(order.itemsPrice || 0).toFixed(2)}</span>
                                     </div>
+                                    {(order.discountAmount > 0 || order.discount > 0) && (
+                                        <div className="flex justify-between text-sm text-success">
+                                            <span>Discount</span>
+                                            <span className="font-medium">-₹{((order.discountAmount || order.discount) || 0).toFixed(2)}</span>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between text-sm text-text-muted">
                                         <span>Shipping</span>
                                         <span className="text-text-base font-medium">₹{(order.shippingPrice || 0).toFixed(2)}</span>
