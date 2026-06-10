@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'; // 👉 1. Import useNavigate
 import { useGetOrders, useUpdateOrderStatus } from '../hooks/useOrders';
 import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
+import { Search, ChevronRight, ChevronLeft } from 'lucide-react';
+
 const ORDER_STATUSES = [
   'All',
   'processing',
@@ -87,7 +89,7 @@ const Orders = () => {
           <p className="font-body-md text-body-md text-text-muted">Review and fulfill recent artisan orders.</p>
         </div>
         <div className="relative w-full sm:w-auto shrink-0">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+          <Search className=" absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]" />
           <input
             type="text"
             placeholder="Search loaded orders..."
@@ -164,9 +166,7 @@ const Orders = () => {
                     </td>
                     <td className="py-4 px-6 font-label-md text-label-md">₹{total}</td>
                     <td className="py-4 px-6 text-right">
-                      <span className="material-symbols-outlined text-text-muted group-hover:text-brand-primary transition-colors">
-                        chevron_right
-                      </span>
+                      <ChevronRight className=" text-text-muted group-hover:text-brand-primary transition-colors" />
                     </td>
                   </tr>
                 );
@@ -192,14 +192,14 @@ const Orders = () => {
               onClick={() => setPage(p => p - 1)}
               className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface disabled:opacity-50 cursor-pointer transition-colors"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+              <ChevronLeft className=" text-[20px]" />
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(p => p + 1)}
               className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface disabled:opacity-50 cursor-pointer transition-colors"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+              <ChevronRight className=" text-[20px]" />
             </button>
           </div>
         </div>

@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGetCategoryProducts, useUpdateCategoryProducts } from '../hooks/useCategories';
 
+import { ArrowLeft, Save, Search, Image } from 'lucide-react';
+
 const CategoryProducts = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -64,7 +66,7 @@ const CategoryProducts = () => {
       {/* Header */}
       <div className="mb-stack-lg flex-shrink-0">
         <button onClick={() => navigate('/categories')} className="flex items-center gap-2 text-text-muted hover:text-brand-primary transition-colors font-label-md text-label-md mb-4 cursor-pointer">
-          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <ArrowLeft className=" text-[20px]" />
           Back to Categories
         </button>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -85,7 +87,7 @@ const CategoryProducts = () => {
                 {isPending ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div>
                 ) : (
-                    <span className="material-symbols-outlined text-[20px]">save</span>
+                    <Save className=" text-[20px]" />
                 )}
                 Save Changes
             </button>
@@ -95,7 +97,7 @@ const CategoryProducts = () => {
       {/* Search Bar */}
       <div className="mb-stack-md flex-shrink-0">
          <div className="relative max-w-md">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">search</span>
+            <Search className=" absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input 
                 type="text" 
                 placeholder="Search products by name..." 
@@ -138,7 +140,7 @@ const CategoryProducts = () => {
                                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-text-muted/50">image</span>
+                                        <Image className=" text-text-muted/50" />
                                     </div>
                                 )}
                             </div>

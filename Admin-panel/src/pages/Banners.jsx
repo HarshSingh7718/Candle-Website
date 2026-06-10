@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 // 👉 Import our new hooks
 import { useGetBanners, useDeleteBanner, useToggleBanner } from '../hooks/useBanners';
+
+import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Banners = () => {
   const navigate = useNavigate();
@@ -13,6 +15,18 @@ const Banners = () => {
   const { data: banners = [], isLoading, isFetching } = useGetBanners();
   const { mutate: deleteBanner } = useDeleteBanner();
   const { mutate: toggleStatus } = useToggleBanner();
+
+  // Pagination logic
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const totalPages = Math.ceil(banners.length / limit);
+  const currentBanners = banners.slice((page - 1) * limit, page * limit);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
 
   useEffect(() => {
     gsap.fromTo(
@@ -55,7 +69,7 @@ const Banners = () => {
           onClick={() => navigate('/banners/add')}
           className="shrink-0 bg-brand-primary hover:bg-coffee-800 text-text-on-brand font-label-md text-label-md py-3 px-6 rounded-lg shadow-sm shadow-orange-900/20 transition-all flex items-center justify-center gap-2 border-b-2 border-coffee-800 hover:border-brand-secondary cursor-pointer"
         >
-          <span className="material-symbols-outlined text-lg">add</span>
+          <Plus className=" text-lg" />
           Add Banner
         </button>
       </div>
@@ -79,7 +93,7 @@ const Banners = () => {
               </div>
             </article>
           ))
-        ) : banners.map((banner) => {
+        ) : currentBanners.map((banner) => {
           // 👉 Adapting to MongoDB data structure
           const isActive = banner.isActive; // Assuming backend uses a boolean
 
@@ -136,13 +150,13 @@ const Banners = () => {
                       onClick={() => navigate(`/banners/edit/${banner._id}`)} // 👉 Route with _id
                       className="p-2 text-text-muted hover:text-brand-primary hover:bg-bg-muted rounded-lg transition-colors cursor-pointer"
                     >
-                      <span className="material-symbols-outlined">edit</span>
+                      <Pencil  />
                     </button>
                     <button
                       onClick={() => deleteBanner(banner._id)} // 👉 Fire mutation with _id
                       className="p-2 text-text-muted hover:text-danger hover:bg-danger/10/50 rounded-lg transition-colors cursor-pointer"
                     >
-                      <span className="material-symbols-outlined">delete</span>
+                      <Trash2  />
                     </button>
                   </div>
                 </div>
@@ -155,6 +169,46 @@ const Banners = () => {
       {banners.length === 0 && !isLoading && (
         <div className="text-center py-12 text-text-muted font-body-lg">
           No banners available. Add one to get started.
+        </div>
+      )}
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="p-4 flex items-center justify-between bg-bg-surface rounded-xl border border-bg-muted/30 mt-6">
+          <span className="text-sm text-text-muted">
+            Showing page {page} of {totalPages}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className=" text-[18px]" />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`w-8 h-8 rounded border text-sm font-medium transition-colors ${
+                  pageNum === page
+                    ? 'bg-brand-primary text-white border-brand-primary'
+                    : 'border-bg-muted text-text-muted hover:bg-bg-surface-hover'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className=" text-[18px]" />
+            </button>
+          </div>
         </div>
       )}
     </main>

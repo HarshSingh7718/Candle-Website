@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
@@ -17,10 +18,7 @@ import CategoryProducts from './pages/CategoryProducts';
 import Options from './pages/Options';
 import AddOption from './pages/AddOption';
 import EditOption from './pages/EditOption';
-import { BannerProvider } from './context/BannerContext';
-import { ProductProvider } from './context/ProductContext';
-import { CategoryProvider } from './context/CategoryContext';
-import { OptionProvider } from './context/OptionContext';
+
 import SignIn from './pages/SignIn';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP';
@@ -45,11 +43,8 @@ function App() {
   return (
     <>
       <Toaster position="top-center" />
-      <CategoryProvider>
-        <ProductProvider>
-          <BannerProvider>
-            <OptionProvider>
               <BrowserRouter>
+                <ScrollToTop />
                 <Routes>
 
                   <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
@@ -87,10 +82,6 @@ function App() {
                   <Route path="/reset-password" element={<ResetPassword />} />
                 </Routes>
               </BrowserRouter>
-            </OptionProvider>
-          </BannerProvider>
-        </ProductProvider>
-      </CategoryProvider>
     </>
   );
 }

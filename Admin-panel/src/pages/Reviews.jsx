@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { Search, Star } from 'lucide-react';
 import { useGetReviews, useUpdateReviewStatus } from '../hooks/useReviews';
 import ReviewModal from '../components/ReviewModal';
 
@@ -81,9 +82,7 @@ const Reviews = () => {
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, i) => (
-      <span key={i} className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: i < rating ? "'FILL' 1" : "'FILL' 0" }}>
-        {i < Math.floor(rating) ? 'star' : (i < rating ? 'star_half' : 'star')}
-      </span>
+      <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-brand-primary text-brand-primary" : "text-bg-muted"}`} />
     ));
   };
 
@@ -100,7 +99,7 @@ const Reviews = () => {
         </div>
         <div className="flex gap-4 w-full md:w-auto">
           <div className="relative w-full md:w-auto">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted">search</span>
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted w-5 h-5" />
             <input
               type="text"
               placeholder="Search loaded reviews..."

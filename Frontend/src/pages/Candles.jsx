@@ -44,7 +44,7 @@ const Candles = () => {
   });
 
   const products = responseData?.pages?.flatMap((page) => page.candles) || [];
-  const totalProducts = responseData?.pages[0]?.total || 0;
+  const totalProducts = responseData?.pages?.[0]?.total || 0;
 
   // ── Sentinel ref for infinite scroll ──
   const sentinelRef = useRef(null);
@@ -244,9 +244,7 @@ const Candles = () => {
 
               {/* Top bar */}
               <div className="flex justify-between items-center mb-8 gap-4 top-bar">
-                <p className="text-text-muted italic">
-                  Showing {products.length} of {totalProducts} results
-                </p>
+                
                 <button
                   onClick={() => setIsMobileFilterOpen(true)}
                   className="lg:hidden flex items-center gap-2 bg-bg-surface border border-bg-muted px-4 py-2 rounded-md shadow-sm text-text-base font-medium hover:bg-bg-surface-hover transition-colors"

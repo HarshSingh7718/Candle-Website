@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSettings, useUpdateSettings } from '../hooks/useSettings';
 import toast from 'react-hot-toast';
 
+import { Truck, ShoppingBag, Sparkles } from 'lucide-react';
+
 const StoreSettings = () => {
     const { data: settings, isLoading } = useSettings();
     const updateSettingsMutation = useUpdateSettings();
@@ -58,7 +60,7 @@ const StoreSettings = () => {
                 <div className="bg-bg-canvas rounded-lg p-4 border border-bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-bold text-text-base">Base Delivery Charge</label>
-                        <span className="material-symbols-outlined text-brand-primary">local_shipping</span>
+                        <Truck className=" text-brand-primary" />
                     </div>
                     <p className="text-xs text-text-muted mb-3">
                         The flat shipping fee applied to orders below the free delivery threshold.
@@ -80,7 +82,7 @@ const StoreSettings = () => {
                 <div className="bg-bg-canvas rounded-lg p-4 border border-bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-bold text-text-base">Free Delivery Threshold</label>
-                        <span className="material-symbols-outlined text-brand-primary">shopping_bag</span>
+                        <ShoppingBag className=" text-brand-primary" />
                     </div>
                     <p className="text-xs text-text-muted mb-3">
                         Orders with a subtotal greater than or equal to this amount will receive free shipping.
@@ -102,7 +104,7 @@ const StoreSettings = () => {
                 <div className="bg-bg-canvas rounded-lg p-4 border border-bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-bold text-text-base">Base Customisation Fee</label>
-                        <span className="material-symbols-outlined text-brand-primary">auto_awesome</span>
+                        <Sparkles className=" text-brand-primary" />
                     </div>
                     <p className="text-xs text-text-muted mb-3">
                         The standard add-on cost applied when a customer selects a custom candle variant.

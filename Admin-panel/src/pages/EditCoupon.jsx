@@ -4,6 +4,8 @@ import gsap from 'gsap';
 import toast from 'react-hot-toast';
 import { useGetCoupon, useUpdateCoupon } from '../hooks/useCoupons';
 
+import { ArrowLeft } from 'lucide-react';
+
 const EditCoupon = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -112,7 +114,7 @@ const EditCoupon = () => {
       {/* Header */}
       <div className="flex items-center gap-4 mb-stack-lg">
         <button onClick={() => navigate('/coupons')} className="p-2 hover:bg-bg-muted rounded-lg transition-colors cursor-pointer">
-          <span className="material-symbols-outlined text-text-muted">arrow_back</span>
+          <ArrowLeft className=" text-text-muted" />
         </button>
         <div>
           <h2 className="font-heading text-headline-lg text-text-base mb-1">Edit Coupon</h2>

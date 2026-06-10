@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGetCoupons, useDeleteCoupon, useToggleCoupon } from '../hooks/useCoupons';
 import TableSkeleton from '../components/Skeletons/TableSkeleton';
+
+import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Coupons = () => {
   const navigate = useNavigate();
@@ -12,6 +14,18 @@ const Coupons = () => {
   const { data: coupons = [], isLoading, isFetching } = useGetCoupons();
   const { mutate: deleteCoupon } = useDeleteCoupon();
   const { mutate: toggleStatus } = useToggleCoupon();
+
+  // Pagination logic
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const totalPages = Math.ceil(coupons.length / limit);
+  const currentCoupons = coupons.slice((page - 1) * limit, page * limit);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
 
   useEffect(() => {
     gsap.fromTo(
@@ -61,7 +75,7 @@ const Coupons = () => {
           onClick={() => navigate('/coupons/add')}
           className="shrink-0 bg-brand-primary hover:bg-coffee-800 text-text-on-brand font-label-md text-label-md py-3 px-6 rounded-lg shadow-sm shadow-orange-900/20 transition-all flex items-center justify-center gap-2 border-b-2 border-coffee-800 hover:border-brand-secondary cursor-pointer"
         >
-          <span className="material-symbols-outlined text-lg">add</span>
+          <Plus className=" text-lg" />
           Add Coupon
         </button>
       </div>
@@ -84,7 +98,7 @@ const Coupons = () => {
             <tbody>
               {isLoading ? (
                 <TableSkeleton rows={5} cols={7} />
-              ) : coupons.map((coupon) => {
+              ) : currentCoupons.map((coupon) => {
                 const expired = isExpired(coupon.endDate);
 
                 return (
@@ -176,13 +190,13 @@ const Coupons = () => {
                           onClick={() => navigate(`/coupons/edit/${coupon._id}`)}
                           className="p-2 text-text-muted hover:text-brand-primary hover:bg-bg-muted rounded-lg transition-colors cursor-pointer"
                         >
-                          <span className="material-symbols-outlined">edit</span>
+                          <Pencil  />
                         </button>
                         <button
                           onClick={() => deleteCoupon(coupon._id)}
                           className="p-2 text-text-muted hover:text-danger hover:bg-danger/10/50 rounded-lg transition-colors cursor-pointer"
                         >
-                          <span className="material-symbols-outlined">delete</span>
+                          <Trash2  />
                         </button>
                       </div>
                     </td>
@@ -197,6 +211,46 @@ const Coupons = () => {
       {coupons.length === 0 && !isLoading && (
         <div className="text-center py-12 text-text-muted font-body-lg">
           No coupons available. Create one to get started.
+        </div>
+      )}
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="p-4 flex items-center justify-between bg-bg-surface rounded-xl border border-bg-muted/30 mt-6">
+          <span className="text-sm text-text-muted">
+            Showing page {page} of {totalPages}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className=" text-[18px]" />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`w-8 h-8 rounded border text-sm font-medium transition-colors ${
+                  pageNum === page
+                    ? 'bg-brand-primary text-white border-brand-primary'
+                    : 'border-bg-muted text-text-muted hover:bg-bg-surface-hover'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className=" text-[18px]" />
+            </button>
+          </div>
         </div>
       )}
     </main>

@@ -4,6 +4,8 @@ import gsap from 'gsap';
 import { useGetProduct, useUpdateProduct } from '../hooks/useProducts';
 import { useGetCategories } from '../hooks/useCategories';
 
+import { ArrowLeft, Camera, Pencil } from 'lucide-react';
+
 const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -153,7 +155,7 @@ const EditProduct = () => {
     <main ref={mainRef} className={`p-gutter md:p-margin-page max-w-container-max mx-auto w-full opacity-0 transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}>
       <div className="mb-stack-lg">
         <button onClick={() => navigate('/inventory')} className="flex items-center gap-2 text-text-muted hover:text-brand-primary transition-colors font-label-md text-label-md mb-4">
-          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <ArrowLeft className=" text-[20px]" />
           Back to Inventory
         </button>
         <h2 className="font-heading text-headline-xl text-text-base mb-2">Edit Product</h2>
@@ -174,7 +176,7 @@ const EditProduct = () => {
               <div onClick={() => handleUploadClick(0)} className="col-span-2 row-span-2 relative group overflow-hidden rounded-lg bg-bg-surface-hover border-2 border-dashed border-bg-muted flex flex-col items-center justify-center cursor-pointer hover:border-brand-primary transition-colors" style={{ backgroundImage: imagePreviews[0] ? `url(${imagePreviews[0]})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 {!imagePreviews[0] && (
                   <div className="relative z-10 flex flex-col items-center pointer-events-none">
-                    <span className="material-symbols-outlined text-brand-primary mb-2 text-[32px]">add_a_photo</span>
+                    <Camera className=" text-brand-primary mb-2 text-[32px]" />
                     <p className="font-label-md text-brand-primary">Main Cover</p>
                   </div>
                 )}
@@ -183,7 +185,7 @@ const EditProduct = () => {
 
               {[1, 2, 3].map((index) => (
                 <div key={index} onClick={() => handleUploadClick(index)} className={`${index === 1 ? 'col-span-2 row-span-1' : 'col-span-1 row-span-1'} relative group overflow-hidden rounded-lg bg-bg-surface-hover border-2 border-dashed border-bg-muted flex items-center justify-center cursor-pointer hover:border-brand-primary transition-colors`} style={{ backgroundImage: imagePreviews[index] ? `url(${imagePreviews[index]})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                  {!imagePreviews[index] && <span className="material-symbols-outlined text-brand-primary text-[24px]">add_a_photo</span>}
+                  {!imagePreviews[index] && <Camera className=" text-brand-primary text-[24px]" />}
                   <input type="file" ref={el => fileInputRefs.current[index] = el} onChange={(e) => handleFileChange(index, e)} accept="image/*" className="hidden" disabled={isPending} />
                 </div>
               ))}
@@ -316,7 +318,7 @@ const EditProduct = () => {
         <div className="col-span-12 flex justify-end gap-4 pt-stack-lg border-t border-bg-mutedest">
           <button type="button" onClick={() => navigate('/inventory')} disabled={isPending} className="px-8 py-4 border border-bg-muted text-text-muted font-heading text-headline-md rounded-lg hover:bg-bg-surface-hover transition-all cursor-pointer">Cancel</button>
           <button type="submit" disabled={isPending} className="px-12 py-4 bg-brand-primary text-text-on-brand font-heading text-headline-md rounded-lg shadow-[0_2px_0_rgba(141,75,0,0.3)] hover:bg-brand-primary-container active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-3 cursor-pointer">
-            {isPending ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div> : <span className="material-symbols-outlined text-[24px]">edit</span>}
+            {isPending ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div> : <Pencil className=" text-[24px]" />}
             {isPending ? 'Saving...' : 'Edit Product'}
           </button>
         </div>

@@ -4,6 +4,8 @@ import gsap from 'gsap';
 import { useGetContacts, useUpdateContactStatus } from '../hooks/useContacts';
 import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
+import { Search, X } from 'lucide-react';
+
 const Contacts = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
@@ -81,7 +83,7 @@ const Contacts = () => {
           <h3 className="font-heading text-headline-md text-text-base">Recent Queries</h3>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:flex-none">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">search</span>
+              <Search className=" absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 className="w-full sm:w-64 pl-10 pr-4 py-2 bg-bg-surface-hover rounded-lg border-none focus:ring-2 focus:ring-brand-primary/20 text-body-md font-body-md placeholder:text-text-disabled transition-all outline-none"
                 placeholder="Search queries..."
@@ -204,7 +206,7 @@ const Contacts = () => {
               onClick={() => setSelectedContact(null)}
               className="absolute top-4 right-4 text-text-muted hover:text-danger transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined">close</span>
+              <X  />
             </button>
 
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-bg-muted">

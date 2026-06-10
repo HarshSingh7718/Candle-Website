@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import Profile from './Profile';
 import StoreSettings from './StoreSettings';
 
+import { User, Settings2 } from 'lucide-react';
+
 /**
  * Setting — Tabbed settings page that replaces the old standalone /profile route.
  * Tab 1: "Admin Profile" — Reuses the existing Profile component (with OTP flow).
  * Tab 2: "Store Settings" — Manages delivery and customisation pricing variables.
  */
 const TABS = [
-    { id: 'profile', label: 'Admin Profile', icon: 'person' },
-    { id: 'store', label: 'Store Settings', icon: 'tune' },
+    { id: 'profile', label: 'Admin Profile', icon: User },
+    { id: 'store', label: 'Store Settings', icon: Settings2 },
 ];
 
 const Setting = () => {
@@ -37,9 +39,7 @@ const Setting = () => {
                                 : 'text-text-muted hover:text-text-base hover:bg-bg-muted/50'
                         }`}
                     >
-                        <span className={`material-symbols-outlined text-[20px] ${activeTab === tab.id ? 'fill' : ''}`}>
-                            {tab.icon}
-                        </span>
+                        <tab.icon className={`w-5 h-5 flex-shrink-0 ${activeTab === tab.id ? 'text-text-base' : 'text-text-muted'}`} />
                         {tab.label}
                     </button>
                 ))}

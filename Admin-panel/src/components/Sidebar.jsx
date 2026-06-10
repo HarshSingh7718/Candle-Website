@@ -1,22 +1,23 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { NavLink } from "react-router-dom";
+import { X, LogOut, LayoutDashboard, GalleryHorizontal, Package, Tags, Star, ShoppingBag, HelpCircle, Ticket, Settings, Users, BarChart3, Settings2 } from 'lucide-react';
 import { useAdminLogout } from "../hooks/useAdminAuth";
 
 // 👉 Pro-tip: Keep your links in an array to make the component super clean and easy to edit!
 const NAV_LINKS = [
-  { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/banners", icon: "view_carousel", label: "Banners" },
-  { to: "/inventory", icon: "inventory_2", label: "Inventory" },
-  { to: "/categories", icon: "category", label: "Categories" },
-  { to: "/reviews", icon: "star", label: "Reviews" },
-  { to: "/orders", icon: "shopping_bag", label: "Orders" },
-  { to: "/contacts", icon: "contact_support", label: "Contacts" },
-  { to: "/coupons", icon: "confirmation_number", label: "Coupons" },
-  { to: "/options", icon: "settings", label: "Options" },
-  { to: "/users", icon: "group", label: "Users" },
-  { to: "/reports", icon: "bar_chart", label: "Reports" },
-  { to: "/setting", icon: "tune", label: "Settings" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/banners", icon: GalleryHorizontal, label: "Banners" },
+  { to: "/inventory", icon: Package, label: "Inventory" },
+  { to: "/categories", icon: Tags, label: "Categories" },
+  { to: "/options", icon: Settings, label: "Options" },
+  { to: "/orders", icon: ShoppingBag, label: "Orders" },
+  { to: "/coupons", icon: Ticket, label: "Coupons" },
+  { to: "/reviews", icon: Star, label: "Reviews" },
+  { to: "/contacts", icon: HelpCircle, label: "Contacts" },
+  { to: "/users", icon: Users, label: "Users" },
+  { to: "/reports", icon: BarChart3, label: "Reports" },
+  { to: "/setting", icon: Settings2, label: "Settings" },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -88,7 +89,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             className="lg:hidden ml-auto text-coffee-200 hover:text-text-on-brand p-1 transition-colors cursor-pointer hover:scale-120 duration-200"
             onClick={() => setIsOpen(false)}
           >
-            <span className="material-symbols-outlined text-[24px]">close</span>
+            <X className="w-6 h-6" />
           </button>
         </div>
 
@@ -115,11 +116,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               {/* 👉 THE FIX: Exposing isActive directly to the children via a callback function */}
               {({ isActive }) => (
                 <>
-                  <span
-                    className={`material-symbols-outlined text-[22px] ${isActive ? "fill" : ""}`}
-                  >
-                    {link.icon}
-                  </span>
+                  <link.icon
+                    className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-text-on-brand" : "text-coffee-200"}`}
+                  />
                   {link.label}
                 </>
               )}
@@ -138,9 +137,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             {isPending ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>
             ) : (
-              <span className="material-symbols-outlined text-[22px]">
-                logout
-              </span>
+              <LogOut className="w-5 h-5" />
             )}
             <span className="font-label-md">
               {isPending ? "Signing out..." : "Sign Out"}

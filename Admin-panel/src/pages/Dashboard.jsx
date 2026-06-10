@@ -8,6 +8,7 @@ import DonutChart from '../components/DonutChart';
 import TopProducts from '../components/TopProducts';
 import RecentOrders from '../components/RecentOrders';
 import Reviews from '../components/Reviews';
+import { IndianRupee, ShoppingBag, Package, Users } from 'lucide-react';
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-IN', {
@@ -115,7 +116,7 @@ const Dashboard = () => {
         <StatsCard
           title="Total Revenue"
           value={formatCurrency(dashboard.totalRevenue)}
-          icon="attach_money"
+          icon={IndianRupee}
           iconBgClass="bg-success/10"
           iconTextClass="text-success"
           linkTo="/reports"
@@ -123,7 +124,7 @@ const Dashboard = () => {
         <StatsCard
           title="Total Orders"
           value={dashboard.totalOrders}
-          icon="local_mall"
+          icon={ShoppingBag}
           iconBgClass="bg-info/10"
           iconTextClass="text-info"
           linkTo="/orders"
@@ -131,7 +132,7 @@ const Dashboard = () => {
         <StatsCard
           title="Total Products"
           value={dashboard.totalProducts}
-          icon="inventory_2"
+          icon={Package}
           iconBgClass="bg-brand-primary/10"
           iconTextClass="text-brand-primary"
           linkTo="/inventory"
@@ -139,7 +140,7 @@ const Dashboard = () => {
         <StatsCard
           title="Total Users"
           value={dashboard.totalUsers}
-          icon="group"
+          icon={Users}
           iconBgClass="bg-warning/10"
           iconTextClass="text-warning"
           linkTo="/users"

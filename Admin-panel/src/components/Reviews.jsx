@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import ReviewModal from './ReviewModal';
 
+import { Star } from 'lucide-react';
+
 const Reviews = ({ reviews = [] }) => {
   const [selectedReview, setSelectedReview] = useState(null);
   if (reviews.length === 0) return null; // Don't show if no reviews exist
@@ -20,7 +22,7 @@ const Reviews = ({ reviews = [] }) => {
           >
             <div className="flex text-yellow-500 mb-3 group-hover:scale-105 origin-left transition-transform">
               {[...Array(5)].map((_, i) => (
-                <span key={i} className={`material-symbols-outlined text-sm ${i < review.rating ? 'fill' : ''}`}>star</span>
+                <Star key={i} className={` text-sm ${i < review.rating ? 'fill' : ''}`} />
               ))}
             </div>
             <p className="font-body-md text-body-md text-text-base italic mb-4">"{review.comment}"</p>

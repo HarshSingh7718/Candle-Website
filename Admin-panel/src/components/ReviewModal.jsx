@@ -1,11 +1,11 @@
 import React from 'react';
 import { createPortal } from "react-dom";
 
+import { Star, X } from 'lucide-react';
+
 const renderStars = (rating) => {
   return Array.from({ length: 5 }).map((_, i) => (
-    <span key={i} className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: i < rating ? "'FILL' 1" : "'FILL' 0" }}>
-      {i < Math.floor(rating) ? 'star' : (i < rating ? 'star_half' : 'star')}
-    </span>
+    <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-brand-primary text-brand-primary" : "text-bg-muted"}`} />
   ));
 };
 
@@ -29,7 +29,7 @@ const ReviewModal = ({ review, onClose, onToggleStatus }) => {
           onClick={onClose}
           className="absolute top-4 right-4 text-text-muted hover:text-danger transition-colors cursor-pointer"
         >
-          <span className="material-symbols-outlined">close</span>
+          <X  />
         </button>
 
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-bg-muted">

@@ -4,6 +4,8 @@ import gsap from 'gsap';
 // 👉 1. Import our new TanStack hooks
 import { useGetBanner, useUpdateBanner } from '../hooks/useBanners';
 
+import { ArrowLeft, CheckCircle2, Image, Plus, Pencil, Save } from 'lucide-react';
+
 const EditBanner = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -104,7 +106,7 @@ const EditBanner = () => {
           onClick={() => navigate('/banners')}
           className="flex items-center gap-2 text-text-muted hover:text-brand-primary transition-colors font-label-md text-label-md mb-4 cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <ArrowLeft className=" text-[20px]" />
           Back to Banners
         </button>
         <h2 className="font-heading text-headline-lg text-text-base mb-2">Edit Banner</h2>
@@ -123,15 +125,15 @@ const EditBanner = () => {
 
           <ul className="space-y-6">
             <li className="flex gap-3 items-start">
-              <span className="material-symbols-outlined text-brand-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
+              <CheckCircle2 className=" text-brand-primary shrink-0 mt-0.5 text-[20px]" />
               <span className="text-text-base font-label-md leading-tight">Use high-resolution photography with natural lighting.</span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="material-symbols-outlined text-brand-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
+              <CheckCircle2 className=" text-brand-primary shrink-0 mt-0.5 text-[20px]" />
               <span className="text-text-base font-label-md leading-tight">Maintain clear space for the text overlay.</span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="material-symbols-outlined text-brand-primary shrink-0 mt-0.5 text-[20px]">check_circle</span>
+              <CheckCircle2 className=" text-brand-primary shrink-0 mt-0.5 text-[20px]" />
               <span className="text-text-base font-label-md leading-tight">Subtitles should offer a gentle call to action.</span>
             </li>
           </ul>
@@ -157,9 +159,9 @@ const EditBanner = () => {
                     <div className="flex flex-col items-center text-center p-6">
                       <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-5 text-brand-primary shadow-sm">
                         <div className="relative">
-                          <span className="material-symbols-outlined text-[28px]">image</span>
+                          <Image className=" text-[28px]" />
                           <div className="absolute -top-1 -right-1 bg-bg-surface rounded-full p-0.5 border border-bg-muted">
-                            <span className="material-symbols-outlined text-[14px]">add</span>
+                            <Plus className=" text-[14px]" />
                           </div>
                         </div>
                       </div>
@@ -172,7 +174,7 @@ const EditBanner = () => {
                   {desktopPreview && !isUpdating && (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="bg-bg-surface text-brand-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        <Pencil className=" text-[18px]" />
                         Change Desktop
                       </span>
                     </div>
@@ -202,9 +204,9 @@ const EditBanner = () => {
                     <div className="flex flex-col items-center text-center p-6">
                       <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-5 text-brand-primary shadow-sm">
                         <div className="relative">
-                          <span className="material-symbols-outlined text-[28px]">image</span>
+                          <Image className=" text-[28px]" />
                           <div className="absolute -top-1 -right-1 bg-bg-surface rounded-full p-0.5 border border-bg-muted">
-                            <span className="material-symbols-outlined text-[14px]">add</span>
+                            <Plus className=" text-[14px]" />
                           </div>
                         </div>
                       </div>
@@ -217,7 +219,7 @@ const EditBanner = () => {
                   {mobilePreview && !isUpdating && (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="bg-bg-surface text-brand-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        <Pencil className=" text-[18px]" />
                         Change Mobile
                       </span>
                     </div>
@@ -282,7 +284,7 @@ const EditBanner = () => {
                 {isUpdating ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div>
                 ) : (
-                  <span className="material-symbols-outlined text-[20px]">save</span>
+                  <Save className=" text-[20px]" />
                 )}
                 {isUpdating ? 'Saving...' : 'Save Changes'}
               </button>

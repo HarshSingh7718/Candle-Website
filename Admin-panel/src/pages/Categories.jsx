@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 // 👉 Import the TanStack hooks
 import { useGetCategories, useDeleteCategory, useToggleCategoryStatus } from '../hooks/useCategories';
+
+import { Plus, Image, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -13,6 +15,18 @@ const Categories = () => {
   const { data: categories = [], isLoading, isFetching } = useGetCategories();
   const { mutate: deleteCategory } = useDeleteCategory();
   const { mutate: toggleStatus } = useToggleCategoryStatus();
+
+  // Pagination logic
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const totalPages = Math.ceil(categories.length / limit);
+  const currentCategories = categories.slice((page - 1) * limit, page * limit);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
 
   useEffect(() => {
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
@@ -49,7 +63,7 @@ const Categories = () => {
           onClick={() => navigate('/categories/add')}
           className="bg-brand-primary hover:bg-coffee-800 text-text-on-brand font-label-md text-label-md px-6 py-3 rounded-lg shadow-sm transition-all duration-200 flex items-center gap-2 border-b-2 border-coffee-800 active:border-b-0 active:translate-y-px cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[18px]">add</span>
+          <Plus className=" text-[18px]" />
           Add Category
         </button>
       </div>
@@ -75,7 +89,7 @@ const Categories = () => {
               </div>
             </article>
           ))
-        ) : categories.map(category => (
+        ) : currentCategories.map(category => (
           <article
             key={category._id} // 👉 MongoDB _id
             ref={addToCardsRef}
@@ -89,7 +103,7 @@ const Categories = () => {
               {category.image?.url ? (
                 <img alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={category.image.url} />
               ) : (
-                <div className="w-full h-full flex items-center justify-center"><span className="material-symbols-outlined text-4xl text-text-muted opacity-50">image</span></div>
+                <div className="w-full h-full flex items-center justify-center"><Image className=" text-4xl text-text-muted opacity-50" /></div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
               <div className="absolute bottom-0 left-0 p-4">
@@ -123,13 +137,13 @@ const Categories = () => {
                     onClick={() => navigate(`/categories/edit/${category._id}`)}
                     className="p-2 text-text-muted hover:text-brand-primary hover:bg-bg-canvas rounded-full transition-colors cursor-pointer"
                   >
-                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                    <Pencil className=" text-[20px]" />
                   </button>
                   <button
                     onClick={() => deleteCategory(category._id)}
                     className="p-2 text-text-muted hover:text-danger hover:bg-danger/10 rounded-full transition-colors cursor-pointer"
                   >
-                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                    <Trash2 className=" text-[20px]" />
                   </button>
                 </div>
               </div>
@@ -142,6 +156,46 @@ const Categories = () => {
           </div>
         )}
       </div>
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="p-4 flex items-center justify-between bg-bg-surface rounded-xl border border-bg-muted/30">
+          <span className="text-sm text-text-muted">
+            Showing page {page} of {totalPages}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className=" text-[18px]" />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`w-8 h-8 rounded border text-sm font-medium transition-colors ${
+                  pageNum === page
+                    ? 'bg-brand-primary text-white border-brand-primary'
+                    : 'border-bg-muted text-text-muted hover:bg-bg-surface-hover'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className="p-2 rounded border border-bg-muted text-text-muted hover:bg-bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className=" text-[18px]" />
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { useAdminProfile, useUpdateAdminProfile, useChangeAdminPassword, useRequestPhoneOtp, useVerifyPhoneUpdate } from '../hooks/useProfile';
 import toast from 'react-hot-toast';
 
+import { Smartphone } from 'lucide-react';
+
 const Profile = () => {
     const { data: user, isLoading, isFetching } = useAdminProfile();
     const updateProfile = useUpdateAdminProfile();
@@ -278,7 +280,7 @@ const Profile = () => {
                     <div className="bg-bg-surface rounded-xl p-8 w-full max-w-md shadow-2xl">
                         <div className="text-center mb-8">
                             <div className="w-14 h-14 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="material-symbols-outlined text-brand-primary text-[28px]">smartphone</span>
+                                <Smartphone className=" text-brand-primary text-[28px]" />
                             </div>
                             <h3 className="text-xl font-bold text-text-base">Verify New Number</h3>
                             <p className="text-sm text-text-muted mt-2">

@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import { useNavigate } from 'react-router-dom';
 import { useGetCustomization, useToggleOptionStatus, useDeleteOption, useInitCustomization } from '../hooks/useOptions';
 
+import { Puzzle, Play, Plus, Trash2, Image, EyeOff, Pencil } from 'lucide-react';
+
 const Options = () => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ const Options = () => {
       <main className="flex-1 p-6 md:p-margin-page max-w-container-max mx-auto w-full flex flex-col items-center justify-center min-h-[70vh] opacity-0" ref={containerRef}>
         <div className="bg-bg-surface border border-bg-muted rounded-2xl p-12 text-center max-w-lg shadow-sm">
           <div className="w-20 h-20 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="material-symbols-outlined text-4xl">extension</span>
+            <Puzzle className=" text-4xl" />
           </div>
           <h2 className="font-heading text-headline-md text-text-base mb-3">Initialize Customization</h2>
           <p className="font-body-md text-text-muted mb-8">
@@ -57,7 +59,7 @@ const Options = () => {
             disabled={isInitializing}
             className="bg-brand-primary text-text-on-brand px-8 py-3.5 rounded-xl font-label-md shadow-sm hover:bg-coffee-800 transition-all flex items-center gap-2 mx-auto disabled:opacity-50 cursor-pointer"
           >
-            {isInitializing ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div> : <span className="material-symbols-outlined text-[20px]">play_arrow</span>}
+            {isInitializing ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-text-on-brand"></div> : <Play className=" text-[20px]" />}
             {isInitializing ? 'Initializing...' : 'Run Setup'}
           </button>
         </div>
@@ -78,7 +80,7 @@ const Options = () => {
           onClick={() => navigate(`/options/add?step=${activeTab}`)}
           className="inline-flex items-center gap-2 bg-brand-primary text-text-on-brand px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_2px_0_0_rgba(0,0,0,0.1)] hover:bg-coffee-800 transition-colors whitespace-nowrap self-start md:self-auto cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[18px]">add</span> Add Option
+          <Plus className=" text-[18px]" /> Add Option
         </button>
       </div>
 
@@ -134,18 +136,18 @@ const Options = () => {
               onClick={() => deleteOption({ stepNumber: activeTab, optionId: opt._id })}
               className="absolute top-6 right-6 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur shadow-sm text-danger flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-error hover:text-white cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[18px]">delete</span>
+              <Trash2 className=" text-[18px]" />
             </button>
 
             <div className="w-full aspect-video rounded-lg overflow-hidden bg-bg-muted flex-shrink-0 border border-bg-muted shadow-sm relative">
               {opt.image?.url ? (
                 <img alt={opt.name} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${!opt.isActive ? 'grayscale opacity-70' : ''}`} src={opt.image.url} />
               ) : (
-                <div className="w-full h-full flex items-center justify-center"><span className="material-symbols-outlined text-4xl text-text-muted opacity-50">image</span></div>
+                <div className="w-full h-full flex items-center justify-center"><Image className=" text-4xl text-text-muted opacity-50" /></div>
               )}
               {!opt.isActive && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-4xl text-white drop-shadow-md">visibility_off</span>
+                  <EyeOff className=" text-4xl text-white drop-shadow-md" />
                 </div>
               )}
             </div>
@@ -175,7 +177,7 @@ const Options = () => {
                     onClick={() => navigate(`/options/edit/${opt._id}?step=${activeTab}`)}
                     className="p-1 rounded text-text-muted hover:text-brand-primary hover:bg-bg-muted transition-colors cursor-pointer"
                   >
-                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                    <Pencil className=" text-[16px]" />
                   </button>
                   {opt.isActive ? (
                     <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#fcead7] text-[#c27823]">Active</span>
@@ -194,7 +196,7 @@ const Options = () => {
           className="bg-transparent border-2 border-dashed border-bg-muted rounded-xl p-4 flex flex-col items-center justify-center gap-3 hover:border-brand-primary hover:bg-bg-canvas transition-all min-h-[300px] group cursor-pointer"
         >
           <div className="w-12 h-12 rounded-full bg-bg-muted flex items-center justify-center text-text-muted group-hover:text-brand-primary group-hover:bg-brand-primary-fixed transition-colors">
-            <span className="material-symbols-outlined text-[24px]">add</span>
+            <Plus className=" text-[24px]" />
           </div>
           <div className="text-center">
             <span className="font-heading text-lg font-bold text-text-base block mb-1">Add New {currentStep?.title || 'Option'}</span>
