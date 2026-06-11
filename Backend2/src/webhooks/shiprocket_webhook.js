@@ -7,21 +7,21 @@ import { config } from "../config/index.js";
 // Maps Shiprocket's current_status strings to our orderStatus enum
 const STATUS_MAP = {
     // Picked up / In transit → shipped
-    "Picked Up": "shipped",
-    "In Transit": "shipped",
-    "Reached at Destination Hub": "shipped",
+    "PICKED UP": "shipped",
+    "IN TRANSIT": "shipped",
+    "REACHED AT DESTINATION HUB": "shipped",
 
     // Out for delivery
-    "Out For Delivery": "out_for_delivery",
+    "OUT FOR DELIVERY": "out_for_delivery",
 
     // Delivered
-    "Delivered": "delivered",
+    "DELIVERED": "delivered",
 
     // RTO / Cancellation
-    "RTO Initiated": "cancelled",
-    "RTO Delivered": "cancelled",
-    "Cancelled": "cancelled",
-    "Undelivered": "cancelled"
+    "RTO INITIATED": "cancelled",
+    "RTO DELIVERED": "cancelled",
+    "CANCELLED": "cancelled",
+    "UNDELIVERED": "cancelled"
 };
 
 // =========================
@@ -41,7 +41,7 @@ export const shiprocketWebhookHandler = async (req, res) => {
         // 2. Extract data from Shiprocket webhook payload
         // Shiprocket sends: { order_id, current_status, awb, courier_name, ... }
         const shiprocketOrderId = payload.order_id;
-        const currentStatus = payload.current_status;
+        const currentStatus = payload.current_status?.toUpperCase();
         const awb = payload.awb;
         const courierName = payload.courier_name;
         const etd = payload.etd; // estimated time of delivery
@@ -95,6 +95,7 @@ export const shiprocketWebhookHandler = async (req, res) => {
             order.trackingUrl = `https://shiprocket.co/tracking/${awb}`;
         }
         if (courierName) order.courierName = courierName;
+        if (etd) order.etd = etd;
 
         // Auto-set date fields
         if (mappedStatus === "shipped") order.shippedAt = Date.now();

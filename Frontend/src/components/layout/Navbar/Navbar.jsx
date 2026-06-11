@@ -11,6 +11,7 @@ import MobileMenu from './MobileMenu';
 import GlobalSearch from './GlobalSearch';
 import { useUser, useLogout } from '../../../hooks/useAuth';
 import { useCart } from '../../../hooks/useCart';
+import { getGuestCart } from '../../../utils/guestCart';
 import API from '../../../api';
 
 const navLinks = [
@@ -31,6 +32,7 @@ const Navbar = () => {
   const { data: user } = useUser();
   const { cart } = useCart();
   const queryClient = useQueryClient();
+  const cartCount = user ? cart?.length || 0 : getGuestCart().length;
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -87,8 +89,8 @@ const Navbar = () => {
 
               <Link to='/cart' className='relative'>
                 <ShoppingBag size={24} className='text-light-yellow cursor-pointer' />
-                {cart?.length > 0 && (
-                  <span className='card-count'>{cart.length}</span>
+                {cartCount > 0 && (
+                  <span className='card-count'>{cartCount}</span>
                 )}
               </Link>
 

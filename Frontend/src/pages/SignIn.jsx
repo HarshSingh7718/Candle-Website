@@ -1,18 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
-import { useLogin, useGoogleLogin } from "../hooks/useAuth"; // IMPORT THE NEW HOOK
+import { useQueryClient } from "@tanstack/react-query";
+import { useLogin, useGoogleLogin, useUser } from "../hooks/useAuth"; // IMPORT THE NEW HOOK
+import { mergeGuestCart } from "../utils/guestCart";
 import SEO from '../components/SEO';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { data: user, isLoading } = useUser();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+      if (!isLoading && user) {
+          navigate("/");
+      }
+  }, [user, isLoading, navigate]);
 
   // Pull in our mutations
   const loginMutation = useLogin();
   const googleLoginMutation = useGoogleLogin();
+
+  const handlePostLogin = async () => {
+    const merged = await mergeGuestCart(queryClient);
+    if (merged) {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Guest items added to your cart!");
+    }
+    navigate(redirectTo);
+  };
 
   // Form State
   const [formData, setFormData] = useState({
@@ -37,9 +58,9 @@ const SignIn = () => {
         password: formData.password,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
           toast.success(`Welcome back, ${data.user.firstName}!`);
-          navigate("/");
+          await handlePostLogin();
         },
         onError: (error) => {
           toast.error(error.response?.data?.message || "Invalid credentials");
@@ -107,7 +128,7 @@ const SignIn = () => {
                   onSuccess={(credentialResponse) => {
                     // Pass callbacks here so the UI can react!
                     googleLoginMutation.mutate(credentialResponse.credential, {
-                      onSuccess: (data) => {
+                      onSuccess: async (data) => {
                         if (data.needsPhone) {
                           toast.success(
                             "Almost done! Please link your mobile number."
@@ -115,7 +136,7 @@ const SignIn = () => {
                           navigate("/complete-google-profile");
                         } else {
                           toast.success("Signed in with Google successfully!");
-                          navigate("/");
+                          await handlePostLogin();
                         }
                       },
                       onError: (error) => {

@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../api"; // Assuming your axios instance is here
 import toast from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
-import { useAuthActions, useGoogleLogin } from "../hooks/useAuth";
+import { useAuthActions, useGoogleLogin, useUser } from "../hooks/useAuth";
 import SEO from '../components/SEO';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { data: user, isLoading } = useUser();
+
+  useEffect(() => {
+      if (!isLoading && user) {
+          navigate("/");
+      }
+  }, [user, isLoading, navigate]);
 
   const { sendRegistrationOtp, isSendingRegOtp } = useAuthActions();
   const googleLoginMutation = useGoogleLogin();

@@ -27,6 +27,7 @@ import seoRoute from './routes/seoRoute.js';
 
 
 const app = express();
+app.set('trust proxy', 1);
 
 // CORS
 const allowedOrigins = [
