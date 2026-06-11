@@ -91,19 +91,31 @@ const ShopDetails = () => {
     name: product.name,
     image: product.images?.[0]?.url || "",
     description: product.description,
+    sku: product._id,
+    mpn: product._id,
     brand: {
       "@type": "Brand",
       name: "Naisha Creations",
     },
     offers: {
       "@type": "Offer",
+      url: window.location.href,
       priceCurrency: "INR",
       price: product.discountPrice > 0 ? product.discountPrice : product.price,
+      priceValidUntil: "2030-12-31",
+      itemCondition: "https://schema.org/NewCondition",
       availability:
         product.stock > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
     },
+    ...(product.numOfReviews > 0 ? {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: product.ratings,
+        reviewCount: product.numOfReviews,
+      }
+    } : {}),
   };
 
   return (
