@@ -31,7 +31,7 @@ const formatOrderData = (data) => {
         { name: "Processing", date: currentStatusIndex >= 1 ? formatDate(order.updatedAt) : "Pending", completed: currentStatusIndex >= 1 },
         { name: "Packaged", date: currentStatusIndex >= 2 ? formatDate(order.updatedAt) : "Pending", completed: currentStatusIndex >= 2 },
         { name: "Shipped", date: order.shippedAt ? formatDate(order.shippedAt) : "Pending", completed: currentStatusIndex >= 3 },
-        { name: "Delivered", date: currentStatusIndex === 4 ? formatDate(order.updatedAt) : "Expected soon", completed: currentStatusIndex === 4 },
+        { name: "Delivered", date: currentStatusIndex === 4 ? formatDate(order.updatedAt) : (order.etd ? `Exp: ${new Date(order.etd).toLocaleDateString('en-GB')}` : "Expected soon"), completed: currentStatusIndex === 4 },
     ];
 
     return {

@@ -143,6 +143,9 @@ const orderSchema = new mongoose.Schema({
     //  Cancel 
     cancelReason: String,
 
+    // Estimated Time of Delivery
+    etd: String,
+
     labelUrl: String,    // Shiprocket label PDF URL
     invoiceUrl: String,  // Shiprocket invoice PDF URL
     manifestUrl: String, // Shiprocket manifest PDF URL

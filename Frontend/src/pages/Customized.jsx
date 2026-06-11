@@ -22,6 +22,9 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import API from "../api";
 import { trackAddToCart } from "../utils/metaPixel";
+import { useUser } from "../hooks/useAuth";
+import { addToGuestCart } from "../utils/guestCart";
+import { useNavigate } from "react-router-dom";
 
 const STEPS = [
   { n: 1, label: "Vessel" },
@@ -33,6 +36,8 @@ const STEPS = [
 export default function Customized() {
   const { addToCart } = useCart();
   const queryClient = useQueryClient();
+  const { data: user } = useUser();
+  const navigate = useNavigate();
 
   // 👉 1. API Hooks (Gets both basePrice and options from one route)
   const [step, setStep] = useState(1);
@@ -109,6 +114,50 @@ export default function Customized() {
   const handleAddToCart = async () => {
     if (!selectedVessel || !selectedScent) {
       return toast.error("Missing vessel or scent selection!");
+    }
+
+    if (!user) {
+        addToGuestCart({
+            type: "custom",
+            config: {
+                vesselId: selectedVessel._id,
+                scentId: selectedScent._id,
+                addOnIds: selectedAddOns.map(a => a._id),
+                message: message || "",
+                quantity: 1
+            },
+            quantity: 1
+        });
+        toast((t) => (
+            <div className="flex flex-col gap-2">
+                <p className="font-medium text-sm">Item saved! Sign in to checkout.</p>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            toast.dismiss(t.id);
+                            navigate("/signin?redirect=/cart");
+                        }}
+                        className="px-3 py-1.5 bg-coffee-600 text-white text-xs rounded font-semibold cursor-pointer hover:bg-coffee-700"
+                    >
+                        Sign In
+                    </button>
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="px-3 py-1.5 border border-coffee-200 text-coffee-600 text-xs rounded cursor-pointer hover:bg-coffee-50"
+                    >
+                        Later
+                    </button>
+                </div>
+            </div>
+        ), { duration: 6000 });
+        
+        // Reset Builder
+        setStep(1);
+        setSelectedVessel(null);
+        setSelectedScent(null);
+        setSelectedAddOns([]);
+        setMessage("");
+        return;
     }
 
     try {

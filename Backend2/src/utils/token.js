@@ -25,7 +25,8 @@ export const setTokenCookie = (res, token) => {
 };
 
 export const clearTokenCookie = (res) => {
-    res.clearCookie("userToken", cookieOptions);
+    const { maxAge, ...clearOptions } = cookieOptions;
+    res.clearCookie("userToken", clearOptions);
 };
 
 // Admin cookie
@@ -34,5 +35,6 @@ export const setAdminTokenCookie = (res, token) => {
 };
 
 export const clearAdminTokenCookie = (res) => {
-    res.clearCookie("adminToken", cookieOptions);
+    const { maxAge, ...clearOptions } = cookieOptions;
+    res.clearCookie("adminToken", clearOptions);
 };

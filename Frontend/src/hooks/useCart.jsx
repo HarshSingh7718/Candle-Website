@@ -2,10 +2,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import API from '../api';
 import toast from 'react-hot-toast';
 import { useUser } from './useAuth';
+import { useNavigate } from 'react-router-dom';
+import { addToGuestCart } from '../utils/guestCart';
 
 export const useCart = () => {
   const queryClient = useQueryClient();
   const { data: user } = useUser();
+  const navigate = useNavigate();
 
   // 1. Get Full Cart -> GET /api/cart/getcart
   const { data: cart = [], isLoading: isCartLoading } = useQuery({
@@ -89,6 +92,40 @@ export const useCart = () => {
     billing, // 👉 Expose billing data to your components
     isLoading: isCartLoading || isBillingLoading, // Consolidate loading states
     addToCart: (item, quantity = 1) => {
+      if (!user) {
+        // Save to guest cart
+        const guestItem = item.customCandleId 
+            ? { customCandleId: item.customCandleId, quantity }
+            : { productId: item._id || item, quantity };
+        
+        addToGuestCart(guestItem);
+
+        // Prompt login with a toast
+        toast((t) => (
+            <div className="flex flex-col gap-2">
+                <p className="font-medium text-sm">Item saved! Sign in to checkout.</p>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            toast.dismiss(t.id);
+                            navigate("/signin?redirect=/cart");
+                        }}
+                        className="px-3 py-1.5 bg-coffee-600 text-white text-xs rounded font-semibold"
+                    >
+                        Sign In
+                    </button>
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="px-3 py-1.5 border border-coffee-200 text-coffee-600 text-xs rounded"
+                    >
+                        Later
+                    </button>
+                </div>
+            </div>
+        ), { duration: 6000 });
+        
+        return;
+      }
 
       // Scenario 1: It's a Custom Candle object from Customized.jsx
       if (item.customCandleId) {
