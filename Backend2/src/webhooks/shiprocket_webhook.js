@@ -1,5 +1,6 @@
 import { Order } from "../models/orderModel.js";
 import { config } from "../config/index.js";
+import mongoose from "mongoose";
 
 // =========================
 //  SHIPROCKET STATUS MAP
@@ -61,11 +62,22 @@ export const shiprocketWebhookHandler = async (req, res) => {
             return res.status(200).json({ success: true, message: "Status acknowledged but not mapped" });
         }
 
-        // 4. Find order — Shiprocket sends back the order_id we gave it (our MongoDB _id)
-        let order = await Order.findOne({ orderId: shiprocketOrderId }).populate("user", "firstName phoneNumber");
+        // 4. Find order
+        let order;
+
+        // Try finding by MongoDB _id (since we pass order._id.toString() as order_id to Shiprocket)
+        if (mongoose.Types.ObjectId.isValid(shiprocketOrderId)) {
+            order = await Order.findById(shiprocketOrderId).populate("user", "firstName phoneNumber");
+        }
+
+        // Fallback: search by custom orderId (NC...)
+        if (!order) {
+            order = await Order.findOne({ orderId: shiprocketOrderId }).populate("user", "firstName phoneNumber");
+        }
 
         // Fallback: search by shiprocketOrderId field (numeric ID from Shiprocket)
-        if (!order) {
+        // Only attempt if the value is numeric to prevent CastError from NaN
+        if (!order && !isNaN(Number(shiprocketOrderId))) {
             order = await Order.findOne({ shiprocketOrderId: Number(shiprocketOrderId) })
                 .populate("user", "firstName phoneNumber");
         }
