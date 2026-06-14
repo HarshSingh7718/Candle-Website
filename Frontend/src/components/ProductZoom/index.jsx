@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import {
-  ChevronUp,
-  ChevronDown,
-  Star,
-  Heart,
-  Plus,
-  Minus,
-  X
-} from "lucide-react";
+import { ChevronUp, ChevronDown, Star, Heart, Plus, Minus, X, Flame, Package, Droplets, ArrowRight } from "lucide-react";
 import { trackAddToCart } from "../../utils/metaPixel";
 import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../hooks/useWishlist";

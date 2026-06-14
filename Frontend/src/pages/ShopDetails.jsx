@@ -134,7 +134,7 @@ const ShopDetails = () => {
           />
 
           {/* ─────────────── Tabs Area ─────────────── */}
-          <div className="mt-8" ref={tabsSectionRef} id="product-tabs">
+          <div className="mt-8 scroll-mt-28" ref={tabsSectionRef} id="product-tabs">
             <div className="flex border-b border-muted gap-8 md:gap-10">
               {["description", "additional", "reviews"].map((tab) => (
                 <button
