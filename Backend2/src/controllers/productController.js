@@ -63,16 +63,25 @@ export const getSingleProduct = async (req, res) => {
 export const getAllCandles = async (req, res) => {
   const {
     page = 1,
-    limit = 10,
+    limit = 12,
     maxPrice,
     search,
-    sort
+    sort,
+    filter
   } = req.query;
 
   const query = {
-    type: "simpleCandle",
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   };
+
+  if (filter === "bestSeller") {
+    query.isBestSeller = true;
+  } else if (filter === "trending") {
+    query.isTrending = true;
+  } else if (filter === "latest") {
+    query.isLatest = true;
+  }
 
   if (search) {
     query.name = { $regex: search, $options: "i" };
@@ -83,9 +92,9 @@ export const getAllCandles = async (req, res) => {
     query.effectivePrice = { $lte: priceLimit };
   }
 
-  let sortOption = { createdAt: -1 };
+  let sortOption = filter === "bestSeller" ? { totalSold: -1, createdAt: -1 } : { createdAt: -1 };
   if (sort === "popularity") {
-    sortOption = { ratings: -1 };
+    sortOption = { totalSold: -1 };
   } else if (sort === "low-to-high") {
     sortOption = { effectivePrice: 1 };
   } else if (sort === "high-to-low") {

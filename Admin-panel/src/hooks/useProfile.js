@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
 export const useAdminProfile = () => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['adminProfile'],
         queryFn: async () => {
             const { data } = await api.get('/user/profile');

@@ -19,7 +19,7 @@ export const getAllCategories = async (req, res) => {
 export const getProductsByCategory = async (req, res) => {
   let {
     page = 1,
-    limit = 10,
+    limit = 12,
     search,
     maxPrice,
     sort
@@ -50,7 +50,7 @@ export const getProductsByCategory = async (req, res) => {
 
   let sortOption = { createdAt: -1 };
   if (sort === "popularity") {
-    sortOption = { ratings: -1 };
+    sortOption = { totalSold: -1 };
   } else if (sort === "low-to-high") {
     sortOption = { price: 1 };
   } else if (sort === "high-to-low") {

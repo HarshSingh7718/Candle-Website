@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ChevronDown,
   Search,
@@ -15,7 +15,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import PageBanner from "../components/ui/PageBanner";
+
+import { trackInitiateCheckout, trackPurchase } from "../utils/metaPixel";
 
 // Custom Hooks
 import { useCart } from "../hooks/useCart";
@@ -31,7 +32,7 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   // --- Data Fetching ---
-  const { data: user } = useUser();
+  const { data: user, isLoading: isUserLoading } = useUser();
   // 👉 1. Destructured the billing object from useCart
   const { cart, billing, isLoading: isCartLoading } = useCart();
   const { createOrder, initRazorpay, verifyPayment, isPlacingOrder } =
@@ -43,9 +44,7 @@ const Checkout = () => {
   // --- State ---
   const savedAddresses = user?.addresses || [];
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const [showNewAddressForm, setShowNewAddressForm] = useState(
-    savedAddresses.length === 0,
-  );
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
@@ -66,7 +65,19 @@ const Checkout = () => {
   });
 
   // --- Effects ---
+  const hasTrackedCheckout = useRef(false);
+
   useEffect(() => {
+    if (billing && !isCartLoading && !hasTrackedCheckout.current) {
+      trackInitiateCheckout(billing);
+      hasTrackedCheckout.current = true;
+    }
+  }, [billing, isCartLoading]);
+
+  useEffect(() => {
+    if (isUserLoading) return;
+    if (!user) return;
+
     if (savedAddresses.length > 0 && !selectedAddressId) {
       const defaultAddr =
         savedAddresses.find((a) => a.isDefault) || savedAddresses[0];
@@ -75,7 +86,7 @@ const Checkout = () => {
     } else if (savedAddresses.length === 0) {
       setShowNewAddressForm(true);
     }
-  }, [savedAddresses, selectedAddressId]);
+  }, [savedAddresses, selectedAddressId, isUserLoading]);
 
   // 👉 2. Removed the manual subtotal, shippingCost, and totalAmount calculations!
 
@@ -209,6 +220,10 @@ const Checkout = () => {
 
       // Branch 1: COD
       if (paymentMethod === "cod") {
+        trackPurchase({
+          totalAmount: Math.max(0, (billing?.totalPrice || 0) - discountAmount),
+          orderItems: cart
+        });
         toast.success("Order placed successfully!");
         navigate("/account/orders");
         return;
@@ -237,6 +252,10 @@ const Checkout = () => {
               razorpay_order_id: res.razorpay_order_id,
               razorpay_payment_id: res.razorpay_payment_id,
               razorpay_signature: res.razorpay_signature,
+            });
+            trackPurchase({
+              totalAmount: Math.max(0, (billing?.totalPrice || 0) - discountAmount),
+              orderItems: cart
             });
             toast.success("Payment successful! Order confirmed.");
             navigate("/account/orders");
@@ -272,7 +291,6 @@ const Checkout = () => {
         description="Complete your purchase securely at Naisha Creations. Fast & reliable delivery. Pay with COD or Razorpay."
       />
       <div className="bg-light-yellow text-paragraph font-sans flex flex-col">
-        <PageBanner title="Checkout" currentPage="Checkout" />
 
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row flex-1 h-full w-full">
           {/* LEFT COLUMN: Delivery & Payment */}

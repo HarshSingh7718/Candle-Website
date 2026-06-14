@@ -27,7 +27,7 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
+        <div className="flex w-full h-screen bg-bg-canvas overflow-hidden">
             {/* Left Side (Image & Brand) */}
             <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
                 <img 
@@ -52,14 +52,14 @@ const ResetPassword = () => {
             </div>
 
             {/* Right Side (Form) */}
-            <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
+            <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-bg-surface">
                 
                 <div className="w-full max-w-[420px]">
                     <header className='text-center mb-10'>
-                        <h2 className='text-[32px] font-bold text-[#111827] tracking-tight mb-2'>
+                        <h2 className='text-[32px] font-bold text-text-base tracking-tight mb-2'>
                             Create New Password
                         </h2>
-                        <p className='text-gray-500 text-[15px]'>
+                        <p className='text-text-muted text-[15px]'>
                             Your new password must be different from previous used passwords.
                         </p>
                     </header>
@@ -69,7 +69,7 @@ const ResetPassword = () => {
                         
                         {/* New Password */}
                         <div className="space-y-1.5 text-left">
-                            <label className="block text-[13px] font-medium text-gray-600">New Password</label>
+                            <label className="block text-[13px] font-medium text-text-muted">New Password</label>
                             <div className="relative flex items-center">
                                 <input 
                                     type={showNewPassword ? "text" : "password"} 
@@ -77,12 +77,12 @@ const ResetPassword = () => {
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     required
-                                    className="w-full py-2.5 px-4 pr-10 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
+                                    className="w-full py-2.5 px-4 pr-10 bg-bg-surface border border-bg-muted rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-text-disabled text-[14px] transition-all"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowNewPassword(!showNewPassword)}
-                                    className="absolute right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="absolute right-4 text-text-disabled hover:text-text-muted transition-colors"
                                 >
                                     {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -91,7 +91,7 @@ const ResetPassword = () => {
 
                         {/* Confirm Password */}
                         <div className="space-y-1.5 text-left">
-                            <label className="block text-[13px] font-medium text-gray-600">Confirm Password</label>
+                            <label className="block text-[13px] font-medium text-text-muted">Confirm Password</label>
                             <div className="relative flex items-center">
                                 <input 
                                     type={showConfirmPassword ? "text" : "password"} 
@@ -99,12 +99,12 @@ const ResetPassword = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
-                                    className="w-full py-2.5 px-4 pr-10 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-gray-300 text-[14px] transition-all"
+                                    className="w-full py-2.5 px-4 pr-10 bg-bg-surface border border-bg-muted rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 placeholder:text-text-disabled text-[14px] transition-all"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    className="absolute right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="absolute right-4 text-text-disabled hover:text-text-muted transition-colors"
                                 >
                                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -112,24 +112,24 @@ const ResetPassword = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className='w-full py-3 mt-6 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[15px] cursor-pointer'>
+                        <button type="submit" className='w-full py-3 mt-6 bg-brand-primary hover:bg-coffee-800 text-white font-bold rounded-lg transition-all shadow-md shadow-brand-primary/30 text-[15px] cursor-pointer'>
                             Reset Password
                         </button>
                     </form>
 
                     {/* Back to Login */}
-                    <div className="text-center mt-8 text-[14px] text-gray-500">
+                    <div className="text-center mt-8 text-[14px] text-text-muted">
                         Back to {" "}
-                        <Link to="/" className="text-[#ea580c] font-bold hover:underline">
+                        <Link to="/" className="text-brand-primary font-bold hover:underline">
                             Sign in
                         </Link>
                     </div>
 
                     {/* Footer Links */}
-                    <div className="flex justify-center gap-6 mt-16 text-[12px] text-gray-400">
-                        <Link to="#" className="hover:text-gray-600 transition-colors">Privacy Policy</Link>
-                        <Link to="#" className="hover:text-gray-600 transition-colors">Terms of Service</Link>
-                        <Link to="#" className="hover:text-gray-600 transition-colors">Support</Link>
+                    <div className="flex justify-center gap-6 mt-16 text-[12px] text-text-disabled">
+                        <Link to="#" className="hover:text-text-muted transition-colors">Privacy Policy</Link>
+                        <Link to="#" className="hover:text-text-muted transition-colors">Terms of Service</Link>
+                        <Link to="#" className="hover:text-text-muted transition-colors">Support</Link>
                     </div>
 
                 </div>

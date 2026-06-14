@@ -1,20 +1,26 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
-export const useGetProducts = () => {
+export const useGetProducts = (page = 1, limit = 10, search = '', activeTab = 'All Products') => {
     return useQuery({
-        queryKey: ['products'],
+        placeholderData: keepPreviousData,
+        queryKey: ['products', page, limit, search, activeTab],
         queryFn: async () => {
-            // Adding limit=100 just to fetch a good chunk without pagination for now
-            const { data } = await api.get('/admin/products?limit=100');
-            return data.products;
+            let url = `/admin/products?page=${page}&limit=${limit}`;
+            if (search) url += `&search=${search}`;
+            if (activeTab === 'Low Stock') url += `&lowStock=true`;
+            if (activeTab === 'Drafts') url += `&inactive=true`;
+            
+            const { data } = await api.get(url);
+            return data;
         }
     });
 };
 
 export const useGetProduct = (id) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['product', id],
         queryFn: async () => {
             const { data } = await api.get(`/admin/product/${id}`);

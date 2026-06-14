@@ -13,10 +13,10 @@ const formatOrderData = (dbOrders) => {
     if (!dbOrders || dbOrders.length === 0) return [];
 
     return dbOrders.map(order => ({
-        id: `#ORD-${order._id.slice(-6).toUpperCase()}`,
+        id: order.orderId,
         rawId: order._id,
-        date: new Date(order.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric', month: 'short', day: 'numeric'
+        date: new Date(order.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit', month: '2-digit', year: 'numeric'
         }),
         status: order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1).replace(/_/g, ' '),
         total: `₹${(order.totalAmount || 0).toFixed(2)}`,
@@ -87,7 +87,7 @@ const Orders = () => {
                         {orders.map((order, idx) => (
                             <div
                                 key={idx}
-                                onClick={() => navigate(`/account/orders/${order.rawId}`)}
+                                onClick={() => navigate(`/account/orders/${order.id}`)}
                                 className="order-item opacity-0 bg-bg-surface border border-bg-muted rounded-lg p-5 cursor-pointer hover:border-primary/30 hover:shadow-md transition-all"
                             >
                                 <div className="flex items-center justify-between">
@@ -140,7 +140,7 @@ const Orders = () => {
                         {orders.map((order, idx) => (
                             <div
                                 key={idx}
-                                onClick={() => navigate(`/account/orders/${order.rawId}`)}
+                                onClick={() => navigate(`/account/orders/${order.id}`)}
                                 className="border border-bg-muted p-4 rounded-sm order-item opacity-0 bg-bg-surface cursor-pointer active:scale-[0.99] hover:border-gray-300 transition-all shadow-sm hover:shadow-md"
                             >
                                 <div className="flex justify-between items-center mb-3 pb-3 border-b border-bg-muted">

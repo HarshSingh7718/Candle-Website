@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import { trackViewContent } from '../utils/metaPixel';
 import SEO from "../components/SEO";
 import ProductZoom from "../components/ProductZoom";
 import { useCart } from "../hooks/useCart";
@@ -44,6 +45,12 @@ const ShopDetails = () => {
     setShowFullDescription(false);
   }, [slug]);
 
+  useEffect(() => {
+    if (product) {
+        trackViewContent(product);
+    }
+  }, [product]);
+
   /**
    * Scrolls to the Description tab section and opens it.
    * Passed down to ProductZoom so the short description acts as an anchor link.
@@ -84,19 +91,31 @@ const ShopDetails = () => {
     name: product.name,
     image: product.images?.[0]?.url || "",
     description: product.description,
+    sku: product._id,
+    mpn: product._id,
     brand: {
       "@type": "Brand",
       name: "Naisha Creations",
     },
     offers: {
       "@type": "Offer",
+      url: window.location.href,
       priceCurrency: "INR",
       price: product.discountPrice > 0 ? product.discountPrice : product.price,
+      priceValidUntil: "2030-12-31",
+      itemCondition: "https://schema.org/NewCondition",
       availability:
         product.stock > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
     },
+    ...(product.numOfReviews > 0 ? {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: product.ratings,
+        reviewCount: product.numOfReviews,
+      }
+    } : {}),
   };
 
   return (
@@ -204,7 +223,7 @@ const ShopDetails = () => {
                             {review.user}
                           </h4>
                           <p className="text-[10px] text-muted mt-1">
-                            {new Date(review.createdAt).toLocaleDateString()}
+                            {new Date(review.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                           </p>
                         </div>
                         <div className="flex">

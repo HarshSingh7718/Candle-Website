@@ -1,53 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-surface-container-low: #f5f3ef;
-  --color-on-primary: #ffffff;
-  --color-inverse-on-surface: #f2f0ed;
-  --color-on-tertiary-fixed: #1c1c15;
-  --color-outline-variant: #dbc2b0;
-  --color-surface-container-highest: #e4e2de;
-  --color-secondary-container: #e4e2e1;
-  --color-on-error: #ffffff;
-  --color-primary-container: #b15f00;
-  --color-on-tertiary: #ffffff;
-  --color-primary: #8d4b00;
-  --color-surface-container-lowest: #ffffff;
-  --color-primary-fixed: #ffdcc3;
-  --color-background: #fbf9f5;
-  --color-primary-fixed-dim: #ffb77d;
-  --color-tertiary-fixed-dim: #cac6bc;
-  --color-on-secondary-fixed-variant: #474746;
-  --color-on-tertiary-container: #fffbff;
-  --color-surface-variant: #e4e2de;
-  --color-error: #ba1a1a;
-  --color-inverse-primary: #ffb77d;
-  --color-surface-dim: #dbdad6;
-  --color-on-secondary-container: #656464;
-  --color-on-surface-variant: #554336;
-  --color-on-primary-fixed: #2f1500;
-  --color-tertiary-fixed: #e6e2d7;
-  --color-on-tertiary-fixed-variant: #48473f;
-  --color-outline: #887364;
-  --color-inverse-surface: #30312e;
-  --color-surface-container-high: #eae8e4;
-  --color-surface-container: #efeeea;
-  --color-surface: #fbf9f5;
-  --color-surface-bright: #fbf9f5;
-  --color-tertiary: #5e5c54;
-  --color-on-surface: #1b1c1a;
-  --color-error-container: #ffdad6;
-  --color-on-primary-fixed-variant: #6e3900;
-  --color-on-background: #1b1c1a;
-  --color-secondary: #5f5e5e;
-  --color-tertiary-container: #77756c;
-  --color-on-secondary-fixed: #1b1c1c;
-  --color-on-secondary: #ffffff;
-  --color-surface-tint: #904d00;
-  --color-secondary-fixed-dim: #c8c6c5;
-  --color-secondary-fixed: #e4e2e1;
-  --color-on-primary-container: #fffbff;
-  --color-on-error-container: #93000a;
+  /* 1. The Core Coffee Scale (Dusty Rose) */
+  --color-coffee-50: #f8f3f2;
+  --color-coffee-100: #f0e5e4;
+  --color-coffee-200: #dfcac7;
+  --color-coffee-300: #c8a8a3;
+  --color-coffee-400: #b0847d;
+  --color-coffee-500: #a67067;
+  --color-coffee-600: #8b5952;
+  --color-coffee-700: #734943;
+  --color-coffee-800: #5f3e3a;
+  --color-coffee-900: #503734;
+  --color-coffee-950: #291a18;
+
+  /* 2. Semantic Brand Colors */
+  --color-brand-primary: #5e3232;
+  --color-brand-secondary: #a67067;
+  
+  /* 3. Semantic Surfaces (Backgrounds) */
+  --color-bg-canvas: #fce8e8;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-hover: #f5dfdf;
+  --color-bg-muted: #e5d5d5;
+
+  /* 4. Semantic Typography */
+  --color-text-base: #221f1f;
+  --color-text-muted: #595554;
+  --color-text-disabled: #9e9a99;
+  --color-text-on-brand: #ffffff;
+
+  /* 5. Feedback / System Alerts */
+  --color-success: #16a34a;
+  --color-warning: #ea580c;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
 
   --radius-DEFAULT: 0.25rem;
   --radius-lg: 0.5rem;
@@ -62,16 +50,16 @@
   --spacing-stack-sm: 12px;
   --spacing-unit: 8px;
 
-  --font-body-lg: "Manrope", sans-serif;
-  --font-body-md: "Manrope", sans-serif;
-  --font-headline-lg: "Noto Serif", serif;
-  --font-headline-md: "Noto Serif", serif;
-  --font-label-sm: "Manrope", sans-serif;
-  --font-headline-xl: "Noto Serif", serif;
-  --font-label-md: "Manrope", sans-serif;
+  --font-body-lg: "Outfit", sans-serif;
+  --font-body-md: "Outfit", sans-serif;
+  --font-headline-lg: "Prata", serif;
+  --font-headline-md: "Prata", serif;
+  --font-label-sm: "Outfit", sans-serif;
+  --font-headline-xl: "Prata", serif;
+  --font-label-md: "Outfit", sans-serif;
   
-  --font-body: "Manrope", sans-serif;
-  --font-heading: "Noto Serif", serif;
+  --font-body: "Outfit", sans-serif;
+  --font-heading: "Prata", serif;
 }
 
 @utility text-body-lg {
@@ -120,8 +108,7 @@
 }
 
 body {
-    background-color: var(--color-background);
-    color: var(--color-on-background);
+    @apply bg-bg-canvas text-text-base;
     font-family: var(--font-body-md);
     font-size: 16px;
     line-height: 1.6;

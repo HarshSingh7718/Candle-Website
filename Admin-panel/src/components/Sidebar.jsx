@@ -1,20 +1,23 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { NavLink } from "react-router-dom";
+import { X, LogOut, LayoutDashboard, GalleryHorizontal, Package, Tags, Star, ShoppingBag, HelpCircle, Ticket, Settings, Users, BarChart3, Settings2 } from 'lucide-react';
 import { useAdminLogout } from "../hooks/useAdminAuth";
 
 // 👉 Pro-tip: Keep your links in an array to make the component super clean and easy to edit!
 const NAV_LINKS = [
-  { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/banners", icon: "view_carousel", label: "Banners" },
-  { to: "/inventory", icon: "inventory_2", label: "Inventory" },
-  { to: "/categories", icon: "category", label: "Categories" },
-  { to: "/reviews", icon: "star", label: "Reviews" },
-  { to: "/orders", icon: "shopping_bag", label: "Orders" },
-  { to: "/contacts", icon: "contact_support", label: "Contacts" },
-  { to: "/coupons", icon: "confirmation_number", label: "Coupons" },
-  { to: "/options", icon: "settings", label: "Options" },
-  { to: "/setting", icon: "tune", label: "Settings" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/banners", icon: GalleryHorizontal, label: "Banners" },
+  { to: "/inventory", icon: Package, label: "Inventory" },
+  { to: "/categories", icon: Tags, label: "Categories" },
+  { to: "/options", icon: Settings, label: "Options" },
+  { to: "/orders", icon: ShoppingBag, label: "Orders" },
+  { to: "/coupons", icon: Ticket, label: "Coupons" },
+  { to: "/reviews", icon: Star, label: "Reviews" },
+  { to: "/contacts", icon: HelpCircle, label: "Contacts" },
+  { to: "/users", icon: Users, label: "Users" },
+  { to: "/reports", icon: BarChart3, label: "Reports" },
+  { to: "/setting", icon: Settings2, label: "Settings" },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -62,10 +65,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Sidebar Container */}
       <nav
         ref={sidebarRef}
-        className={`bg-stone-50 dark:bg-black text-orange-700 dark:text-orange-500 font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-stone-200 dark:border-stone-800 shadow-[4px_0_24px_-12px_rgba(217,119,6,0.15)] flex-col py-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        className={`bg-brand-primary text-text-on-brand font-heading text-base tracking-tight h-screen w-64 border-r fixed left-0 top-0 border-coffee-800 flex-col pb-3 space-y-2 hide-scrollbar overflow-y-auto z-50 flex transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
-        <div className="px-6 mb-8 mt-2 flex items-center gap-4">
-          <div className="w-7 md:w-10  h-7 md:h-10 rounded-full bg-surface-container overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
+        <div className="px-6 py-5 mb-8 flex items-center gap-4 bg-coffee-950 border-b border-coffee-800">
+          <div className="w-7 md:w-10  h-7 md:h-10 rounded-full bg-bg-muted overflow-hidden flex-shrink-0 shadow-sm border border-stone-200 dark:border-stone-800">
             <a href="/setting">
               <img
                 alt="Administrator profile"
@@ -76,17 +79,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </div>
           <div>
             <a href="/setting">
-              <h1 className="font-heading text-sm md:text-lg font-bold text-stone-800 dark:text-stone-100 leading-tight">
+              <h1 className="font-heading text-sm md:text-lg font-bold text-text-on-brand leading-tight">
                 Naisha Admin
               </h1>
             </a>
           </div>
           {/* Close Button strictly visible only on mobile/tablet */}
           <button
-            className="lg:hidden ml-auto text-stone-500 hover:text-stone-800 dark:hover:text-stone-300 p-1 transition-colors cursor-pointer"
+            className="lg:hidden ml-auto text-coffee-200 hover:text-text-on-brand p-1 transition-colors cursor-pointer hover:scale-120 duration-200"
             onClick={() => setIsOpen(false)}
           >
-            <span className="material-symbols-outlined text-[24px]">close</span>
+            <X className="w-6 h-6" />
           </button>
         </div>
 
@@ -105,19 +108,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-6 py-3 mx-2 rounded-r-full border-l-4 transition-all duration-200 active:scale-95 transform ${
                   isActive
-                    ? "text-orange-800 dark:text-orange-400 font-bold bg-stone-100 dark:bg-stone-900 border-orange-600 shadow-sm"
-                    : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 border-transparent"
+                    ? "text-text-on-brand font-bold bg-coffee-800 border-brand-secondary shadow-sm"
+                    : "text-coffee-200 hover:text-text-on-brand hover:bg-coffee-800 border-transparent"
                 }`
               }
             >
               {/* 👉 THE FIX: Exposing isActive directly to the children via a callback function */}
               {({ isActive }) => (
                 <>
-                  <span
-                    className={`material-symbols-outlined text-[22px] ${isActive ? "fill" : ""}`}
-                  >
-                    {link.icon}
-                  </span>
+                  <link.icon
+                    className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-text-on-brand" : "text-coffee-200"}`}
+                  />
                   {link.label}
                 </>
               )}
@@ -126,19 +127,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </div>
 
         {/* Footer Area (Sign Out) */}
-        <div className="mt-auto space-y-1 pt-6 pb-4 border-t border-stone-200 dark:border-stone-800 mx-4">
+        <div className="mt-auto space-y-1 pt-6 pb-4 border-t border-coffee-800 mx-4">
           <button
             ref={addToRefs}
             onClick={handleLogout}
             disabled={isPending}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-stone-500 dark:text-stone-400 hover:text-error dark:hover:text-error-container hover:bg-error/10 dark:hover:bg-error/20 rounded-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-coffee-200 hover:text-danger hover:bg-bg-surface-hover/10 rounded-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-50"
           >
             {isPending ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>
             ) : (
-              <span className="material-symbols-outlined text-[22px]">
-                logout
-              </span>
+              <LogOut className="w-5 h-5" />
             )}
             <span className="font-label-md">
               {isPending ? "Signing out..." : "Sign Out"}

@@ -2,11 +2,12 @@ import { User } from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import 'dotenv/config';
 import { config } from "../config/index.js";
-import { generateToken, setTokenCookie, clearTokenCookie } from "../utils/token.js";
+import { generateToken, setTokenCookie, clearTokenCookie, setAdminTokenCookie, clearAdminTokenCookie} from "../utils/token.js";
 import { verifyGoogleToken, findOrCreateGoogleUser } from "../services/googleAuthService.js";
 import { sendOtp, verifyOtpService } from "../services/otp_services.js";
 import jwt from "jsonwebtoken";
 import { sendWelcomeEmail } from '../utils/sendEmail.js';
+import { checkOtpRateLimit } from "../utils/otpRateLimiter.js";
 
 
 
@@ -144,6 +145,9 @@ export const sendOtpController = async (req, res, next) => {
   if (existingUser) {
     throw new CustomError("User already exists", 400);
   }
+  
+  checkOtpRateLimit(phoneNumber);
+  
   await sendOtp(phoneNumber);
   res.status(200).json({
     success: true,
@@ -252,6 +256,12 @@ export const googleAuth = async (req, res) => {
   }
   const payload = await verifyGoogleToken(token);
   const { user, isNewUser } = await findOrCreateGoogleUser(payload);
+  if (user && !user.isActive) {
+      return res.status(403).json({
+          success: false,
+          message: "Access revoked by admin"
+      });
+  }
   if (isNewUser) {
     sendWelcomeEmail(user.email, user.firstName);
   }
@@ -322,14 +332,15 @@ export const login = async (req, res) => {
     throw new CustomError("Invalid phone number", 400);
   }
   const existingUser = await User.findOne(query);
-  // if (!existingUser.isActive) {
-  //     return res.status(403).json({
-  //         success: false,
-  //         message: "Access revoked by admin"
-  //     });
-  // }
+  
   if (!existingUser) {
     throw new CustomError("User not exists", 400);
+  }
+  if (!existingUser.isActive) {
+      return res.status(403).json({
+          success: false,
+          message: "Access revoked by admin"
+      });
   }
   const isPasswordValid = await bcrypt.compare(password, existingUser.password);
   if (!isPasswordValid) {
@@ -373,14 +384,14 @@ export const adminLogin = async (req, res) => {
     throw new CustomError("Invalid phone number", 400);
   }
   const existingUser = await User.findOne(query);
-  // if (!existingUser.isActive) {
-  //     return res.status(403).json({
-  //         success: false,
-  //         message: "Access revoked by admin"
-  //     });
-  // }
   if (!existingUser) {
     throw new CustomError("User not exists", 400);
+  }
+  if (!existingUser.isActive) {
+      return res.status(403).json({
+          success: false,
+          message: "Access revoked by admin"
+      });
   }
   if (existingUser.role !== "admin") {
     throw new CustomError("Access denied: Admin only", 403);
@@ -390,7 +401,7 @@ export const adminLogin = async (req, res) => {
     throw new CustomError("Password is invalid", 400);
   }
   const token = generateToken(existingUser);
-  setTokenCookie(res, token);
+  setAdminTokenCookie(res, token);
   existingUser.isLoggedIn = true;
   // existingUser.isAdmin =  existingUser.role === "admin";
   await existingUser.save();
@@ -450,6 +461,14 @@ export const logout = async (req, res) => {
     message: " User logged out successfully"
   });
 };
+
+export const adminLogout = async (req, res) => {
+  const userId = req.id;
+  await User.findByIdAndUpdate(userId, { isLoggedIn: false });
+  clearAdminTokenCookie(res);
+  return res.status(200).json({ success: true, message: "Admin logged out successfully" });
+};
+
 export const forgotPassword = async (req, res) => {
   const {
     phoneNumber
@@ -460,8 +479,11 @@ export const forgotPassword = async (req, res) => {
   if (!user) {
     throw new CustomError("User not found", 400);
   }
+  
+  checkOtpRateLimit(phoneNumber);
+  
   await sendOtp(phoneNumber);
-  user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  user.otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
   await user.save();
   return res.status(200).json({
     success: true,
@@ -518,8 +540,11 @@ export const resendOtp = async (req, res) => {
   if (!user) {
     throw new CustomError("User not found", 400);
   }
+  
+  checkOtpRateLimit(phoneNumber);
+  
   await sendOtp(phoneNumber);
-  user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  user.otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
   await user.save();
   return res.status(200).json({
     success: true,

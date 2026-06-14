@@ -5,6 +5,7 @@ import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
+import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 import { sendSMS } from "../services/otp_services.js";
 
 // =========================
@@ -62,7 +63,7 @@ export const razorpayWebhookHandler = async (req, res) => {
 
             // 5. IDEMPOTENCY: If already paid, skip
             if (order.paymentStatus === "paid") {
-                console.log(`ℹ️ Razorpay webhook: Order ${order._id} already paid, skipping`);
+                console.log(`ℹ️ Razorpay webhook: Order ${order.orderId} already paid, skipping`);
                 return res.status(200).json({ success: true, message: "Already processed" });
             }
 
@@ -84,6 +85,7 @@ export const razorpayWebhookHandler = async (req, res) => {
                     const prod = await Product.findById(item.product);
                     if (prod) {
                         prod.stock -= item.quantity;
+                        prod.totalSold = (prod.totalSold || 0) + item.quantity;
                         await prod.save();
                     }
                 }
@@ -105,7 +107,7 @@ export const razorpayWebhookHandler = async (req, res) => {
                         reduceStock("vessel", candle.vessel);
                         reduceStock("scent", candle.scent);
                         if (candle.addOns?.length > 0) {
-                            candle.addOns.forEach(id => reduceStock("addon", id));
+                            candle.addOns.forEach(id => reduceStock("addOn", id));
                         }
                     }
                 }
@@ -144,19 +146,26 @@ export const razorpayWebhookHandler = async (req, res) => {
 
             // 9. SEND SMS
             if (user?.phoneNumber) {
-                const shortOrderId = order._id.toString().slice(-6).toUpperCase();
+                const shortOrderId = order.orderId;
                 await sendSMS(
                     user.phoneNumber,
                     config.msg91.orderConfirmTemplateId,
                     {
                         NAME: user.firstName || "Customer",
                         ORDER_ID: shortOrderId,
-                        AMOUNT: String(order.totalAmount)
+                        AMOUNT: String(order.totalAmount),
+                        URL: `${config.url.frontend}/account/orders/${order.orderId}`
                     }
                 ).catch(err => console.error("Razorpay webhook SMS failed:", err.message));
             }
 
-            console.log(`✅ Razorpay webhook: Order ${order._id} confirmed via payment.captured`);
+            // Send order confirmation email
+            await sendOrderConfirmationEmail(user.email, {
+                ...order.toObject(),
+                user: { firstName: user.firstName }
+            });
+
+            console.log(`✅ Razorpay webhook: Order ${order.orderId} confirmed via payment.captured`);
         }
 
         // Always return 200 to acknowledge receipt

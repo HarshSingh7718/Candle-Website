@@ -33,7 +33,7 @@ const MyAccount = () => {
         duration: 0.6,
         stagger: 0.15,
         ease: "power3.out",
-        scrollTrigger: { trigger: ".account-section", start: "top 85%" },
+        scrollTrigger: { trigger: ".account-section", start: "top 95%" },
       });
     }, accountRef);
     return () => ctx.revert();
@@ -54,10 +54,10 @@ const MyAccount = () => {
 
   return (
     <>
-    <SEO
-      title="My Account - Naisha Creations"
-      description="Manage your profile, orders, saved addresses and wishlist at Naisha Creations."
-    />
+      <SEO
+        title="My Account - Naisha Creations"
+        description="Manage your profile, orders, saved addresses and wishlist at Naisha Creations."
+      />
       <PageBanner title="My Account" currentPage="My Account" />
       <div
         ref={accountRef}

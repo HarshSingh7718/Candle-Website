@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { useGetContacts, useUpdateContactStatus } from '../hooks/useContacts';
+import TableSkeleton from '../components/Skeletons/TableSkeleton';
+
+import { Search, X } from 'lucide-react';
 
 const Contacts = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,7 +18,7 @@ const Contacts = () => {
   const rowsRef = useRef([]);
 
   // 👉 Fetch from Backend
-  const { data, isLoading } = useGetContacts(page, limit);
+  const { data, isLoading, isFetching } = useGetContacts(page, limit);
   const { mutate: updateStatus } = useUpdateContactStatus();
 
   const queries = data?.contacts || [];
@@ -22,23 +26,22 @@ const Contacts = () => {
   const totalPages = data?.totalPages || 1;
 
   useEffect(() => {
-    if (isLoading) return;
     gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
     );
-  }, [isLoading]);
+  }, []);
 
   useEffect(() => {
-    if (rowsRef.current.length > 0) {
+    if (rowsRef.current.length > 0 && !isLoading) {
       gsap.fromTo(
         rowsRef.current,
         { opacity: 0, y: 15 },
         { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: "power2.out" }
       );
     }
-  }, [queries, searchQuery]);
+  }, [queries, searchQuery, isLoading]);
 
   const toggleStatus = (id, currentStatus) => {
     // Backend accepts exactly "pending" or "resolved"
@@ -63,28 +66,26 @@ const Contacts = () => {
     }
   };
 
-  if (isLoading) {
-    return <div className="flex-1 flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
-  }
+
 
   return (
     <main ref={mainRef} className="p-gutter md:p-margin-page max-w-container-max mx-auto w-full pb-20 flex-1 opacity-0">
 
       {/* Page Header */}
       <div className="mb-stack-lg">
-        <h2 className="font-heading text-headline-xl text-on-surface mb-2">Customer Support</h2>
-        <p className="font-body-lg text-body-lg text-on-surface-variant">Manage and respond to customer inquiries and feedback.</p>
+        <h2 className="font-heading text-headline-xl text-text-base mb-2">Customer Support</h2>
+        <p className="font-body-lg text-body-lg text-text-muted">Manage and respond to customer inquiries and feedback.</p>
       </div>
 
       {/* Queries List Card */}
-      <div className="bg-surface-container-lowest rounded-xl border border-surface-container-highest shadow-sm overflow-hidden p-stack-md relative">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-stack-md pb-stack-sm border-b border-surface-container-high gap-4">
-          <h3 className="font-heading text-headline-md text-on-surface">Recent Queries</h3>
+      <div className={`bg-bg-surface rounded-xl border border-bg-mutedest shadow-sm overflow-hidden p-stack-md relative transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-stack-md pb-stack-sm border-b border-bg-muted gap-4">
+          <h3 className="font-heading text-headline-md text-text-base">Recent Queries</h3>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:flex-none">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+              <Search className=" absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
-                className="w-full sm:w-64 pl-10 pr-4 py-2 bg-surface-container rounded-lg border-none focus:ring-2 focus:ring-primary text-body-md font-body-md placeholder-on-surface-variant transition-all outline-none"
+                className="w-full sm:w-64 pl-10 pr-4 py-2 bg-bg-surface-hover rounded-lg border-none focus:ring-2 focus:ring-brand-primary/20 text-body-md font-body-md placeholder:text-text-disabled transition-all outline-none"
                 placeholder="Search queries..."
                 type="text"
                 value={searchQuery}
@@ -97,45 +98,47 @@ const Contacts = () => {
         <div className="w-full overflow-x-auto hide-scrollbar">
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
-              <tr className="border-b border-surface-container-high">
-                <th className="py-4 px-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Customer</th>
+              <tr className="border-b border-bg-muted">
+                <th className="py-4 px-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Customer</th>
                 {/* 👉 Replaced Subject with Message */}
-                <th className="py-4 px-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Message</th>
-                <th className="py-4 px-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Date Received</th>
-                <th className="py-4 px-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Status</th>
-                <th className="py-4 px-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+                <th className="py-4 px-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Message</th>
+                <th className="py-4 px-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Date Received</th>
+                <th className="py-4 px-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Status</th>
+                <th className="py-4 px-4 font-label-md text-label-md text-text-muted uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredQueries.map((query) => (
+              {isLoading ? (
+                <TableSkeleton rows={limit} cols={5} />
+              ) : filteredQueries.map((query) => (
                 <tr
                   key={query._id}
                   ref={addToRowsRef}
                   // 👉 Triggers popup on row click
                   onClick={() => setSelectedContact(query)}
-                  className="border-b border-surface-container-high hover:bg-surface-container-low transition-colors group cursor-pointer"
+                  className="border-b border-bg-muted hover:bg-bg-surface-hover transition-colors group cursor-pointer"
                 >
                   <td className="py-4 px-4">
                     <div className="flex flex-col">
-                      <span className="font-body-md text-body-md font-semibold text-on-surface">{query.name}</span>
+                      <span className="font-body-md text-body-md font-semibold text-text-base">{query.name}</span>
                       {/* 👉 Replaced Email with Phone */}
-                      <span className="font-label-sm text-label-sm text-on-surface-variant">{query.phone || "No phone provided"}</span>
+                      <span className="font-label-sm text-label-sm text-text-muted">{query.phone || "No phone provided"}</span>
                     </div>
                   </td>
                   {/* 👉 Show truncated message */}
-                  <td className="py-4 px-4 font-body-md text-body-md text-on-surface max-w-[250px] truncate">
+                  <td className="py-4 px-4 font-body-md text-body-md text-text-base max-w-[250px] truncate">
                     {query.message}
                   </td>
-                  <td className="py-4 px-4 font-body-md text-body-md text-on-surface-variant">
-                    {new Date(query.createdAt).toLocaleDateString()}
+                  <td className="py-4 px-4 font-body-md text-body-md text-text-muted">
+                    {new Date(query.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </td>
                   <td className="py-4 px-4">
                     {query.status === 'resolved' ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#e8eedd] text-[#4b5d3a] border border-[#d1e0c0] capitalize">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-success/10 text-success border border-success/20 capitalize">
                         {query.status}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant border border-surface-dim capitalize">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-bg-canvas text-text-muted border border-bg-muted capitalize">
                         {query.status}
                       </span>
                     )}
@@ -146,7 +149,7 @@ const Contacts = () => {
                         e.stopPropagation(); // 👉 Prevents the popup from opening when clicking this button
                         toggleStatus(query._id, query.status);
                       }}
-                      className="text-primary hover:text-on-primary-fixed-variant transition-colors font-label-md text-label-md cursor-pointer"
+                      className="text-brand-primary hover:text-text-on-brand-fixed-variant transition-colors font-label-md text-label-md cursor-pointer"
                     >
                       {query.status === 'resolved' ? 'Reopen' : 'Resolve'}
                     </button>
@@ -154,9 +157,9 @@ const Contacts = () => {
                 </tr>
               ))}
 
-              {filteredQueries.length === 0 && (
+              {(!isLoading && filteredQueries.length === 0) && (
                 <tr>
-                  <td colSpan="5" className="py-12 text-center text-on-surface-variant">
+                  <td colSpan="5" className="py-12 text-center text-text-muted">
                     No queries found.
                   </td>
                 </tr>
@@ -166,22 +169,22 @@ const Contacts = () => {
         </div>
 
         {/* Pagination */}
-        <div className="mt-stack-md flex flex-col sm:flex-row justify-between items-center pt-stack-sm border-t border-surface-container-high gap-4">
-          <span className="font-label-md text-label-md text-on-surface-variant">
+        <div className="mt-stack-md flex flex-col sm:flex-row justify-between items-center pt-stack-sm border-t border-bg-muted gap-4">
+          <span className="font-label-md text-label-md text-text-muted">
             Showing {totalContacts === 0 ? 0 : (page - 1) * limit + 1} to {Math.min(page * limit, totalContacts)} of {totalContacts} queries
           </span>
           <div className="flex gap-2">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-3 py-1 border border-outline-variant rounded-md text-on-surface-variant disabled:opacity-50 font-label-md cursor-pointer transition-colors hover:bg-surface-container-low"
+              className="px-3 py-1 border border-bg-muted rounded-md text-text-muted disabled:opacity-50 font-label-md cursor-pointer transition-colors hover:bg-bg-surface-hover"
             >
               Prev
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(p => p + 1)}
-              className="px-3 py-1 border border-outline-variant rounded-md text-on-surface hover:bg-surface-container-low font-label-md cursor-pointer transition-colors disabled:opacity-50"
+              className="px-3 py-1 border border-bg-muted rounded-md text-text-base hover:bg-bg-surface-hover font-label-md cursor-pointer transition-colors disabled:opacity-50"
             >
               Next
             </button>
@@ -190,29 +193,29 @@ const Contacts = () => {
       </div>
 
       {/* 👉 Contact Detail Modal / Popup */}
-      {selectedContact && (
+      {selectedContact && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
           onClick={() => setSelectedContact(null)} // Click outside to close
         >
           <div
-            className="bg-surface-container-lowest p-8 rounded-2xl max-w-lg w-full shadow-2xl relative animate-in fade-in zoom-in duration-200"
+            className="bg-bg-surface p-8 rounded-2xl max-w-lg w-full shadow-2xl relative animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()} // Prevent clicking inside from closing it
           >
             <button
               onClick={() => setSelectedContact(null)}
-              className="absolute top-4 right-4 text-on-surface-variant hover:text-error transition-colors cursor-pointer"
+              className="absolute top-4 right-4 text-text-muted hover:text-danger transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined">close</span>
+              <X  />
             </button>
 
-            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-surface-variant">
-              <div className="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center text-xl font-heading text-primary">
+            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-bg-muted">
+              <div className="w-14 h-14 rounded-full bg-brand-primary/10 flex items-center justify-center text-xl font-heading text-brand-primary font-bold">
                 {selectedContact.name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h3 className="font-heading text-headline-sm text-on-surface">{selectedContact.name}</h3>
-                <span className={`inline-flex items-center px-2 py-0.5 mt-1 rounded text-xs font-bold capitalize ${selectedContact.status === 'resolved' ? 'bg-[#e8eedd] text-[#4b5d3a]' : 'bg-surface-variant text-on-surface-variant'}`}>
+                <h3 className="font-heading text-headline-sm text-text-base">{selectedContact.name}</h3>
+                <span className={`inline-flex items-center px-2 py-0.5 mt-1 rounded text-xs font-bold capitalize ${selectedContact.status === 'resolved' ? 'bg-success/10 text-success' : 'bg-bg-muted text-text-muted'}`}>
                   {selectedContact.status}
                 </span>
               </div>
@@ -220,29 +223,29 @@ const Contacts = () => {
 
             <div className="space-y-4 mb-8">
               <div>
-                <p className="text-xs font-bold tracking-widest text-on-surface-variant uppercase mb-1">Email Address</p>
-                <p className="font-body-md text-on-surface">{selectedContact.email}</p>
+                <p className="text-xs font-bold tracking-widest text-text-muted uppercase mb-1">Email Address</p>
+                <p className="font-body-md text-text-base">{selectedContact.email}</p>
               </div>
               <div>
-                <p className="text-xs font-bold tracking-widest text-on-surface-variant uppercase mb-1">Phone Number</p>
-                <p className="font-body-md text-on-surface">{selectedContact.phone || "Not provided"}</p>
+                <p className="text-xs font-bold tracking-widest text-text-muted uppercase mb-1">Phone Number</p>
+                <p className="font-body-md text-text-base">{selectedContact.phone || "Not provided"}</p>
               </div>
               <div>
-                <p className="text-xs font-bold tracking-widest text-on-surface-variant uppercase mb-1">Date Received</p>
-                <p className="font-body-md text-on-surface">{new Date(selectedContact.createdAt).toLocaleString()}</p>
+                <p className="text-xs font-bold tracking-widest text-text-muted uppercase mb-1">Date Received</p>
+                <p className="font-body-md text-text-base">{new Date(selectedContact.createdAt).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
               </div>
               <div>
-                <p className="text-xs font-bold tracking-widest text-on-surface-variant uppercase mb-2">Message</p>
-                <div className="p-4 bg-surface-container-low rounded-lg border border-outline-variant/50 max-h-48 overflow-y-auto custom-scrollbar">
-                  <p className="font-body-md text-on-surface whitespace-pre-wrap">{selectedContact.message}</p>
+                <p className="text-xs font-bold tracking-widest text-text-muted uppercase mb-2">Message</p>
+                <div className="p-4 bg-bg-surface-hover rounded-lg border border-bg-muted/50 max-h-48 overflow-y-auto custom-scrollbar">
+                  <p className="font-body-md text-text-base whitespace-pre-wrap">{selectedContact.message}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-surface-variant">
+            <div className="flex justify-end gap-3 pt-4 border-t border-bg-muted">
               <button
                 onClick={() => setSelectedContact(null)}
-                className="px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors cursor-pointer font-label-md"
+                className="px-5 py-2.5 rounded-lg border border-bg-muted text-text-base hover:bg-bg-surface-hover transition-colors cursor-pointer font-label-md"
               >
                 Close
               </button>
@@ -253,14 +256,15 @@ const Contacts = () => {
                     toggleStatus(selectedContact._id, selectedContact.status);
                     setSelectedContact(null); // Auto-close modal after resolving
                   }}
-                  className="px-5 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container transition-colors cursor-pointer font-label-md shadow-sm"
+                  className="px-5 py-2.5 rounded-lg bg-brand-primary text-text-on-brand hover:bg-brand-primary-container hover:text-text-on-brand-container transition-colors cursor-pointer font-label-md shadow-sm"
                 >
                   Mark as Resolved
                 </button>
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </main>
   );

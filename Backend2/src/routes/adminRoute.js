@@ -1,8 +1,8 @@
 import express from "express";
-import { adminLogin } from "../controllers/authController.js";
+import { adminLogin, adminLogout } from "../controllers/authController.js";
 import { createProduct, updateProduct, deleteProduct, getSingleProductAdmin, getAllProductsAdmin } from "../controllers/adminProductController.js";
 import { updateReviewStatus, toggleOptionStatus, toggleBannerStatus, toggleProductStatus, toggleCategoryStatus } from "../controllers/adminToggleController.js";
-import { isAuthenticated, isAdmin } from "../middleware/authmiddleware.js";
+import { isAdminAuthenticated, isAdmin } from "../middleware/authmiddleware.js";
 import { getAllReviewsAdmin } from "../controllers/adminReviewController.js";
 import { getAdminDashboard } from "../controllers/adminDasboardController.js";
 import { upload } from "../middleware/multerMiddleware.js";
@@ -10,14 +10,26 @@ import { getAllContacts, updateContactStatus } from "../controllers/adminContact
 import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin, getSingleCategoryAdmin, getCategoryProducts, updateCategoryProducts, migrateCategoryToArray } from "../controllers/adminCategoryController.js";
 import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
 import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
-import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus } from "../controllers/adminOrderController.js";
+import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus, getAvailableCouriersForOrder, shipOrder } from "../controllers/adminOrderController.js";
 import { createCoupon, getAllCoupons, getSingleCoupon, updateCoupon, toggleCouponStatus, deleteCoupon } from "../controllers/couponController.js";
 import { getSettings, updateSettings } from "../controllers/settingsController.js";
+import { getAllUsers, getUserById, blockUser } from "../controllers/adminUserController.js";
+import { getSummaryReport, getOrdersReport, getProductsReport, getCustomersReport, exportReport } from "../controllers/adminReportController.js";
+import rateLimit from "express-rate-limit";
+import { isAuthenticated } from "../middleware/authmiddleware.js";
+
+const blockLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10,
+    message: { success: false, message: "Too many block requests. Please try again later." }
+});
 
 const router = express.Router();
 
 //Admin Login
 router.post("/login", adminLogin);
+//Admin Logout
+router.post("/logout", isAuthenticated, isAdmin, adminLogout);
 
 // ==========================
 //  PRODUCT ROUTES
@@ -31,7 +43,7 @@ router.get("/products", isAuthenticated, isAdmin, getAllProductsAdmin);
 // Create product
 router.post(
     "/product",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.array("images", 4),
     createProduct
@@ -40,7 +52,7 @@ router.post(
 // Update product
 router.put(
     "/product/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.array("images", 4),
     updateProduct
@@ -49,7 +61,7 @@ router.put(
 // Delete product
 router.delete(
     "/product/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     deleteProduct
 );
@@ -57,7 +69,7 @@ router.delete(
 // Toggle product status
 router.patch(
     "/product/:id/toggle-status",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     toggleProductStatus
 );
@@ -74,7 +86,7 @@ router.get("/reviews", isAuthenticated, isAdmin, getAllReviewsAdmin);
 // Update review status
 router.patch(
     "/review/:productId/:reviewId",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     updateReviewStatus
 );
@@ -88,7 +100,7 @@ router.patch(
 // Get all contacts
 router.get(
     "/contacts",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getAllContacts
 );
@@ -96,7 +108,7 @@ router.get(
 // Update contact status
 router.patch(
     "/contact/:id/status",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     updateContactStatus
 );
@@ -108,8 +120,23 @@ router.patch(
 // ==========================
 
 router.get(
+    "/orders/:id/couriers",
+    isAdminAuthenticated,
+    isAdmin,
+    getAvailableCouriersForOrder
+);
+
+// Ship order
+router.post(
+    "/orders/:id/ship",
+    isAdminAuthenticated,
+    isAdmin,
+    shipOrder
+);
+
+router.get(
     "/orders/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getSingleOrderAdmin
 );
@@ -117,7 +144,7 @@ router.get(
 // Get all orders
 router.get(
     "/orders",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getAllOrdersAdmin
 );
@@ -125,7 +152,7 @@ router.get(
 // Update order status
 router.put(
     "/orders/:id/update",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     updateOrderStatus
 );
@@ -139,7 +166,7 @@ router.put(
 // Create category
 router.post(
     "/category",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.single("image"),
     createCategory
@@ -148,7 +175,7 @@ router.post(
 // Update category
 router.put(
     "/category/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.single("image"),
     updateCategory
@@ -157,7 +184,7 @@ router.put(
 // Delete category
 router.delete(
     "/category/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     deleteCategory
 );
@@ -165,14 +192,14 @@ router.delete(
 // Toggle category status
 router.patch(
     "/category/:id/toggle",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     toggleCategoryStatus
 );
 
 router.get(
     "/category/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getSingleCategoryAdmin
 );
@@ -181,7 +208,7 @@ router.get(
 // Get all categories
 router.get(
     "/categories",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getAllCategoriesAdmin
 );
@@ -189,7 +216,7 @@ router.get(
 // Get products assigned to a category (for category-product management UI)
 router.get(
     "/category/:id/products",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getCategoryProducts
 );
@@ -197,7 +224,7 @@ router.get(
 // Bulk assign/unassign products to a category
 router.put(
     "/category/:id/products",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     updateCategoryProducts
 );
@@ -205,7 +232,7 @@ router.put(
 // One-time migration: convert single category ObjectId to array
 router.post(
     "/migrate-categories",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     migrateCategoryToArray
 );
@@ -228,7 +255,7 @@ router.post(
 // Get single banner (For pre-filling the edit form)
 router.get(
     "/banner/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getSingleBanner
 );
@@ -239,7 +266,7 @@ router.get("/banners", isAuthenticated, isAdmin, getAllBanners);
 // Update banner
 router.put( // or router.patch, depending on your preference
     "/banner/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.fields([{ name: 'desktopImage', maxCount: 1 }, { name: 'mobileImage', maxCount: 1 }]), // 🔥 REQUIRED: In case they change the image!
     updateBanner
@@ -248,7 +275,7 @@ router.put( // or router.patch, depending on your preference
 // Toggle banner
 router.patch(
     "/banner/:id/toggle",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     toggleBannerStatus
 );
@@ -256,7 +283,7 @@ router.patch(
 // Delete banner
 router.delete(
     "/banner/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     deleteBanner
 );
@@ -270,14 +297,14 @@ router.delete(
 // Get all steps with options
 router.get(
     "/customization",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getAllStepOptions
 );
 
 router.post(
     "/customization/init-customization",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     initCustomization
 );
@@ -285,7 +312,7 @@ router.post(
 // Create option
 router.post(
     "/customization/:stepNumber",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.single("image"),
     createOption
@@ -294,7 +321,7 @@ router.post(
 // Update option
 router.put(
     "/customization/:stepNumber/:optionId",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     upload.single("image"),
     updateOption
@@ -303,7 +330,7 @@ router.put(
 // Delete option
 router.delete(
     "/customization/:stepNumber/:optionId",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     deleteOption
 );
@@ -311,7 +338,7 @@ router.delete(
 // Toggle option status
 router.patch(
     "/customization/:step/:optionId/toggle",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     toggleOptionStatus
 );
@@ -324,7 +351,7 @@ router.patch(
 
 router.get(
     "/dashboard",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getAdminDashboard
 );
@@ -338,7 +365,7 @@ router.get(
 // Create coupon
 router.post(
     "/coupons",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     createCoupon
 );
@@ -346,7 +373,7 @@ router.post(
 // Get all coupons
 router.get(
     "/coupons",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getAllCoupons
 );
@@ -354,7 +381,7 @@ router.get(
 // Get single coupon
 router.get(
     "/coupons/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getSingleCoupon
 );
@@ -362,7 +389,7 @@ router.get(
 // Update coupon
 router.put(
     "/coupons/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     updateCoupon
 );
@@ -370,7 +397,7 @@ router.put(
 // Toggle coupon status
 router.patch(
     "/coupons/:id/toggle",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     toggleCouponStatus
 );
@@ -378,7 +405,7 @@ router.patch(
 // Delete coupon
 router.delete(
     "/coupons/:id",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     deleteCoupon
 );
@@ -389,16 +416,81 @@ router.delete(
 
 router.get(
     "/settings",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     getSettings
 );
 
 router.put(
     "/settings",
-    isAuthenticated,
+    isAdminAuthenticated,
     isAdmin,
     updateSettings
+);
+
+// ==========================
+//  USERS ROUTES
+// ==========================
+
+router.get(
+    "/users",
+    isAdminAuthenticated,
+    isAdmin,
+    getAllUsers
+);
+
+router.get(
+    "/users/:id",
+    isAdminAuthenticated,
+    isAdmin,
+    getUserById
+);
+
+router.put(
+    "/users/:id/block",
+    isAdminAuthenticated,
+    isAdmin,
+    blockLimiter,
+    blockUser
+);
+
+// ==========================
+//  REPORTS ROUTES
+// ==========================
+
+router.get(
+    "/reports/summary",
+    isAdminAuthenticated,
+    isAdmin,
+    getSummaryReport
+);
+
+router.get(
+    "/reports/orders",
+    isAdminAuthenticated,
+    isAdmin,
+    getOrdersReport
+);
+
+router.get(
+    "/reports/products",
+    isAdminAuthenticated,
+    isAdmin,
+    getProductsReport
+);
+
+router.get(
+    "/reports/customers",
+    isAdminAuthenticated,
+    isAdmin,
+    getCustomersReport
+);
+
+router.post(
+    "/reports/export",
+    isAdminAuthenticated,
+    isAdmin,
+    exportReport
 );
 
 export default router;

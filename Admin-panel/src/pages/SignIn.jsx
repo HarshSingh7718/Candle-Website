@@ -24,7 +24,7 @@ export default function SignIn() {
     };
 
     return (
-        <div className="flex w-full h-screen bg-[#f9fafb] overflow-hidden">
+        <div className="flex w-full h-screen bg-bg-canvas overflow-hidden">
 
             {/* Left Side (Fixed/Static) */}
             <div className="hidden lg:block relative w-[35%] h-full bg-black overflow-hidden">
@@ -50,14 +50,14 @@ export default function SignIn() {
             </div>
 
             {/* Right Side (Form) */}
-            <div className="w-full lg:w-[65%] h-full flex flex-col items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
+            <div className="w-full lg:w-[65%] h-full flex flex-col items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-bg-surface">
 
                 <div className="w-full max-w-[420px] my-auto">
                     <header className='text-center mb-8'>
-                        <h2 className='text-[32px] font-bold text-[#111827] tracking-tight mb-2'>
+                        <h2 className='text-[32px] font-bold text-text-base tracking-tight mb-2'>
                             Welcome Back
                         </h2>
-                        <p className='text-gray-500 text-[14px]'>
+                        <p className='text-text-muted text-[14px]'>
                             Please enter your credentials to access the dashboard.
                         </p>
                     </header>
@@ -65,7 +65,7 @@ export default function SignIn() {
                     <form className='space-y-4' onSubmit={handleSubmit}>
                         {/* Identifier (Email or Mobile) */}
                         <div className="space-y-1.5 text-left">
-                            <label className="block text-[13px] font-medium text-gray-600">Email or Mobile Number</label>
+                            <label className="block text-[13px] font-medium text-text-muted">Email or Mobile Number</label>
                             <input
                                 required
                                 name="identifier"
@@ -74,15 +74,15 @@ export default function SignIn() {
                                 type="text"
                                 placeholder="name@example.com or 9876543210"
                                 disabled={isPending}
-                                className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] placeholder:text-gray-300 text-[14px] transition-all disabled:opacity-60"
+                                className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 placeholder:text-text-disabled text-[14px] transition-all disabled:opacity-60"
                             />
                         </div>
 
                         {/* Password */}
                         <div className="space-y-1.5 text-left">
                             <div className="flex justify-between items-center">
-                                <label className="block text-[13px] font-medium text-gray-600">Password</label>
-                                <Link to="/forgot-password" className="text-[13px] font-bold text-[#ea580c] hover:underline">
+                                <label className="block text-[13px] font-medium text-text-muted">Password</label>
+                                <Link to="/forgot-password" className="text-[13px] font-bold text-brand-primary hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -95,12 +95,12 @@ export default function SignIn() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
                                     disabled={isPending}
-                                    className="w-full py-2.5 px-4 bg-white border border-gray-200 rounded-[20px] focus:outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] placeholder:text-gray-300 text-[14px] transition-all pr-12 disabled:opacity-60"
+                                    className="w-full py-2.5 px-4 bg-bg-surface border border-bg-muted rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 placeholder:text-text-disabled text-[14px] transition-all pr-12 disabled:opacity-60"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#ea580c] cursor-pointer transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-brand-primary cursor-pointer transition-colors"
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} strokeWidth={1.5} />}
                                 </button>
@@ -111,7 +111,7 @@ export default function SignIn() {
                         <button
                             disabled={isPending}
                             type="submit"
-                            className='w-full py-2.5 mt-4 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold rounded-[20px] transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] text-[14px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none flex justify-center items-center gap-2'
+                            className='w-full py-2.5 mt-4 bg-brand-primary hover:bg-coffee-800 text-white font-bold rounded-lg transition-all shadow-md shadow-brand-primary/30 text-[14px] cursor-pointer disabled:bg-gray-400 disabled:shadow-none flex justify-center items-center gap-2'
                         >
                             {isPending ? (
                                 <>

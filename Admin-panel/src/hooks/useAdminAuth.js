@@ -29,7 +29,7 @@ export const useAdminLogout = () => {
         mutationFn: async () => {
             // 👉 Hits your backend to clear the HttpOnly cookie. 
             // (Double-check that '/auth/user/logout' is your correct admin route!)
-            await api.post('/auth/user/logout');
+            await api.post('/admin/logout');
         },
         onSuccess: () => {
             // 1. Remove the frontend wristband

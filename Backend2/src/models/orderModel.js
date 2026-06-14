@@ -37,6 +37,14 @@ const orderItemSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
+    //  Custom Order ID (public-facing)
+    orderId: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true,
+    },
+
     //  User
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -134,6 +142,13 @@ const orderSchema = new mongoose.Schema({
 
     //  Cancel 
     cancelReason: String,
+
+    // Estimated Time of Delivery
+    etd: String,
+
+    labelUrl: String,    // Shiprocket label PDF URL
+    invoiceUrl: String,  // Shiprocket invoice PDF URL
+    manifestUrl: String, // Shiprocket manifest PDF URL
     
 
     //  STATUS HISTORY
@@ -148,5 +163,12 @@ const orderSchema = new mongoose.Schema({
     ]
 
 }, { timestamps: true });
+
+// Auto-generate orderId from MongoDB _id before validation
+orderSchema.pre('validate', function () {
+    if (!this.orderId) {
+        this.orderId = `NC${this._id.toString().slice(-8)}`;
+    }
+});
 
 export const Order = mongoose.model("Order", orderSchema);

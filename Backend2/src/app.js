@@ -27,6 +27,7 @@ import seoRoute from './routes/seoRoute.js';
 
 
 const app = express();
+app.set('trust proxy', 1);
 
 // CORS
 const allowedOrigins = [
@@ -50,7 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Shiprocket webhook (uses normal JSON parsing, placed after express.json)
-app.post("/api/webhook/shiprocket", shiprocketWebhookHandler);
+app.post("/api/webhook/shipment", shiprocketWebhookHandler);
 
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -69,7 +70,6 @@ app.use("/api/auth", rateLimit({
 }))
 
 
-app.use('/', seoRoute);
 
 // ==========================
 //  ADMIN ROUTES
@@ -120,6 +120,8 @@ app.use("/api", wishlistRoutes);
 
 // COUPON ROUTES
 app.use("/api/coupons", couponRoutes);
+
+app.use('/', seoRoute);
 
 // Error Handling Middleware (MUST BE LAST)
 app.use(errorHandler);

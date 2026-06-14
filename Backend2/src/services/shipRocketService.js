@@ -83,9 +83,9 @@ export const checkServiceability = async ({ delivery_postcode, weight = 0.5, cod
 //  PACKAGING DIMENSION MAP
 // =========================
 const PACKAGING_DIMENSIONS = {
-    small:  { length: 15, breadth: 15, height: 10 },
-    medium: { length: 20, breadth: 20, height: 15 },
-    large:  { length: 25, breadth: 25, height: 20 }
+    small:  { length: 12.7, breadth: 12.7, height: 12.7 },
+    medium: { length: 15.24, breadth: 15.24, height: 15.24 },
+    large:  { length: 28, breadth: 15.24, height: 12.7 }
 };
 
 // =========================
@@ -127,8 +127,8 @@ export const createShiprocketOrder = async (order) => {
             // Items
             order_items: order.orderItems.map(item => ({
                 name: item.name,
-                sku: item.product
-                    ? item.product.toString()
+                sku: item.slug
+                    ? item.slug
                     : (item.customCandle ? item.customCandle.toString() : "CUSTOM"),
                 units: item.quantity,
                 selling_price: item.price,
@@ -137,13 +137,15 @@ export const createShiprocketOrder = async (order) => {
 
             // Payment
             payment_method: order.paymentMethod === "cod" ? "COD" : "Prepaid",
+            shipping_charges: order.shippingPrice,
+            total_discount: order.discountAmount,
             sub_total: order.totalAmount,
 
             // Dimensions from packaging selection
             length: dims.length,
             breadth: dims.breadth,
             height: dims.height,
-            weight: order.weight || 0.5
+            weight: order.weight || 0.5,
         };
 
         const response = await axios.post(
@@ -169,6 +171,156 @@ export const createShiprocketOrder = async (order) => {
 
     } catch (error) {
         console.error("❌ Shiprocket Order Creation Failed:", error.response?.data || error.message);
+        return null;
+    }
+};
+
+// =========================
+//  GET AVAILABLE COURIERS
+// =========================
+export const getAvailableCouriers = async (shiprocketOrderId) => {
+    try {
+        const token = await getShiprocketToken();
+        const res = await axios.get(
+            `https://apiv2.shiprocket.in/v1/external/courier/serviceability/?order_id=${shiprocketOrderId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data?.data?.available_courier_companies || [];
+    } catch (error) {
+        console.error("❌ Failed to fetch available couriers:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Failed to fetch available couriers");
+    }
+};
+
+// =========================
+//  ASSIGN AWB
+// =========================
+export const assignAWB = async (shipmentId, courierId) => {
+    try {
+        const token = await getShiprocketToken();
+        const payload = {
+            shipment_id: shipmentId,
+            courier_id: courierId
+        };
+        const res = await axios.post(
+            "https://apiv2.shiprocket.in/v1/external/courier/assign/awb",
+            payload,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error("❌ Failed to assign AWB:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Failed to assign AWB");
+    }
+};
+
+// =========================
+//  SCHEDULE PICKUP
+// =========================
+export const schedulePickup = async (shipmentId, pickupDate) => {
+    try {
+        const token = await getShiprocketToken();
+        const payload = {
+            shipment_id: [shipmentId]
+        };
+        if (pickupDate) {
+            payload.pickup_date = [pickupDate];
+        }
+        
+        const res = await axios.post(
+            "https://apiv2.shiprocket.in/v1/external/courier/generate/pickup",
+            payload,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error("❌ Failed to schedule pickup:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Failed to schedule pickup");
+    }
+};
+
+// =========================
+//  GENERATE LABEL
+// =========================
+export const generateLabel = async (shipmentId) => {
+    try {
+        const token = await getShiprocketToken();
+        const res = await axios.post(
+            "https://apiv2.shiprocket.in/v1/external/courier/generate/label",
+            { shipment_id: [shipmentId] },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data?.label_created === 1 ? res.data.label_url : null;
+    } catch (error) {
+        console.error("❌ Failed to generate label:", error.response?.data || error.message);
+        // Don't throw here, just return null so it doesn't break the flow
+        return null; 
+    }
+};
+
+// =========================
+//  GENERATE INVOICE
+// =========================
+export const generateInvoice = async (orderId) => {
+    try {
+        const token = await getShiprocketToken();
+        const res = await axios.post(
+            "https://apiv2.shiprocket.in/v1/external/orders/print/invoice",
+            { ids: [orderId] },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data?.is_invoice_created ? res.data.invoice_url : null;
+    } catch (error) {
+        console.error("❌ Failed to generate invoice:", error.response?.data || error.message);
+        // Don't throw here, just return null so it doesn't break the flow
+        return null;
+    }
+};
+
+// =========================
+//  GENERATE MANIFEST
+// =========================
+export const generateManifest = async (shipmentId) => {
+    try {
+        const token = await getShiprocketToken();
+        const res = await axios.post(
+            "https://apiv2.shiprocket.in/v1/external/manifests/generate",
+            { shipment_id: [shipmentId] },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return res.data?.manifest_url ? res.data.manifest_url : null;
+    } catch (error) {
+        console.error("❌ Failed to generate manifest:", error.response?.data || error.message);
         return null;
     }
 };

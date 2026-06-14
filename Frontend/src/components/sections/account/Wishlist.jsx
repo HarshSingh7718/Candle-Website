@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { useCart } from '../../../hooks/useCart';
 import { useWishlist } from '../../../hooks/useWishlist'; // Refactored Hook
 import { Icon } from "@iconify/react";
+import { trackAddToCart } from '../../../utils/metaPixel';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,7 +22,6 @@ const Wishlist = () => {
         );
     };
 
-    // Bulk Add Logic
     const addSelectedToCart = async () => {
         if (selected.length === 0) {
             toast.error("Please select at least one product");
@@ -30,6 +30,7 @@ const Wishlist = () => {
         const selectedProducts = wishlist.filter((item) => selected.includes(item._id));
         for (const product of selectedProducts) {
             await addToCart({ productId: product._id, quantity: 1 });
+            trackAddToCart(product, 1);
         }
         toast.success("Selected items added");
     };
@@ -37,6 +38,7 @@ const Wishlist = () => {
     const addAllToCart = async () => {
         for (const product of wishlist) {
             await addToCart({ productId: product._id, quantity: 1 });
+            trackAddToCart(product, 1);
         }
         toast.success("All items added to cart");
     };
@@ -57,7 +59,7 @@ const Wishlist = () => {
                 ease: "power3.out",
                 scrollTrigger: {
                     trigger: q(".wishlist-section"),
-                    start: "top 85%",
+                    start: "top 95%",
                     toggleActions: "play none none reverse",
                 },
             });
@@ -68,8 +70,8 @@ const Wishlist = () => {
                 duration: 0.6,
                 ease: "back.out(1.7)",
                 scrollTrigger: {
-                    trigger: q(".wishlist-empty"),
-                    start: "top 85%",
+                    trigger: q(".wishlist-section"),
+                    start: "top 95%",
                     toggleActions: "play none none reverse",
                 },
             });
@@ -81,14 +83,14 @@ const Wishlist = () => {
 
     return (
         <>
-            <div ref={wishlistRef} className="container mx-auto py-[8%] px-4">
+            <div ref={wishlistRef} className="container mx-auto py-[8%] px-4 wishlist-section">
                 {wishlist.length === 0 ? (
                     <p className="text-center text-lg bg-bg-surface-hover shadow-md py-5 wishlist-empty">
                         No products in wishlist
                     </p>
                 ) : (
                     <>
-                            <div className="hidden lg:block overflow-x-auto hide-scrollbar">
+                        <div className="hidden lg:block overflow-x-auto hide-scrollbar">
                             <table className="w-full">
                                 <thead className="bg-primary text-text-on-brand wishlist-head">
                                     <tr>
@@ -126,7 +128,10 @@ const Wishlist = () => {
                                             <td className="text-right">
                                                 <MainBtn
                                                     type="button"
-                                                    onClick={() => addToCart(item)}
+                                                    onClick={() => {
+                                                        addToCart(item);
+                                                        trackAddToCart(item, 1);
+                                                    }}
                                                     className="bg-transparent! border! shadow-none! rounded-sm! hover:bg-primary!"
                                                     text={"Add to Cart"}
                                                 />
@@ -166,7 +171,10 @@ const Wishlist = () => {
                                     <div className="mt-4">
                                         <MainBtn
                                             type="button"
-                                            onClick={() => addToCart(item)}
+                                            onClick={() => {
+                                                addToCart(item);
+                                                trackAddToCart(item, 1);
+                                            }}
                                             className='w-full! bg-transparent! border! border-gray-200! shadow-none! rounded-sm!'
                                             text={"Add to Cart"}
                                         />

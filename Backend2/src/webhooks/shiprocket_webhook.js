@@ -1,6 +1,6 @@
 import { Order } from "../models/orderModel.js";
 import { config } from "../config/index.js";
-import { sendSMS } from "../services/otp_services.js";
+import mongoose from "mongoose";
 
 // =========================
 //  SHIPROCKET STATUS MAP
@@ -8,21 +8,21 @@ import { sendSMS } from "../services/otp_services.js";
 // Maps Shiprocket's current_status strings to our orderStatus enum
 const STATUS_MAP = {
     // Picked up / In transit → shipped
-    "Picked Up": "shipped",
-    "In Transit": "shipped",
-    "Reached at Destination Hub": "shipped",
+    "PICKED UP": "shipped",
+    "IN TRANSIT": "shipped",
+    "REACHED AT DESTINATION HUB": "shipped",
 
     // Out for delivery
-    "Out For Delivery": "out_for_delivery",
+    "OUT FOR DELIVERY": "out_for_delivery",
 
     // Delivered
-    "Delivered": "delivered",
+    "DELIVERED": "delivered",
 
     // RTO / Cancellation
-    "RTO Initiated": "cancelled",
-    "RTO Delivered": "cancelled",
-    "Cancelled": "cancelled",
-    "Undelivered": "cancelled"
+    "RTO INITIATED": "cancelled",
+    "RTO DELIVERED": "cancelled",
+    "CANCELLED": "cancelled",
+    "UNDELIVERED": "cancelled"
 };
 
 // =========================
@@ -42,7 +42,7 @@ export const shiprocketWebhookHandler = async (req, res) => {
         // 2. Extract data from Shiprocket webhook payload
         // Shiprocket sends: { order_id, current_status, awb, courier_name, ... }
         const shiprocketOrderId = payload.order_id;
-        const currentStatus = payload.current_status;
+        const currentStatus = payload.current_status?.toUpperCase();
         const awb = payload.awb;
         const courierName = payload.courier_name;
         const etd = payload.etd; // estimated time of delivery
@@ -62,11 +62,22 @@ export const shiprocketWebhookHandler = async (req, res) => {
             return res.status(200).json({ success: true, message: "Status acknowledged but not mapped" });
         }
 
-        // 4. Find order — Shiprocket sends back the order_id we gave it (our MongoDB _id)
-        let order = await Order.findById(shiprocketOrderId).populate("user", "firstName phoneNumber");
+        // 4. Find order
+        let order;
+
+        // Try finding by MongoDB _id (since we pass order._id.toString() as order_id to Shiprocket)
+        if (mongoose.Types.ObjectId.isValid(shiprocketOrderId)) {
+            order = await Order.findById(shiprocketOrderId).populate("user", "firstName phoneNumber");
+        }
+
+        // Fallback: search by custom orderId (NC...)
+        if (!order) {
+            order = await Order.findOne({ orderId: shiprocketOrderId }).populate("user", "firstName phoneNumber");
+        }
 
         // Fallback: search by shiprocketOrderId field (numeric ID from Shiprocket)
-        if (!order) {
+        // Only attempt if the value is numeric to prevent CastError from NaN
+        if (!order && !isNaN(Number(shiprocketOrderId))) {
             order = await Order.findOne({ shiprocketOrderId: Number(shiprocketOrderId) })
                 .populate("user", "firstName phoneNumber");
         }
@@ -91,8 +102,12 @@ export const shiprocketWebhookHandler = async (req, res) => {
         order.statusHistory.push({ status: mappedStatus, date: new Date() });
 
         // Update tracking info
-        if (awb) order.awbCode = awb;
+        if (awb) {
+            order.awbCode = awb;
+            order.trackingUrl = `https://shiprocket.co/tracking/${awb}`;
+        }
         if (courierName) order.courierName = courierName;
+        if (etd) order.etd = etd;
 
         // Auto-set date fields
         if (mappedStatus === "shipped") order.shippedAt = Date.now();
@@ -102,21 +117,9 @@ export const shiprocketWebhookHandler = async (req, res) => {
 
         await order.save();
 
-        console.log(`✅ Order ${order._id} updated to "${mappedStatus}" via Shiprocket webhook`);
+        console.log(`✅ Order ${order.orderId} updated to "${mappedStatus}" via Shiprocket webhook`);
 
-        // 7. Send SMS to customer on key transitions
-        if (order.user?.phoneNumber) {
-            const shortOrderId = order._id.toString().slice(-6).toUpperCase();
-            const shouldSMS = ["shipped", "out_for_delivery", "delivered"].includes(mappedStatus);
 
-            if (shouldSMS) {
-                await sendSMS(order.user.phoneNumber, config.msg91.orderStatusTemplateId, {
-                    NAME: order.user.firstName || "Customer",
-                    ORDER_ID: shortOrderId,
-                    STATUS: mappedStatus.replace(/_/g, " ").toUpperCase()
-                }).catch(err => console.error("Shiprocket webhook SMS failed:", err.message));
-            }
-        }
 
         return res.status(200).json({ success: true, message: "Order updated" });
 

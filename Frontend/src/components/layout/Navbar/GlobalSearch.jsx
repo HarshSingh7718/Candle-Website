@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Search, X, Frown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ProductCard from '../../ui/Cards/ProductCard';
 import { useGlobalSearch } from '../../../hooks/useSearch'; // Imported your hook
+import { trackSearch } from '../../../utils/metaPixel';
 
 const GlobalSearch = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedTerm, setDebouncedTerm] = useState('');
 
@@ -18,6 +20,12 @@ const GlobalSearch = ({ isOpen, onClose }) => {
 
   // Logic: Use your TanStack Query hook
   const { data: results = [], isLoading } = useGlobalSearch(debouncedTerm);
+
+  useEffect(() => {
+    if (debouncedTerm.trim().length >= 2) {
+      trackSearch(debouncedTerm.trim());
+    }
+  }, [debouncedTerm]);
 
   // Handle escape key to close and body scroll lock
   useEffect(() => {
@@ -60,6 +68,12 @@ const GlobalSearch = ({ isOpen, onClose }) => {
                 placeholder="SEARCH..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchTerm.trim()) {
+                    onClose();
+                    navigate(`/collections/candles?search=${searchTerm.trim()}`);
+                  }
+                }}
                 autoFocus
               />
             </div>

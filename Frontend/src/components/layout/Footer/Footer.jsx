@@ -57,14 +57,14 @@ const Footer = () => {
         </div>
 
         {/* Useful Links */}
-        <div className='hidden md:block'>
+        <div>
           <h3 className="text-xl font-bold text-light-yellow mb-4 md:mb-6">Useful Links</h3>
           <ul className="space-y-3">
-            <FooterLink href="/">Home</FooterLink>
             <FooterLink href="/collections">Shop Collections</FooterLink>
             <FooterLink href="/custom-candle">Customise</FooterLink>
+            <FooterLink href="/shipping-policy">Shipping Policy</FooterLink>
+            <FooterLink href="/return-refund-policy">Return & Refund Policy</FooterLink>
             <FooterLink href="/contact">Contact Support</FooterLink>
-            <FooterLink href="/about">Our Story</FooterLink>
           </ul>
         </div>
 
@@ -76,7 +76,7 @@ const Footer = () => {
               <li className="text-light-yellow/60 text-sm">Loading categories...</li>
             ) : topCategories.length > 0 ? (
               topCategories.map((category) => (
-                <FooterLink key={category._id} href={`/collections/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')}`}>
+                <FooterLink key={category._id} href={`/collections/${category.slug}`}>
                   {category.name}
                 </FooterLink>
               ))

@@ -6,7 +6,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import API from '../../../api';
-import { useOrderDetails } from '../../../hooks/useOrders';
+import { useOrderDetails, useCancelOrder } from '../../../hooks/useOrders';
+import ConfirmModal from '../../ui/ConfirmModal';
 
 const formatOrderData = (data) => {
     if (!data?.order) return null;
@@ -15,21 +16,22 @@ const formatOrderData = (data) => {
 
     const formatDate = (dateString) => {
         if (!dateString) return "Pending";
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        return new Date(dateString).toLocaleString('en-GB', {
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
     };
 
     const displayStatus = order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1).replace(/_/g, ' ');
 
-    const statuses = ['confirmed', 'processing', 'shipped', 'delivered'];
+    const statuses = ['confirmed', 'processing', 'packaged', 'shipped', 'delivered'];
     const currentStatusIndex = statuses.indexOf(order.orderStatus.toLowerCase());
 
     const statusSteps = [
         { name: "Order Placed", date: formatDate(order.createdAt), completed: true },
         { name: "Processing", date: currentStatusIndex >= 1 ? formatDate(order.updatedAt) : "Pending", completed: currentStatusIndex >= 1 },
-        { name: "Shipped", date: order.shippedAt ? formatDate(order.shippedAt) : "Pending", completed: currentStatusIndex >= 2 },
-        { name: "Delivered", date: currentStatusIndex === 3 ? formatDate(order.updatedAt) : "Expected soon", completed: currentStatusIndex === 3 },
+        { name: "Packaged", date: currentStatusIndex >= 2 ? formatDate(order.updatedAt) : "Pending", completed: currentStatusIndex >= 2 },
+        { name: "Shipped", date: order.shippedAt ? formatDate(order.shippedAt) : "Pending", completed: currentStatusIndex >= 3 },
+        { name: "Delivered", date: currentStatusIndex === 4 ? formatDate(order.updatedAt) : (order.etd ? `Exp: ${new Date(order.etd).toLocaleDateString('en-GB')}` : "Expected soon"), completed: currentStatusIndex === 4 },
     ];
 
     return {
@@ -61,8 +63,22 @@ const ViewOrder = () => {
     const [hoverRating, setHoverRating] = useState(0);
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [cancelReason, setCancelReason] = useState("");
+
     const { data, isLoading, isError } = useOrderDetails(orderId);
+    const cancelOrderMutation = useCancelOrder();
     const formattedData = useMemo(() => formatOrderData(data), [data]);
+
+    const handleConfirmCancel = async () => {
+        try {
+            await cancelOrderMutation.mutateAsync({ orderId, reason: cancelReason });
+            toast.success("Order cancelled successfully");
+            setIsCancelModalOpen(false);
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to cancel order");
+        }
+    };
 
     const handleOpenReview = (productId, productName, initialRating) => {
         setReviewModal({
@@ -135,7 +151,7 @@ const ViewOrder = () => {
                         <button onClick={() => navigate(-1)} className="p-2 hover:bg-stone-100 rounded-full transition-colors cursor-pointer">
                             <ChevronLeft size={20} />
                         </button>
-                        <h1 className="text-xl font-medium">Order #ORD-{order._id.slice(-6).toUpperCase()}</h1>
+                        <h1 className="text-xl font-medium">Order #{order.orderId}</h1>
                     </div>
                 </div>
             </header>
@@ -157,11 +173,11 @@ const ViewOrder = () => {
                                 </span>
                             </div>
 
-                            <div className="relative">
+                            <div className="relative overflow-x-auto hide-scrollbar">
                                 <div className="absolute left-[15px] top-0 h-full w-0.5 bg-stone-100 sm:hidden"></div>
                                 <div className="hidden sm:block absolute top-[15px] left-0 w-full h-0.5 bg-stone-100"></div>
 
-                                <div className="flex flex-col sm:flex-row justify-between relative z-10 space-y-8 sm:space-y-0">
+                                <div className="flex flex-col sm:flex-row justify-between relative z-10 space-y-8 sm:space-y-0 sm:min-w-max sm:gap-2">
                                     {statusSteps.map((step, idx) => (
                                         <div key={idx} className="flex sm:flex-col items-start sm:items-center text-left sm:text-center group">
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-text-on-brand shadow-sm transition-colors ${step.completed ? 'bg-green-600 text-text-on-brand' : 'bg-stone-200 text-stone-500'
@@ -189,10 +205,11 @@ const ViewOrder = () => {
                                         <span className="font-medium text-stone-900">{order.awbCode}</span>
                                     </div>
                                 </div>
-                                <button className="text-sm font-semibold text-stone-900 flex items-center space-x-1 hover:underline cursor-pointer">
-                                    <span>Track Shipment</span>
-                                    <ExternalLink size={14} />
-                                </button>
+                                <a href={`${order.trackingUrl}`} target="_blank" rel="noopener noreferrer">
+                                    <button className="text-sm font-semibold text-stone-900 flex items-center space-x-1 hover:underline cursor-pointer">
+                                        <span>Track Shipment</span>
+                                        <ExternalLink size={14} />
+                                    </button></a>
                             </div>
                         )}
                     </section>
@@ -211,7 +228,7 @@ const ViewOrder = () => {
 
                                 // 👉 Construct the URL for standard products
                                 const productUrl = item.type !== "custom" && item.product?._id
-                                    ? `/collections/candles/product/${item.product._id}`
+                                    ? `/collections/candles/product/${item.product.slug}`
                                     : null;
 
                                 return (
@@ -347,7 +364,7 @@ const ViewOrder = () => {
                         </div>
                     </section>
 
-                    <section className="bg-stone-900 text-text-on-brand rounded-2xl shadow-lg p-6">
+                    <section className="bg-primary text-text-on-brand rounded-2xl shadow-lg p-6">
                         <h3 className="font-semibold text-lg mb-6">Order Summary</h3>
                         <div className="space-y-4 text-sm">
                             <div className="flex justify-between text-stone-400">
@@ -373,6 +390,38 @@ const ViewOrder = () => {
                         <button className="w-full mt-8 py-3 bg-bg-surface text-stone-900 rounded-xl font-bold text-sm hover:bg-stone-100 transition-colors shadow-sm cursor-pointer">
                             Need Help with Order?
                         </button>
+                        
+                        {order.orderStatus === 'processing' && (
+                            <button
+                                onClick={() => setIsCancelModalOpen(true)}
+                                disabled={cancelOrderMutation.isPending}
+                                className="w-full mt-4 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-colors shadow-sm cursor-pointer border border-red-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                {cancelOrderMutation.isPending ? (
+                                    <><Loader2 size={16} className="animate-spin" /> Cancelling...</>
+                                ) : "Cancel Order"}
+                            </button>
+                        )}
+                        
+                        <ConfirmModal
+                            isOpen={isCancelModalOpen}
+                            onClose={() => setIsCancelModalOpen(false)}
+                            onConfirm={handleConfirmCancel}
+                            title="Cancel Order"
+                            message="Are you sure you want to cancel this order? This action cannot be undone."
+                            confirmText="Yes, Cancel Order"
+                            cancelText="No, Keep It"
+                            isDestructive={true}
+                            isLoading={cancelOrderMutation.isPending}
+                        >
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                placeholder="Reason for cancellation (optional)"
+                                rows="3"
+                                className="w-full border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 resize-none"
+                            />
+                        </ConfirmModal>
                     </section>
                 </div>
             </main>

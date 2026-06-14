@@ -6,6 +6,7 @@ import { Order } from "../models/orderModel.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { config } from "../config/index.js";
+import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 import { sendSMS } from "./otp_services.js";
 import mongoose from "mongoose";
 
@@ -172,7 +173,8 @@ export const verifyPayment = async (req, res) => {
                 const prod = await Product.findById(item.product).session(session);
                 if (prod) {
                     prod.stock -= item.quantity;
-                    await prod.save({session});
+                    prod.totalSold = (prod.totalSold || 0) + item.quantity;
+                    await prod.save({ session });
                 }
             }
 
@@ -196,7 +198,7 @@ export const verifyPayment = async (req, res) => {
                     reduceStock("scent", candle.scent);
 
                     if (candle.addOns && candle.addOns.length > 0) {
-                        candle.addOns.forEach(id => reduceStock("addon", id));
+                        candle.addOns.forEach(id => reduceStock("addOn", id));
                     }
                 }
             }
@@ -205,7 +207,7 @@ export const verifyPayment = async (req, res) => {
         if (customization) {
             // Signal Mongoose that the nested array changed before saving
             customization.markModified('steps');
-            await customization.save({session});
+            await customization.save({ session });
         }
 
         // =========================
@@ -220,7 +222,7 @@ export const verifyPayment = async (req, res) => {
         order.orderStatus = "confirmed";
         order.statusHistory.push({ status: "confirmed" });
 
-        await order.save({session});
+        await order.save({ session });
 
         // =========================
         //  PER-USER COUPON CONSUMPTION (RAZORPAY)
@@ -246,27 +248,32 @@ export const verifyPayment = async (req, res) => {
         //  CLEAR CART
         // =========================
         user.cart = [];
-        await user.save({session});
+        await user.save({ session });
 
         await session.commitTransaction();
-        
+
         // =========================
         //  SEND MSG91 SMS
         // =========================
         if (user?.phoneNumber) {
-            const shortOrderId = order._id.toString().slice(-6).toUpperCase();
-
             // 👉 Updated to use the MSG91 Flow API pattern
-            await sendSMS(
+            sendSMS(
                 user.phoneNumber,
                 config.msg91.orderConfirmTemplateId, // Use the same template ID you used in the COD block
                 {
                     NAME: user.firstName || "Customer",
-                    ORDER_ID: shortOrderId,
-                    AMOUNT: String(order.totalAmount)
+                    ORDER_ID: order.orderId,
+                    AMOUNT: String(order.totalAmount),
+                    URL: `${config.url.frontend}/account/orders/${order.orderId}`
                 }
             ).catch(err => console.error("Failed to send Razorpay SMS:", err.message));
         }
+
+        // Send order confirmation email
+        sendOrderConfirmationEmail(user.email, {
+            ...order.toObject(),
+            user: { firstName: user.firstName }
+        }).catch(err => console.error("Failed to send Razorpay Email:", err.message));
 
         // =========================
         //  CREATE SHIPMENT

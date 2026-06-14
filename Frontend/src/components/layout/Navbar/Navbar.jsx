@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingBag, TextAlignJustify, User, Search, LogOut } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import MobileMenu from './MobileMenu';
 import GlobalSearch from './GlobalSearch';
 import { useUser, useLogout } from '../../../hooks/useAuth';
 import { useCart } from '../../../hooks/useCart';
+import { getGuestCart } from '../../../utils/guestCart';
 import API from '../../../api';
 
 const navLinks = [
@@ -26,10 +27,12 @@ const Navbar = () => {
   const [scroll, setScroll] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const hoverTimeoutRef = useRef(null);
 
   const { data: user } = useUser();
   const { cart } = useCart();
   const queryClient = useQueryClient();
+  const cartCount = user ? cart?.length || 0 : getGuestCart().length;
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -68,13 +71,11 @@ const Navbar = () => {
       <div className={`w-full z-50 fixed top-0 left-0 transition-all duration-300 ${is404 ? "bg-primary text-light-yellow" : "bg-primary shadow-lg" }`}>
         <div className="container mx-auto flex justify-between items-center h-19 md:h-22 px-4">
           
-          <NavLink to="/">
-            <Logo />
-          </NavLink>
+          <Logo />
 
-          <div className="centered-row justify-start gap-12">
+          <div className="centered-row justify-start gap-5 xl:gap-12">
             {/* Desktop Navigation - All items now use NavMenu */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-5 xl:gap-8">
                 {navLinks.map((item, index) => (
                     <NavMenu key={index} name={item.name} path={item.path} />
                 ))}
@@ -88,16 +89,26 @@ const Navbar = () => {
 
               <Link to='/cart' className='relative'>
                 <ShoppingBag size={24} className='text-light-yellow cursor-pointer' />
-                {cart?.length > 0 && (
-                  <span className='card-count'>{cart.length}</span>
+                {cartCount > 0 && (
+                  <span className='card-count'>{cartCount}</span>
                 )}
               </Link>
 
-              <div className="relative">
+              <div 
+                className="relative"
+                onMouseEnter={() => {
+                  if (user) {
+                    clearTimeout(hoverTimeoutRef.current);
+                    setShowUserDropdown(true);
+                  }
+                }}
+                onMouseLeave={() => {
+                  hoverTimeoutRef.current = setTimeout(() => setShowUserDropdown(false), 200);
+                }}
+              >
                 {user ? (
                   <button 
                     onClick={() => setShowUserDropdown(!showUserDropdown)} 
-                    onBlur={() => setTimeout(() => setShowUserDropdown(false), 200)}
                     className='user cursor-pointer flex items-center'
                   >
                     <User size={24} className='text-light-yellow cursor-pointer' />

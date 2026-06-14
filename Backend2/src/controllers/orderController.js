@@ -6,6 +6,7 @@ import { Product } from "../models/productModels.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { CandleCustomization } from "../models/optionModel.js";
 import { sendSMS } from "../services/otp_services.js";
+import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 import { checkServiceability } from "../services/shipRocketService.js";
 import { config } from "../config/index.js";
 import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
@@ -46,6 +47,7 @@ export const createOrder = async (req, res) => {
       product: prod._id,
       name: prod.name,
       quantity,
+      slug: prod.slug,
       price: prod.discountPrice || prod.price,
       image: prod.images?.[0]?.url || ""
     });
@@ -109,11 +111,11 @@ export const createOrder = async (req, res) => {
   if (isNaN(itemsPrice)) {
     throw new CustomError("Failed to calculate total price (invalid item price).", 400);
   }
-  
+
   const settings = await Settings.findOne({ key: "global" });
   const deliveryCharges = settings?.deliveryCharges ?? 99;
   const freeDeliveryThreshold = settings?.freeDeliveryThreshold ?? 999;
-  
+
   const shippingPrice = itemsPrice >= freeDeliveryThreshold ? 0 : deliveryCharges;
 
   // =========================
@@ -192,7 +194,7 @@ export const createOrder = async (req, res) => {
       amount: totalAmount * 100,
       // Razorpay works in paise
       currency: "INR",
-      receipt: `order_${order._id}`
+      receipt: `order_${order.orderId}`
     });
     order.razorpayOrderId = razorpayOrder.id;
     await order.save();
@@ -200,6 +202,7 @@ export const createOrder = async (req, res) => {
       success: true,
       razorpayOrder,
       orderId: order._id,
+      customOrderId: order.orderId,
       amount: totalAmount
     });
   }
@@ -208,14 +211,19 @@ export const createOrder = async (req, res) => {
   //  FLOW B: CASH ON DELIVERY
   // =========================
   if (paymentMethod === "cod") {
-    const shortOrderId = order._id.toString().slice(-6).toUpperCase();
-
     // Awaiting the promise ensures we catch any SMS failures without crashing the order
-    await sendSMS(user.phoneNumber, config.msg91.orderConfirmTemplateId, {
+    sendSMS(user.phoneNumber, config.msg91.orderConfirmTemplateId, {
       NAME: user.firstName || "Customer",
-      ORDER_ID: shortOrderId,
-      AMOUNT: String(order.totalAmount)
+      ORDER_ID: order.orderId,
+      AMOUNT: String(order.totalAmount),
+      URL: `${config.url.frontend}/account/orders/${order.orderId}`
     }).catch(err => console.error("Failed to send COD SMS:", err.message));
+
+    // Send order confirmation email
+    sendOrderConfirmationEmail(user.email, {
+      ...order.toObject(),
+      user: { firstName: user.firstName }
+    }).catch(err => console.error("Failed to send COD Email:", err.message));
 
     // =========================
     //  UPDATE STOCK
@@ -227,6 +235,7 @@ export const createOrder = async (req, res) => {
         const prod = await Product.findById(item.product);
         if (prod) {
           prod.stock -= item.quantity;
+          prod.totalSold = (prod.totalSold || 0) + item.quantity;
           await prod.save();
         }
       }
@@ -248,7 +257,7 @@ export const createOrder = async (req, res) => {
           reduceStock("vessel", candle.vessel);
           reduceStock("scent", candle.scent);
           if (candle.addOns && candle.addOns.length > 0) {
-            candle.addOns.forEach(id => reduceStock("addon", id));
+            candle.addOns.forEach(id => reduceStock("addOn", id));
           }
         }
       }

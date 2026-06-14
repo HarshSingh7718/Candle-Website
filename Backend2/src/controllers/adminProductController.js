@@ -164,6 +164,10 @@ export const getAllProductsAdmin = async (req, res) => {
   // BUILD QUERY
   let query = {};
 
+  if (req.query.search) {
+    query.name = { $regex: req.query.search, $options: "i" };
+  }
+
   // Low stock filter (e.g. stock <= 5)
   if (lowStock === "true") {
     query.stock = {

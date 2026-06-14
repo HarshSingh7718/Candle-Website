@@ -8,7 +8,7 @@ export const getOptionsByStep = async (req, res) => {
   const stepMap = {
     1: "vessel",
     2: "scent",
-    3: "addon"
+    3: "addOn"
   };
   const type = stepMap[step];
   if (!type) {

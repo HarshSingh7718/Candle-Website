@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Toaster } from "react-hot-toast";
+import { trackPageView } from "./utils/metaPixel";
 import Footer from "./components/layout/Footer/Footer";
 import CompleteGoogleProfile from "./pages/CompleteGoogleProfile";
 import MyAccount from "./pages/MyAccount";
@@ -41,6 +42,8 @@ const SignIn = lazy(() => import("./pages/SignIn"));
 const Register = lazy(() => import("./pages/Register"));
 const VerifyOTP = lazy(() => import("./pages/VerifyOTP"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
+const ReturnRefundPolicy = lazy(() => import("./pages/ReturnRefundPolicy"));
 
 // Simple loading indicator for Suspense fallback
 const PageLoader = () => (
@@ -62,6 +65,10 @@ function App() {
     "/verify-otp",
     "/complete-google-profile",
   ];
+
+  useEffect(() => {
+    trackPageView();
+  }, [location.pathname]);
 
   const hasNavbarSpacing = !authPages.includes(location.pathname);
 
@@ -95,13 +102,15 @@ function App() {
                   />
                   <Route path="/about" element={<OurStory />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />}/>
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                   <Route path="/term-of-service" element={<TermsOfServicePage />} />
+                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                  <Route path="/return-refund-policy" element={<ReturnRefundPolicy />} />
                   <Route path="/collections/candles" element={<Candles />} />
                   <Route path="/customized" element={<Customized />} />
                   <Route path="/collections" element={<Collections />} />
                   <Route
-                    path="/collections/:categoryName"
+                    path="/collections/:slug"
                     element={<CollectionProducts />}
                   />
 
@@ -137,7 +146,24 @@ function App() {
           </div>
         </div>
       </div>
-      <Toaster position="top-right" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#3d2424',
+            color: '#fce8e8',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontWeight: '500',
+            padding: '12px 20px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+          },
+          success: { iconTheme: { primary: '#16a34a', secondary: '#fce8e8' } },
+          error: { iconTheme: { primary: '#dc2626', secondary: '#fce8e8' } },
+        }}
+        containerStyle={{ bottom: 24, zIndex: 999999 }}
+      />
     </>
   );
 }

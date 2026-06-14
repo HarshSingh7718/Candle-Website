@@ -7,7 +7,7 @@ const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex flex-col md:flex-row w-full min-h-screen relative bg-background text-on-background font-body-md">
+    <div className="flex flex-col md:flex-row w-full min-h-screen relative bg-bg-canvas text-text-base font-body-md">
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div 

@@ -1,20 +1,23 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Search, ChevronDown, Filter, Loader2 } from "lucide-react";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { useParams, useSearchParams, Link } from "react-router-dom";
+import { Filter } from "lucide-react";
 import SEO from '../components/SEO';
 
 import ProductCard from "../components/ui/Cards/ProductCard";
+import ProductCardSkeleton from "../components/ui/Skeletons/ProductCardSkeleton";
 import PageBanner from "../components/ui/PageBanner";
-import Loader from "../components/ui/Loader";
+import MobileFilterModal from "../components/ui/MobileFilterModal";
+import CustomDropdown from "../components/ui/CustomDropdown";
 import { useProductsByCategory } from "../hooks/useProducts";
 import { useDebounce } from "../hooks/useDebounce";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CollectionProducts = () => {
-  const { categoryName } = useParams();
+  const { slug: categoryName } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const querySearch = searchParams.get("search") || "";
   const queryPrice = searchParams.get("maxPrice") || null;
@@ -22,62 +25,59 @@ const CollectionProducts = () => {
 
   const sidebarRef = useRef();
   const mainRef = useRef();
+  const sentinelRef = useRef(null);
 
-  // Local UI State
-  const [searchInput, setSearchInput] = useState(querySearch);
   const [sortInput, setSortInput] = useState(querySort);
-  const [priceInput, setPriceInput] = useState(queryPrice || 5000);
-  const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 8;
+  const [priceInput, setPriceInput] = useState(queryPrice || 3000);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const debouncedPrice = useDebounce(priceInput, 500);
 
-  // Fetch specific products using category slug from URL
-  const { data: responseData, isLoading, isFetching } =
-    useProductsByCategory(categoryName, {
-      page: currentPage,
-      search: querySearch,
-      sort: querySort,
-      maxPrice: queryPrice
+  const {
+    data: responseData,
+    isLoading,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useProductsByCategory(categoryName, {
+    search: querySearch,
+    sort: querySort,
+    maxPrice: debouncedPrice,
+  });
+
+  const products = responseData?.pages?.flatMap((page) => page.products) || [];
+  const totalProducts = responseData?.pages?.[0]?.totalProducts || 0;
+
+  // ── Infinite scroll sentinel ──
+  useEffect(() => {
+    if (!sentinelRef.current || !hasNextPage) return;
+
+    const st = ScrollTrigger.create({
+      trigger: sentinelRef.current,
+      start: "top 95%",
+      onEnter: () => {
+        if (!isFetchingNextPage && hasNextPage) {
+          fetchNextPage();
+        }
+      },
     });
 
-  const categoryProducts = responseData?.products || [];
-  const totalPages = responseData?.totalPages || 0;
-  const currentProducts = categoryProducts; // Backend handles slicing now!
+    return () => st.kill();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Reset page when URL filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [querySearch, querySort, queryPrice]);
-
-  // Sync Search Input local state if URL changes externally
-  useEffect(() => {
-    setSearchInput(querySearch);
-  }, [querySearch]);
-
-  const handleSearchCommit = () => {
-    const newParams = new URLSearchParams(searchParams);
-    if (searchInput) newParams.set("search", searchInput);
-    else newParams.delete("search");
-    setSearchParams(newParams);
-  };
-
-  const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter") handleSearchCommit();
-  };
-
-  // Sync Debounced Price to URL (Auto Trigger)
+  // ── Sync Debounced Price to URL ──
   useEffect(() => {
     const newParams = new URLSearchParams(searchParams);
-    if (debouncedPrice && debouncedPrice < 5000) {
+    if (debouncedPrice && debouncedPrice < 3000) {
       newParams.set("maxPrice", debouncedPrice);
     } else {
       newParams.delete("maxPrice");
     }
     setSearchParams(newParams);
-  }, [debouncedPrice, searchParams, setSearchParams]);
+  }, [debouncedPrice]);
 
-  // Sync Sort to URL (Auto Trigger)
+  // ── Sync Sort to URL ──
   useEffect(() => {
     const newParams = new URLSearchParams(searchParams);
     if (sortInput && sortInput !== "latest") {
@@ -86,16 +86,39 @@ const CollectionProducts = () => {
       newParams.delete("sort");
     }
     setSearchParams(newParams);
-  }, [sortInput, searchParams, setSearchParams]);
+  }, [sortInput]);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 400, behavior: "smooth" });
+  // ── Scroll to top when filters change ──
+  useEffect(() => {
+    const smoother = ScrollSmoother.get();
+    if (smoother && mainRef.current) {
+      smoother.scrollTo(mainRef.current, true, "top 100px");
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [querySearch, querySort, debouncedPrice]);
+
+  const handleMobileApply = ({ sort, maxPrice }) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (sort && sort !== "latest") newParams.set("sort", sort);
+    else newParams.delete("sort");
+    if (maxPrice && maxPrice < 3000) newParams.set("maxPrice", maxPrice);
+    else newParams.delete("maxPrice");
+    setSearchParams(newParams);
+    setSortInput(sort || "latest");
+    setPriceInput(maxPrice || 3000);
   };
 
-  // 5. GSAP Animations
+  const sortOptions = [
+    { value: "latest", label: "Sort by latest" },
+    { value: "popularity", label: "Sort by Popularity" },
+    { value: "low-to-high", label: "Sort by Low to High" },
+    { value: "high-to-low", label: "Sort by High to Low" },
+  ];
+
+  // ── GSAP sidebar animation ──
   useEffect(() => {
-    if (!sidebarRef.current || isLoading) return;
+    if (!sidebarRef.current) return;
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(sidebarRef);
       q(".sidebar-box").forEach((box) => {
@@ -106,8 +129,8 @@ const CollectionProducts = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: box,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
+            start: "top 95%",
+            toggleActions: "play none none none",
           },
         });
         gsap.from(box.querySelector(".sidebar-content"), {
@@ -118,15 +141,16 @@ const CollectionProducts = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: box,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
+            start: "top 95%",
+            toggleActions: "play none none none",
           },
         });
       });
     }, sidebarRef);
     return () => ctx.revert();
-  }, [isLoading]);
+  }, []);
 
+  // ── GSAP product grid entrance (initial load only) ──
   useEffect(() => {
     if (!mainRef.current || isLoading) return;
     const ctx = gsap.context(() => {
@@ -137,33 +161,31 @@ const CollectionProducts = () => {
         duration: 0.6,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: q(".top-bar"),
-          start: "top 85%",
-          toggleActions: "play none none reverse",
+          trigger: mainRef.current,
+          start: "top 95%",
+          toggleActions: "play none none none",
         },
       });
-      if (currentProducts.length > 0) {
-        gsap.from(q(".product-grid > *"), {
-          y: 60,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: q(".product-grid"),
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        });
-      }
+      gsap.from(q(".product-grid > .product-card-animate"), {
+        y: 60,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: mainRef.current,
+          start: "top 95%",
+          toggleActions: "play none none none",
+        },
+      });
     }, mainRef);
     return () => ctx.revert();
-  }, [currentProducts, isLoading]);
-
-  if (!categoryName) return <Loader />;
+  }, [isLoading]);
 
   const collectionDisplayName =
-    categoryProducts[0]?.category?.name || categoryName.replace(/-/g, " ");
+    products[0]?.category?.name ||
+    categoryName?.replace(/-/g, " ") ||
+    "Collection";
 
   return (
     <>
@@ -174,136 +196,125 @@ const CollectionProducts = () => {
       <SEO
         title={`${collectionDisplayName} | Naisha Creations`}
         description={`Discover our full range of ${collectionDisplayName} candles. Hand-poured with eco-friendly soy wax and premium fragrance oils.`}
-        image={categoryProducts[0]?.images?.[0]?.url}
+        image={products[0]?.images?.[0]?.url}
       />
-      <div className="bg-[#fcfaf5]">
+
+      <div className="bg-bg-canvas min-h-screen">
         <div className="container mx-auto px-4 py-[8%]">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar */}
+
+            {/* ── Sidebar ── */}
             <aside
               ref={sidebarRef}
               className="w-full lg:w-1/4 space-y-8 order-2 lg:order-1"
             >
-              <div className="bg-bg-surface p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
-                <h3 className="text-xl font-medium mb-4 sidebar-title">
-                  Search
-                </h3>
-                <div className="relative sidebar-content">
-                  <input
-                    type="text"
-                    value={searchInput}
-                    placeholder="Search in collection..."
-                    className="w-full border border-stone-200 p-2 pl-10 rounded-md outline-none focus:border-primary transition-colors"
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={handleSearchKeyDown}
-                  />
-                  <button 
-                    onClick={handleSearchCommit} 
-                    className="absolute left-3 top-2.5 text-stone-400 cursor-pointer hover:text-primary transition-colors"
-                  >
-                    <Search size={18} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-bg-surface hidden md:block p-6 rounded-sm shadow-sm sidebar-box border border-stone-100">
-                <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center">
-                  Price Filter
+              <div className="bg-bg-surface hidden lg:block p-6 rounded-sm shadow-sm sidebar-box border border-bg-muted">
+                <h3 className="text-xl font-medium mb-4 sidebar-title flex justify-between items-center text-text-base">
+                  Filter By Price
                   {queryPrice !== null && (
                     <button
-                      onClick={() => setPriceInput(5000)}
-                      className="text-[10px] bg-red-100 text-danger px-2 py-1 rounded cursor-pointer hover:bg-red-200 transition-colors"
+                      onClick={() => setPriceInput(3000)}
+                      className="text-[10px] bg-danger/10 text-danger px-2 py-1 rounded cursor-pointer hover:bg-danger/20 transition-colors"
                     >
                       Reset
                     </button>
                   )}
                 </h3>
-
                 <div className="sidebar-content">
                   <input
                     type="range"
                     min="0"
-                    max="5000"
+                    max="3000"
                     value={priceInput}
                     onChange={(e) => setPriceInput(Number(e.target.value))}
-                    className="w-full accent-primary cursor-pointer"
+                    className="w-full accent-brand-primary cursor-pointer"
                   />
-                  <div className="flex justify-between text-sm mt-2 font-medium text-stone-600">
+                  <div className="flex justify-between text-sm mt-2 font-medium text-text-base">
                     <span>₹0</span>
-                    <span>{priceInput < 5000 ? `Max: ₹${priceInput}` : "No Max"}</span>
+                    <span>
+                      {priceInput < 3000 ? `Max: ₹${priceInput}` : "No Max"}
+                    </span>
                   </div>
-                  <div className="relative group mt-6">
-                    <select
-                      className="w-full appearance-none bg-bg-surface border border-stone-200 px-4 py-2.5 pr-10 rounded-md shadow-sm outline-none cursor-pointer focus:ring-1 ring-primary/20"
+                  <div className="mt-6">
+                    <CustomDropdown
+                      options={sortOptions}
                       value={sortInput}
-                      onChange={(e) => setSortInput(e.target.value)}
-                    >
-                      <option value="latest">Sort by latest</option>
-                      <option value="popularity">Sort by Popularity</option>
-                      <option value="low-to-high">Sort by Low to High</option>
-                      <option value="high-to-low">Sort by High to Low</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none w-4 h-4" />
+                      onChange={setSortInput}
+                    />
                   </div>
                 </div>
               </div>
             </aside>
 
-            {/* Main Content Grid */}
+            {/* ── Main Content ── */}
             <main ref={mainRef} className="w-full lg:w-3/4 order-1 lg:order-2">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 top-bar">
-                <p className="text-stone-500 italic">
-                  Showing{" "}
-                  {categoryProducts.length > 0
-                    ? (currentPage - 1) * productPerPage + 1
-                    : 0}
-                  -
-                  {((currentPage - 1) * productPerPage) + categoryProducts.length}{" "}
-                  of {responseData?.totalProducts || 0} results
-                </p>
+
+              {/* Top bar */}
+              <div className="flex justify-between items-center mb-8 gap-4 top-bar">
+                
+                <button
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="lg:hidden flex items-center gap-2 bg-bg-surface border border-bg-muted px-4 py-2 rounded-md shadow-sm text-text-base font-medium hover:bg-bg-surface-hover transition-colors"
+                >
+                  <Filter size={18} />
+                  Filters
+                </button>
               </div>
 
+              {/* Initial load — full skeleton grid */}
               {isLoading ? (
-                <div className="flex justify-center items-center py-20">
-                  <Loader2 className="animate-spin text-primary" size={48} />
+                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <ProductCardSkeleton key={i} />
+                  ))}
                 </div>
-              ) : currentProducts.length > 0 ? (
+
+              ) : products.length > 0 ? (
                 <>
-                  <div className="relative">
-                    {isFetching && (
-                      <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10 bg-bg-surface p-2 rounded-full shadow-lg">
-                        <Loader2 className="animate-spin text-primary" size={24} />
+                  {/* Product grid */}
+                  <div
+                    className={`grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid transition-opacity duration-300 ${
+                      isFetching && !isFetchingNextPage
+                        ? "opacity-50 pointer-events-none"
+                        : "opacity-100"
+                    }`}
+                  >
+                    {products.map((item) => (
+                      <div key={item._id} className="product-card-animate">
+                        <ProductCard product={item} />
                       </div>
-                    )}
-                    <div className={`grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-10 product-grid transition-opacity duration-300 ${isFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-                      {currentProducts.map((item) => (
-                        <ProductCard key={item._id} product={item} />
+                    ))}
+
+                    {/* Skeleton cards appended inside grid while fetching next page */}
+                    {isFetchingNextPage &&
+                      Array.from({ length: 4 }).map((_, i) => (
+                        <ProductCardSkeleton key={`skeleton-${i}`} />
                       ))}
-                    </div>
                   </div>
 
-                  {totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-12 gap-2 pagination">
-                      {[...Array(totalPages)].map((_, index) => (
-                        <button
-                          key={index + 1}
-                          onClick={() => handlePageChange(index + 1)}
-                          className={`w-10 h-10 border rounded-sm transition-all cursor-pointer font-medium ${
-                            currentPage === index + 1
-                              ? "bg-primary text-text-on-brand border-primary"
-                              : "bg-bg-surface text-stone-600 border-stone-200 hover:border-primary hover:text-primary"
-                          }`}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
+                  {/* Invisible sentinel — triggers next page fetch */}
+                  <div ref={sentinelRef} className="h-20 w-full mt-4" />
+
+                  {/* End of results */}
+                  {!hasNextPage && products.length > 0 && (
+                    <div className="flex flex-col items-center gap-4 py-10">
+                      <p className="text-text-muted text-sm italic">
+                        You've seen all {collectionDisplayName} candles ✨
+                      </p>
+                      <Link
+                        to="/collections/candles"
+                        className="px-8 py-3 bg-brand-primary text-text-on-brand text-sm font-semibold uppercase tracking-widest rounded-sm hover:bg-coffee-800 transition-colors"
+                      >
+                        View All Candles
+                      </Link>
                     </div>
                   )}
                 </>
+
               ) : (
-                <div className="text-center py-20 bg-bg-surface rounded-lg border border-dashed border-stone-200 empty-state">
-                  <Filter className="mx-auto text-stone-300 mb-4" size={48} />
-                  <h3 className="text-xl font-medium text-stone-500 font-serif">
+                <div className="text-center py-20 bg-bg-surface rounded-xl shadow-sm border border-bg-muted">
+                  <Filter className="mx-auto text-text-disabled mb-4" size={48} />
+                  <h3 className="text-xl font-medium text-text-muted">
                     No candles match these filters.
                   </h3>
                 </div>
@@ -312,6 +323,14 @@ const CollectionProducts = () => {
           </div>
         </div>
       </div>
+
+      <MobileFilterModal
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        initialSort={querySort}
+        initialPrice={queryPrice ? Number(queryPrice) : 3000}
+        onApply={handleMobileApply}
+      />
     </>
   );
 };

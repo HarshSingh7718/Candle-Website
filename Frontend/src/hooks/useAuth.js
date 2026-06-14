@@ -200,7 +200,7 @@ export const useAuthActions = () => {
   // 2. Verify OTP
   const verifyOtpMutation = useMutation({
     mutationFn: async ({ phoneNumber, otp }) => {
-      const { data } = await API.post('/auth/user/verify-otp', { phoneNumber, otp });
+      const { data } = await API.post('/auth/user/forgot-password/verify-otp', { phoneNumber, otp });
       return data;
     },
     onSuccess: (data) => {

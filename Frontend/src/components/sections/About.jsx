@@ -1,7 +1,6 @@
-const aboutMainImg = "/images/Index/About/about-main-image.jpg";
-const aboutImg1 = "/images/Index/About/about-image01.jpg";
-const aboutImg2 = "/images/Index/About/about-image02.jpg";
-const aboutImg3 = "/images/Index/About/about-image03.jpg";
+const aboutMainImg = "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780791832/homepage-about-main_oz3udy.webp";
+const aboutImg1 = "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780792394/homepage-about-sub2_icugaz.webp";
+const aboutImg2 = "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780792645/homepage-about-sub1_sor9mr.webp";
 
 import MainBtn from "../ui/Buttons/MainBtn";
 import { useEffect, useRef } from "react";
@@ -20,9 +19,9 @@ function About() {
       //   duration: 1,
       //   ease: "power3.out",
       //   scrollTrigger: {
-      //     trigger: ".about-image",
+      //     trigger: ".about",
       //     start: "top 85%",
-      //     toggleActions: "play none none reset",
+      //     toggleActions: "play none none reverse",
       //   }
       // });
       gsap.from(".about-content", {
@@ -32,9 +31,9 @@ function About() {
         delay: 0.2,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: ".about-content",
-          start: "top 85%",
-          toggleActions: "play none none reset",
+          trigger: ".about",
+          start: "top 95%",
+          toggleActions: "play none none reverse",
         },
       });
 
@@ -46,9 +45,9 @@ function About() {
 
         ease: "power3.out",
         scrollTrigger: {
-          trigger: ".image",
-          start: "top 90%",
-          toggleActions: "play none none reset",
+          trigger: ".about",
+          start: "top 95%",
+          toggleActions: "play none none reverse",
         },
       });
     }, aboutRef);
@@ -90,30 +89,21 @@ function About() {
             with organic ingredients to elevate your everyday rituals.
           </p>
           <div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-10 xl:gap-8
-lg:grid-cols-3 mx-auto mb-1 md:mb-18"
+            className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-8 w-[85%] sm:w-[70%] mb-8 md:mb-12"
           >
-            <div className="image ">
+            <div className="image">
               <img
                 src={aboutImg1}
                 alt="Artisanal process"
-                className="section-image w-full md:h-auto object-cover rounded-sm "
+                className="section-image w-full aspect-[4/5] object-cover rounded-lg shadow-md"
                 loading="lazy"
               />
             </div>
-            <div className="image ">
+            <div className="image">
               <img
                 src={aboutImg2}
                 alt="Premium ingredients"
-                className="section-image w-full aspect-[3/4] md:h-auto object-cover rounded-sm"
-                loading="lazy"
-              />
-            </div>
-            <div className="image ">
-              <img
-                src={aboutImg3}
-                alt="Final product"
-                className="section-image w-full h-auto object-cover rounded-sm hidden md:block"
+                className="section-image w-full aspect-[4/5] object-cover rounded-lg shadow-md"
                 loading="lazy"
               />
             </div>

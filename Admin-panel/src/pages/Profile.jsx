@@ -3,8 +3,10 @@ import { createPortal } from 'react-dom';
 import { useAdminProfile, useUpdateAdminProfile, useChangeAdminPassword, useRequestPhoneOtp, useVerifyPhoneUpdate } from '../hooks/useProfile';
 import toast from 'react-hot-toast';
 
+import { Smartphone } from 'lucide-react';
+
 const Profile = () => {
-    const { data: user, isLoading } = useAdminProfile();
+    const { data: user, isLoading, isFetching } = useAdminProfile();
     const updateProfile = useUpdateAdminProfile();
     const changePassword = useChangeAdminPassword();
     const requestOtpMutation = useRequestPhoneOtp();
@@ -157,61 +159,64 @@ const Profile = () => {
 
     if (isLoading) {
         return (
-            <div className="flex-1 flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <div className="w-full space-y-8 animate-pulse">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-bg-surface rounded-xl shadow-sm border border-bg-muted p-6 h-[400px]"></div>
+                    <div className="bg-bg-surface rounded-xl shadow-sm border border-bg-muted p-6 h-[300px]"></div>
+                </div>
             </div>
         );
     }
 
     return (
         <>
-            <div className="w-full space-y-8">
+            <div className={`w-full space-y-8 transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Profile Info Form */}
-                    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6">
-                        <h3 className="text-lg font-bold mb-6 text-on-surface">Personal Information</h3>
+                    <div className="bg-bg-surface rounded-xl shadow-sm border border-bg-muted p-6">
+                        <h3 className="text-lg font-bold mb-6 text-text-base">Personal Information</h3>
                         <form onSubmit={handleProfileSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-on-surface-variant mb-1">First Name</label>
+                                    <label className="block text-sm font-medium text-text-muted mb-1">First Name</label>
                                     <input
                                         type="text"
                                         name="firstName"
                                         value={formData.firstName}
                                         onChange={handleFormChange}
-                                        className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                        className="w-full px-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-on-surface-variant mb-1">Last Name</label>
+                                    <label className="block text-sm font-medium text-text-muted mb-1">Last Name</label>
                                     <input
                                         type="text"
                                         name="lastName"
                                         value={formData.lastName}
                                         onChange={handleFormChange}
-                                        className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                        className="w-full px-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Email Address</label>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Email Address</label>
                                 <input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleFormChange}
-                                    className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    className="w-full px-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Phone Number</label>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Phone Number</label>
                                 <input
                                     type="text"
                                     name="phoneNumber"
                                     value={formData.phoneNumber}
                                     onChange={handleFormChange}
                                     maxLength={10}
-                                    className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    className="w-full px-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary"
                                 />
                                 {formData.phoneNumber !== (user?.phoneNumber || '') && formData.phoneNumber.length > 0 && (
                                     <p className="text-xs text-orange-600 mt-1">
@@ -230,35 +235,35 @@ const Profile = () => {
                     </div>
 
                     {/* Change Password Form */}
-                    <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-6 h-fit">
-                        <h3 className="text-lg font-bold mb-6 text-on-surface">Change Password</h3>
+                    <div className="bg-bg-surface rounded-xl shadow-sm border border-bg-muted p-6 h-fit">
+                        <h3 className="text-lg font-bold mb-6 text-text-base">Change Password</h3>
                         <form onSubmit={handlePasswordSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-on-surface-variant mb-1">Current Password</label>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Current Password</label>
                                 <input
                                     type="password"
                                     name="oldPassword"
                                     value={passwordData.oldPassword}
                                     onChange={handlePasswordChange}
-                                    className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    className="w-full px-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary"
                                     placeholder="••••••••"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-on-surface-variant mb-1">New Password</label>
+                                <label className="block text-sm font-medium text-text-muted mb-1">New Password</label>
                                 <input
                                     type="password"
                                     name="newPassword"
                                     value={passwordData.newPassword}
                                     onChange={handlePasswordChange}
-                                    className="w-full px-4 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:border-primary"
+                                    className="w-full px-4 py-2 border border-bg-muted rounded-md bg-bg-surface text-text-base focus:outline-none focus:border-brand-primary"
                                     placeholder="••••••••"
                                 />
                             </div>
                             <button
                                 type="submit"
                                 disabled={changePassword.isPending}
-                                className="mt-4 bg-black text-white px-6 py-2 rounded-md hover:bg-black/80 transition-colors disabled:opacity-50"
+                                className="mt-4 bg-[#8d4b00] text-white px-6 py-2 rounded-md hover:bg-[#b15f00] transition-colors disabled:opacity-50"
                             >
                                 {changePassword.isPending ? "Updating..." : "Update Password"}
                             </button>
@@ -272,14 +277,14 @@ const Profile = () => {
             ========================================== */}
             {showOtpModal && createPortal(
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-                    <div className="bg-white rounded-xl p-8 w-full max-w-md shadow-2xl">
+                    <div className="bg-bg-surface rounded-xl p-8 w-full max-w-md shadow-2xl">
                         <div className="text-center mb-8">
-                            <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="material-symbols-outlined text-primary text-[28px]">smartphone</span>
+                            <div className="w-14 h-14 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Smartphone className=" text-brand-primary text-[28px]" />
                             </div>
-                            <h3 className="text-xl font-bold text-on-surface">Verify New Number</h3>
-                            <p className="text-sm text-on-surface-variant mt-2">
-                                Enter the 6-digit code sent to <span className="font-semibold text-on-surface">+91 {pendingPhoneNumber}</span>
+                            <h3 className="text-xl font-bold text-text-base">Verify New Number</h3>
+                            <p className="text-sm text-text-muted mt-2">
+                                Enter the 6-digit code sent to <span className="font-semibold text-text-base">+91 {pendingPhoneNumber}</span>
                             </p>
                         </div>
 
@@ -294,7 +299,7 @@ const Profile = () => {
                                     value={digit}
                                     onChange={(e) => handleOtpChange(index, e.target.value)}
                                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                    className="w-12 h-14 text-center text-xl font-bold border-2 border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all bg-surface"
+                                    className="w-12 h-14 text-center text-xl font-bold border-2 border-bg-muted rounded-lg focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all bg-bg-surface"
                                 />
                             ))}
                         </div>
@@ -312,14 +317,14 @@ const Profile = () => {
                                 type="button"
                                 onClick={handleResendOtp}
                                 disabled={requestOtpMutation.isPending}
-                                className="text-sm text-primary hover:text-primary-container font-medium cursor-pointer disabled:text-gray-400"
+                                className="text-sm text-brand-primary hover:text-brand-primary-container font-medium cursor-pointer disabled:text-text-disabled"
                             >
                                 {requestOtpMutation.isPending ? "Sending..." : "Resend OTP"}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => { setShowOtpModal(false); setOtpDigits(['', '', '', '', '', '']); }}
-                                className="text-sm text-on-surface-variant hover:text-on-surface font-medium cursor-pointer"
+                                className="text-sm text-text-muted hover:text-text-base font-medium cursor-pointer"
                             >
                                 Cancel
                             </button>

@@ -79,6 +79,12 @@ import { config } from "../config/index.js";
 // Helper to format phone for MSG91: Removes '+' and ensures '91' prefix
 const formatPhoneForMsg91 = (phoneNumber) => {
     const cleaned = phoneNumber.replace(/\D/g, ''); // Strip all non-numeric characters
+    
+    // If it's a standard 10-digit number, prepend 91 regardless of what it starts with
+    if (cleaned.length === 10) {
+        return `91${cleaned}`;
+    }
+    
     return cleaned.startsWith("91") ? cleaned : `91${cleaned}`;
 };
 
@@ -147,32 +153,29 @@ export const verifyOtpService = async (phoneNumber, otp) => {
     }
 };
 
-export const sendSMS = async (phoneNumber, message) => {
+export const sendSMS = async (phoneNumber, templateId, variables = {}) => {
     try {
-        if (!phoneNumber || !message) {
-            throw new Error("Phone number and message are required");
+        if (!phoneNumber || !templateId) {
+            throw new Error("Phone number and templateId are required");
         }
 
         const formattedPhone = formatPhoneForMsg91(phoneNumber);
 
-        // NOTE: For standard SMS in India, MSG91 requires a DLT approved Template ID.
-        // The 'message' string passed here MUST exactly match your approved DLT template.
         const options = {
             method: 'POST',
-            url: 'https://control.msg91.com/api/v5/sendsms',
+            url: 'https://control.msg91.com/api/v5/flow/',
             headers: {
                 accept: 'application/json',
                 authkey: config.msg91.authKey,
                 'content-type': 'application/json'
             },
             data: {
-                sender: config.msg91.senderId, // 6-letter DLT approved Sender ID
-                route: "4", // 4 is for Transactional route
-                country: "91",
-                sms: [
+                template_id: templateId,
+                short_url: "0",
+                recipients: [
                     {
-                        message: message,
-                        to: [formattedPhone]
+                        mobiles: formattedPhone,
+                        ...variables
                     }
                 ]
             }

@@ -1,41 +1,55 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { createCustomCandle } from '../api';
 import API from "../api"; 
 import toast from 'react-hot-toast';
 
 export const useProducts = (params = {}) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["products", params],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 1 }) => {
       const searchParams = new URLSearchParams();
-      if (params.page) searchParams.append("page", params.page);
+      searchParams.append("page", pageParam);
       if (params.search) searchParams.append("search", params.search);
       if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
       if (params.sort) searchParams.append("sort", params.sort);
-      searchParams.append("limit", "8");
+      if (params.filter) searchParams.append("filter", params.filter);
+      searchParams.append("limit", "12");
 
       const { data } = await API.get(`/candles?${searchParams.toString()}`);
       return data;
     },
-    staleTime: 1000 * 60 * 5, // Fresh for 5 minutes
+    getNextPageParam: (lastPage) => {
+      if (lastPage.currentPage < lastPage.totalPages) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
   });
 };
 
 export const useProductsByCategory = (categorySlug, params = {}) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["products", categorySlug, params],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 1 }) => {
       const searchParams = new URLSearchParams();
-      if (params.page) searchParams.append("page", params.page);
+      searchParams.append("page", pageParam);
       if (params.search) searchParams.append("search", params.search);
       if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
       if (params.sort) searchParams.append("sort", params.sort);
-      searchParams.append("limit", "8");
+      searchParams.append("limit", "12");
 
       const { data } = await API.get(`/products/category/${categorySlug}?${searchParams.toString()}`);
       return data;
     },
-    enabled: !!categorySlug, // Only run if we have a slug
+    getNextPageParam: (lastPage) => {
+      if (lastPage.currentPage < lastPage.totalPages) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!categorySlug,
   });
 };
 

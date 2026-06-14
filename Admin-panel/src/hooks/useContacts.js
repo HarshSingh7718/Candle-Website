@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../api';
 import toast from 'react-hot-toast';
 
 export const useGetContacts = (page = 1, limit = 10) => {
     return useQuery({
+        placeholderData: keepPreviousData,
         queryKey: ['contacts', page, limit],
         queryFn: async () => {
             const { data } = await api.get(`/admin/contacts?page=${page}&limit=${limit}`);

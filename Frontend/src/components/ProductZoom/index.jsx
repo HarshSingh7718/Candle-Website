@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronUp, ChevronDown, Star, Heart, Plus, Minus, X, Flame, Package, Droplets, ArrowRight } from "lucide-react";
+import {
+  ChevronUp,
+  ChevronDown,
+  Star,
+  Heart,
+  Plus,
+  Minus,
+  X
+} from "lucide-react";
+import { trackAddToCart } from "../../utils/metaPixel";
 import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../hooks/useWishlist";
 import { useNavigate } from "react-router-dom";
@@ -447,6 +456,7 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
 
   const handleBuyNow = async () => {
     await addToCart(product, qty);
+    await trackAddToCart(product, qty);
     navigate("/checkout");
   };
 
@@ -634,7 +644,10 @@ const ProductZoom = ({ product, onScrollToDescription }) => {
           <div style={styles.qtyWrap}>
             <button
               style={styles.qtyBtn}
-              onClick={() => setQty(q => Math.max(1, q - 1))}
+              onClick={() => {
+                  addToCart(product, qty)
+                  trackAddToCart(product, qty);
+              }}
               onMouseEnter={e => e.currentTarget.style.background = t.bgCanvas}
               onMouseLeave={e => e.currentTarget.style.background = "none"}
             >

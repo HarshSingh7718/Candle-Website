@@ -11,27 +11,32 @@ export const getHomeData = async (req, res) => {
   // Featured
   Product.find({
     isFeatured: true,
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   }).limit(6).select("name slug price discountPrice images ratings"),
   // Trending
   Product.find({
     isTrending: true,
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   }).limit(6).select("name slug price discountPrice images ratings"),
   // Latest
   Product.find({
     isLatest: true,
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   }).limit(6).select("name slug price discountPrice images ratings"),
   // Best Seller
   Product.find({
     isBestSeller: true,
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   }).limit(6).select("name slug price discountPrice images ratings"),
   // Discounted
   Product.find({
     isDiscounted: true,
-    isActive: true
+    isActive: true,
+    type: "simpleCandle"
   }).limit(6).select("name slug price discountPrice images ratings"),
   // Raw products
   Product.find({
