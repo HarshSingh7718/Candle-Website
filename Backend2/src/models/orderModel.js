@@ -25,6 +25,7 @@ const orderItemSchema = new mongoose.Schema({
     quantity: Number,
     price: Number,
     image: String,
+    slug: String,
 
     //  SNAPSHOT FOR CUSTOM (VERY IMPORTANT)
     snapshot: {

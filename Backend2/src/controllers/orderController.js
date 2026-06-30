@@ -72,6 +72,7 @@ export const createOrder = async (req, res) => {
           product: prod._id,
           name: prod.name,
           quantity: item.quantity,
+          slug: prod.slug,
           price: prod.discountPrice || prod.price || 0,
           image: prod.images?.[0]?.url || ""
         });
