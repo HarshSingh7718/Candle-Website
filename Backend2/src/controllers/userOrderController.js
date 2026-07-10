@@ -101,7 +101,11 @@ export const getSingleOrder = async (req, res) => {
 export const cancelOrder = async (req, res) => {
     const reason = req.body?.reason;
     const searchValue = req.params.id;
-    const order = await Order.findOne({ orderId: searchValue });
+    const order = await Order.findOne(
+        mongoose.Types.ObjectId.isValid(searchValue)
+            ? { $or: [{ orderId: searchValue }, { _id: searchValue }] }
+            : { orderId: searchValue }
+    );
 
     if (!order) {
         throw new CustomError("Order not found", 404);
@@ -150,8 +154,12 @@ export const addReviewAfterDelivery = async (req, res) => {
     comment
   } = req.body;
 
-  // 1. Find order
-  const order = await Order.findById(orderId);
+  // 1. Find order (lookup by orderId or _id)
+  const order = await Order.findOne(
+    mongoose.Types.ObjectId.isValid(orderId)
+      ? { $or: [{ orderId }, { _id: orderId }] }
+      : { orderId }
+  );
   if (!order) {
     throw new CustomError("Order not found", 404);
   }
