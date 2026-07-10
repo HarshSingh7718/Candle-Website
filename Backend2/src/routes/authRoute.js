@@ -1,4 +1,5 @@
 import express from 'express'
+import rateLimit from 'express-rate-limit';
 import { login, sendOtpController, verifyOtpController, completeProfile, logout, forgotPassword, verifyOTP, resendOtp, resetPassword, googleAuth, saveGooglePhone } from '../controllers/authController.js'
 import { isAuthenticated, sendOtpMiddleware } from "../middleware/authmiddleware.js"
 import { validate } from "../middleware/validate.js"
@@ -23,11 +24,17 @@ const router = express.Router()
 router.post("/login", validate(loginSchema), login);
 router.post("/logout", isAuthenticated, logout);
 
+const passwordResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 3, // Limit each IP to 3 password reset requests per hour
+    message: 'Too many password reset attempts from this IP, please try again after an hour'
+});
+
 // PASSWORD RESET
-router.post("/forgot-password", validate(sendOtpSchema), forgotPassword);
-router.post("/forgot-password/verify-otp", validate(verifyOtpSchema), verifyOTP);
-router.post("/forgot-password/resend-otp", validate(sendOtpSchema), resendOtp);
-router.post("/forgot-password/reset-password", validate(resetPasswordSchema), resetPassword);
+router.post("/forgot-password", passwordResetLimiter, validate(sendOtpSchema), forgotPassword);
+router.post("/forgot-password/verify-otp", passwordResetLimiter, validate(verifyOtpSchema), verifyOTP);
+router.post("/forgot-password/resend-otp", passwordResetLimiter, validate(sendOtpSchema), resendOtp);
+router.post("/forgot-password/reset-password", passwordResetLimiter, validate(resetPasswordSchema), resetPassword);
 
 
 

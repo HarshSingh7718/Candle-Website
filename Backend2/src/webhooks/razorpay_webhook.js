@@ -41,7 +41,6 @@ export const razorpayWebhookHandler = async (req, res) => {
 
         // 2. PARSE BODY after verification
         const event = JSON.parse(req.body.toString());
-        console.log(`💳 Razorpay Webhook: ${event.event}`);
 
         // 3. HANDLE EVENTS
         if (event.event === "payment.captured") {
@@ -63,7 +62,6 @@ export const razorpayWebhookHandler = async (req, res) => {
 
             // 5. IDEMPOTENCY: If already paid, skip
             if (order.paymentStatus === "paid") {
-                console.log(`ℹ️ Razorpay webhook: Order ${order.orderId} already paid, skipping`);
                 return res.status(200).json({ success: true, message: "Already processed" });
             }
 
@@ -164,8 +162,6 @@ export const razorpayWebhookHandler = async (req, res) => {
                 ...order.toObject(),
                 user: { firstName: user.firstName }
             });
-
-            console.log(`✅ Razorpay webhook: Order ${order.orderId} confirmed via payment.captured`);
         }
 
         // Always return 200 to acknowledge receipt

@@ -43,7 +43,7 @@ export const sendWelcomeEmail = async (email, firstName) => {
 
         await transporter.sendMail(mailOptions);
     } catch (error) {
-        console.error("Email Error:", error);
+        console.error("Email Error:", error.message);
     }
 };
 
@@ -79,6 +79,6 @@ export const sendOrderConfirmationEmail = async (email, orderData) => {
 
         await transporter.sendMail(mailOptions);
     } catch (error) {
-        console.error("Order Confirmation Email Error:", error);
+        console.error("Order Confirmation Email Error:", error.message);
     }
 };

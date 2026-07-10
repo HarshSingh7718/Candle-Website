@@ -5,7 +5,6 @@ import { Product } from "../models/productModels.js";
 export const initBestSellersCron = () => {
     cron.schedule("0 0 * * *", async () => {
         try {
-            console.log("Running best sellers auto-promotion cron job...");
             
             // Get the top 6 products by totalSold
             const topProducts = await Product.find({ isActive: true })
@@ -21,7 +20,6 @@ export const initBestSellersCron = () => {
                     { _id: { $in: topProductIds } },
                     { $set: { isBestSeller: true } }
                 );
-                console.log(`Auto-promoted ${topProductIds.length} products to best sellers.`);
             }
 
             // Note: We deliberately do NOT set isBestSeller to false for other products,

@@ -1,3 +1,6 @@
+import crypto from "crypto";
+import { logger, sendSlackAlert } from "../utils/logger.js";
+
 export class CustomError extends Error {
   constructor(message, statusCode) {
     super(message);
@@ -39,9 +42,24 @@ export const errorHandler = (err, req, res, next) => {
     message = err.error.description;
   }
 
+  const correlationId = crypto.randomUUID();
+
+  // For 500 errors, mask the message to the user, but log the real error
+  const userMessage = statusCode >= 500 ? "An unexpected error occurred. Please contact support." : message;
+
+  // Detailed server-side logging
+  logger.error(`[Error ID: ${correlationId}] ${statusCode} - ${message}`, { stack: err.stack });
+
+  if (statusCode >= 500) {
+      // Don't block the response waiting for the Slack alert
+      sendSlackAlert(correlationId, statusCode, message, err.stack).catch(e => 
+          logger.error("Slack alert failed", e)
+      );
+  }
+
   res.status(statusCode).json({
     success: false,
-    message,
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    message: userMessage,
+    errorId: correlationId,
   });
 };

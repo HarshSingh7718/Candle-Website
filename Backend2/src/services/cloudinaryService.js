@@ -39,7 +39,7 @@ export const uploadImage = async (fileBuffer, folder = "naisha-creations/misc", 
             uploadStream.end(compressedBuffer);
         });
     } catch (error) {
-        console.error("Cloudinary upload error:", error);
+        console.error("Cloudinary upload error:", error.message);
         throw new Error("Failed to upload image");
     }
 };

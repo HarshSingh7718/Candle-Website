@@ -20,6 +20,8 @@
     "@iconify/react": "^6.0.2",
     "@mui/material": "^9.0.0",
     "@react-oauth/google": "^0.13.5",
+    "@sentry/browser": "^10.65.0",
+    "@sentry/react": "^10.65.0",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-query": "^5.100.6",
     "@tanstack/react-virtual": "^3.13.24",

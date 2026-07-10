@@ -1,4 +1,5 @@
 import router from './routes/authRoute.js'
+import * as Sentry from "@sentry/node";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -54,7 +55,21 @@ app.use(cookieParser());
 app.post("/api/webhook/shipment", shiprocketWebhookHandler);
 
 app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+        },
+    },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    xContentTypeOptions: true,
+    xFrameOptions: { action: "deny" },
+    strictTransportSecurity: {
+        maxAge: 31536000, // 1 year
+        includeSubDomains: true,
+    }
 }));
 
 // Security
@@ -122,6 +137,11 @@ app.use("/api", wishlistRoutes);
 app.use("/api/coupons", couponRoutes);
 
 app.use('/', seoRoute);
+
+// Sentry Error Handler (must be before custom error handlers)
+if (process.env.SENTRY_DSN) {
+    Sentry.setupExpressErrorHandler(app);
+}
 
 // Error Handling Middleware (MUST BE LAST)
 app.use(errorHandler);
