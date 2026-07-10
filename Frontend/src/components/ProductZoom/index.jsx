@@ -1,397 +1,800 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import {
-  ChevronUp,
-  ChevronDown,
-  Star,
-  Heart,
-  Plus,
-  Minus,
-  X
-} from "lucide-react";
+import { ChevronUp, ChevronDown, Star, Heart, Plus, Minus, X, Flame, Package, Droplets, ArrowRight } from "lucide-react";
 import { trackAddToCart } from "../../utils/metaPixel";
 import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../hooks/useWishlist";
 import { useNavigate } from "react-router-dom";
 
-/**
- * ProductZoom – Product detail view with image gallery and purchase controls.
- *
- * Props:
- *  - product: the full product object
- *  - onScrollToDescription: callback that scrolls to & opens the Description tab
- */
+/* ─── Design tokens ──────────────────────────────────────────────────── */
+const t = {
+  brandPrimary:      "#5e3232",
+  brandSecondary:    "#a67067",
+  bgCanvas:          "#fce8e8",
+  bgSurface:         "#ffffff",
+  bgSurfaceHover:    "#f5dfdf",
+  bgMuted:           "#e5d5d5",
+  textBase:          "#221f1f",
+  textMuted:         "#595554",
+  textDisabled:      "#9e9a99",
+  textOnBrand:       "#ffffff",
+  success:           "#16a34a",
+  danger:            "#dc2626",
+};
+
+/* ─── Inline style helpers ────────────────────────────────────────────── */
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: t.bgCanvas,
+    fontFamily: "'Georgia', 'Times New Roman', serif",
+    color: t.textBase,
+    overflowX: "hidden",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    minHeight: "100vh",
+  },
+  // Left: sticky gallery
+  galleryCol: {
+    position: "sticky",
+    top: 0,
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    background: t.bgCanvas,
+    overflow: "hidden",
+  },
+  mainImgWrap: {
+    flex: 1,
+    position: "relative",
+    overflow: "hidden",
+    cursor: "zoom-in",
+  },
+  mainImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    transition: "transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)",
+  },
+  thumbRail: {
+    display: "flex",
+    gap: 8,
+    padding: "12px 16px",
+    background: t.bgCanvas,
+    overflowX: "auto",
+    scrollbarWidth: "none",
+  },
+  // Right: details scroll
+  detailsCol: {
+    background: t.bgSurface,
+    padding: "48px 40px 80px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 0,
+  },
+  eyebrow: {
+    fontFamily: "'Arial', sans-serif",
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: "0.18em",
+    textTransform: "uppercase",
+    color: t.brandSecondary,
+    marginBottom: 14,
+  },
+  h1: {
+    fontFamily: "'Georgia', serif",
+    fontSize: 30,
+    fontWeight: 400,
+    lineHeight: 1.25,
+    color: t.textBase,
+    margin: "0 0 20px",
+  },
+  divider: {
+    border: "none",
+    borderTop: `1px solid ${t.bgMuted}`,
+    margin: "24px 0",
+  },
+  priceWrap: {
+    display: "flex",
+    alignItems: "baseline",
+    gap: 12,
+    marginBottom: 6,
+  },
+  priceMain: {
+    fontSize: 34,
+    fontWeight: 700,
+    fontFamily: "'Georgia', serif",
+    color: t.brandPrimary,
+  },
+  priceStrike: {
+    fontSize: 18,
+    fontWeight: 400,
+    color: t.textDisabled,
+    textDecoration: "line-through",
+  },
+  stockPill: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 5,
+    fontSize: 12,
+    fontFamily: "'Arial', sans-serif",
+    color: t.success,
+    background: "#dcfce7",
+    borderRadius: 100,
+    padding: "3px 10px",
+    fontWeight: 600,
+    marginBottom: 20,
+    width: "fit-content",
+  },
+  outOfStockPill: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 5,
+    fontSize: 12,
+    fontFamily: "'Arial', sans-serif",
+    color: t.danger,
+    background: "#fee2e2",
+    borderRadius: 100,
+    padding: "3px 10px",
+    fontWeight: 600,
+    marginBottom: 20,
+    width: "fit-content",
+  },
+  starsRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 20,
+  },
+  descBtn: {
+    textAlign: "left",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+    color: t.textMuted,
+    fontFamily: "'Georgia', serif",
+    fontSize: 15,
+    lineHeight: 1.75,
+    marginBottom: 28,
+  },
+  readMore: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    fontFamily: "'Arial', sans-serif",
+    fontSize: 12,
+    color: t.brandSecondary,
+    fontWeight: 600,
+    letterSpacing: "0.05em",
+    marginTop: 6,
+  },
+  // Quantity
+  qtyWrap: {
+    display: "flex",
+    alignItems: "center",
+    border: `1.5px solid ${t.bgMuted}`,
+    borderRadius: 4,
+    overflow: "hidden",
+    width: "fit-content",
+  },
+  qtyBtn: {
+    width: 44,
+    height: 44,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    color: t.brandPrimary,
+    transition: "background 0.15s",
+  },
+  qtyNum: {
+    width: 44,
+    textAlign: "center",
+    fontFamily: "'Georgia', serif",
+    fontWeight: 700,
+    fontSize: 16,
+    color: t.textBase,
+    borderLeft: `1px solid ${t.bgMuted}`,
+    borderRight: `1px solid ${t.bgMuted}`,
+  },
+  // CTA buttons
+  btnCart: {
+    width: "100%",
+    height: 52,
+    background: "none",
+    border: `1.5px solid ${t.brandPrimary}`,
+    color: t.brandPrimary,
+    fontFamily: "'Arial', sans-serif",
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: "0.15em",
+    textTransform: "uppercase",
+    cursor: "pointer",
+    transition: "background 0.2s, color 0.2s",
+    borderRadius: 2,
+  },
+  btnBuy: {
+    width: "100%",
+    height: 52,
+    background: t.brandPrimary,
+    border: "none",
+    color: t.textOnBrand,
+    fontFamily: "'Arial', sans-serif",
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: "0.15em",
+    textTransform: "uppercase",
+    cursor: "pointer",
+    transition: "background 0.2s",
+    borderRadius: 2,
+  },
+  // Spec pills
+  specGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 10,
+    margin: "0 0 24px",
+  },
+  specCard: {
+    background: t.bgCanvas,
+    border: `1px solid ${t.bgMuted}`,
+    borderRadius: 6,
+    padding: "12px 14px",
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  specIcon: {
+    color: t.brandSecondary,
+    flexShrink: 0,
+    marginTop: 1,
+  },
+  specLabel: {
+    fontFamily: "'Arial', sans-serif",
+    fontSize: 10,
+    fontWeight: 600,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase",
+    color: t.textMuted,
+    marginBottom: 2,
+  },
+  specVal: {
+    fontFamily: "'Georgia', serif",
+    fontSize: 14,
+    color: t.textBase,
+  },
+  // Accordion
+  accordionItem: {
+    borderBottom: `1px solid ${t.bgMuted}`,
+  },
+  accordionBtn: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 0",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontFamily: "'Arial', sans-serif",
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: "0.15em",
+    textTransform: "uppercase",
+    color: t.textBase,
+  },
+  accordionBody: {
+    fontFamily: "'Georgia', serif",
+    fontSize: 14,
+    color: t.textMuted,
+    lineHeight: 1.8,
+    overflow: "hidden",
+    transition: "max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease",
+  },
+  // Wishlist pill
+  wishlistBtn: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    zIndex: 40,
+    background: "rgba(252,232,232,0.92)",
+    backdropFilter: "blur(4px)",
+    border: "none",
+    borderRadius: "50%",
+    width: 40,
+    height: 40,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(94,50,50,0.12)",
+    transition: "transform 0.15s",
+  },
+  // Lightbox
+  lightboxOverlay: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 9999,
+    background: "rgba(34,31,31,0.97)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+  },
+  lightboxClose: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    background: "none",
+    border: "none",
+    color: "#fff",
+    cursor: "pointer",
+    opacity: 0.7,
+    transition: "opacity 0.15s",
+  },
+  lightboxImg: {
+    maxWidth: "100%",
+    maxHeight: "75vh",
+    objectFit: "contain",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+  },
+  lightboxThumbRail: {
+    display: "flex",
+    gap: 10,
+    marginTop: 20,
+    overflowX: "auto",
+    scrollbarWidth: "none",
+  },
+};
+
+/* ─── Thumb button ────────────────────────────────────────────────────── */
+function Thumb({ src, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: 60,
+        aspectRatio: "4/5",
+        flexShrink: 0,
+        border: `2px solid ${active ? t.brandPrimary : "transparent"}`,
+        opacity: active ? 1 : 0.55,
+        overflow: "hidden",
+        cursor: "pointer",
+        transition: "opacity 0.15s, border-color 0.15s",
+        borderRadius: 2,
+        background: "none",
+        padding: 0,
+      }}
+    >
+      <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </button>
+  );
+}
+
+/* ─── Spec card ───────────────────────────────────────────────────────── */
+function SpecCard({ icon, label, value }) {
+  if (!value) return null;
+  return (
+    <div style={styles.specCard}>
+      <span style={styles.specIcon}>{icon}</span>
+      <div>
+        <div style={styles.specLabel}>{label}</div>
+        <div style={styles.specVal}>{value}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Accordion item ──────────────────────────────────────────────────── */
+function AccordionItem({ title, content, open, onToggle }) {
+  return (
+    <div style={styles.accordionItem}>
+      <button style={styles.accordionBtn} onClick={onToggle}>
+        <span>{title}</span>
+        {open ? <ChevronUp size={16} strokeWidth={1.5} color={t.textMuted} /> : <ChevronDown size={16} strokeWidth={1.5} color={t.textMuted} />}
+      </button>
+      <div
+        style={{
+          ...styles.accordionBody,
+          maxHeight: open ? 200 : 0,
+          opacity: open ? 1 : 0,
+          paddingBottom: open ? 16 : 0,
+        }}
+      >
+        {content}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main component ──────────────────────────────────────────────────── */
 const ProductZoom = ({ product, onScrollToDescription }) => {
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const navigate  = useNavigate();
+  const { addToCart }                  = useCart();
   const { liked: isWishlisted, toggleWishlist } = useWishlist(product?._id);
 
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [openFaq, setOpenFaq] = useState(null);
-  const [qty, setQty] = useState(1);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [activeIdx,      setActiveIdx]      = useState(0);
+  const [openFaq,        setOpenFaq]        = useState(null);
+  const [qty,            setQty]            = useState(1);
+  const [lightbox,       setLightbox]       = useState(false);
+  const [cartHover,      setCartHover]      = useState(false);
+  const [buyHover,       setBuyHover]       = useState(false);
+  const [imgHover,       setImgHover]       = useState(false);
+  const [isDesktop,      setIsDesktop]      = useState(false);
 
   useEffect(() => {
-    if (isLightboxOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isLightboxOpen]);
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
-  const toggleFaq = (index) => setOpenFaq(openFaq === index ? null : index);
+  useEffect(() => {
+    document.body.style.overflow = lightbox ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [lightbox]);
 
-  const imageUrls =
-    product?.images?.map((img) => img.url) || ["/images/placeholder.jpg"];
+  const imageUrls = product?.images?.map((i) => i.url) || ["/images/placeholder.jpg"];
+  const inStock   = product?.stock > 0;
+  const price     = product?.discountPrice > 0 ? product.discountPrice : product?.price;
+  const original  = product?.discountPrice > 0 ? product?.price : null;
+  const discount  = original ? Math.round(((original - price) / original) * 100) : null;
 
-  const nextImage = () => {
-    setActiveImageIndex((prev) => (prev + 1) % imageUrls.length);
-  };
-
-  const prevImage = () => {
-    setActiveImageIndex(
-      (prev) => (prev - 1 + imageUrls.length) % imageUrls.length
-    );
-  };
-
-  // Buy It Now Logic
   const handleBuyNow = async () => {
     await addToCart(product, qty);
     await trackAddToCart(product, qty);
     navigate("/checkout");
   };
 
-  return (
-    <div className="min-h-screen bg-light-yellow flex items-center justify-center p-0 sm:p-4 font-sans text-slate-900 overflow-x-hidden">
-      <div className="bg-light-yellow rounded-none sm:rounded-sm w-full relative flex flex-col min-[1281px]:flex-row overflow-hidden min-h-screen sm:min-h-0">
-        {/* ─────────────────── Left Column: Image Gallery ─────────────────── */}
-        <div className="flex flex-col w-full min-[1281px]:w-[45%] 2xl:w-[44%] p-3 sm:p-4 md:p-8 min-[1281px]:p-6 mx-auto md:max-w-4xl min-[1281px]:max-w-none min-[1281px]:mx-0 self-start sticky top-6">
-          {/* Desktop layout: thumbnails on left + main image */}
-          <div className="hidden md:flex flex-row">
-            {/* Vertical thumbnail strip (desktop only) */}
-            <div className="flex flex-col gap-2 mr-4 justify-center">
-              {imageUrls.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImageIndex(idx)}
-                  className={`w-16 aspect-[4/5] border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
-                    activeImageIndex === idx
-                      ? "border-coffee"
-                      : "border-transparent opacity-70 hover:opacity-100"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`thumb-${idx}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+  const faqs = [
+    {
+      title: "About Naisha Creations",
+      content: "We are a Dehradun-based handmade candle studio crafting premium, smokeless soy wax candles designed to elevate your living space. Every piece is poured by hand with love.",
+    },
+    {
+      title: "Fragrance Notes",
+      content: product?.scent || "Formulated with the highest quality fragrance oils. Each scent is carefully chosen for clarity, longevity, and mood.",
+    },
+    {
+      title: "Delivery & Packaging",
+      content: "Ships within 48 hours. Packed in eco-friendly tissue wrap and a gift-ready box. Available for gifting with a personal note — DM us to arrange.",
+    },
+  ];
 
-            {/* Main image (desktop) */}
-            <div 
-              className="flex-1 relative group overflow-hidden bg-light-yellow cursor-zoom-in"
-              onClick={() => setIsLightboxOpen(true)}
-            >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleWishlist();
-                }}
-                className="absolute top-4 right-4 z-[40] bg-light-yellow/90 backdrop-blur-sm p-2.5 rounded-full shadow-md hover:bg-light-yellow transition-all group/heart cursor-pointer"
-              >
-                <Heart
-                  size={20}
-                  className={`transition-all ${
-                    isWishlisted
-                      ? "fill-red-500 text-danger"
-                      : "text-muted hover:text-red-500"
-                  }`}
-                />
-              </button>
-
-              <div className="w-full aspect-[4/5] overflow-hidden">
-                <img
-                  src={imageUrls[activeImageIndex]}
-                  alt="Product Main"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            </div>
+  /* ── Gallery ─────────────────────────────────────────────── */
+  const Gallery = () => (
+    <div style={isDesktop ? styles.galleryCol : { background: t.bgCanvas }}>
+      {/* Main image */}
+      <div
+        style={{
+          ...styles.mainImgWrap,
+          ...(isDesktop ? { flex: 1 } : { aspectRatio: "4/5" }),
+        }}
+        onClick={() => setLightbox(true)}
+        onMouseEnter={() => setImgHover(true)}
+        onMouseLeave={() => setImgHover(false)}
+      >
+        <img
+          src={imageUrls[activeIdx]}
+          alt={product?.name}
+          style={{
+            ...styles.mainImg,
+            transform: imgHover ? "scale(1.06)" : "scale(1)",
+          }}
+        />
+        {/* Wishlist */}
+        <button
+          style={styles.wishlistBtn}
+          onClick={(e) => { e.stopPropagation(); toggleWishlist(); }}
+        >
+          <Heart
+            size={18}
+            style={{
+              fill: isWishlisted ? t.danger : "none",
+              color: isWishlisted ? t.danger : t.textMuted,
+              transition: "all 0.2s",
+            }}
+          />
+        </button>
+        {/* Discount badge */}
+        {discount && (
+          <div style={{
+            position: "absolute",
+            top: 16,
+            left: 16,
+            background: t.brandPrimary,
+            color: "#fff",
+            fontFamily: "'Arial', sans-serif",
+            fontSize: 11,
+            fontWeight: 700,
+            padding: "4px 10px",
+            borderRadius: 2,
+            letterSpacing: "0.08em",
+          }}>
+            -{discount}%
           </div>
-
-          {/* Mobile layout: main image + horizontal thumbnails below */}
-          <div className="flex flex-col md:hidden">
-            {/* Main image (no zoom on mobile — tap to see lightbox) */}
-            <div 
-              className="relative group overflow-hidden bg-light-yellow cursor-zoom-in"
-              onClick={() => setIsLightboxOpen(true)}
-            >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleWishlist();
-                }}
-                className="absolute top-4 right-4 z-[40] bg-light-yellow/90 backdrop-blur-sm p-2.5 rounded-full shadow-md hover:bg-light-yellow transition-all cursor-pointer"
-              >
-                <Heart
-                  size={20}
-                  className={`transition-all ${
-                    isWishlisted
-                      ? "fill-red-500 text-danger"
-                      : "text-muted hover:text-red-500"
-                  }`}
-                />
-              </button>
-
-              <div className="w-full aspect-[4/5] overflow-hidden">
-                <img
-                  src={imageUrls[activeImageIndex]}
-                  alt="Product Main"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Horizontal thumbnail strip (mobile) */}
-            {imageUrls.length > 1 && (
-              <div className="flex gap-2 mt-3 overflow-x-auto hide-scrollbar pb-1">
-                {imageUrls.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImageIndex(idx)}
-                    className={`w-16 aspect-[4/5] border overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
-                      activeImageIndex === idx
-                        ? "border-coffee"
-                        : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`thumb-${idx}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ─────────────────── Right Column: Details ─────────────────── */}
-        <div className="flex-1 p-6 md:p-10 min-[1281px]:p-10 2xl:p-12 bg-light-yellow w-full min-[1281px]:w-[55%] 2xl:w-[56%] md:max-w-4xl mx-auto min-[1281px]:max-w-none min-[1281px]:mx-0">
-          <h1 className="text-xl sm:text-2xl font-semibold text-heading leading-tight mb-3">
-            {product.name}
-          </h1>
-
-          <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mb-4 text-sm">
-            <div className="flex items-center text-muted">
-              <span className="mr-1">Collection :</span>
-              <span className="text-heading font-medium">
-                {product.category?.map(c => c.name).join(', ') || "Naisha Creations"}
-              </span>
-            </div>
-            <div className="flex items-center">
-              <div className="flex mr-1.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={14}
-                    className={
-                      i < product.ratings
-                        ? "fill-[#ffb400] text-[#ffb400]"
-                        : "text-orange-400"
-                    }
-                  />
-                ))}
-              </div>
-              <span className="text-muted text-xs">
-                Review ({product.numOfReviews || 0})
-              </span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-baseline gap-3 mb-6">
-            {product.discountPrice > 0 && (
-              <span className="text-xl sm:text-2xl line-through text-muted font-normal">
-                ₹{product.price}
-              </span>
-            )}
-            <span className="text-2xl sm:text-3xl text-heading font-bold">
-              ₹{product.discountPrice > 0 ? product.discountPrice : product.price}
-            </span>
-            <span className="text-xs sm:text-sm text-paragraph ml-0 sm:ml-2 w-full sm:w-auto">
-              Availability:{" "}
-              <span className="text-emerald-600 font-semibold">
-                {product.stock > 0 ? "In Stock" : "Out of Stock"}
-              </span>
-            </span>
-          </div>
-
-          {/* Short description — clicking scrolls to the full Description tab */}
-          <button
-            onClick={onScrollToDescription}
-            className="text-left w-full text-paragraph text-sm leading-relaxed border-b border-muted/20 pb-8 cursor-pointer hover:text-heading transition-colors group/desc"
-          >
-            <span className="line-clamp-3">{product.description}</span>
-            <span className="text-xs text-coffee font-medium mt-1 inline-block group-hover/desc:underline">
-              Read full description ↓
-            </span>
-          </button>
-
-          {/* Quantity and Actions */}
-          <div className="flex flex-col gap-4 mb-10 mt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center border border-coffee h-14 bg-light-yellow">
-                <button
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-4 h-full hover:bg-coffee/10 cursor-pointer transition-colors"
-                >
-                  <Minus size={16} />
-                </button>
-                <span className="w-12 text-center font-bold text-lg text-heading">
-                  {qty}
-                </span>
-                <button
-                  onClick={() => setQty(qty + 1)}
-                  className="px-4 h-full hover:bg-coffee/10 cursor-pointer transition-colors"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-
-              <button
-                onClick={() => {
-                  addToCart(product, qty)
-                  trackAddToCart(product, qty);
-                }}
-                className="flex-1 h-14 bg-light-yellow border border-coffee hover:bg-coffee hover:text-light-yellow text-heading text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] cursor-pointer"
-              >
-                ADD TO CART
-              </button>
-            </div>
-
-            <button
-              onClick={handleBuyNow}
-              className="w-full h-14 bg-coffee hover:bg-coffee-light text-light-yellow text-xs font-bold tracking-widest uppercase transition-all duration-300 active:scale-[0.98] shadow-md cursor-pointer"
-            >
-              BUY IT NOW
-            </button>
-          </div>
-
-          {/* Delivery & FAQ Info */}
-          <div className="mt-8 mb-6">
-            <div className="border-t border-muted/20">
-              {[
-                {
-                  title: "ABOUT Naisha Creations",
-                  content:
-                    "Premium range of home fragrances designed to elevate your living spaces.",
-                },
-                {
-                  title: "ABOUT FRAGRANCE",
-                  content:
-                    product.scent || "Formulated with highest quality oils.",
-                },
-                {
-                  title: "SPECIFICATIONS",
-                  content: `Burn Time: ${product.burnTime}h | Weight: ${product.weight}g | Material: ${product.material}${product.vessel ? ` | Vessel: ${product.vessel}` : ''}`,
-                },
-              ].map((faq, idx) => (
-                <div key={idx} className="border-b border-muted/20">
-                  <button
-                    onClick={() => toggleFaq(idx)}
-                    className="w-full flex justify-between items-center py-5 text-left cursor-pointer group"
-                  >
-                    <span className="text-[13px] font-normal text-heading tracking-widest uppercase">
-                      {faq.title}
-                    </span>
-                    {openFaq === idx ? (
-                      <ChevronUp size={18} strokeWidth={1} />
-                    ) : (
-                      <ChevronDown size={18} strokeWidth={1} />
-                    )}
-                  </button>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      openFaq === idx
-                        ? "max-h-40 opacity-100 pb-5"
-                        : "max-h-0 opacity-0"
-                    }`}
-                  >
-                    <p className="text-paragraph text-[13px] leading-relaxed">
-                      {faq.content}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        )}
+        {/* Zoom hint */}
+        <div style={{
+          position: "absolute",
+          bottom: 16,
+          right: 16,
+          background: "rgba(252,232,232,0.85)",
+          backdropFilter: "blur(4px)",
+          fontFamily: "'Arial', sans-serif",
+          fontSize: 10,
+          fontWeight: 600,
+          letterSpacing: "0.1em",
+          color: t.brandPrimary,
+          padding: "4px 10px",
+          borderRadius: 100,
+          opacity: imgHover ? 1 : 0,
+          transition: "opacity 0.2s",
+          pointerEvents: "none",
+        }}>
+          CLICK TO ZOOM
         </div>
       </div>
 
-      {/* ─────────────────── Lightbox Modal ─────────────────── */}
-      {isLightboxOpen && createPortal(
-        <div 
-          className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4 sm:p-8 w-screen h-[100dvh] overflow-hidden"
-          onClick={() => setIsLightboxOpen(false)}
-        >
-          {/* Close Button */}
-          <button 
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-text-on-brand hover:text-gray-300 p-2 cursor-pointer z-[60] transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsLightboxOpen(false);
-            }}
-          >
-            <X size={32} />
-          </button>
-          
-          {/* Large Image Container */}
-          <div className="flex-1 w-full min-h-0 flex items-center justify-center mb-4 sm:mb-6">
-            <img 
-              src={imageUrls[activeImageIndex]} 
-              alt="Lightbox Main" 
-              className="max-w-full max-h-full object-contain select-none drop-shadow-2xl"
-              onClick={(e) => e.stopPropagation()} 
+      {/* Thumbnail rail */}
+      {imageUrls.length > 1 && (
+        <div style={styles.thumbRail}>
+          {imageUrls.map((url, idx) => (
+            <Thumb
+              key={idx}
+              src={url}
+              active={activeIdx === idx}
+              onClick={() => setActiveIdx(idx)}
             />
-          </div>
-          
-          {/* Thumbnail Strip */}
-          {imageUrls.length > 1 && (
-            <div 
-              className="flex gap-4 overflow-x-auto max-w-full pb-2 hide-scrollbar shrink-0 px-2 sm:px-4" 
-              onClick={(e) => e.stopPropagation()}
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  /* ── Details ─────────────────────────────────────────────── */
+  const Details = () => (
+    <div style={styles.detailsCol}>
+      {/* Collection eyebrow */}
+      <div style={styles.eyebrow}>
+        {product?.category?.map(c => c.name).join(" · ") || "Naisha Creations"}
+      </div>
+
+      {/* Name */}
+      <h1 style={styles.h1}>{product?.name}</h1>
+
+      {/* Stars */}
+      <div style={styles.starsRow}>
+        <div style={{ display: "flex", gap: 2 }}>
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              size={14}
+              style={{
+                fill: i < (product?.ratings || 0) ? "#c88b47" : "none",
+                color: i < (product?.ratings || 0) ? "#c88b47" : t.bgMuted,
+              }}
+            />
+          ))}
+        </div>
+        <span style={{ fontFamily: "'Arial', sans-serif", fontSize: 12, color: t.textMuted }}>
+          {product?.numOfReviews || 0} reviews
+        </span>
+      </div>
+
+      <hr style={styles.divider} />
+
+      {/* Price */}
+      <div style={styles.priceWrap}>
+        {original && <span style={styles.priceStrike}>₹{original}</span>}
+        <span style={styles.priceMain}>₹{price}</span>
+      </div>
+
+      {/* Stock */}
+      <div style={inStock ? styles.stockPill : styles.outOfStockPill}>
+        <span style={{
+          width: 6, height: 6, borderRadius: "50%",
+          background: inStock ? t.success : t.danger,
+          display: "inline-block",
+        }} />
+        {inStock ? "In Stock" : "Out of Stock"}
+      </div>
+
+      {/* Short description */}
+      <button style={styles.descBtn} onClick={onScrollToDescription}>
+        <span style={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+          {product?.description}
+        </span>
+        <span style={styles.readMore}>
+          Read full description <ArrowRight size={12} />
+        </span>
+      </button>
+
+      <hr style={styles.divider} />
+
+      {/* Spec grid */}
+      <div style={styles.specGrid}>
+        <SpecCard icon={<Flame size={16} />} label="Burn Time" value={product?.burnTime ? `${product.burnTime} hours` : null} />
+        <SpecCard icon={<Package size={16} />} label="Weight" value={product?.weight ? `${product.weight}g` : null} />
+        <SpecCard icon={<Droplets size={16} />} label="Material" value={product?.material} />
+        {product?.vessel && <SpecCard icon={<Package size={16} />} label="Vessel" value={product.vessel} />}
+      </div>
+
+      {/* Qty + CTAs */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+        {/* Quantity row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontFamily: "'Arial', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: t.textMuted, minWidth: 52 }}>
+            Qty
+          </span>
+          <div style={styles.qtyWrap}>
+            <button
+              style={styles.qtyBtn}
+              onClick={() => {
+                  addToCart(product, qty)
+                  trackAddToCart(product, qty);
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = t.bgCanvas}
+              onMouseLeave={e => e.currentTarget.style.background = "none"}
             >
-              {imageUrls.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveImageIndex(idx);
-                  }}
-                  className={`w-16 sm:w-20 aspect-[4/5] border-2 overflow-hidden transition-all flex-shrink-0 cursor-pointer ${
-                    activeImageIndex === idx
-                      ? "border-text-on-brand scale-105"
-                      : "border-transparent opacity-50 hover:opacity-100"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`lightbox-thumb-${idx}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>, 
-        document.body)}
+              <Minus size={14} />
+            </button>
+            <span style={styles.qtyNum}>{qty}</span>
+            <button
+              style={styles.qtyBtn}
+              onClick={() => setQty(q => q + 1)}
+              onMouseEnter={e => e.currentTarget.style.background = t.bgCanvas}
+              onMouseLeave={e => e.currentTarget.style.background = "none"}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Add to cart */}
+        <button
+          disabled={!inStock}
+          style={{
+            ...styles.btnCart,
+            background: cartHover && inStock ? t.brandPrimary : "none",
+            color: cartHover && inStock ? t.textOnBrand : t.brandPrimary,
+            opacity: inStock ? 1 : 0.4,
+            cursor: inStock ? "pointer" : "not-allowed",
+          }}
+          onMouseEnter={() => setCartHover(true)}
+          onMouseLeave={() => setCartHover(false)}
+          onClick={() => addToCart(product, qty)}
+        >
+          Add to Cart
+        </button>
+
+        {/* Buy now */}
+        <button
+          disabled={!inStock}
+          style={{
+            ...styles.btnBuy,
+            background: buyHover && inStock ? "#7a3f3f" : t.brandPrimary,
+            opacity: inStock ? 1 : 0.4,
+            cursor: inStock ? "pointer" : "not-allowed",
+          }}
+          onMouseEnter={() => setBuyHover(true)}
+          onMouseLeave={() => setBuyHover(false)}
+          onClick={handleBuyNow}
+        >
+          Buy It Now
+        </button>
+      </div>
+
+      {/* Accordion */}
+      <div style={{ borderTop: `1px solid ${t.bgMuted}` }}>
+        {faqs.map((faq, idx) => (
+          <AccordionItem
+            key={idx}
+            title={faq.title}
+            content={faq.content}
+            open={openFaq === idx}
+            onToggle={() => setOpenFaq(openFaq === idx ? null : idx)}
+          />
+        ))}
+      </div>
+
+      {/* Trust row */}
+      <div style={{
+        display: "flex",
+        gap: 24,
+        marginTop: 32,
+        paddingTop: 24,
+        borderTop: `1px solid ${t.bgMuted}`,
+        flexWrap: "wrap",
+      }}>
+        {["Handmade in Dehradun", "100% Soy Wax", "Ships in 48 hrs"].map(label => (
+          <div key={label} style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontFamily: "'Arial', sans-serif",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: "0.06em",
+            color: t.textMuted,
+            textTransform: "uppercase",
+          }}>
+            <span style={{ width: 4, height: 4, borderRadius: "50%", background: t.brandSecondary, flexShrink: 0 }} />
+            {label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  /* ── Lightbox ─────────────────────────────────────────────── */
+  const Lightbox = () => createPortal(
+    <div style={styles.lightboxOverlay} onClick={() => setLightbox(false)}>
+      <button style={styles.lightboxClose} onClick={e => { e.stopPropagation(); setLightbox(false); }}>
+        <X size={28} />
+      </button>
+
+      <img
+        src={imageUrls[activeIdx]}
+        alt={product?.name}
+        style={styles.lightboxImg}
+        onClick={e => e.stopPropagation()}
+      />
+
+      {imageUrls.length > 1 && (
+        <div style={styles.lightboxThumbRail} onClick={e => e.stopPropagation()}>
+          {imageUrls.map((url, idx) => (
+            <button
+              key={idx}
+              onClick={e => { e.stopPropagation(); setActiveIdx(idx); }}
+              style={{
+                width: 56,
+                aspectRatio: "4/5",
+                flexShrink: 0,
+                border: `2px solid ${activeIdx === idx ? "#fff" : "transparent"}`,
+                opacity: activeIdx === idx ? 1 : 0.45,
+                overflow: "hidden",
+                cursor: "pointer",
+                borderRadius: 2,
+                background: "none",
+                padding: 0,
+                transition: "opacity 0.15s, border-color 0.15s",
+              }}
+            >
+              <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>,
+    document.body
+  );
+
+  /* ── Render ───────────────────────────────────────────────── */
+  return (
+    <div style={styles.page}>
+      {isDesktop ? (
+        /* Desktop: side-by-side sticky gallery */
+        <div style={{ ...styles.grid, gridTemplateColumns: "48% 52%" }}>
+          <Gallery />
+          <div style={{ overflowY: "auto" }}>
+            <Details />
+          </div>
+        </div>
+      ) : (
+        /* Mobile: stacked */
+        <div>
+          <Gallery />
+          <Details />
+        </div>
+      )}
+      {lightbox && <Lightbox />}
     </div>
   );
 };

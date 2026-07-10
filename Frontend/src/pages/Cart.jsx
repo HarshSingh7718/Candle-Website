@@ -15,30 +15,31 @@ gsap.registerPlugin(ScrollTrigger);
 function Cart() {
   const [selectedCustomCandle, setSelectedCustomCandle] = useState(null);
 
-  // 👉 1. Destructure the new billing object from useCart
   const { cart, billing, removeFromCart, updateQuantity, isLoading } = useCart();
 
   const increase = (itemId, currentQty) => {
-    if (currentQty < 5) {
-      updateQuantity(itemId, currentQty + 1);
-    }
+    if (currentQty < 5) updateQuantity(itemId, currentQty + 1);
   };
 
   const decrease = (itemId, currentQty) => {
-    if (currentQty > 1) {
-      updateQuantity(itemId, currentQty - 1);
-    }
+    if (currentQty > 1) updateQuantity(itemId, currentQty - 1);
   };
 
-  // 👉 2. Removed the manual subtotal calculation here!
+  const cartRef   = useRef();
+  // Track whether the entry animation has already fired
+  const hasAnimated = useRef(false);
 
-  const cartRef = useRef();
   useEffect(() => {
-    if (!cartRef.current || isLoading) return;
+    // Only run the entry animation once: when the cart first loads with items
+    if (!cartRef.current || isLoading || cart.length === 0 || hasAnimated.current) return;
+
+    hasAnimated.current = true;
+
     const ctx = gsap.context(() => {
-      const q = gsap.utils.selector(cartRef);
+      const q  = gsap.utils.selector(cartRef);
       const tl = gsap.timeline();
-      tl.from(q(".cart-th, .cart-empty"), {
+
+      tl.from(q(".cart-th"), {
         y: -20,
         opacity: 0,
         duration: 0.5,
@@ -52,17 +53,24 @@ function Cart() {
         stagger: 0.1,
         ease: "power3.out",
       }, "-=0.3")
-
       .from(q(".cart-actions"), {
         y: 20,
         opacity: 0,
         duration: 0.4,
         ease: "back.out(1.5)",
       }, "-=0.2");
-
     }, cartRef);
+
     return () => ctx.revert();
-  }, [cart, isLoading]);
+
+  // ✅ Only depends on isLoading — NOT on cart, so qty/remove changes
+  // never retrigger the animation
+  }, [isLoading]);
+
+  // Reset the animation guard if the user empties then re-fills the cart
+  useEffect(() => {
+    if (cart.length === 0) hasAnimated.current = false;
+  }, [cart.length]);
 
   if (isLoading)
     return (
@@ -89,14 +97,13 @@ function Cart() {
           </p>
         ) : (
           <>
+            {/* ── Desktop table ── */}
             <div className="hidden lg:block overscroll-x-auto w-[180%]">
               <table className="w-full border-collapse">
                 <thead className="bg-primary">
                   <tr className="text-center text-light-yellow">
                     <th className="p-4 cart-th"></th>
-                    <th className="p-4 text-left font-medium cart-th">
-                      Product
-                    </th>
+                    <th className="p-4 text-left font-medium cart-th">Product</th>
                     <th className="p-4 font-medium cart-th">Price</th>
                     <th className="p-4 font-medium cart-th">Quantity</th>
                     <th className="p-4 font-medium cart-th">Status</th>
@@ -106,27 +113,19 @@ function Cart() {
 
                 <tbody>
                   {cart.map((item) => {
-                    const isCustom = item.type === "custom";
-                    const productData = isCustom
-                      ? item.customCandle
-                      : item.product;
+                    const isCustom    = item.type === "custom";
+                    const productData = isCustom ? item.customCandle : item.product;
 
-                    const displayName = isCustom
-                      ? "Customized Candle"
-                      : productData?.name;
+                    const displayName  = isCustom ? "Customized Candle" : productData?.name;
                     const displayPrice = isCustom
                       ? productData?.totalPrice
                       : productData?.discountPrice || productData?.price || 0;
-
                     const displayImage = isCustom
                       ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
-                      : productData?.images?.[0]?.url || "/placeholder.jpg";
-
-                    const stockStatus = isCustom
+                      : productData?.images?.[0]?.url    || "/placeholder.jpg";
+                    const stockStatus  = isCustom
                       ? "Made to Order"
-                      : productData?.stock > 0
-                        ? "In stock"
-                        : "Out of stock";
+                      : productData?.stock > 0 ? "In stock" : "Out of stock";
 
                     return (
                       <tr key={item._id} className="border-b cart-item">
@@ -146,13 +145,9 @@ function Cart() {
                               className="flex items-center gap-4 text-left hover:opacity-80 transition-opacity cursor-pointer w-full"
                             >
                               <div className="w-16 sm:w-20 aspect-[4/5] overflow-hidden shrink-0">
-                                <img
-                                  src={displayImage}
-                                  className="w-full h-full object-cover"
-                                  alt={displayName}
-                                />
+                                <img src={displayImage} className="w-full h-full object-cover" alt={displayName} />
                               </div>
-                              <p className="font-semibold text-heading group-hover:text-coffee transition-colors">{displayName}</p>
+                              <p className="font-semibold text-heading">{displayName}</p>
                             </button>
                           ) : (
                             <Link
@@ -160,11 +155,7 @@ function Cart() {
                               className="flex items-center gap-4 hover:opacity-80 transition-opacity w-full group"
                             >
                               <div className="w-16 sm:w-20 aspect-[4/5] overflow-hidden shrink-0">
-                                <img
-                                  src={displayImage}
-                                  className="w-full h-full object-cover"
-                                  alt={displayName}
-                                />
+                                <img src={displayImage} className="w-full h-full object-cover" alt={displayName} />
                               </div>
                               <p className="font-semibold group-hover:text-coffee transition-colors">{displayName}</p>
                             </Link>
@@ -181,11 +172,7 @@ function Cart() {
                             >
                               <Minus size={14} />
                             </button>
-
-                            <span className="w-4 text-center">
-                              {item.quantity}
-                            </span>
-
+                            <span className="w-4 text-center">{item.quantity}</span>
                             <button
                               onClick={() => increase(item._id, item.quantity)}
                               className="border border-muted/20 p-2 cursor-pointer hover:bg-coffee/10"
@@ -195,14 +182,10 @@ function Cart() {
                           </div>
                         </td>
 
-                        <td
-                          className={`text-center ${isCustom
-                            ? "text-blue-600"
-                            : productData?.stock > 0
-                              ? "text-success"
-                              : "text-danger"
-                            }`}
-                        >
+                        <td className={`text-center ${
+                          isCustom ? "text-blue-600"
+                          : productData?.stock > 0 ? "text-success" : "text-danger"
+                        }`}>
                           {stockStatus}
                         </td>
 
@@ -216,28 +199,22 @@ function Cart() {
               </table>
             </div>
 
-            {/* Mobile View */}
+            {/* ── Mobile cards ── */}
             <div className="lg:hidden space-y-6">
               {cart.map((item) => {
-                const isCustom = item.type === "custom";
+                const isCustom    = item.type === "custom";
                 const productData = isCustom ? item.customCandle : item.product;
 
-                const displayName = isCustom
-                  ? "Customized Candle"
-                  : productData?.name;
+                const displayName  = isCustom ? "Customized Candle" : productData?.name;
                 const displayPrice = isCustom
                   ? productData?.totalPrice
                   : productData?.discountPrice || productData?.price || 0;
-
                 const displayImage = isCustom
                   ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
-                  : productData?.images?.[0]?.url || "/placeholder.jpg";
-
-                const stockStatus = isCustom
+                  : productData?.images?.[0]?.url    || "/placeholder.jpg";
+                const stockStatus  = isCustom
                   ? "Made to Order"
-                  : productData?.stock > 0
-                    ? "In stock"
-                    : "Out of stock";
+                  : productData?.stock > 0 ? "In stock" : "Out of stock";
 
                 return (
                   <div
@@ -245,14 +222,10 @@ function Cart() {
                     className="border border-muted/20 bg-light-yellow shadow-sm p-4 rounded-lg cart-item"
                   >
                     <div className="flex justify-between items-center">
-                      <span
-                        className={`text-sm font-medium ${isCustom
-                          ? "text-blue-600"
-                          : productData?.stock > 0
-                            ? "text-success"
-                            : "text-danger"
-                          }`}
-                      >
+                      <span className={`text-sm font-medium ${
+                        isCustom ? "text-blue-600"
+                        : productData?.stock > 0 ? "text-success" : "text-danger"
+                      }`}>
                         {stockStatus}
                       </span>
                       <button
@@ -262,6 +235,7 @@ function Cart() {
                         <Trash2 size={20} />
                       </button>
                     </div>
+
                     <div className="mt-4">
                       {isCustom ? (
                         <button
@@ -269,15 +243,9 @@ function Cart() {
                           className="flex items-center gap-4 text-left hover:opacity-80 transition-opacity w-full cursor-pointer"
                         >
                           <div className="w-20 aspect-[4/5] overflow-hidden rounded-sm border border-muted/20 shrink-0">
-                            <img
-                              src={displayImage}
-                              className="w-full h-full object-cover"
-                              alt={displayName}
-                            />
+                            <img src={displayImage} className="w-full h-full object-cover" alt={displayName} />
                           </div>
-                          <p className="font-semibold text-heading group-hover:text-coffee transition-colors">
-                            {displayName}
-                          </p>
+                          <p className="font-semibold text-heading">{displayName}</p>
                         </button>
                       ) : (
                         <Link
@@ -285,18 +253,13 @@ function Cart() {
                           className="flex items-center gap-4 hover:opacity-80 transition-opacity w-full group"
                         >
                           <div className="w-20 aspect-[4/5] overflow-hidden rounded-sm border border-muted/20 shrink-0">
-                            <img
-                              src={displayImage}
-                              className="w-full h-full object-cover"
-                              alt={displayName}
-                            />
+                            <img src={displayImage} className="w-full h-full object-cover" alt={displayName} />
                           </div>
-                          <p className="font-semibold text-heading group-hover:text-coffee transition-colors">
-                            {displayName}
-                          </p>
+                          <p className="font-semibold text-heading group-hover:text-coffee transition-colors">{displayName}</p>
                         </Link>
                       )}
                     </div>
+
                     <div className="flex justify-between items-center mt-6">
                       <span className="text-muted text-sm">Price:</span>
                       <span className="font-medium">₹{displayPrice}</span>
@@ -311,9 +274,7 @@ function Cart() {
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="w-4 text-center font-medium">
-                          {item.quantity}
-                        </span>
+                        <span className="w-4 text-center font-medium">{item.quantity}</span>
                         <button
                           onClick={() => increase(item._id, item.quantity)}
                           className="border border-muted/20 p-1.5 rounded-sm cursor-pointer active:bg-coffee/10"
@@ -332,45 +293,31 @@ function Cart() {
               })}
             </div>
 
-            {/* 👉 3. Subtotal Section dynamically bound to billing object */}
+            {/* ── Order summary ── */}
             <div className="w-full flex justify-end mb-10 mt-8 lg:mt-0">
               <div className="w-full h-fit lg:w-120 border border-muted/20 lg:sticky lg:top-24 rounded-sm bg-light-yellow">
 
-                {/* Subtotal */}
                 <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
-                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">
-                    Subtotal
-                  </div>
-                  <div className="p-6 text-right font-semibold">
-                    ₹{billing?.itemsPrice || 0}.00
-                  </div>
+                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">Subtotal</div>
+                  <div className="p-6 text-right font-semibold">₹{billing?.itemsPrice || 0}.00</div>
                 </div>
 
-                {/* Shipping */}
                 <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
-                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">
-                    Shipping
-                  </div>
+                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">Shipping</div>
                   <div className={`p-6 text-right font-semibold ${billing?.shippingPrice === 0 ? "text-success" : ""}`}>
                     {billing?.shippingPrice === 0 ? "Free" : `₹${billing?.shippingPrice || 0}.00`}
                   </div>
                 </div>
 
-                {/* Total */}
                 <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
-                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20 text-lg">
-                    Total
-                  </div>
-                  <div className="p-6 text-right font-bold text-xl text-coffee">
-                    ₹{billing?.totalPrice || 0}.00
-                  </div>
+                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20 text-lg">Total</div>
+                  <div className="p-6 text-right font-bold text-xl text-coffee">₹{billing?.totalPrice || 0}.00</div>
                 </div>
 
-                {/* Checkout Button */}
                 <div className="p-6 cart-actions">
                   <MainBtn
                     path="/checkout"
-                    text={"PROCEED TO CHECKOUT"}
+                    text="PROCEED TO CHECKOUT"
                     className="wishlist-btn shadow-none! bg-coffee! text-light-yellow! w-full! rounded-sm! hover:bg-coffee-light!"
                   />
                 </div>
@@ -380,7 +327,7 @@ function Cart() {
         )}
       </div>
 
-      {/* Custom Candle Details Modal */}
+      {/* ── Custom candle modal ── */}
       {selectedCustomCandle && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
