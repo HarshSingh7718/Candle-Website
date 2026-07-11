@@ -29,6 +29,11 @@ export const isAuthenticated = async (req, res, next) => {
             clearTokenCookie(res);
             return res.status(403).json({ success: false, message: "Access revoked by admin" });
         }
+        
+        if (!user.isLoggedIn) {
+            clearTokenCookie(res);
+            return res.status(401).json({ success: false, message: "Session expired or logged out" });
+        }
 
         req.id = user._id;
         req.user = user;
@@ -60,6 +65,11 @@ export const isAdminAuthenticated = async (req, res, next) => {
         if (user.isActive === false) {
             clearAdminTokenCookie(res);
             return res.status(403).json({ success: false, message: "Access revoked by admin" });
+        }
+        
+        if (!user.isLoggedIn) {
+            clearAdminTokenCookie(res);
+            return res.status(401).json({ success: false, message: "Session expired or logged out" });
         }
 
         req.id = user._id;

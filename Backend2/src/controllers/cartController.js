@@ -11,6 +11,12 @@ export const addToCart = async (req, res) => {
     customCandleId,
     quantity = 1
   } = req.body;
+  
+  const qty = Number(quantity);
+  if (isNaN(qty) || qty < 1) {
+      throw new CustomError("Quantity must be at least 1", 400);
+  }
+  
   const user = await User.findById(req.user._id);
 
   // =========================

@@ -61,7 +61,7 @@ export const getAllUsers = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching users:", error.message);
         res.status(500).json({ success: false, message: "Server Error fetching users" });
     }
 };
@@ -90,7 +90,7 @@ export const getUserById = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error fetching user detail:", error);
+        console.error("Error fetching user detail:", error.message);
         res.status(500).json({ success: false, message: "Server Error fetching user detail" });
     }
 };
@@ -128,7 +128,7 @@ export const blockUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error blocking user:", error);
+        console.error("Error blocking user:", error.message);
         res.status(500).json({ success: false, message: "Server Error blocking user" });
     }
 };

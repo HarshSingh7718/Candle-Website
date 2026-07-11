@@ -1,4 +1,5 @@
 import express from 'express'
+import rateLimit from 'express-rate-limit';
 import { login, sendOtpController, verifyOtpController, completeProfile, logout, forgotPassword, verifyOTP, resendOtp, resetPassword, googleAuth, saveGooglePhone } from '../controllers/authController.js'
 import { isAuthenticated, sendOtpMiddleware } from "../middleware/authmiddleware.js"
 import { validate } from "../middleware/validate.js"
@@ -23,11 +24,23 @@ const router = express.Router()
 router.post("/login", validate(loginSchema), login);
 router.post("/logout", isAuthenticated, logout);
 
+const passwordResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 3, // Limit each IP to 3 password reset requests per hour
+    message: 'Too many password reset attempts from this IP, please try again after an hour'
+});
+
+const otpVerificationLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 OTP verification attempts
+    message: { success: false, message: 'Too many OTP verification attempts. Please try again later.' }
+});
+
 // PASSWORD RESET
-router.post("/forgot-password", validate(sendOtpSchema), forgotPassword);
-router.post("/forgot-password/verify-otp", validate(verifyOtpSchema), verifyOTP);
-router.post("/forgot-password/resend-otp", validate(sendOtpSchema), resendOtp);
-router.post("/forgot-password/reset-password", validate(resetPasswordSchema), resetPassword);
+router.post("/forgot-password", passwordResetLimiter, validate(sendOtpSchema), forgotPassword);
+router.post("/forgot-password/verify-otp", passwordResetLimiter, otpVerificationLimiter, validate(verifyOtpSchema), verifyOTP);
+router.post("/forgot-password/resend-otp", passwordResetLimiter, validate(sendOtpSchema), resendOtp);
+router.post("/forgot-password/reset-password", passwordResetLimiter, validate(resetPasswordSchema), resetPassword);
 
 
 
@@ -36,7 +49,7 @@ router.post("/google-auth", googleAuth);
 
 // PHONE NUMBER (Google users)
 router.post("/send-phone-otp", isAuthenticated, sendOtpMiddleware);
-router.patch("/verify-phone", isAuthenticated, saveGooglePhone);
+router.patch("/verify-phone", isAuthenticated, otpVerificationLimiter, saveGooglePhone);
 
 // router.patch("/admin/revoke/:userId", isAuthenticated, isAdmin, revokeUserAccess);
 
@@ -45,7 +58,7 @@ router.patch("/verify-phone", isAuthenticated, saveGooglePhone);
 router.post("/send-otp", validate(sendOtpSchema), sendOtpController);
 
 //  Step 2: Verify OTP
-router.post("/verify-otp", validate(verifyOtpSchema), verifyOtpController);
+router.post("/verify-otp", otpVerificationLimiter, validate(verifyOtpSchema), verifyOtpController);
 
 //  Step 3: Complete registration
 router.post("/complete-profile", validate(completeProfileSchema), completeProfile);

@@ -516,11 +516,15 @@ export const verifyOTP = async (req, res) => {
     throw new CustomError("Invalid OTP", 400);
   }
   user.otpExpiresAt = null;
-  user.isOtpVerified = true;
+  
+  // Issue a short-lived token specifically for password reset
+  const resetToken = jwt.sign({ id: user._id, purpose: "reset_password" }, config.jwt.secret, { expiresIn: '15m' });
+  
   await user.save();
   return res.status(200).json({
     success: true,
-    message: "OTP verified successfully"
+    message: "OTP verified successfully",
+    resetToken
   });
 };
 export const resendOtp = async (req, res) => {
@@ -555,10 +559,11 @@ export const resetPassword = async (req, res) => {
   const {
     phoneNumber,
     newPassword,
-    confirmPassword
+    confirmPassword,
+    resetToken
   } = req.body;
-  if (!phoneNumber || !newPassword || !confirmPassword) {
-    throw new CustomError("All feilds are required", 400);
+  if (!phoneNumber || !newPassword || !confirmPassword || !resetToken) {
+    throw new CustomError("All fields are required", 400);
   }
   if (newPassword !== confirmPassword) {
     throw new CustomError("Password and confirm password do not match", 400);
@@ -573,15 +578,21 @@ export const resetPassword = async (req, res) => {
   if (!user) {
     throw new CustomError("User not found", 400);
   }
-  if (!user.isOtpVerified) {
-    throw new CustomError("OTP verification required", 401);
+  
+  try {
+      const decoded = jwt.verify(resetToken, config.jwt.secret);
+      if (decoded.purpose !== "reset_password" || decoded.id !== user._id.toString()) {
+          throw new Error("Invalid token purpose or user");
+      }
+  } catch (error) {
+      throw new CustomError("Invalid or expired reset token. Please verify OTP again.", 401);
   }
+  
   if (newPassword.length < 6) {
     throw new CustomError("Password must be at least 6 characters", 400);
   }
   const hashedPassword = await bcrypt.hash(newPassword, 10);
   user.password = hashedPassword;
-  user.isOtpVerified = false;
   await user.save();
   return res.status(200).json({
     success: true,

@@ -109,8 +109,8 @@ export const createOrder = async (req, res) => {
   orderItems.forEach(item => {
     itemsPrice += (item.price || 0) * (item.quantity || 1);
   });
-  if (isNaN(itemsPrice)) {
-    throw new CustomError("Failed to calculate total price (invalid item price).", 400);
+  if (isNaN(itemsPrice) || itemsPrice <= 0) {
+    throw new CustomError("Failed to calculate total price (invalid or negative amount).", 400);
   }
 
   const settings = await Settings.findOne({ key: "global" });

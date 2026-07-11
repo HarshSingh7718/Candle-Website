@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { config } from "../config/index.js";
 import { compressImage } from '../utils/imageCompressor.js';
+import { fileTypeFromBuffer } from "file-type";
+import { CustomError } from "../middleware/errorHandler.js";
 
 cloudinary.config({
     cloud_name: config.cloud.cloud_n,
@@ -16,6 +18,11 @@ cloudinary.config({
  */
 export const uploadImage = async (fileBuffer, folder = "naisha-creations/misc", maxWidth = 1200) => {
     try {
+        const type = await fileTypeFromBuffer(fileBuffer);
+        if (!type || !type.mime.startsWith("image/")) {
+            throw new CustomError("Invalid file type (magic byte check failed)", 400);
+        }
+
         // 1. Compress the image dynamically based on maxWidth
         const compressedBuffer = await compressImage(fileBuffer, 80, maxWidth);
 
@@ -39,7 +46,7 @@ export const uploadImage = async (fileBuffer, folder = "naisha-creations/misc", 
             uploadStream.end(compressedBuffer);
         });
     } catch (error) {
-        console.error("Cloudinary upload error:", error);
+        console.error("Cloudinary upload error:", error.message);
         throw new Error("Failed to upload image");
     }
 };

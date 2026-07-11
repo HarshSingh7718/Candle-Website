@@ -52,13 +52,10 @@ export const shiprocketWebhookHandler = async (req, res) => {
             return res.status(400).json({ success: false, message: "Invalid payload" });
         }
 
-        console.log(`📦 Shiprocket Webhook: Order ${shiprocketOrderId} → ${currentStatus}`);
-
         // 3. Map Shiprocket status to our status
         const mappedStatus = STATUS_MAP[currentStatus];
         if (!mappedStatus) {
             // Status we don't track — acknowledge but don't update
-            console.log(`ℹ️ Shiprocket status "${currentStatus}" not mapped, skipping update.`);
             return res.status(200).json({ success: true, message: "Status acknowledged but not mapped" });
         }
 
@@ -93,7 +90,6 @@ export const shiprocketWebhookHandler = async (req, res) => {
         const newIndex = statusOrder.indexOf(mappedStatus);
 
         if (mappedStatus !== "cancelled" && newIndex <= currentIndex) {
-            console.log(`ℹ️ Skipping: ${order.orderStatus} → ${mappedStatus} (not a forward transition)`);
             return res.status(200).json({ success: true, message: "No update needed" });
         }
 
@@ -116,8 +112,6 @@ export const shiprocketWebhookHandler = async (req, res) => {
         if (mappedStatus === "cancelled") order.cancelledAt = Date.now();
 
         await order.save();
-
-        console.log(`✅ Order ${order.orderId} updated to "${mappedStatus}" via Shiprocket webhook`);
 
 
 

@@ -81,10 +81,6 @@ const userSchema = new mongoose.Schema({
     needsPhone: { type: Boolean, default: false },
     // isAdmin: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    isOtpVerified: {
-        type: Boolean,
-        default: false
-    },
     lastOtpSentAt: Date,
     isPhoneVerified: { type: Boolean, default: false },
 

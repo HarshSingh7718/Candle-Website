@@ -4,7 +4,8 @@ import bcrypt from "bcrypt";
 import { sendOtp, verifyOtpService } from "../services/otp_services.js";
 
 export const getUserProfile = async (req, res) => {
-  const user = await User.findById(req.user._id).select("-password -token")
+  const user = await User.findById(req.user._id)
+  .select("firstName lastName email phoneNumber role isPhoneVerified addresses wishlist cart")
   .populate("wishlist", "name price images").populate("cart.product", "name price images");
   if (!user) {
     throw new CustomError("User not found", 404);
@@ -207,5 +208,49 @@ export const changePassword = async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Password changed successfully"
+  });
+};
+
+/**
+ * deleteAccount — Permanently anonymizes all user PII.
+ *
+ * Instead of hard-deleting the document (which would orphan orders),
+ * we overwrite every personal field with anonymous placeholders and
+ * deactivate the account. Order records are preserved for business
+ * compliance but the user data within them (shippingAddress) is kept
+ * as-is since it's needed for legal/tax records.
+ */
+export const deleteAccount = async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new CustomError("User not found", 404);
+  }
+
+  // Anonymize PII
+  user.firstName = "Deleted";
+  user.lastName = "User";
+  user.email = `deleted_${user._id}@removed.local`;
+  user.phoneNumber = null;
+  user.password = null;
+  user.googleId = null;
+  user.addresses = [];
+  user.wishlist = [];
+  user.cart = [];
+  user.couponUsage = [];
+  user.isActive = false;
+  user.isLoggedIn = false;
+  user.isVerified = false;
+  user.isPhoneVerified = false;
+  user.token = null;
+
+  await user.save();
+
+  // Clear auth cookie
+  const { clearTokenCookie } = await import("../utils/token.js");
+  clearTokenCookie(res);
+
+  res.status(200).json({
+    success: true,
+    message: "Your account and personal data have been permanently deleted."
   });
 };
