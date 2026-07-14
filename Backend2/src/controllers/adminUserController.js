@@ -70,7 +70,20 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id).select("-password -token").lean();
+        const user = await User.findById(id)
+            .select("-password -token")
+            .populate({
+                path: "wishlist",
+                select: "name price discountedPrice images"
+            })
+            .populate({
+                path: "cart.product",
+                select: "name price discountedPrice images"
+            })
+            .populate({
+                path: "cart.customCandle"
+            })
+            .lean();
 
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
@@ -130,5 +143,38 @@ export const blockUser = async (req, res) => {
     } catch (error) {
         console.error("Error blocking user:", error.message);
         res.status(500).json({ success: false, message: "Server Error blocking user" });
+    }
+};
+
+// PUT /api/admin/users/:id/unblock
+export const unblockUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (user.isActive) {
+            return res.status(400).json({ success: false, message: "User is already active" });
+        }
+
+        user.isActive = true;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "User unblocked successfully",
+            user: {
+                _id: user._id,
+                isActive: user.isActive,
+                isLoggedIn: user.isLoggedIn
+            }
+        });
+
+    } catch (error) {
+        console.error("Error unblocking user:", error.message);
+        res.status(500).json({ success: false, message: "Server Error unblocking user" });
     }
 };

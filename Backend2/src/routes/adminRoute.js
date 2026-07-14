@@ -13,7 +13,7 @@ import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanne
 import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus, getAvailableCouriersForOrder, shipOrder } from "../controllers/adminOrderController.js";
 import { createCoupon, getAllCoupons, getSingleCoupon, updateCoupon, toggleCouponStatus, deleteCoupon } from "../controllers/couponController.js";
 import { getSettings, updateSettings } from "../controllers/settingsController.js";
-import { getAllUsers, getUserById, blockUser } from "../controllers/adminUserController.js";
+import { getAllUsers, getUserById, blockUser, unblockUser } from "../controllers/adminUserController.js";
 import { getSummaryReport, getOrdersReport, getProductsReport, getCustomersReport, exportReport } from "../controllers/adminReportController.js";
 import rateLimit from "express-rate-limit";
 import { isAuthenticated } from "../middleware/authmiddleware.js";
@@ -452,6 +452,14 @@ router.put(
     isAdmin,
     blockLimiter,
     blockUser
+);
+
+router.put(
+    "/users/:id/unblock",
+    isAdminAuthenticated,
+    isAdmin,
+    blockLimiter,
+    unblockUser
 );
 
 // ==========================

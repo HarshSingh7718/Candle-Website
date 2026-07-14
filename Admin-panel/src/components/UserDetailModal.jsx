@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { X, AlertTriangle, MapPin, Package, Clock, ShieldAlert } from "lucide-react";
+import { X, AlertTriangle, MapPin, Package, Clock, ShieldAlert, ShoppingCart, Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import { api } from "../api";
 
@@ -28,6 +28,22 @@ const UserDetailModal = ({ userId, onClose, onUpdate }) => {
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Failed to block user.");
+      setShowConfirm(false);
+    }
+  });
+
+  const unblockMutation = useMutation({
+    mutationFn: async () => {
+      const res = await api.put(`/admin/users/${userId}/unblock`);
+      return res.data;
+    },
+    onSuccess: (resData) => {
+      toast.success("User successfully unblocked.");
+      setShowConfirm(false);
+      onUpdate();
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to unblock user.");
       setShowConfirm(false);
     }
   });
@@ -107,9 +123,22 @@ const UserDetailModal = ({ userId, onClose, onUpdate }) => {
             {user.role !== "admin" && (
               <div className="w-full sm:w-auto">
                 {!user.isActive ? (
-                  <span className="inline-block px-4 py-2 border border-danger/20 text-danger bg-danger/10 rounded-lg cursor-not-allowed opacity-75 font-medium w-full sm:w-auto text-center">
-                    User Blocked
-                  </span>
+                  !showConfirm ? (
+                    <button onClick={() => setShowConfirm(true)} className="w-full sm:w-auto px-6 py-2 border border-success/20 text-success bg-success/10 hover:bg-success/20 rounded-lg font-medium transition-colors" >
+                      Unblock User
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 bg-success/5 p-2 rounded-lg border border-success/20 w-full sm:w-auto">
+                      <AlertTriangle size={18} className="text-success" />
+                      <span className="text-sm text-success font-medium whitespace-nowrap">Are you sure?</span>
+                      <button onClick={() => unblockMutation.mutate()} disabled={unblockMutation.isPending} className="px-3 py-1 bg-success hover:bg-success/80 text-white text-sm rounded font-medium ml-2 disabled:opacity-50" >
+                        {unblockMutation.isPending ? "..." : "Confirm"}
+                      </button>
+                      <button onClick={() => setShowConfirm(false)} disabled={unblockMutation.isPending} className="px-3 py-1 text-text-muted hover:bg-bg-muted text-sm rounded transition-colors" >
+                        Cancel
+                      </button>
+                    </div>
+                  )
                 ) : !showConfirm ? (
                   <button onClick={() => setShowConfirm(true)} className="w-full sm:w-auto px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors" >
                     Block User
@@ -177,6 +206,63 @@ const UserDetailModal = ({ userId, onClose, onUpdate }) => {
                 </div>
               ) : (
                 <p className="text-text-muted text-sm italic">No orders found.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+            {/* Cart Area */}
+            <div>
+              <h3 className="text-lg font-bold text-text-base flex items-center gap-2 mb-4">
+                <ShoppingCart size={20} className="text-text-muted" /> Shopping Cart
+              </h3>
+              {user.cart?.length > 0 ? (
+                <div className="space-y-3">
+                  {user.cart.map((item, i) => (
+                    <div key={i} className="p-4 rounded-xl border border-bg-muted flex items-center gap-4 hover:bg-bg-muted transition-colors">
+                      {item.type === "custom" ? (
+                        <div className="w-12 h-12 rounded-lg bg-brand-primary/10 flex items-center justify-center text-xs text-brand-primary font-medium shrink-0">Custom</div>
+                      ) : (
+                        <img src={item.product?.images?.[0]?.url || item.product?.images?.[0] || "https://placehold.co/100"} alt="product" className="w-12 h-12 rounded-lg object-cover bg-bg-muted shrink-0" />
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium text-sm text-text-base line-clamp-1">
+                          {item.type === "custom" ? "Custom Candle" : item.product?.name || "Unknown Product"}
+                        </p>
+                        {item.type !== "custom" && (
+                           <p className="text-xs text-text-muted font-semibold mt-1">₹{item.product?.discountedPrice || item.product?.price}</p>
+                        )}
+                      </div>
+                      <div className="text-xs font-medium bg-bg-canvas border border-bg-muted text-text-muted px-2 py-1 rounded-md shrink-0">
+                        Qty: {item.quantity}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-text-muted text-sm italic">Cart is empty.</p>
+              )}
+            </div>
+
+            {/* Wishlist Area */}
+            <div>
+              <h3 className="text-lg font-bold text-text-base flex items-center gap-2 mb-4">
+                <Heart size={20} className="text-text-muted" /> Wishlist
+              </h3>
+              {user.wishlist?.length > 0 ? (
+                <div className="space-y-3">
+                  {user.wishlist.map((product, i) => (
+                    <div key={i} className="p-4 rounded-xl border border-bg-muted flex items-center gap-4 hover:bg-bg-muted transition-colors">
+                       <img src={product?.images?.[0]?.url || product?.images?.[0] || "https://placehold.co/100"} alt="product" className="w-12 h-12 rounded-lg object-cover bg-bg-muted shrink-0" />
+                       <div className="flex-1">
+                          <p className="font-medium text-sm text-text-base line-clamp-1">{product?.name || "Unknown Product"}</p>
+                          <p className="text-xs text-text-muted font-semibold mt-1">₹{product?.discountedPrice || product?.price}</p>
+                       </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-text-muted text-sm italic">Wishlist is empty.</p>
               )}
             </div>
           </div>
