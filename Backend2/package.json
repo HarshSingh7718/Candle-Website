@@ -4,8 +4,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --env-file=.env.development server.js",
-    "start": "node --env-file=.env.production server.js"
+    "dev": "nodemon --env-file=.env.development --import ./src/config/sentry.js server.js",
+    "start": "node --env-file=.env.production --import ./src/config/sentry.js server.js"
   },
   "keywords": [],
   "author": "",

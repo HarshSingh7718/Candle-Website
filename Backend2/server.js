@@ -1,5 +1,4 @@
 import "./src/config/validateEnv.js";
-import "./src/config/sentry.js";
 import app from './src/app.js'
 import connectdb from './src/db/db.js'
 import 'dotenv/config'
