@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Filter } from 'lucide-react';
+import CustomDropdown from './CustomDropdown';
 
 const MobileFilterModal = ({
     isOpen,
     onClose,
     initialSort,
     initialPrice,
+    initialCategory,
+    categoryOptions,
     onApply
 }) => {
     const [sortInput, setSortInput] = useState(initialSort || 'latest');
     const [priceInput, setPriceInput] = useState(initialPrice || 3000);
+    const [categoryInput, setCategoryInput] = useState(initialCategory || '');
     const [isMounted, setIsMounted] = useState(false);
 
     // Handle mounting for animation and state sync
@@ -19,6 +23,7 @@ const MobileFilterModal = ({
         if (isOpen) {
             setSortInput(initialSort || 'latest');
             setPriceInput(initialPrice || 3000);
+            setCategoryInput(initialCategory || '');
             setIsMounted(true);
             document.body.style.overflow = 'hidden';
         } else {
@@ -29,18 +34,19 @@ const MobileFilterModal = ({
             if (timeout) clearTimeout(timeout);
             document.body.style.overflow = 'unset'; 
         };
-    }, [isOpen, initialSort, initialPrice]);
+    }, [isOpen, initialSort, initialPrice, initialCategory]);
 
     if (!isMounted && !isOpen) return null;
 
     const handleApply = () => {
-        onApply({ sort: sortInput, maxPrice: priceInput });
+        onApply({ sort: sortInput, maxPrice: priceInput, category: categoryInput });
         onClose();
     };
 
     const handleReset = () => {
         setSortInput('latest');
         setPriceInput(3000);
+        setCategoryInput('');
     };
 
     const sortOptions = [
@@ -108,6 +114,22 @@ const MobileFilterModal = ({
                             ))}
                         </div>
                     </div>
+
+                    <div className="h-px bg-bg-muted w-full" />
+
+                    {/* Collection Filter Section */}
+                    {categoryOptions && (
+                        <div>
+                            <h3 className="text-lg font-medium mb-4 text-text-base flex items-center gap-2">
+                                Collection
+                            </h3>
+                            <CustomDropdown
+                              options={categoryOptions}
+                              value={categoryInput}
+                              onChange={setCategoryInput}
+                            />
+                        </div>
+                    )}
 
                     <div className="h-px bg-bg-muted w-full" />
 

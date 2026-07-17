@@ -49,7 +49,7 @@ const Candles = () => {
     category: queryCategory,
   });
 
-  const { data: categoryData } = useCategoryBySlug(queryCategory);
+  const { data: categoryData, isLoading: isCategoryLoading } = useCategoryBySlug(queryCategory);
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
@@ -139,15 +139,19 @@ const Candles = () => {
     }
   }, [querySearch, querySort, debouncedPrice, queryFilter, queryCategory]);
 
-  const handleMobileApply = ({ sort, maxPrice }) => {
+  const handleMobileApply = ({ sort, maxPrice, category }) => {
     const newParams = new URLSearchParams(searchParams);
     if (sort && sort !== "latest") newParams.set("sort", sort);
     else newParams.delete("sort");
+
     if (maxPrice && maxPrice < 3000) newParams.set("maxPrice", maxPrice);
     else newParams.delete("maxPrice");
-    setSearchParams(newParams);
-    setSortInput(sort || "latest");
-    setPriceInput(maxPrice || 3000);
+
+    if (category) newParams.set("category", category);
+    else newParams.delete("category");
+
+    setSearchParams(newParams, { replace: true });
+    setIsMobileFilterOpen(false);
   };
 
   const sortOptions = [
@@ -272,6 +276,7 @@ const Candles = () => {
         title={categoryData ? categoryData.name : "Candles"} 
         currentPage="Candles" 
         bgImage={categoryData?.bannerImage?.url}
+        isLoading={!!queryCategory && isCategoryLoading}
       />
       <div className="bg-bg-canvas min-h-screen">
         <div className="container mx-auto px-4 py-[8%]">
@@ -493,6 +498,8 @@ const Candles = () => {
         onClose={() => setIsMobileFilterOpen(false)}
         initialSort={querySort}
         initialPrice={queryPrice ? Number(queryPrice) : 3000}
+        initialCategory={queryCategory}
+        categoryOptions={categoryOptions}
         onApply={handleMobileApply}
       />
     </>
