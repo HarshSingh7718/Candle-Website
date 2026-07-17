@@ -1,8 +1,52 @@
 {
-    "rewrites": [
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [
         {
-            "source": "/(.*)",
-            "destination": "/index.html"
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Tt]witterbot|[Ff]acebookexternalhit|[Ww]hats[Aa]pp|[Ll]inked[Ii]n[Bb]ot|[Pp]interest|[Ss]lackbot|[Dd]iscordbot).*"
         }
-    ]
+      ],
+      "destination": "/api/seo-prerender"
+    },
+    {
+      "source": "/collections",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Tt]witterbot|[Ff]acebookexternalhit|[Ww]hats[Aa]pp|[Ll]inked[Ii]n[Bb]ot|[Pp]interest|[Ss]lackbot|[Dd]iscordbot).*"
+        }
+      ],
+      "destination": "/api/seo-prerender"
+    },
+    {
+      "source": "/collections/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Tt]witterbot|[Ff]acebookexternalhit|[Ww]hats[Aa]pp|[Ll]inked[Ii]n[Bb]ot|[Pp]interest|[Ss]lackbot|[Dd]iscordbot).*"
+        }
+      ],
+      "destination": "/api/seo-prerender"
+    },
+    {
+      "source": "/collections/candles/product/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Tt]witterbot|[Ff]acebookexternalhit|[Ww]hats[Aa]pp|[Ll]inked[Ii]n[Bb]ot|[Pp]interest|[Ss]lackbot|[Dd]iscordbot).*"
+        }
+      ],
+      "destination": "/api/seo-prerender"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

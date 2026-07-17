@@ -51,7 +51,6 @@ function About() {
         },
       });
     }, aboutRef);
-    ScrollTrigger.refresh();
     return () => ctx.revert();
   }, []);
 

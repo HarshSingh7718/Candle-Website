@@ -9,6 +9,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Toaster } from "react-hot-toast";
 import { trackPageView } from "./utils/metaPixel";
 import Footer from "./components/layout/Footer/Footer";
+import SEO from "./components/SEO/index.jsx";
 import CompleteGoogleProfile from "./pages/CompleteGoogleProfile";
 import MyAccount from "./pages/MyAccount";
 import Wishlist from "./components/sections/account/Wishlist";
@@ -85,8 +86,25 @@ function App() {
     };
   }, []);
 
+  const globalSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Naisha Creations",
+        "url": "https://naishacreations.com"
+      },
+      {
+        "@type": "WebSite",
+        "name": "Naisha Creations",
+        "url": "https://naishacreations.com"
+      }
+    ]
+  };
+
   return (
     <>
+      <SEO schema={globalSchema} />
       <div id="smooth-wrapper">
         <Navbar />
         <div id="smooth-content">

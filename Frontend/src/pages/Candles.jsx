@@ -22,6 +22,7 @@ const Candles = () => {
   const queryPrice = searchParams.get("maxPrice") || null;
   const querySort = searchParams.get("sort") || "latest";
   const queryFilter = searchParams.get("filter") || null;
+  const location = useLocation();
 
   const [priceInput, setPriceInput] = useState(queryPrice || 3000);
   const [sortInput, setSortInput] = useState(querySort);
@@ -185,11 +186,14 @@ const Candles = () => {
     return () => ctx.revert();
   }, [isLoading]);
 
+  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}${location.pathname}` : '';
+
   return (
     <>
       <SEO
         title="Shop All Candles | Naisha Creations"
         description="Shop our full range of luxury scented candles. Hand-poured with eco-friendly soy wax and premium fragrance oils."
+        canonical={canonicalUrl}
       />
       <PageBanner title="Candles" currentPage="Candles" />
       <div className="bg-bg-canvas min-h-screen">

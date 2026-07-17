@@ -5,6 +5,7 @@ function CollectionsCard({ image, title, description, slug}) {
   return (
     <Link
       to={`/collections/${slug}`}
+      state={{ collectionName: title }}
       className="collections-card flex justify-center items-end pb-8 relative h-72 md:h-96 lg:h-110 group overflow-hidden rounded-md cursor-pointer block"
     >
       <img

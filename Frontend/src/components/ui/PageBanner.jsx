@@ -74,7 +74,7 @@ function PageBanner({ title, currentPage, productName }) {
 
       {/* Content */}
       <div className="container px-4 z-10 text-center">
-        <h3 className="text-3xl md:text-5xl font-semibold text-white tracking-wide leading-tight">
+        <h3 className="text-3xl md:text-5xl font-semibold text-white tracking-wide leading-tight truncate px-4 max-w-full">
           {productName ? productName : title}
         </h3>
 

@@ -22,9 +22,9 @@ export const useProducts = (params = {}) => {
       if (lastPage.currentPage < lastPage.totalPages) {
         return lastPage.currentPage + 1;
       }
-      return undefined;
     },
     initialPageParam: 1,
+    staleTime: 60 * 1000,
   });
 };
 
@@ -46,10 +46,10 @@ export const useProductsByCategory = (categorySlug, params = {}) => {
       if (lastPage.currentPage < lastPage.totalPages) {
         return lastPage.currentPage + 1;
       }
-      return undefined;
     },
     initialPageParam: 1,
     enabled: !!categorySlug,
+    staleTime: 60 * 1000,
   });
 };
 

@@ -2,9 +2,10 @@ import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useParams, useSearchParams, Link, useLocation } from "react-router-dom";
 import { Filter } from "lucide-react";
 import SEO from '../components/SEO';
+import { scrollToTarget } from "../components/ScrollToTop";
 
 import ProductCard from "../components/ui/Cards/ProductCard";
 import ProductCardSkeleton from "../components/ui/Skeletons/ProductCardSkeleton";
@@ -18,6 +19,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const CollectionProducts = () => {
   const { slug: categoryName } = useParams();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const querySearch = searchParams.get("search") || "";
   const queryPrice = searchParams.get("maxPrice") || null;
@@ -26,6 +28,7 @@ const CollectionProducts = () => {
   const sidebarRef = useRef();
   const mainRef = useRef();
   const sentinelRef = useRef(null);
+  const isInitialMount = useRef(true);
 
   const [sortInput, setSortInput] = useState(querySort);
   const [priceInput, setPriceInput] = useState(queryPrice || 3000);
@@ -69,33 +72,58 @@ const CollectionProducts = () => {
   // ── Sync Debounced Price to URL ──
   useEffect(() => {
     const newParams = new URLSearchParams(searchParams);
+    const currentPrice = searchParams.get("maxPrice");
+    let changed = false;
+
     if (debouncedPrice && debouncedPrice < 3000) {
-      newParams.set("maxPrice", debouncedPrice);
+      if (currentPrice !== String(debouncedPrice)) {
+        newParams.set("maxPrice", debouncedPrice);
+        changed = true;
+      }
     } else {
-      newParams.delete("maxPrice");
+      if (currentPrice !== null) {
+        newParams.delete("maxPrice");
+        changed = true;
+      }
     }
-    setSearchParams(newParams);
-  }, [debouncedPrice]);
+    
+    if (changed) {
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [debouncedPrice, searchParams, setSearchParams]);
 
   // ── Sync Sort to URL ──
   useEffect(() => {
     const newParams = new URLSearchParams(searchParams);
+    const currentSort = searchParams.get("sort");
+    let changed = false;
+
     if (sortInput && sortInput !== "latest") {
-      newParams.set("sort", sortInput);
+      if (currentSort !== sortInput) {
+        newParams.set("sort", sortInput);
+        changed = true;
+      }
     } else {
-      newParams.delete("sort");
+      if (currentSort !== null) {
+        newParams.delete("sort");
+        changed = true;
+      }
     }
-    setSearchParams(newParams);
-  }, [sortInput]);
+    
+    if (changed) {
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [sortInput, searchParams, setSearchParams]);
+
+
 
   // ── Scroll to top when filters change ──
   useEffect(() => {
-    const smoother = ScrollSmoother.get();
-    if (smoother && mainRef.current) {
-      smoother.scrollTo(mainRef.current, true, "top 100px");
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
+    scrollToTarget(mainRef.current, "top 100px", true);
   }, [querySearch, querySort, debouncedPrice]);
 
   const handleMobileApply = ({ sort, maxPrice }) => {
@@ -182,10 +210,20 @@ const CollectionProducts = () => {
     return () => ctx.revert();
   }, [isLoading]);
 
+  const formatCategoryName = (name) => {
+    if (!name) return "Collection";
+    return name
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const collectionDisplayName =
+    location.state?.collectionName ||
     products[0]?.category?.name ||
-    categoryName?.replace(/-/g, " ") ||
-    "Collection";
+    formatCategoryName(categoryName);
+
+  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}${location.pathname}` : '';
 
   return (
     <>
@@ -197,6 +235,7 @@ const CollectionProducts = () => {
         title={`${collectionDisplayName} | Naisha Creations`}
         description={`Discover our full range of ${collectionDisplayName} candles. Hand-poured with eco-friendly soy wax and premium fragrance oils.`}
         image={products[0]?.images?.[0]?.url}
+        canonical={canonicalUrl}
       />
 
       <div className="bg-bg-canvas min-h-screen">

@@ -48,3 +48,26 @@ export const CandleCustomization = mongoose.model(
     "CandleCustomization",
     candleCustomizationSchema
 );
+
+/**
+ * Resolves an Option by its nested ID inside the CandleCustomization singleton.
+ * Use this instead of .populate("scent") since Option is not a top-level model.
+ * 
+ * @param {mongoose.Types.ObjectId | String} optionId 
+ * @param {String} [stepType] Optional step type to ensure the option is of the correct type (e.g. "vessel")
+ * @returns {Promise<Object|null>} The option document or null
+ */
+export const resolveOptionById = async (optionId, stepType) => {
+    const query = { "steps.options._id": optionId };
+    if (stepType) {
+        query["steps.type"] = stepType;
+    }
+    
+    const config = await CandleCustomization.findOne(
+        query,
+        { "steps.$": 1 }
+    );
+    if (!config || !config.steps || config.steps.length === 0) return null;
+    
+    return config.steps[0].options.id(optionId);
+};

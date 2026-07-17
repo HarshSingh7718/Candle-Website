@@ -17,8 +17,9 @@ function Cart() {
 
   const { cart, billing, removeFromCart, updateQuantity, isLoading } = useCart();
 
-  const increase = (itemId, currentQty) => {
-    if (currentQty < 5) updateQuantity(itemId, currentQty + 1);
+  const increase = (itemId, currentQty, stock) => {
+    const limit = stock !== undefined && stock > 0 ? stock : 10;
+    if (currentQty < limit) updateQuantity(itemId, currentQty + 1);
   };
 
   const decrease = (itemId, currentQty) => {
@@ -174,7 +175,7 @@ function Cart() {
                             </button>
                             <span className="w-4 text-center">{item.quantity}</span>
                             <button
-                              onClick={() => increase(item._id, item.quantity)}
+                              onClick={() => increase(item._id, item.quantity, productData?.stock)}
                               className="border border-muted/20 p-2 cursor-pointer hover:bg-coffee/10"
                             >
                               <Plus size={14} />
@@ -276,7 +277,7 @@ function Cart() {
                         </button>
                         <span className="w-4 text-center font-medium">{item.quantity}</span>
                         <button
-                          onClick={() => increase(item._id, item.quantity)}
+                          onClick={() => increase(item._id, item.quantity, productData?.stock)}
                           className="border border-muted/20 p-1.5 rounded-sm cursor-pointer active:bg-coffee/10"
                         >
                           <Plus size={14} />

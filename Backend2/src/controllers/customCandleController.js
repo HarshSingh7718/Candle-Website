@@ -1,5 +1,5 @@
 import { CustomError } from "../middleware/errorHandler.js";
-import { CandleCustomization } from "../models/optionModel.js";
+import { resolveOptionById } from "../models/optionModel.js";
 import { CustomizedCandle } from "../models/customModel.js";
 import { Settings } from "../models/settingsModel.js";
 export const createCustomCandle = async (req, res) => {
@@ -18,50 +18,40 @@ export const createCustomCandle = async (req, res) => {
   if (!vesselId || !scentId) {
     throw new CustomError("Vessel and Scent are required", 400);
   }
-  const customization = await CandleCustomization.findOne();
-  if (!customization) {
-    throw new CustomError("Customization data not found", 400);
-  }
-
   const settings = await Settings.findOne({ key: "global" });
   const basePrice = settings?.baseCustomisationCharges ?? 100;
 
   // =========================
   //  HELPERS
   // =========================
-  const findStep = type => customization.steps.find(step => step.type === type);
-  const findOption = (step, id) => step?.options.find(opt => opt._id.toString() === id);
   const validateOption = (option, name) => {
-    if (!option) throw new Error(`${name} not found`);
-    if (option.stock < quantity) throw new Error(`${name} is out of stock`);
+    if (!option) throw new CustomError(`${name} not found`, 404);
+    if (option.stock < quantity) throw new CustomError(`${name} is out of stock`, 400);
   };
   let customizationPrice = 0;
 
   // =========================
   //  VESSEL
   // =========================
-  const vesselStep = findStep("vessel");
-  const vessel = findOption(vesselStep, vesselId);
+  const vessel = await resolveOptionById(vesselId, "vessel");
   validateOption(vessel, "Vessel");
   customizationPrice += vessel.price;
 
   // =========================
   //  SCENT
   // =========================
-  const scentStep = findStep("scent");
-  const scent = findOption(scentStep, scentId);
+  const scent = await resolveOptionById(scentId, "scent");
   validateOption(scent, "Scent");
   customizationPrice += scent.price;
 
   // =========================
   //  ADD-ONS
   // =========================
-  const addOnStep = findStep("addOn");
   const uniqueAddOns = [...new Set(addOnIds)];
   let validAddOns = [];
   let addOnNames = [];
   for (let id of uniqueAddOns) {
-    const addOn = findOption(addOnStep, id);
+    const addOn = await resolveOptionById(id, "addOn");
     validateOption(addOn, "Add-on");
     customizationPrice += addOn.price;
     validAddOns.push(addOn._id);
