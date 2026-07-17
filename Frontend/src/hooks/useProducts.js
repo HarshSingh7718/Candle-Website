@@ -13,6 +13,7 @@ export const useProducts = (params = {}) => {
       if (params.maxPrice) searchParams.append("maxPrice", params.maxPrice);
       if (params.sort) searchParams.append("sort", params.sort);
       if (params.filter) searchParams.append("filter", params.filter);
+      if (params.category) searchParams.append("category", params.category);
       searchParams.append("limit", "12");
 
       const { data } = await API.get(`/candles?${searchParams.toString()}`);
@@ -50,6 +51,17 @@ export const useProductsByCategory = (categorySlug, params = {}) => {
     initialPageParam: 1,
     enabled: !!categorySlug,
     staleTime: 60 * 1000,
+  });
+};
+
+export const useCategoryBySlug = (slug) => {
+  return useQuery({
+    queryKey: ["category", slug],
+    queryFn: async () => {
+      const { data } = await API.get(`/category/${slug}`);
+      return data.category;
+    },
+    enabled: !!slug,
   });
 };
 

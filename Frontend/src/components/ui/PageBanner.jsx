@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import sectionBanner from "/images/section-banner.jpg";
 
-function PageBanner({ title, currentPage, productName }) {
+function PageBanner({ title, currentPage, productName, bgImage }) {
   const bannerRef = useRef();
 
   useEffect(() => {
@@ -51,7 +51,7 @@ function PageBanner({ title, currentPage, productName }) {
       {/* Background image with subtle scale for depth */}
       <div
         className="absolute inset-0 bg-center bg-cover bg-no-repeat scale-105"
-        style={{ backgroundImage: `url(${sectionBanner})` }}
+        style={{ backgroundImage: `url(${bgImage || sectionBanner})` }}
       />
 
       {/* Rich gradient overlay — bordeaux to dark, with side vignette */}

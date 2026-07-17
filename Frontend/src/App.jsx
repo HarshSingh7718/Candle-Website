@@ -27,7 +27,6 @@ import Candles from "./pages/Candles";
 import Contact from "./components/sections/Contact";
 import Customized from "./pages/Customized";
 import Collections from "./components/sections/Collections";
-import CollectionProducts from "./pages/CollectionProducts";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy";
 import TermsOfServicePage from "./pages/TermsOfService";
 import NotFound from './pages/NotFound';
@@ -127,10 +126,6 @@ function App() {
                   <Route path="/collections/candles" element={<Candles />} />
                   <Route path="/customized" element={<Customized />} />
                   <Route path="/collections" element={<Collections />} />
-                  <Route
-                    path="/collections/:slug"
-                    element={<CollectionProducts />}
-                  />
 
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/reset-password" element={<ResetPassword />} />

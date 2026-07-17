@@ -168,7 +168,7 @@ router.post(
     "/category",
     isAdminAuthenticated,
     isAdmin,
-    upload.single("image"),
+    upload.fields([{ name: 'image', maxCount: 1 }, { name: 'bannerImage', maxCount: 1 }]),
     createCategory
 );
 
@@ -177,7 +177,7 @@ router.put(
     "/category/:id",
     isAdminAuthenticated,
     isAdmin,
-    upload.single("image"),
+    upload.fields([{ name: 'image', maxCount: 1 }, { name: 'bannerImage', maxCount: 1 }]),
     updateCategory
 );
 

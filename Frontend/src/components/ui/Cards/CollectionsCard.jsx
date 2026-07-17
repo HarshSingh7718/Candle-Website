@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 function CollectionsCard({ image, title, description, slug}) {
   return (
     <Link
-      to={`/collections/${slug}`}
-      state={{ collectionName: title }}
+      to={`/collections/candles?category=${slug}`}
+      state={{ collectionName: title, collectionImage: image }}
       className="collections-card flex justify-center items-end pb-8 relative h-72 md:h-96 lg:h-110 group overflow-hidden rounded-md cursor-pointer block"
     >
       <img

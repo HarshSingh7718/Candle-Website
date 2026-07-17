@@ -1,15 +1,16 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const FooterLink = ({ href, children }) => (
   <li>
-    <a 
-      href={href} 
+    <Link 
+      to={href} 
       className="relative inline-block text-light-yellow/80 hover:text-white transition-all duration-300 hover:translate-x-2 group pb-1"
     >
       <span>{children}</span>
       {/* Animated Underline */}
       <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-bg-surface transition-all duration-500 group-hover:w-full"></span>
-    </a>
+    </Link>
   </li>
 );
 

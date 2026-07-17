@@ -9,6 +9,7 @@ import Logo from './Logo';
 import NavMenu from './NavMenu';
 import MobileMenu from './MobileMenu';
 import GlobalSearch from './GlobalSearch';
+import CartDrawer from './CartDrawer';
 import { useUser, useLogout } from '../../../hooks/useAuth';
 import { useCart } from '../../../hooks/useCart';
 import { getGuestCart } from '../../../utils/guestCart';
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scroll, setScroll] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const hoverTimeoutRef = useRef(null);
 
@@ -42,6 +44,13 @@ const Navbar = () => {
     const handleScroll = () => setScroll(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Listen for global cart open events (from Cart page redirect or elsewhere)
+  useEffect(() => {
+    const handleOpenCart = () => setIsCartOpen(true);
+    window.addEventListener('open-cart', handleOpenCart);
+    return () => window.removeEventListener('open-cart', handleOpenCart);
   }, []);
 
   const logoutMutation = useLogout();
@@ -87,12 +96,12 @@ const Navbar = () => {
               </button>
 
 
-              <Link to='/cart' className='relative'>
+              <button onClick={() => setIsCartOpen(true)} className='relative cursor-pointer'>
                 <ShoppingBag size={24} className='text-light-yellow cursor-pointer' />
                 {cartCount > 0 && (
                   <span className='card-count'>{cartCount}</span>
                 )}
-              </Link>
+              </button>
 
               <div 
                 className="relative"
@@ -152,6 +161,7 @@ const Navbar = () => {
 
       <MobileMenu menuOpen={menuOpen} setMenuOpen={setMenuOpen} navLinks={navLinks} />
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };

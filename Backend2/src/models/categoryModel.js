@@ -19,6 +19,10 @@ const categorySchema = new mongoose.Schema({
         url: String,
         public_id: String
     },
+    bannerImage: {
+        url: String,
+        public_id: String
+    },
     description: String,
     isActive: {
         type: Boolean,

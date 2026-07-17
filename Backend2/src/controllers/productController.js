@@ -67,7 +67,8 @@ export const getAllCandles = async (req, res) => {
     maxPrice,
     search,
     sort,
-    filter
+    filter,
+    category
   } = req.query;
 
   const query = {
@@ -85,6 +86,14 @@ export const getAllCandles = async (req, res) => {
 
   if (search) {
     query.name = { $regex: search, $options: "i" };
+  }
+  
+  if (category) {
+    const Category = (await import("../models/categoryModel.js")).Category;
+    const cat = await Category.findOne({ slug: category, isActive: true });
+    if (cat) {
+      query.category = cat._id;
+    }
   }
 
   if (maxPrice) {

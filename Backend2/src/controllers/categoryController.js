@@ -16,6 +16,20 @@ export const getAllCategories = async (req, res) => {
     categories
   });
 };
+
+export const getCategoryBySlug = async (req, res) => {
+  const { slug } = req.params;
+  const category = await Category.findOne({ slug, isActive: true });
+  
+  if (!category) {
+    throw new CustomError("Category not found", 404);
+  }
+  
+  res.status(200).json({
+    success: true,
+    category
+  });
+};
 export const getProductsByCategory = async (req, res) => {
   let {
     page = 1,

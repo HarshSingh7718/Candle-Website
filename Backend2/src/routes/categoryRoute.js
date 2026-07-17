@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllCategories, getProductsByCategory } from "../controllers/categoryController.js";
+import { getAllCategories, getProductsByCategory, getCategoryBySlug } from "../controllers/categoryController.js";
 
 import { isAuthenticated, isAdmin } from "../middleware/authmiddleware.js";
 import { upload } from "../middleware/multerMiddleware.js";
@@ -15,6 +15,9 @@ router.get("/categories", getAllCategories);
 
 // Get products by category
 router.get("/products/category/:slug", getProductsByCategory);
+
+// Get single category by slug
+router.get("/category/:slug", getCategoryBySlug);
 
 
 

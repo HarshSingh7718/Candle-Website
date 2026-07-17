@@ -42,6 +42,8 @@ export const useCart = () => {
       // 👉 Invalidate both queries to sync UI
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       queryClient.invalidateQueries({ queryKey: ['cartBilling'] });
+      // 👉 Open the side cart drawer automatically
+      window.dispatchEvent(new Event('open-cart'));
     },
     onError: (err) => toast.error(err.response?.data?.message || "Failed to add to cart")
   });

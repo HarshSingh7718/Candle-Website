@@ -18,8 +18,11 @@ const EditCategory = () => {
   const [description, setDescription] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState(null);
+  const [bannerFile, setBannerFile] = useState(null);
 
   const fileInputRef = useRef(null);
+  const bannerInputRef = useRef(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -28,6 +31,7 @@ const EditCategory = () => {
       setName(category.name || '');
       setDescription(category.description || '');
       setImagePreview(category.image?.url || null);
+      setBannerPreview(category.bannerImage?.url || null);
 
       gsap.fromTo(containerRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
     }
@@ -43,7 +47,18 @@ const EditCategory = () => {
     }
   };
 
+  const handleBannerChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setBannerFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setBannerPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleUploadClick = () => fileInputRef.current?.click();
+  const handleBannerUploadClick = () => bannerInputRef.current?.click();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +69,7 @@ const EditCategory = () => {
     formData.append('name', name);
     if (description) formData.append('description', description);
     if (imageFile) formData.append('image', imageFile);
+    if (bannerFile) formData.append('bannerImage', bannerFile);
 
     try {
       await updateCategory({ id, formData });
@@ -106,6 +122,26 @@ const EditCategory = () => {
                   </div>
                 )}
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" disabled={isPending} />
+              </div>
+            </div>
+
+            {/* Banner Image Upload */}
+            <div className="space-y-3">
+              <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">Banner Image (3:1 Ratio)</label>
+              <div onClick={handleBannerUploadClick} className={`relative w-full aspect-[3/1] rounded-xl border-2 border-dashed ${bannerPreview ? 'border-brand-primary' : 'border-bg-muted'} bg-bg-surface-hover flex flex-col items-center justify-center cursor-pointer hover:bg-bg-surface-hover hover:border-brand-primary transition-all group overflow-hidden ${isPending ? 'opacity-50 pointer-events-none' : ''}`} style={{ backgroundImage: bannerPreview ? `url(${bannerPreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                {!bannerPreview && (
+                  <div className="flex flex-col items-center text-center p-6">
+                    <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-5 text-brand-primary shadow-sm"><Image className=" text-[28px]" /></div>
+                    <h3 className="text-xl font-heading font-bold text-text-base mb-1">Click to Upload Banner</h3>
+                    <p className="text-text-muted mb-6 text-sm">Best size: 1920x640</p>
+                  </div>
+                )}
+                {bannerPreview && !isPending && (
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="bg-bg-surface text-brand-primary px-4 py-2 rounded-lg font-label-md shadow-lg flex items-center gap-2"><Pencil className=" text-[18px]" />Change Banner</span>
+                  </div>
+                )}
+                <input type="file" ref={bannerInputRef} onChange={handleBannerChange} accept="image/*" className="hidden" disabled={isPending} />
               </div>
             </div>
 

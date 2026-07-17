@@ -12,20 +12,33 @@ export const createCategory = async (req, res) => {
   }
   
   let imageData = {};
+  let bannerImageData = {};
 
-  // 👉 Delegate to your generic service (800px is plenty for category thumbnails)
-  if (req.file) {
-    const result = await uploadImage(req.file.buffer, "categories", 800);
-    imageData = {
-      url: result.url,
-      public_id: result.public_id
-    };
+  if (req.files) {
+    // Process main image (800px for thumbnails)
+    if (req.files.image && req.files.image[0]) {
+      const result = await uploadImage(req.files.image[0].buffer, "categories", 800);
+      imageData = {
+        url: result.url,
+        public_id: result.public_id
+      };
+    }
+
+    // Process banner image (1920px for wide banners)
+    if (req.files.bannerImage && req.files.bannerImage[0]) {
+      const bannerResult = await uploadImage(req.files.bannerImage[0].buffer, "categories_banners", 1920);
+      bannerImageData = {
+        url: bannerResult.url,
+        public_id: bannerResult.public_id
+      };
+    }
   }
 
   const category = await Category.create({
     name,
     description,
-    image: imageData
+    image: imageData,
+    bannerImage: bannerImageData
   });
 
   res.status(201).json({
@@ -46,20 +59,31 @@ export const updateCategory = async (req, res) => {
   if (name) category.name = name;
   if (description) category.description = description;
 
-  // Replace image
-  if (req.file) {
-    // delete old image
-    if (category.image?.public_id) {
-      await cloudinary.uploader.destroy(category.image.public_id);
+  // Handle image updates
+  if (req.files) {
+    // Replace main image
+    if (req.files.image && req.files.image[0]) {
+      if (category.image?.public_id) {
+        await cloudinary.uploader.destroy(category.image.public_id);
+      }
+      const result = await uploadImage(req.files.image[0].buffer, "categories", 800);
+      category.image = {
+        url: result.url,
+        public_id: result.public_id
+      };
     }
 
-    // 👉 Delegate to your generic service
-    const result = await uploadImage(req.file.buffer, "categories", 800);
-    
-    category.image = {
-      url: result.url,
-      public_id: result.public_id
-    };
+    // Replace banner image
+    if (req.files.bannerImage && req.files.bannerImage[0]) {
+      if (category.bannerImage?.public_id) {
+        await cloudinary.uploader.destroy(category.bannerImage.public_id);
+      }
+      const bannerResult = await uploadImage(req.files.bannerImage[0].buffer, "categories_banners", 1920);
+      category.bannerImage = {
+        url: bannerResult.url,
+        public_id: bannerResult.public_id
+      };
+    }
   }
   
   await category.save();
