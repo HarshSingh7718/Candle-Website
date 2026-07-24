@@ -68,6 +68,27 @@ function App() {
 
   useEffect(() => {
     trackPageView();
+
+    // ── Unlock body scroll & unpause ScrollSmoother on route change ──
+    document.body.style.overflow = "";
+    const smoother = ScrollSmoother.get();
+    if (smoother) {
+      smoother.paused(false);
+      smoother.scrollTo(0, false);
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    // Refresh ScrollTrigger so wrapper height updates for new page content
+    const timer = setTimeout(() => {
+      const currentSmoother = ScrollSmoother.get();
+      if (currentSmoother) {
+        currentSmoother.paused(false);
+      }
+      ScrollTrigger.refresh();
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, [location.pathname]);
 
   const hasNavbarSpacing = !authPages.includes(location.pathname);

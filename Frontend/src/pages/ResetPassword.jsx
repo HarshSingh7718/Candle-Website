@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuthActions } from "../hooks/useAuth"; // Import our hook
 import SEO from '../components/SEO';
+import BackButton from '../components/ui/BackButton';
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -94,9 +95,10 @@ const ResetPassword = () => {
         </div>
 
         {/* Right Side (Form) */}
-        <div className="w-full lg:w-[65%] h-full flex flex-col items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
-          <div className="w-full max-w-[420px] my-auto">
-            <header className="text-center mb-10">
+        <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
+          <div className="w-full max-w-[420px]">
+            <BackButton className="mb-4" />
+            <header className="text-center mb-8">
               <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
                 Create New Password
               </h2>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'; // 👉 1. Import useNavigate
 import { useGetOrders, useUpdateOrderStatus } from '../hooks/useOrders';
 import TableSkeleton from '../components/Skeletons/TableSkeleton';
 
-import { Search, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Search, ChevronRight, ChevronLeft, Plus } from 'lucide-react';
 
 const ORDER_STATUSES = [
   'All',
@@ -79,24 +79,31 @@ const Orders = () => {
 
   const formatId = (id, orderId) => orderId || (id ? `#${id.slice(-6).toUpperCase()}` : '#UNKNOWN');
 
-
-
   return (
     <main ref={mainRef} className="p-gutter md:p-margin-page max-w-container-max mx-auto w-full opacity-0 pb-20">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-stack-lg gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-stack-lg gap-4">
         <div>
           <h2 className="font-heading text-headline-xl text-text-base mb-unit">Order Management</h2>
           <p className="font-body-md text-body-md text-text-muted">Review and fulfill recent artisan orders.</p>
         </div>
-        <div className="relative w-full sm:w-auto shrink-0">
-          <Search className=" absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]" />
-          <input
-            type="text"
-            placeholder="Search loaded orders..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-64 pl-10 pr-4 py-2 bg-bg-surface border border-bg-muted rounded-lg font-body-md text-body-md text-text-base focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-colors"
-          />
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
+          <div className="relative w-full sm:w-auto">
+            <Search className=" absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]" />
+            <input
+              type="text"
+              placeholder="Search loaded orders..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-bg-surface border border-bg-muted rounded-lg font-body-md text-body-md text-text-base focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-colors"
+            />
+          </div>
+          <button
+            onClick={() => navigate('/orders/create')}
+            className="w-full sm:w-auto px-4 py-2 bg-brand-primary text-text-on-brand rounded-lg font-label-md text-label-md hover:bg-coffee-800 transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+          >
+            <Plus size={18} />
+            <span>Create Order</span>
+          </button>
         </div>
       </div>
 

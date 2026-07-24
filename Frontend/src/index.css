@@ -46,6 +46,7 @@
   --color-warning: #ea580c;
   --color-danger: #dc2626;
   --color-info: #2563eb;
+  --color-star-fill: #ffb400;
 
   /* ---------------------------------------------------- */
   /* LEGACY ALIASES (Kept so your older files don't break) */

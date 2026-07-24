@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSendGooglePhoneOtp, useVerifyGooglePhone } from "../hooks/useAuth";
 import SEO from '../components/SEO';
+import BackButton from '../components/ui/BackButton';
 
 const CompleteGoogleProfile = () => {
   // UI State
@@ -101,6 +102,7 @@ const CompleteGoogleProfile = () => {
         {/* Right Side (Form) */}
         <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
           <div className="w-full max-w-[420px]">
+            <BackButton className="mb-4" />
             {step === 1 ? (
               /* --- STEP 1: PHONE NUMBER FORM --- */
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">

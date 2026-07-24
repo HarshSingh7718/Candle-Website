@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 // 👉 1. Import the new hook
 import { useCreateBanner } from '../hooks/useBanners';
+import { useGetCategories } from '../hooks/useCategories';
 
 import { ArrowLeft, CheckCircle2, Image, Plus, Pencil } from 'lucide-react';
 
 const AddBanner = () => {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
+  const [linkedCollection, setLinkedCollection] = useState('');
   const [desktopPreview, setDesktopPreview] = useState(null);
   const [mobilePreview, setMobilePreview] = useState(null);
 
@@ -20,8 +22,9 @@ const AddBanner = () => {
   const mobileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  // 👉 3. Initialize the mutation
+  // 👉 3. Initialize the mutation & categories
   const { mutateAsync: createBanner, isPending } = useCreateBanner();
+  const { data: categories = [] } = useGetCategories();
 
   const containerRef = useRef(null);
 
@@ -64,6 +67,7 @@ const AddBanner = () => {
     const formData = new FormData();
     formData.append('title', title);
     if (subtitle) formData.append('subtitle', subtitle);
+    if (linkedCollection) formData.append('linkedCollection', linkedCollection);
     formData.append('desktopImage', desktopFile);
     formData.append('mobileImage', mobileFile);
 
@@ -241,6 +245,26 @@ const AddBanner = () => {
                 disabled={isPending}
                 className="w-full px-6 py-4 rounded-xl border border-bg-muted bg-bg-surface text-text-base font-body-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary placeholder:text-text-muted/50 transition-all shadow-sm disabled:opacity-50"
               />
+            </div>
+
+            {/* Linked Collection Field (Optional) */}
+            <div className="space-y-3">
+              <label className="block text-[11px] font-bold text-text-muted tracking-widest uppercase">
+                Linked Collection (Optional)
+              </label>
+              <select
+                value={linkedCollection}
+                onChange={(e) => setLinkedCollection(e.target.value)}
+                disabled={isPending}
+                className="w-full px-6 py-4 rounded-xl border border-bg-muted bg-bg-surface text-text-base font-body-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+              >
+                <option value="">None (Default: /collections/candles)</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Action Buttons */}

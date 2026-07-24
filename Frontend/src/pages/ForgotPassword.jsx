@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthActions } from "../hooks/useAuth"; // Import the new hook
 import SEO from '../components/SEO';
+import BackButton from '../components/ui/BackButton';
 
 const ForgotPassword = () => {
   const [phoneNumber, setPhone] = useState("");
@@ -69,6 +70,7 @@ const ForgotPassword = () => {
         {/* Right Side (Form) */}
         <div className="w-full lg:w-[65%] h-full flex flex-col justify-center items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
           <div className="w-full max-w-[420px]">
+            <BackButton className="mb-4" />
             <header className="text-center mb-10">
               <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
                 Forgot Password

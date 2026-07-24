@@ -25,6 +25,11 @@ const bannerSchema = new mongoose.Schema({
     title: String,
     subtitle: String,
     
+    linkedCollection: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        default: null
+    },
 
     isActive: {
         type: Boolean,

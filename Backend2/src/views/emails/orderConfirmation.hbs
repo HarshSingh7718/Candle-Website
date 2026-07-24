@@ -398,6 +398,15 @@
                         <span class="summary-total-value" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;color:#8b4a3a;letter-spacing:1px;">&#8377;{{total}}</span>
                       </td>
                     </tr>
+                    {{#if paymentStatusLabel}}
+                    <tr>
+                      <td colspan="2" align="right" style="padding-top:12px;">
+                        <span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:12px;display:inline-block;{{#if isPaid}}background-color:#eaf5ea;color:#2e7d32;border:1px solid #c8e6c9;{{else}}background-color:#fff3e0;color:#e65100;border:1px solid #ffe0b2;{{/if}}">
+                          {{paymentStatusLabel}} ({{paymentMethodLabel}})
+                        </span>
+                      </td>
+                    </tr>
+                    {{/if}}
                   </table>
                 </div>
 

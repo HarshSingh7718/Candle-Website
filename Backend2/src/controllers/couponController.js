@@ -7,34 +7,108 @@ import { validateAndCalculateDiscount } from "../utils/couponHelper.js";
 
 // ============================================================
 //  CUSTOMER: Get available coupons for current user
+// ============================================================
+//  CUSTOMER: Get available coupons for current user / guest
 //  GET /api/coupons/available
 // ============================================================
 export const getAvailableCoupons = async (req, res) => {
     const now = new Date();
+    const querySubtotal = Number(req.query.subtotal) || 0;
 
     // 1. Fetch all active coupons within valid date range
     const allCoupons = await Coupon.find({
         isActive: true,
         startDate: { $lte: now },
         endDate: { $gte: now },
-    }).sort({ createdAt: -1 });
+    }).populate("applicableCollections", "name slug").sort({ createdAt: -1 });
 
-    // 2. Fetch user's couponUsage array
-    const user = await User.findById(req.user._id).select("couponUsage");
-    const couponUsage = user?.couponUsage || [];
+    // 2. Fetch user's couponUsage array and cart items if logged in
+    let couponUsage = [];
+    let userCartItems = [];
+    let cartTotal = querySubtotal;
 
-    // 3. Filter: only include coupons the user hasn't exhausted
-    const available = allCoupons.filter((coupon) => {
+    if (req.user) {
+        const user = await User.findById(req.user._id)
+            .select("couponUsage cart")
+            .populate("cart.product")
+            .populate("cart.customCandle");
+        couponUsage = user?.couponUsage || [];
+        userCartItems = user?.cart || [];
+
+        if (userCartItems.length > 0 && querySubtotal === 0) {
+            cartTotal = 0;
+            for (const item of userCartItems) {
+                if (item.type === "simpleCandle" || item.type === "simpleRaw") {
+                    const prod = item.product;
+                    if (prod) {
+                        cartTotal += (prod.discountPrice || prod.price || 0) * (item.quantity || 1);
+                    }
+                }
+                if (item.type === "custom") {
+                    const candle = item.customCandle;
+                    if (candle) {
+                        cartTotal += (candle.totalPrice || 0) * (item.quantity || 1);
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Evaluate discount & eligibility server-side for each coupon
+    const evaluated = allCoupons.map((c) => {
         const entry = couponUsage.find(
-            (u) => u.couponId.toString() === coupon._id.toString()
+            (u) => u.couponId.toString() === c._id.toString()
         );
         const currentCount = entry ? entry.count : 0;
-        return currentCount < coupon.usageLimitPerUser;
-    });
+        const usageExhausted = currentCount >= c.usageLimitPerUser;
 
-    res.status(200).json({
-        success: true,
-        coupons: available.map((c) => ({
+        const scopedCollectionIds = (c.applicableCollections || []).map((col) => (col._id || col).toString());
+        const isScoped = scopedCollectionIds.length > 0;
+
+        let eligibleSubtotal = 0;
+        if (isScoped && userCartItems.length > 0) {
+            for (const item of userCartItems) {
+                if (item.type !== "custom" && item.product) {
+                    const prodCats = Array.isArray(item.product.category)
+                        ? item.product.category.map((cat) => (cat._id || cat).toString())
+                        : [(item.product.category?._id || item.product.category || "").toString()];
+                    if (prodCats.some((catId) => scopedCollectionIds.includes(catId))) {
+                        eligibleSubtotal += (item.product.discountPrice || item.product.price || 0) * (item.quantity || 1);
+                    }
+                }
+            }
+        } else {
+            eligibleSubtotal = cartTotal;
+        }
+
+        let discountAmount = 0;
+        let isEligible = !usageExhausted;
+        let reason = "";
+
+        if (usageExhausted) {
+            isEligible = false;
+            reason = "Usage limit reached";
+        } else if (isScoped && eligibleSubtotal === 0) {
+            isEligible = false;
+            reason = "Only valid for selected collections";
+        } else if (eligibleSubtotal < c.minOrderValue) {
+            isEligible = false;
+            const diff = Math.ceil(c.minOrderValue - eligibleSubtotal);
+            reason = `Add ₹${diff} more from eligible items to unlock`;
+        } else {
+            if (c.discountType === "percentage") {
+                discountAmount = (c.discountValue / 100) * eligibleSubtotal;
+                if (c.maxDiscountAmount && discountAmount > c.maxDiscountAmount) {
+                    discountAmount = c.maxDiscountAmount;
+                }
+            } else {
+                discountAmount = Math.min(c.discountValue, eligibleSubtotal);
+            }
+            discountAmount = Math.min(discountAmount, eligibleSubtotal);
+            discountAmount = Math.round(discountAmount);
+        }
+
+        return {
             _id: c._id,
             code: c.code,
             title: c.title,
@@ -43,7 +117,36 @@ export const getAvailableCoupons = async (req, res) => {
             discountValue: c.discountValue,
             maxDiscountAmount: c.maxDiscountAmount,
             minOrderValue: c.minOrderValue,
-        })),
+            applicableCollections: c.applicableCollections,
+            eligibleSubtotal,
+            discountAmount,
+            isEligible,
+            reason,
+        };
+    });
+
+    // 4. Sort: Eligible coupons first (highest discount first), then ineligible
+    evaluated.sort((a, b) => {
+        if (a.isEligible && !b.isEligible) return -1;
+        if (!a.isEligible && b.isEligible) return 1;
+        if (a.isEligible && b.isEligible) return b.discountAmount - a.discountAmount;
+        return 0;
+    });
+
+    // 5. Mark the single best coupon (highest discount amount among eligible)
+    let foundBest = false;
+    evaluated.forEach((c) => {
+        if (c.isEligible && !foundBest && c.discountAmount > 0) {
+            c.isBest = true;
+            foundBest = true;
+        } else {
+            c.isBest = false;
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        coupons: evaluated,
     });
 };
 
@@ -52,44 +155,48 @@ export const getAvailableCoupons = async (req, res) => {
 //  POST /api/coupons/apply
 // ============================================================
 export const applyCoupon = async (req, res) => {
-    const { code } = req.body;
+    const { code, subtotal, items } = req.body;
     if (!code) {
         throw new CustomError("Please provide a coupon code", 400);
     }
 
-    // 1. Fetch user + populated cart to calculate subtotal server-side
-    const user = await User.findById(req.user._id)
-        .populate("cart.product")
-        .populate("cart.customCandle");
+    let cartItems = Array.isArray(items) ? items : [];
+    let couponUsage = [];
 
-    if (!user || user.cart.length === 0) {
-        throw new CustomError("Your cart is empty", 400);
+    if (req.user) {
+        const user = await User.findById(req.user._id)
+            .populate("cart.product")
+            .populate("cart.customCandle");
+
+        if (user && user.cart.length > 0) {
+            cartItems = user.cart;
+        }
+        couponUsage = user?.couponUsage || [];
     }
 
-    // 2. Server-side cart subtotal — never trust client math
-    let cartTotal = 0;
-    for (const item of user.cart) {
-        if (item.type === "simpleCandle" || item.type === "simpleRaw") {
-            const prod = item.product;
-            if (prod) {
-                cartTotal += (prod.discountPrice || prod.price || 0) * (item.quantity || 1);
-            }
-        }
-        if (item.type === "custom") {
-            const candle = item.customCandle;
-            if (candle) {
-                cartTotal += (candle.totalPrice || 0) * (item.quantity || 1);
-            }
+    // For guest sessions, populate category references if item.productId is present
+    if (!req.user && Array.isArray(cartItems) && cartItems.length > 0) {
+        const prodIds = cartItems
+            .map((i) => (i.product?._id || i.productId || i._id))
+            .filter(Boolean);
+        if (prodIds.length > 0) {
+            const products = await Product.find({ _id: { $in: prodIds } }).select("price discountPrice category");
+            const prodMap = new Map(products.map((p) => [p._id.toString(), p]));
+            cartItems = cartItems.map((i) => {
+                const targetId = (i.product?._id || i.productId || i._id || "").toString();
+                const p = prodMap.get(targetId);
+                return p ? { ...i, product: p } : i;
+            });
         }
     }
 
-    // 3. Validate & calculate using shared helper (now uses couponUsage)
     try {
-        const { coupon, discountAmount, finalTotal } = await validateAndCalculateDiscount(
+        const userId = req.user ? req.user._id.toString() : "guest";
+        const { coupon, eligibleSubtotal, discountAmount, finalTotal, fullCartSubtotal } = await validateAndCalculateDiscount(
             code,
-            cartTotal,
-            user._id.toString(),
-            user.couponUsage || []
+            cartItems.length > 0 ? cartItems : (Number(subtotal) || 0),
+            userId,
+            couponUsage
         );
 
         return res.status(200).json({
@@ -102,8 +209,11 @@ export const applyCoupon = async (req, res) => {
                 description: coupon.description,
                 discountType: coupon.discountType,
                 discountValue: coupon.discountValue,
+                maxDiscountAmount: coupon.maxDiscountAmount,
+                applicableCollections: coupon.applicableCollections,
             },
-            cartTotal,
+            eligibleSubtotal,
+            cartTotal: fullCartSubtotal,
             discountAmount,
             finalTotal,
         });
@@ -125,6 +235,7 @@ export const createCoupon = async (req, res) => {
         discountValue,
         maxDiscountAmount,
         minOrderValue,
+        applicableCollections,
         startDate,
         endDate,
         usageLimitPerUser,
@@ -152,6 +263,7 @@ export const createCoupon = async (req, res) => {
         discountValue,
         maxDiscountAmount: discountType === "percentage" ? maxDiscountAmount : null,
         minOrderValue: minOrderValue || 0,
+        applicableCollections: Array.isArray(applicableCollections) ? applicableCollections : [],
         startDate,
         endDate,
         usageLimitPerUser: usageLimitPerUser || 1,
@@ -170,7 +282,7 @@ export const createCoupon = async (req, res) => {
 //  GET /api/admin/coupons
 // ============================================================
 export const getAllCoupons = async (req, res) => {
-    const coupons = await Coupon.find().sort({ createdAt: -1 });
+    const coupons = await Coupon.find().populate("applicableCollections", "name slug").sort({ createdAt: -1 });
     res.status(200).json({ success: true, coupons });
 };
 
@@ -179,7 +291,7 @@ export const getAllCoupons = async (req, res) => {
 //  GET /api/admin/coupons/:id
 // ============================================================
 export const getSingleCoupon = async (req, res) => {
-    const coupon = await Coupon.findById(req.params.id);
+    const coupon = await Coupon.findById(req.params.id).populate("applicableCollections", "name slug");
     if (!coupon) {
         throw new CustomError("Coupon not found", 404);
     }
@@ -199,6 +311,7 @@ export const updateCoupon = async (req, res) => {
         discountValue,
         maxDiscountAmount,
         minOrderValue,
+        applicableCollections,
         startDate,
         endDate,
         usageLimitPerUser,
@@ -229,6 +342,7 @@ export const updateCoupon = async (req, res) => {
     if (discountValue !== undefined) coupon.discountValue = discountValue;
     if (maxDiscountAmount !== undefined) coupon.maxDiscountAmount = (discountType || coupon.discountType) === "percentage" ? maxDiscountAmount : null;
     if (minOrderValue !== undefined) coupon.minOrderValue = minOrderValue;
+    if (applicableCollections !== undefined) coupon.applicableCollections = Array.isArray(applicableCollections) ? applicableCollections : [];
     if (startDate !== undefined) coupon.startDate = startDate;
     if (endDate !== undefined) coupon.endDate = endDate;
     if (usageLimitPerUser !== undefined) coupon.usageLimitPerUser = usageLimitPerUser;

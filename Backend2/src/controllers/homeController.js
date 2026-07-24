@@ -5,7 +5,7 @@ export const getHomeData = async (req, res) => {
   // Fetch active banners
   Banner.find({
     isActive: true
-  }).sort({
+  }).populate("linkedCollection", "name slug").sort({
     createdAt: -1
   }).limit(6),
   // Featured

@@ -50,24 +50,29 @@ function Hero() {
         loop={banners.length > 1}
         className="heroSwiper"
       >
-        {banners.map((banner) => (
-          <SwiperSlide key={banner._id}>
-            {/* Entire banner image is a clickable link — no overlay text */}
-            <Link
-              to="/collections/candles"
-              className="block w-full relative aspect-[4/5] md:aspect-video overflow-hidden"
-            >
-              <picture className="absolute inset-0 w-full h-full">
-                <source media="(min-width: 768px)" srcSet={banner.desktopImage?.url} />
-                <img
-                  src={banner.mobileImage?.url}
-                  alt={banner.title || "Shop our candle collection"}
-                  className="w-full h-full object-cover"
-                />
-              </picture>
-            </Link>
-          </SwiperSlide>
-        ))}
+        {banners.map((banner) => {
+          const targetSlug = banner.linkedCollection?.slug;
+          const targetLink = targetSlug ? `/collections/${targetSlug}` : "/collections/candles";
+
+          return (
+            <SwiperSlide key={banner._id}>
+              {/* Entire banner image is a clickable link — no overlay text */}
+              <Link
+                to={targetLink}
+                className="block w-full relative aspect-[4/5] md:aspect-video overflow-hidden"
+              >
+                <picture className="absolute inset-0 w-full h-full">
+                  <source media="(min-width: 768px)" srcSet={banner.desktopImage?.url} />
+                  <img
+                    src={banner.mobileImage?.url}
+                    alt={banner.title || "Shop our candle collection"}
+                    className="w-full h-full object-cover"
+                  />
+                </picture>
+              </Link>
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
 
       {/* CUSTOM NAV — only shown when multiple banners exist */}

@@ -57,13 +57,17 @@ export const sendOrderConfirmationEmail = async (email, orderData) => {
             type: item.type === "custom" ? "Bespoke Creation" : "Classic Candle"
         }));
 
+        const isPaid = orderData.paymentStatus === "paid" || String(orderData.paymentMethod || "").toLowerCase() !== "cod";
+        const paymentMethodLabel = String(orderData.paymentMethod || "").toLowerCase() === "cod" ? "Cash on Delivery (COD)" : (orderData.paymentMethod === "razorpay" ? "Online (Razorpay)" : "Paid upfront");
+        const paymentStatusLabel = isPaid ? "Payment Received" : `Pay ₹${(orderData.totalAmount || 0).toFixed(2)} on Delivery`;
+
         const mailOptions = {
             from: `"Naisha Creations" <${process.env.SMTP_FROM_EMAIL}>`,
             to: email,
             subject: `Order Confirmed: #${orderData.orderId} - Naisha Creations`,
             template: 'orderConfirmation', // matches orderConfirmation.hbs
             context: {
-                firstName: orderData.user?.firstName || "Customer",
+                firstName: orderData.user?.firstName || orderData.shippingAddress?.firstName || "Customer",
                 orderId: orderData.orderId,
                 items: items,
                 subtotal: (orderData.itemsPrice || 0).toFixed(2),
@@ -72,6 +76,9 @@ export const sendOrderConfirmationEmail = async (email, orderData) => {
                 total: (orderData.totalAmount || 0).toFixed(2),
                 shippingAddress: orderData.shippingAddress,
                 trackingUrl: `${config.url.frontend}/account/orders/${orderData.orderId}`,
+                isPaid: isPaid,
+                paymentMethodLabel: paymentMethodLabel,
+                paymentStatusLabel: paymentStatusLabel,
                 year: new Date().getFullYear(),
                 logoUrl: "https://res.cloudinary.com/dk1qzyep1/image/upload/v1780831689/Naisha_brand_ryldmf.jpg",
             }

@@ -23,8 +23,8 @@ export const addShippingAddress = async (req, res) => {
   }
 
   // Shiprocket Serviceability Check
-  const { deliverable } = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 0 });
-  if (!deliverable) {
+  const serviceability = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 0 });
+  if (!serviceability.apiError && !serviceability.deliverable) {
     throw new CustomError("Sorry, we currently do not deliver to this pincode.", 400);
   }
 
@@ -78,8 +78,8 @@ export const updateAddress = async (req, res) => {
   // Shiprocket Serviceability Check (only if pincode changed)
   const currentPincode = user.addresses[addressIndex].pincode;
   if (pincode && pincode !== currentPincode) {
-    const { deliverable } = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 0 });
-    if (!deliverable) {
+    const serviceability = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 0 });
+    if (!serviceability.apiError && !serviceability.deliverable) {
       throw new CustomError("Sorry, we currently do not deliver to this pincode.", 400);
     }
   }

@@ -7,7 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Icon } from "@iconify/react";
 import { useCart } from "../hooks/useCart";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import MainBtn from "../components/ui/Buttons/MainBtn";
+import CouponSection from "../components/ui/CouponSection";
+import { useCoupon } from "../hooks/useCoupon";
 import SEO from "../components/SEO";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,9 @@ function Cart() {
   const [selectedCustomCandle, setSelectedCustomCandle] = useState(null);
 
   const { cart, billing, removeFromCart, updateQuantity, isLoading } = useCart();
+  const { appliedCoupon, discountAmount } = useCoupon();
+
+  const finalTotal = Math.max(0, (billing?.totalPrice || 0) - discountAmount);
 
   const increase = (itemId, currentQty, stock) => {
     const limit = stock !== undefined && stock > 0 ? stock : 10;
@@ -115,7 +119,7 @@ function Cart() {
                 <tbody>
                   {cart.map((item) => {
                     const isCustom    = item.type === "custom";
-                    const productData = isCustom ? item.customCandle : item.product;
+                    const productData = isCustom ? item.customCandle : (item.product || item);
 
                     const displayName  = isCustom ? "Customized Candle" : productData?.name;
                     const displayPrice = isCustom
@@ -124,9 +128,9 @@ function Cart() {
                     const displayImage = isCustom
                       ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
                       : productData?.images?.[0]?.url    || "/placeholder.jpg";
-                    const stockStatus  = isCustom
-                      ? "Made to Order"
-                      : productData?.stock > 0 ? "In stock" : "Out of stock";
+                    const isInStock    = isCustom || productData?.stock === undefined || productData?.stock > 0;
+                    const stockStatus  = isCustom ? "Made to Order" : (isInStock ? "In stock" : "Out of stock");
+                    const stockColor   = isCustom ? "text-blue-600" : (isInStock ? "text-success" : "text-danger");
 
                     return (
                       <tr key={item._id} className="border-b cart-item">
@@ -183,10 +187,7 @@ function Cart() {
                           </div>
                         </td>
 
-                        <td className={`text-center ${
-                          isCustom ? "text-blue-600"
-                          : productData?.stock > 0 ? "text-success" : "text-danger"
-                        }`}>
+                        <td className={`text-center ${stockColor}`}>
                           {stockStatus}
                         </td>
 
@@ -204,7 +205,7 @@ function Cart() {
             <div className="lg:hidden space-y-6">
               {cart.map((item) => {
                 const isCustom    = item.type === "custom";
-                const productData = isCustom ? item.customCandle : item.product;
+                const productData = isCustom ? item.customCandle : (item.product || item);
 
                 const displayName  = isCustom ? "Customized Candle" : productData?.name;
                 const displayPrice = isCustom
@@ -213,9 +214,9 @@ function Cart() {
                 const displayImage = isCustom
                   ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
                   : productData?.images?.[0]?.url    || "/placeholder.jpg";
-                const stockStatus  = isCustom
-                  ? "Made to Order"
-                  : productData?.stock > 0 ? "In stock" : "Out of stock";
+                const isInStock    = isCustom || productData?.stock === undefined || productData?.stock > 0;
+                const stockStatus  = isCustom ? "Made to Order" : (isInStock ? "In stock" : "Out of stock");
+                const stockColor   = isCustom ? "text-blue-600" : (isInStock ? "text-success" : "text-danger");
 
                 return (
                   <div
@@ -223,10 +224,7 @@ function Cart() {
                     className="border border-muted/20 bg-light-yellow shadow-sm p-4 rounded-lg cart-item"
                   >
                     <div className="flex justify-between items-center">
-                      <span className={`text-sm font-medium ${
-                        isCustom ? "text-blue-600"
-                        : productData?.stock > 0 ? "text-success" : "text-danger"
-                      }`}>
+                      <span className={`text-sm font-medium ${stockColor}`}>
                         {stockStatus}
                       </span>
                       <button
@@ -296,31 +294,47 @@ function Cart() {
 
             {/* ── Order summary ── */}
             <div className="w-full flex justify-end mb-10 mt-8 lg:mt-0">
-              <div className="w-full h-fit lg:w-120 border border-muted/20 lg:sticky lg:top-24 rounded-sm bg-light-yellow">
+              <div className="w-full h-fit lg:w-120 border border-muted/20 lg:sticky lg:top-24 rounded-sm bg-light-yellow p-6 space-y-6">
+                <h3 className="font-serif text-lg font-bold text-heading uppercase tracking-wider border-b border-muted/20 pb-3">
+                  Order Summary
+                </h3>
 
-                <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
-                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">Subtotal</div>
-                  <div className="p-6 text-right font-semibold">₹{billing?.itemsPrice || 0}.00</div>
-                </div>
+                {/* Full Coupon Section */}
+                <CouponSection variant="full" />
 
-                <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
-                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20">Shipping</div>
-                  <div className={`p-6 text-right font-semibold ${billing?.shippingPrice === 0 ? "text-success" : ""}`}>
-                    {billing?.shippingPrice === 0 ? "Free" : `₹${billing?.shippingPrice || 0}.00`}
+                <div className="border border-muted/20 rounded bg-bg-surface overflow-hidden divide-y divide-muted/20">
+                  <div className="flex justify-between items-center p-4 text-sm font-medium">
+                    <span className="text-text-muted">Subtotal</span>
+                    <span className="text-heading font-semibold">₹{billing?.itemsPrice || 0}.00</span>
+                  </div>
+
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between items-center p-4 text-sm font-medium bg-emerald-50/50 text-emerald-800">
+                      <span>Discount ({appliedCoupon?.code})</span>
+                      <span className="font-bold">-₹{discountAmount}.00</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center p-4 text-sm font-medium">
+                    <span className="text-text-muted">Shipping</span>
+                    <span className={`font-semibold ${billing?.shippingPrice === 0 ? "text-success" : "text-heading"}`}>
+                      {billing?.shippingPrice === 0 ? "Free" : `₹${billing?.shippingPrice || 0}.00`}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center p-4 text-base font-bold text-heading bg-bg-canvas/50">
+                    <span>Total</span>
+                    <span className="text-xl text-primary">₹{finalTotal}.00</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 border-b border-muted/20 cart-item">
-                  <div className="p-6 font-semibold bg-muted/10 border-r border-muted/20 text-lg">Total</div>
-                  <div className="p-6 text-right font-bold text-xl text-coffee">₹{billing?.totalPrice || 0}.00</div>
-                </div>
-
-                <div className="p-6 cart-actions">
-                  <MainBtn
-                    path="/checkout"
-                    text="PROCEED TO CHECKOUT"
-                    className="wishlist-btn shadow-none! bg-coffee! text-light-yellow! w-full! rounded-sm! hover:bg-coffee-light!"
-                  />
+                <div className="cart-actions pt-2">
+                  <Link
+                    to="/checkout"
+                    className="w-full h-12 bg-primary text-white font-bold tracking-widest uppercase rounded flex items-center justify-center hover:bg-primary/90 transition-colors shadow-sm"
+                  >
+                    PROCEED TO CHECKOUT
+                  </Link>
                 </div>
               </div>
             </div>

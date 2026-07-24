@@ -10,7 +10,7 @@ import { getAllContacts, updateContactStatus } from "../controllers/adminContact
 import { createCategory, updateCategory, deleteCategory, getAllCategoriesAdmin, getSingleCategoryAdmin, getCategoryProducts, updateCategoryProducts, migrateCategoryToArray } from "../controllers/adminCategoryController.js";
 import { initCustomization, createOption, updateOption, deleteOption, getAllStepOptions } from "../controllers/adminOptionController.js";
 import { createBanner, getAllBanners, deleteBanner, getSingleBanner, updateBanner} from "../controllers/adminBannerController.js"
-import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus, getAvailableCouriersForOrder, shipOrder } from "../controllers/adminOrderController.js";
+import { getAllOrdersAdmin, getSingleOrderAdmin, updateOrderStatus, getAvailableCouriersForOrder, shipOrder, createManualOrder } from "../controllers/adminOrderController.js";
 import { createCoupon, getAllCoupons, getSingleCoupon, updateCoupon, toggleCouponStatus, deleteCoupon } from "../controllers/couponController.js";
 import { getSettings, updateSettings } from "../controllers/settingsController.js";
 import { getAllUsers, getUserById, blockUser, unblockUser } from "../controllers/adminUserController.js";
@@ -147,6 +147,14 @@ router.get(
     isAdminAuthenticated,
     isAdmin,
     getAllOrdersAdmin
+);
+
+// Create manual order
+router.post(
+    "/orders/create",
+    isAdminAuthenticated,
+    isAdmin,
+    createManualOrder
 );
 
 // Update order status

@@ -4,10 +4,12 @@ import { X, Minus, Plus, Trash2 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { Icon } from '@iconify/react';
 import { useCart } from '../../../hooks/useCart';
+import { useUser } from '../../../hooks/useAuth';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const { data: user } = useUser();
   const { cart, billing, removeFromCart, updateQuantity, isLoading } = useCart();
   const [selectedCustomCandle, setSelectedCustomCandle] = useState(null);
 
@@ -23,19 +25,16 @@ const CartDrawer = ({ isOpen, onClose }) => {
       const smoother = ScrollSmoother.get();
       if (smoother) smoother.paused(true);
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
       const smoother = ScrollSmoother.get();
       if (smoother) smoother.paused(false);
     }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      // Let the 'else' block or the next unmount cycle restore overflow
-      if (isOpen) {
-        document.body.style.overflow = 'unset';
-        const smoother = ScrollSmoother.get();
-        if (smoother) smoother.paused(false);
-      }
+      document.body.style.overflow = '';
+      const smoother = ScrollSmoother.get();
+      if (smoother) smoother.paused(false);
     };
   }, [isOpen, onClose]);
 
@@ -119,7 +118,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {cart.map((item) => {
                 const isCustom = item.type === "custom";
-                const productData = isCustom ? item.customCandle : item.product;
+                const productData = isCustom ? item.customCandle : (item.product || item);
 
                 const displayName = isCustom ? "Customized Candle" : productData?.name;
                 const displayPrice = isCustom
@@ -128,17 +127,14 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 const displayImage = isCustom
                   ? productData?.snapshot?.vesselImage || "/placeholder.jpg"
                   : productData?.images?.[0]?.url || "/placeholder.jpg";
-                const stockStatus = isCustom
-                  ? "Made to Order"
-                  : productData?.stock > 0 ? "In stock" : "Out of stock";
+                const isInStock = isCustom || productData?.stock === undefined || productData?.stock > 0;
+                const stockStatus = isCustom ? "Made to Order" : (isInStock ? "In stock" : "Out of stock");
+                const stockColor = isCustom ? "text-blue-600" : (isInStock ? "text-success" : "text-danger");
 
                 return (
                   <div key={item._id} className="border border-muted/20 bg-light-yellow shadow-sm p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-4">
-                      <span className={`text-sm font-medium ${
-                        isCustom ? "text-blue-600"
-                        : productData?.stock > 0 ? "text-success" : "text-danger"
-                      }`}>
+                      <span className={`text-sm font-medium ${stockColor}`}>
                         {stockStatus}
                       </span>
                       <button
@@ -210,33 +206,29 @@ const CartDrawer = ({ isOpen, onClose }) => {
               })}
             </div>
 
-            <div className="p-6 bg-surface-2 border-t border-border">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-secondary font-sans text-sm tracking-wide uppercase">Subtotal</span>
-                <span className="text-primary font-sans text-sm tracking-wide">
+            <div className="p-6 bg-surface-2 border-t border-border space-y-4">
+              <div className="flex justify-between items-center text-sm font-medium">
+                <span className="text-secondary">
+                  Total
+                </span>
+                <span className="text-heading font-bold text-base">
                   ₹{billing?.itemsPrice || 0}
                 </span>
               </div>
-              <div className="flex justify-between items-center mb-6">
-                <span className="text-secondary font-sans text-sm tracking-wide uppercase">Shipping</span>
-                <span className={`font-sans text-sm tracking-wide ${billing?.shippingPrice === 0 ? "text-success uppercase" : "text-primary"}`}>
-                  {billing?.shippingPrice === 0 ? "Free" : `₹${billing?.shippingPrice || 0}`}
-                </span>
-              </div>
-              <div className="flex justify-between items-center mb-8 pb-4 border-b border-border">
-                <span className="text-primary font-serif text-xl tracking-widest uppercase font-bold">Total</span>
-                <span className="text-primary font-serif text-xl font-bold text-coffee">
-                  ₹{billing?.totalPrice || 0}
-                </span>
-              </div>
+
               <button
+                type="button"
                 onClick={() => {
                   onClose();
-                  navigate('/checkout');
+                  if (user) {
+                    navigate('/cart');
+                  } else {
+                    navigate('/signin?redirect=/cart');
+                  }
                 }}
-                className="w-full block text-center bg-coffee text-text-on-brand py-4 font-bold tracking-widest uppercase hover:bg-coffee-700 transition-colors cursor-pointer rounded-sm"
+                className="w-full block text-center bg-coffee text-text-on-brand py-3.5 font-bold tracking-widest uppercase hover:bg-coffee-700 transition-colors cursor-pointer rounded-sm text-sm"
               >
-                Proceed to Checkout
+                {user ? "Review Cart" : "Sign In"}
               </button>
             </div>
           </>

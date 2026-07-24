@@ -43,6 +43,23 @@ export const isAuthenticated = async (req, res, next) => {
     }
 };
 
+// Used when route is accessible to both guests and logged-in users
+export const optionalAuth = async (req, res, next) => {
+    try {
+        const token = req.cookies?.userToken || req.cookies?.adminToken || req.headers.authorization?.split(" ")[1];
+        if (!token) return next();
+        const decoded = jwt.verify(token, config.jwt.secret);
+        const user = await User.findById(decoded.id);
+        if (user && user.isActive !== false && user.isLoggedIn) {
+            req.id = user._id;
+            req.user = user;
+        }
+    } catch {
+        // Ignore token errors for optional auth
+    }
+    next();
+};
+
 // Used on all /api/admin/* routes — only reads adminToken
 export const isAdminAuthenticated = async (req, res, next) => {
     try {

@@ -129,9 +129,9 @@ export const createOrder = async (req, res) => {
     try {
       const result = await validateAndCalculateDiscount(
         couponCode,
-        itemsPrice,
-        user._id.toString(),
-        user.couponUsage || []
+        user && user.cart && user.cart.length > 0 ? user.cart : orderItems,
+        (user?._id || "guest").toString(),
+        user?.couponUsage || []
       );
       discountAmount = result.discountAmount;
       couponId = result.coupon._id;
@@ -144,13 +144,31 @@ export const createOrder = async (req, res) => {
   const totalAmount = Math.max(0, Math.round(itemsPrice - discountAmount + shippingPrice));
 
   // =========================
-  //  COD SERVICEABILITY CHECK
+  //  SHIPROCKET SERVICEABILITY CHECK BEFORE PAYMENT / ORDER CREATION
   // =========================
-  if (paymentMethod === "cod") {
-    const { codAvailable } = await checkServiceability({ delivery_postcode: pincode, weight: 0.5, cod: 1 });
-    if (!codAvailable) {
-      throw new CustomError("Cash on Delivery is not available for this pincode. Please select a Prepaid payment method.", 400);
+  const isCod = paymentMethod === "cod" ? 1 : 0;
+  const serviceability = await checkServiceability({
+    delivery_postcode: pincode,
+    weight: 0.5,
+    cod: isCod
+  });
+
+  // Distinction: genuine not-serviceable response vs Shiprocket API network/timeout error
+  if (!serviceability.apiError) {
+    if (!serviceability.deliverable) {
+      throw new CustomError(
+        `We currently cannot ship to pincode ${pincode}. Please try a different delivery address.`,
+        400
+      );
     }
+    if (paymentMethod === "cod" && !serviceability.codAvailable) {
+      throw new CustomError(
+        `Cash on Delivery is not available for pincode ${pincode}. Please select a Prepaid payment method or try another address.`,
+        400
+      );
+    }
+  } else {
+    console.warn(`[CHECKOUT FAIL-OPEN] Shiprocket API error/timeout for pincode ${pincode}. Allowing order to proceed.`);
   }
 
   // =========================

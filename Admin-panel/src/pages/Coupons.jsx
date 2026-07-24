@@ -142,6 +142,17 @@ const Coupons = () => {
                             Min order ₹{coupon.minOrderValue}
                           </span>
                         )}
+                        {coupon.applicableCollections?.length > 0 ? (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {coupon.applicableCollections.map((col) => (
+                              <span key={col._id || col} className="px-2 py-0.5 rounded bg-brand-primary/10 text-brand-primary text-[10px] font-semibold">
+                                {col.name || col}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-text-muted mt-0.5">Store-wide</span>
+                        )}
                       </div>
                     </td>
 

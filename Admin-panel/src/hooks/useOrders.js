@@ -84,3 +84,20 @@ export const useShipOrder = () => {
         onError: (error) => toast.error(error.response?.data?.message || "Failed to initiate shipping")
     });
 };
+
+export const useCreateManualOrder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (orderPayload) => {
+            const { data } = await api.post('/admin/orders/create', orderPayload);
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['orders']);
+            queryClient.invalidateQueries(['products']);
+            toast.success("Manual order created successfully!");
+        },
+        onError: (error) => toast.error(error.response?.data?.message || "Failed to create order")
+    });
+};

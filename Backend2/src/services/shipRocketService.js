@@ -62,7 +62,8 @@ export const checkServiceability = async ({ delivery_postcode, weight = 0.5, cod
                     delivery_postcode,
                     weight,
                     cod
-                }
+                },
+                timeout: 5000
             }
         );
 
@@ -70,12 +71,12 @@ export const checkServiceability = async ({ delivery_postcode, weight = 0.5, cod
         const deliverable = couriers.length > 0;
         const codAvailable = cod === 1 ? couriers.some(c => c.cod === 1) : false;
 
-        return { deliverable, codAvailable };
+        return { deliverable, codAvailable, apiError: false };
     } catch (error) {
-        console.error("Shiprocket Serviceability Check Failed:", error.response?.data || error.message);
-        // On API failure, allow the operation to proceed (fail-open)
-        // so a temporary Shiprocket outage doesn't block all orders
-        return { deliverable: true, codAvailable: true };
+        console.error("⚠️ Shiprocket Serviceability Check API Error/Timeout:", error.response?.data || error.message);
+        // On API failure (timeout/network/5xx), allow operation to proceed (fail-open)
+        // so a temporary Shiprocket API outage never blocks real sales
+        return { deliverable: true, codAvailable: true, apiError: true };
     }
 };
 
@@ -135,8 +136,8 @@ export const createShiprocketOrder = async (order) => {
                 discount: 0,
             })),
 
-            // Payment
-            payment_method: order.paymentMethod === "cod" ? "COD" : "Prepaid",
+            // Payment: "cod" -> "COD", all others ("other", "razorpay") -> "Prepaid"
+            payment_method: String(order.paymentMethod || "").toLowerCase() === "cod" ? "COD" : "Prepaid",
             shipping_charges: order.shippingPrice,
             total_discount: order.discountAmount,
             sub_total: order.totalAmount,

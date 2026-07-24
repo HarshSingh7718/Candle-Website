@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Search, X, Frown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductCard from '../../ui/Cards/ProductCard';
@@ -36,16 +37,21 @@ const GlobalSearch = ({ isOpen, onClose }) => {
     if (isOpen) {
       window.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
+      const smoother = ScrollSmoother.get();
+      if (smoother) smoother.paused(true);
     } else {
-      document.body.style.overflow = 'unset';
-      // FIX: Only clear the search term when the modal actually CLOSES
+      document.body.style.overflow = '';
       setSearchTerm('');
       setDebouncedTerm('');
+      const smoother = ScrollSmoother.get();
+      if (smoother) smoother.paused(false);
     }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      // Don't unset overflow here, handle it in the else block
+      document.body.style.overflow = '';
+      const smoother = ScrollSmoother.get();
+      if (smoother) smoother.paused(false);
     };
   }, [isOpen, onClose]);
 

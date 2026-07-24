@@ -53,6 +53,14 @@ const Navbar = () => {
     return () => window.removeEventListener('open-cart', handleOpenCart);
   }, []);
 
+  // Close all navbar overlays on route change
+  useEffect(() => {
+    setIsCartOpen(false);
+    setIsSearchOpen(false);
+    setMenuOpen(false);
+    setShowUserDropdown(false);
+  }, [location.pathname]);
+
   const logoutMutation = useLogout();
 
   // 2. Replace your old handleLogout with this clean version
@@ -96,7 +104,16 @@ const Navbar = () => {
               </button>
 
 
-              <button onClick={() => setIsCartOpen(true)} className='relative cursor-pointer'>
+              <button 
+                onClick={() => {
+                  if (user) {
+                    navigate('/cart');
+                  } else {
+                    setIsCartOpen(true);
+                  }
+                }} 
+                className='relative cursor-pointer'
+              >
                 <ShoppingBag size={24} className='text-light-yellow cursor-pointer' />
                 {cartCount > 0 && (
                   <span className='card-count'>{cartCount}</span>

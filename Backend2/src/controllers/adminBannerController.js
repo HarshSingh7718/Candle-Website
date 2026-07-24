@@ -3,7 +3,7 @@ import { Banner } from "../models/bannerModel.js";
 import cloudinary, { uploadImage } from "../services/cloudinaryService.js";
 
 export const createBanner = async (req, res) => {
-  const { title, subtitle } = req.body;
+  const { title, subtitle, linkedCollection } = req.body;
   if (!req.files || !req.files.desktopImage || !req.files.mobileImage) {
     throw new CustomError("Both desktop and mobile images are required", 400);
   }
@@ -14,6 +14,7 @@ export const createBanner = async (req, res) => {
   const banner = await Banner.create({
     title,
     subtitle,
+    linkedCollection: linkedCollection || null,
     desktopImage: {
       url: desktopResult.url,
       public_id: desktopResult.public_id
@@ -52,7 +53,7 @@ export const deleteBanner = async (req, res) => {
 };
 
 export const getSingleBanner = async (req, res) => {
-  const banner = await Banner.findById(req.params.id);
+  const banner = await Banner.findById(req.params.id).populate("linkedCollection", "name slug");
   if (!banner) {
     throw new CustomError("Banner not found", 404);
   }
@@ -63,7 +64,7 @@ export const getSingleBanner = async (req, res) => {
 };
 
 export const getAllBanners = async (req, res) => {
-  const banners = await Banner.find().sort({
+  const banners = await Banner.find().populate("linkedCollection", "name slug").sort({
     isActive: -1,
     createdAt: -1
   });
@@ -79,7 +80,7 @@ export const updateBanner = async (req, res) => {
   if (!banner) {
     throw new CustomError("Banner not found", 404);
   }
-  const { title, subtitle } = req.body;
+  const { title, subtitle, linkedCollection } = req.body;
 
   // If new desktop image uploaded
   if (req.files && req.files.desktopImage) {
@@ -108,6 +109,7 @@ export const updateBanner = async (req, res) => {
   // update fields
   banner.title = title || banner.title;
   banner.subtitle = subtitle || banner.subtitle;
+  banner.linkedCollection = linkedCollection || null;
   await banner.save();
   
   res.status(200).json({

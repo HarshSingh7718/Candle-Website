@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import toast from 'react-hot-toast';
 import { useCreateCoupon } from '../hooks/useCoupons';
+import { useGetCategories } from '../hooks/useCategories';
 
 import { ArrowLeft } from 'lucide-react';
 
@@ -10,6 +11,7 @@ const AddCoupon = () => {
   const navigate = useNavigate();
   const mainRef = useRef(null);
   const { mutateAsync: createCoupon, isPending } = useCreateCoupon();
+  const { data: categories = [] } = useGetCategories();
 
   const [form, setForm] = useState({
     code: '',
@@ -25,6 +27,8 @@ const AddCoupon = () => {
     isActive: true,
   });
 
+  const [applicableCollections, setApplicableCollections] = useState([]);
+
   useEffect(() => {
     gsap.fromTo(mainRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
   }, []);
@@ -35,6 +39,12 @@ const AddCoupon = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
+  };
+
+  const handleCollectionToggle = (catId) => {
+    setApplicableCollections((prev) =>
+      prev.includes(catId) ? prev.filter((id) => id !== catId) : [...prev, catId]
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -56,6 +66,7 @@ const AddCoupon = () => {
       discountValue: Number(form.discountValue),
       maxDiscountAmount: form.discountType === 'percentage' && form.maxDiscountAmount ? Number(form.maxDiscountAmount) : null,
       minOrderValue: form.minOrderValue ? Number(form.minOrderValue) : 0,
+      applicableCollections,
       startDate: form.startDate,
       endDate: form.endDate,
       usageLimitPerUser: form.usageLimitPerUser ? Number(form.usageLimitPerUser) : 1,
@@ -186,6 +197,41 @@ const AddCoupon = () => {
               min="0"
               className="w-full px-4 py-3 border border-bg-muted rounded-lg bg-bg-surface text-text-base focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
             />
+          </div>
+
+          {/* Applicable Collections (Optional) */}
+          <div className="md:col-span-2 space-y-2">
+            <label className="block font-label-md text-label-md text-text-base">
+              Applicable Collections (Optional)
+            </label>
+            <p className="text-xs text-text-muted">
+              Select specific collections to scope this coupon. Leave unselected for store-wide applicability.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+              {categories.map((cat) => {
+                const isSelected = applicableCollections.includes(cat._id);
+                return (
+                  <button
+                    key={cat._id}
+                    type="button"
+                    onClick={() => handleCollectionToggle(cat._id)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-xs font-semibold transition-all cursor-pointer text-left ${
+                      isSelected
+                        ? 'border-brand-primary bg-brand-primary/10 text-brand-primary'
+                        : 'border-bg-muted bg-bg-surface text-text-muted hover:border-brand-primary/40'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => {}}
+                      className="rounded text-brand-primary focus:ring-brand-primary/20 cursor-pointer"
+                    />
+                    <span className="truncate">{cat.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Start Date */}

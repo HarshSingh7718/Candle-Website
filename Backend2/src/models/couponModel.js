@@ -48,6 +48,14 @@ const couponSchema = new mongoose.Schema(
             default: null,
         },
 
+        // Optional array of collection/category refs to scope coupon to specific collections
+        applicableCollections: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Category",
+            },
+        ],
+
         // Minimum cart subtotal required to use this coupon
         minOrderValue: {
             type: Number,

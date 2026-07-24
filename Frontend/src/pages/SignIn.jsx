@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLogin, useGoogleLogin, useUser } from "../hooks/useAuth"; // IMPORT THE NEW HOOK
 import { mergeGuestCart } from "../utils/guestCart";
 import SEO from '../components/SEO';
+import BackButton from '../components/ui/BackButton';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -112,6 +113,7 @@ const SignIn = () => {
         {/* Right Side (Form) */}
         <div className="w-full lg:w-[65%] h-full flex flex-col items-center px-6 py-12 hide-scrollbar overflow-y-auto bg-[#fafafa]">
           <div className="w-full max-w-[420px] my-auto">
+            <BackButton className="mb-4" />
             <header className="text-center mb-8">
               <h2 className="text-[32px] font-bold text-[#111827] tracking-tight mb-2">
                 Welcome Back

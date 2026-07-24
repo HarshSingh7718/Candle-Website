@@ -215,7 +215,11 @@ const Candles = () => {
           ScrollTrigger.create({
             trigger: sidebarRef.current,
             start: "top 112px", // 112px matches top-28 (28 * 4)
-            end: () => `+=${Math.max(0, mainRef.current.offsetHeight - sidebarRef.current.offsetHeight)}`,
+            end: () => {
+              const mainH = mainRef.current?.offsetHeight || 0;
+              const sideH = sidebarRef.current?.offsetHeight || 0;
+              return `+=${Math.max(0, mainH - sideH)}`;
+            },
             pin: true,
             // pinSpacing: true is default. Required here so the flex column doesn't collapse!
             invalidateOnRefresh: true,

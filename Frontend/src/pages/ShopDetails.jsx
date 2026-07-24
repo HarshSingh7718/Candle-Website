@@ -5,18 +5,20 @@ import SEO from "../components/SEO";
 import ProductZoom from "../components/ProductZoom";
 import { useCart } from "../hooks/useCart";
 import { useWishlist } from "../hooks/useWishlist";
-import { Star } from "lucide-react";
 import ProductCard from "../components/ui/Cards/ProductCard";
 import Loader from "../components/ui/Loader";
+import StarRating from "../components/ui/StarRating";
 import { useSingleProduct } from "../hooks/useProducts";
+
+import BackButton from "../components/ui/BackButton";
 
 /**
  * ShopDetails – Product detail page.
  *
  * Features:
  *  - Image zoom via ProductZoom
- *  - Tabs: Description (with Show More/Less), Additional Info, Reviews
- *  - Short description click scrolls to & opens the Description tab
+ *  - Tabs: Description (with Show More/Less), Reviews
+ *  - Short description click scrolls to & opens full Description tab
  *  - Similar products grid
  */
 const ShopDetails = () => {
@@ -52,11 +54,12 @@ const ShopDetails = () => {
   }, [product]);
 
   /**
-   * Scrolls to the Description tab section and opens it.
+   * Scrolls to the Description tab section and opens it in full view.
    * Passed down to ProductZoom so the short description acts as an anchor link.
    */
   const handleScrollToDescription = useCallback(() => {
     setActiveTab("description");
+    setShowFullDescription(true);
     // Slight delay so the tab content renders before we scroll
     setTimeout(() => {
       tabsSectionRef.current?.scrollIntoView({
@@ -126,8 +129,9 @@ const ShopDetails = () => {
         image={product.images?.[0]?.url}
         schema={productSchema}
       />
-      <div className="bg-light-yellow pb-1 pt-24">
+      <div className="bg-light-yellow pb-1 pt-2">
         <div className="container mx-auto py-5 px-4 lg:px-8 w-full">
+          <BackButton className="mb-4" />
           <ProductZoom
             product={product}
             onScrollToDescription={handleScrollToDescription}
@@ -136,7 +140,7 @@ const ShopDetails = () => {
           {/* ─────────────── Tabs Area ─────────────── */}
           <div className="mt-8 scroll-mt-28" ref={tabsSectionRef} id="product-tabs">
             <div className="flex border-b border-muted gap-8 md:gap-10">
-              {["description", "additional", "reviews"].map((tab) => (
+              {["description", "reviews"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -175,38 +179,6 @@ const ShopDetails = () => {
                 </div>
               )}
 
-              {/* ── Additional Info Tab ── */}
-              {activeTab === "additional" && (
-                <div className="text-paragraph text-sm max-w-lg">
-                  {product.vessel && (
-                    <div className="grid grid-cols-2 py-3 border-b border-muted/20">
-                      <span className="font-bold text-heading uppercase tracking-wider">
-                        Vessel
-                      </span>
-                      <span>{product.vessel}</span>
-                    </div>
-                  )}
-                  <div className="grid grid-cols-2 py-3 border-b border-muted/20">
-                    <span className="font-bold text-heading uppercase tracking-wider">
-                      Weight
-                    </span>
-                    <span>{product.weight} g</span>
-                  </div>
-                  <div className="grid grid-cols-2 py-3 border-b border-muted/20">
-                    <span className="font-bold text-heading uppercase tracking-wider">
-                      Materials
-                    </span>
-                    <span>{product.material}</span>
-                  </div>
-                  <div className="grid grid-cols-2 py-3 border-b border-muted/20">
-                    <span className="font-bold text-heading uppercase tracking-wider">
-                      Burn Time
-                    </span>
-                    <span>~{product.burnTime} Hours</span>
-                  </div>
-                </div>
-              )}
-
               {/* ── Reviews Tab ── */}
               {activeTab === "reviews" && (
                 <div className="space-y-8">
@@ -226,20 +198,7 @@ const ShopDetails = () => {
                             {new Date(review.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                           </p>
                         </div>
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={14}
-                              fill={i < review.rating ? "black" : "none"}
-                              className={
-                                i < review.rating
-                                  ? "fill-[#ffb400] text-[#ffb400]"
-                                  : "text-orange-400"
-                              }
-                            />
-                          ))}
-                        </div>
+                        <StarRating rating={review.rating} size={14} />
                       </div>
                       <p className="text-paragraph text-sm leading-relaxed">
                         {review.comment}

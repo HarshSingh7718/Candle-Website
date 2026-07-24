@@ -27,6 +27,8 @@ import { usePincodeLookup } from "../hooks/usePincodeLookup";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
 import { useCoupon } from "../hooks/useCoupon";
 import SEO from "../components/SEO";
+import BackButton from "../components/ui/BackButton";
+import CouponSection from "../components/ui/CouponSection";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -49,8 +51,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
   // --- Coupon State ---
-  const [couponCode, setCouponCode] = useState("");
-  const { applyCoupon, removeCoupon, appliedCoupon, discountAmount, isApplying, availableCoupons, isLoadingCoupons } = useCoupon();
+  const { appliedCoupon, discountAmount } = useCoupon();
 
   const [shippingAddress, setShippingAddress] = useState({
     firstName: user?.firstName,
@@ -295,6 +296,7 @@ const Checkout = () => {
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row flex-1 h-full w-full">
           {/* LEFT COLUMN: Delivery & Payment */}
           <div className="w-full md:w-[58%] p-6 md:p-12 border-r border-muted/20 bg-light-yellow">
+            <BackButton className="mb-6" />
             <header className="mb-10">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold">Delivery Address</h1>
@@ -607,102 +609,9 @@ const Checkout = () => {
               })}
             </div>
 
-            {/* ===== COUPON SECTION — Mamaearth/Swiggy Style ===== */}
+            {/* ===== COUPON SECTION — Recap / Minimal Fallback ===== */}
             <div className="border-t border-muted/20 pt-5 mb-6">
-              {appliedCoupon ? (
-                /* ── Applied Success Badge ── */
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <CheckCircle2 size={16} className="text-success" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-green-800 tracking-wider">{appliedCoupon.code}</span>
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Applied</span>
-                      </div>
-                      <p className="text-xs text-success mt-0.5">You're saving {formatCurrency(discountAmount)} on this order</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => { removeCoupon(); setCouponCode(""); }}
-                    className="p-1.5 text-success hover:text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              ) : (
-                <>
-                  {/* ── Section 1: Available Offers ── */}
-                  {!isLoadingCoupons && availableCoupons.length > 0 && (
-                    <div className="mb-5">
-                      <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                        <Tag size={12} />
-                        Available Offers
-                      </h4>
-                      <div className="space-y-2.5">
-                        {availableCoupons.map((coupon) => (
-                          <div
-                            key={coupon._id}
-                            className="flex items-center justify-between border border-muted/20 rounded-lg px-4 py-3 hover:border-coffee hover:bg-coffee/5 transition-all group"
-                          >
-                            <div className="flex items-start gap-3 min-w-0">
-                              <div className="w-9 h-9 rounded-lg bg-muted/10 flex items-center justify-center shrink-0 mt-0.5">
-                                <Percent size={16} className="text-paragraph" />
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2 mb-0.5">
-                                  <span className="text-xs font-bold tracking-widest text-heading bg-muted/10 px-2 py-0.5 rounded border border-dashed border-muted">
-                                    {coupon.code}
-                                  </span>
-                                </div>
-                                <p className="text-sm font-medium text-heading leading-snug">{coupon.title}</p>
-                                {coupon.description && (
-                                  <p className="text-xs text-muted mt-0.5 leading-snug">{coupon.description}</p>
-                                )}
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => applyCoupon(coupon.code)}
-                              disabled={isApplying}
-                              className="shrink-0 ml-3 text-xs font-bold text-paragraph hover:text-heading uppercase tracking-wider px-3 py-1.5 border border-muted rounded-md hover:bg-muted/10 transition-colors cursor-pointer disabled:opacity-50"
-                            >
-                              Apply
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ── Section 2: Always-Visible Manual Input ── */}
-                  <div>
-                    <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                      <Tag size={12} />
-                      {availableCoupons.length > 0 ? 'Or enter a code' : 'Have a promo code?'}
-                    </h4>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        placeholder="Enter coupon code"
-                        className="flex-1 px-3 py-2.5 border border-muted rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-coffee focus:border-coffee uppercase tracking-wider font-medium placeholder:normal-case placeholder:tracking-normal placeholder:font-normal transition-all"
-                      />
-                      <button
-                        type="button"
-                        disabled={!couponCode.trim() || isApplying}
-                        onClick={() => applyCoupon(couponCode.trim())}
-                        className="px-5 py-2.5 bg-coffee text-light-yellow text-sm font-medium rounded-md hover:bg-coffee-light disabled:bg-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
-                      >
-                        {isApplying ? "Applying..." : "Apply"}
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
+              <CouponSection variant={appliedCoupon ? "recap" : "minimal"} />
             </div>
 
             <div className="space-y-3 mb-6 pt-6 border-t border-muted/20">

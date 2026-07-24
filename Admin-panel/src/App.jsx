@@ -25,6 +25,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import { Toaster } from 'react-hot-toast';
 import OrderDetails from './pages/OrderDetails';
+import CreateManualOrder from './pages/CreateManualOrder';
 import Setting from './pages/Setting';
 import Coupons from './pages/Coupons';
 import AddCoupon from './pages/AddCoupon';
@@ -60,6 +61,7 @@ function App() {
                       <Route path="/categories/edit/:id" element={<EditCategory />} />
                       <Route path="/categories/:id/products" element={<CategoryProducts />} />
                       <Route path="/orders" element={<Orders />} />
+                      <Route path="/orders/create" element={<CreateManualOrder />} />
                       <Route path="/reviews" element={<Reviews />} />
                       <Route path="/contacts" element={<Contacts />} />
                       <Route path="/banners" element={<Banners />} />

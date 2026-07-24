@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { createPortal } from 'react-dom';
 import { X, Filter } from 'lucide-react';
 import CustomDropdown from './CustomDropdown';
@@ -26,13 +27,19 @@ const MobileFilterModal = ({
             setCategoryInput(initialCategory || '');
             setIsMounted(true);
             document.body.style.overflow = 'hidden';
+            const smoother = ScrollSmoother.get();
+            if (smoother) smoother.paused(true);
         } else {
             timeout = setTimeout(() => setIsMounted(false), 300); // 300ms for exit animation
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = '';
+            const smoother = ScrollSmoother.get();
+            if (smoother) smoother.paused(false);
         }
         return () => { 
             if (timeout) clearTimeout(timeout);
-            document.body.style.overflow = 'unset'; 
+            document.body.style.overflow = '';
+            const smoother = ScrollSmoother.get();
+            if (smoother) smoother.paused(false);
         };
     }, [isOpen, initialSort, initialPrice, initialCategory]);
 

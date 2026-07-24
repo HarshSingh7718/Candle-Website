@@ -24,6 +24,8 @@ const orderItemSchema = new mongoose.Schema({
     name: String,
     quantity: Number,
     price: Number,
+    catalogPrice: Number, // Stored catalog price for audit
+    overridePrice: Number, // Stored override price for audit
     image: String,
     slug: String,
 
@@ -46,11 +48,27 @@ const orderSchema = new mongoose.Schema({
         index: true,
     },
 
-    //  User
+    // User (Optional for guest / manual admin orders)
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: false,
+        default: null
+    },
+
+    // Admin track
+    createdByAdmin: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null
+    },
+    isManualOrder: {
+        type: Boolean,
+        default: false
+    },
+    adminNotes: {
+        type: String,
+        default: ""
     },
 
     //  UPDATED ITEMS
@@ -64,7 +82,8 @@ const orderSchema = new mongoose.Schema({
         city: String,
         state: String,
         pincode: String,
-        phone: String
+        phone: String,
+        email: String
     },
 
     //  Pricing
@@ -91,7 +110,7 @@ const orderSchema = new mongoose.Schema({
 
     paymentMethod: {
         type: String,
-        enum: ["razorpay", "cod"],
+        enum: ["razorpay", "cod", "other"],
         default: "razorpay"
     },
 

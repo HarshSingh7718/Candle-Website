@@ -1,5 +1,6 @@
 import React from 'react';
 import SEO from '../components/SEO';
+import BackButton from '../components/ui/BackButton';
 
 export default function TermsOfServicePage() {
     return (
@@ -10,6 +11,7 @@ export default function TermsOfServicePage() {
             />
             <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-3xl rounded-2xl bg-bg-surface p-8 sm:p-12 border-stone-100">
+                    <BackButton className="mb-6" />
 
                     {/* Header */}
                     <div className="mb-10 border-b border-stone-200 pb-8 text-center">
