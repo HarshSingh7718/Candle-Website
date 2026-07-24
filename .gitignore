@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Editor directories and files
+# Editor directories and 
 .vscode/*
 !.vscode/extensions.json
 .idea
